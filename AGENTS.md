@@ -240,6 +240,10 @@ arrives:
   After any scripted/CLI edit, normalize before committing:
   `plutil -convert json -r -o FILE FILE` — then opening the project in Xcode
   produces no churn.
+- **`InfoPlist.xcstrings` needs an explicit `en` unit for every key.** Its keys
+  are plist keys, and a catalog falls back to the key as the source-language
+  value, so without one English devices see `NSCameraUsageDescription` as the
+  camera's reason and App Store Connect flags it (ITMS-90738).
 - **Renaming a key must update its explicit `en` unit too.** An entry with an
   `en` localization whose value overrides the key would leave English silently
   showing the old text. Audit: flag any entry whose explicit `en` value ≠ its
