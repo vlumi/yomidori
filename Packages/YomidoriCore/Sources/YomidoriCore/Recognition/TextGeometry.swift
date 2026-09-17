@@ -37,6 +37,40 @@ public enum TextGeometry {
             .min { area(lines[$0].box) < area(lines[$1].box) }
     }
 
+    /// The image pixel under a point in the view, y down as `CGImage` counts rows.
+    /// Nil outside the image's frame.
+    public static func imagePoint(at point: CGPoint, in frame: CGRect, imageSize: CGSize)
+        -> CGPoint?
+    {
+        guard frame.width > 0, frame.height > 0, frame.contains(point) else { return nil }
+        return CGPoint(
+            x: (point.x - frame.minX) / frame.width * imageSize.width,
+            y: (point.y - frame.minY) / frame.height * imageSize.height)
+    }
+
+    /// A square of `side` pixels around a point, kept inside the image: slid in at
+    /// the edges, shrunk only where the image itself is smaller.
+    public static func cropRect(around point: CGPoint, side: CGFloat, in imageSize: CGSize)
+        -> CGRect
+    {
+        let width = min(side, imageSize.width)
+        let height = min(side, imageSize.height)
+        return CGRect(
+            x: min(max(point.x - width / 2, 0), imageSize.width - width),
+            y: min(max(point.y - height / 2, 0), imageSize.height - height),
+            width: width, height: height)
+    }
+
+    /// A rect in image pixels (y down) as the normalized y-up box the recognizer
+    /// uses, so `viewRect(for:in:)` can draw it too.
+    public static func normalizedBox(for rect: CGRect, imageSize: CGSize) -> CGRect {
+        CGRect(
+            x: rect.minX / imageSize.width,
+            y: 1 - rect.maxY / imageSize.height,
+            width: rect.width / imageSize.width,
+            height: rect.height / imageSize.height)
+    }
+
     private static func area(_ rect: CGRect) -> CGFloat {
         rect.width * rect.height
     }
