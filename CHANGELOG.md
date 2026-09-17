@@ -15,3 +15,4 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 ### Unreleased (next build)
 
 - **The camera reads the page.** Frame a paperback and press the shutter, or choose a screenshot from the photo library; the still freezes on the screen with every line Vision recognized boxed over it, and a tap on a line reads it out large with the recognizer's confidence. A switch at the bottom shows the same still through Live Text instead, with its transcript and its own text selection. Both run on the device; the image never leaves it. This is the spike the roadmap starts with: which on-device engine, if either, reads a real page and its vertical columns.
+- **The mascot on the icon.** A silver Java sparrow, head-on and mochi-round, perched low on a silver rule with its toes showing, drawn in night green and silver; the placeholder roundel retires.
