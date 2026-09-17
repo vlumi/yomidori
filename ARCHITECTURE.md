@@ -75,6 +75,14 @@ The recognized characters are shown as editable text in the sheet, so an OCR
 error on one stroke is a one-character fix, and the same field is the fallback
 when the print is truly too small.
 
+The camera is one source of a still, not the only one. A screenshot of an
+e-book app or a web page enters the same screen, through the photo picker or a
+share extension that receives the image from the screenshot preview; from the
+still on, camera and screenshot are the same path, vertical columns included,
+since Japanese e-book novels flow the way the paperbacks do. Watching the screenshots
+album is deliberately not offered: it needs photo-library access for everything
+in exchange for one tap the share sheet already saves.
+
 ### The tokenizer and its dictionaries — the open decision
 
 A reading needs a tokenizer with a dictionary that carries readings and pitch,
@@ -106,9 +114,11 @@ for; a meaning card is an option ticked when the meaning was the gap.
 
 A sentence spanning two pages is glued in the capture flow: when expanding to
 the sentence boundary runs off the end of the last column, the sheet offers
-"continues on next page", a second shutter, a tap on the continuation, and the
-two fragments join with plain concatenation — Japanese has no hyphenation — and
-are re-tokenized. Both crops are kept.
+"continues on next page" and leaves the sentence open; the next still, whether a
+second shutter or a second screenshot shared in, is where the continuation is
+tapped, and the two fragments join with plain concatenation — Japanese has no
+hyphenation — and are re-tokenized. Both crops are kept. E-book screens end
+sentences mid-way exactly as pages do, so the glue is not a paperback feature.
 
 ### Scheduling and storage
 
