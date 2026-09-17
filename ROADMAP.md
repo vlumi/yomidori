@@ -22,12 +22,14 @@ The whole idea rests on on-device text recognition reading real books: vertical 
 - [ ] **Freeze the page.** Camera view that only frames; shutter on screen, on the volume button and on the Camera Control; the still is what everything works on, pinch to zoom.
 - [ ] **Tap a word.** A tap anywhere on a token highlights the whole token, vertical or horizontal; a second tap on a neighbor extends over a compound. The reading appears in a bottom sheet in large kana, meaning collapsed under it. The recognized characters are editable in the sheet.
 - [ ] **Reach.** Everything touchable in the thumb's arc; the page can be swiped so the top of a column comes down.
+- [ ] **A screenshot as the still.** Reading on the same device — an e-book app, a web page — the still comes from a screenshot instead of the camera: the photo picker inside the app first, then a share extension so Share → Yomidori from the screenshot preview lands straight on the freeze-and-tap screen. Everything after the still is the same code, the vertical columns of an e-book novel included; screenshots are only sharper than any camera frame.
 
 ## Cards — *the word keeps working*
 
 - [ ] **One card per word.** Dictionary form as the key; the sentence from the page as the front, OCR text plus the crop; reading, pitch and the collapsed meaning on the back; book and page recorded. A second sighting adds a sentence, never a card.
 - [ ] **Review.** FSRS with two grades; the queue is what is due when the app opens; no streaks, no reminders. Readings by default, meaning cards as an option per word.
-- [ ] **Two pages, one sentence.** "Continues on next page" in the capture flow; the fragments joined and re-tokenized, both crops kept.
+- [ ] **Two pages, one sentence.** "Continues on next page" in the capture flow, for two shutters and for two screenshots alike: a sentence left open waits for the next still, shared or picked, and its continuation is tapped there; the fragments are joined and re-tokenized, both crops kept.
+- [ ] **Stills stitched into one page**, later, not for the first prototype. The visual side of the same glue: consecutive stills laid out as one canvas in reading order — a vertical page continues to the left of the previous, a horizontal one below — so the sentence is seen to flow while its continuation is tapped. The gap between them is trimmed by what Vision recognized, each still cropped to its text block plus a margin, which drops page margins, running heads and an e-reader's chrome without guessing at empty pixels; the seam stays visible as a thin line, the raw frames remain an option, and the originals stay on the card either way.
 
 ## Dictionary — *meaning on request*
 
