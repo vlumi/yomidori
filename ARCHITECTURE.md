@@ -55,6 +55,11 @@ the Mac; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
   only frames, with one shutter that keeps the next frame of the stream: a frame
   grab, not a photo capture, so nothing is written to the library and there is
   no shutter sound (mandatory for photo capture in Japan, where the app is read).
+  On a phone with several back cameras it opens them as one virtual device, so
+  the system hands a page held close to the ultra-wide (macro) and a pinch past
+  the wide's reach to the telephoto, both optical; autofocus is kept to the near
+  range, since a book is read at arm's length. The pinch on the preview is the
+  zoom-before-capture that small print needs.
   `Still` is the frozen frame, upright, so orientation is settled once; from the
   picker it is decoded upright. A still also comes from the photo picker, which
   is how a screenshot enters and how the simulator, having no camera, is used.
