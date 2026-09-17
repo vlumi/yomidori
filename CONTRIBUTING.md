@@ -9,8 +9,8 @@ Quick orientation:
 
 - **Build & run / tests:** see [AGENTS.md](AGENTS.md). In short: Xcode 26 and
   XcodeGen; `make test` runs the logic tests, `make run-iphone` /
-  `make run-ipad` build and launch in a simulator. The camera needs a real
-  device and a real book.
+  `make run-ipad` build and launch in a simulator, `make run-device` on a
+  paired phone. The camera needs a real device and a real book.
 - **Architecture / why things are the way they are:**
   [ARCHITECTURE.md](ARCHITECTURE.md).
 - **What's planned:** [ROADMAP.md](ROADMAP.md). **What's changed:**

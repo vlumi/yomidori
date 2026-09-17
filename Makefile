@@ -39,6 +39,10 @@ run-iphone: Yomidori.xcodeproj  ## Build + launch on an iPhone simulator (DEVICE
 run-ipad: Yomidori.xcodeproj  ## Build + launch on an iPad simulator (DEVICE="Air" / "13-inch" to pick)
 	@Scripts/run-ios.sh ipad "$(DEVICE)"
 
+.PHONY: run-device
+run-device: Yomidori.xcodeproj  ## Build + install + launch on a paired iPhone/iPad (DEVICE="<name>" to pick)
+	@Scripts/run-device.sh "$(DEVICE)"
+
 .PHONY: build-ios
 build-ios: Yomidori.xcodeproj  ## Build the iOS app (simulator, unsigned)
 	@Scripts/build.sh ios

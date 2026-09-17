@@ -1,12 +1,122 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "Point at a word, get its reading." : {
+    "Camera access is off. Turn it on in Settings to frame a page." : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "言葉に向けると、読みがわかる。"
+            "value" : "カメラへのアクセスがオフになっています。設定でオンにすると、ページを撮影できます。"
+          }
+        }
+      }
+    },
+    "Choose a photo" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "写真を選ぶ"
+          }
+        }
+      }
+    },
+    "Live Text" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テキスト認識表示"
+          }
+        }
+      }
+    },
+    "Live Text is not available on this device." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この端末ではテキスト認識表示を使えません。"
+          }
+        }
+      }
+    },
+    "No camera here. Choose a photo instead." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カメラがありません。写真を選んでください。"
+          }
+        }
+      }
+    },
+    "Nothing was recognized." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文字が見つかりませんでした。"
+          }
+        }
+      }
+    },
+    "Reading the page…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み取り中…"
+          }
+        }
+      }
+    },
+    "Recognizer" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "認識エンジン"
+          }
+        }
+      }
+    },
+    "Retake" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撮り直す"
+          }
+        }
+      }
+    },
+    "Shutter" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "シャッター"
+          }
+        }
+      }
+    },
+    "Tap a line to see what was read." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行をタップすると、読み取った文字が見られます。"
+          }
+        }
+      }
+    },
+    "Vision" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vision"
           }
         }
       }
