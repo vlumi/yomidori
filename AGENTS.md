@@ -95,7 +95,7 @@ yomidori/
 ├── Makefile                        Short targets; run `make` to list them
 ├── Scripts/                        One job per script; the Makefile wires them
 │     generate.sh                   Regenerates the .xcodeproj (refuses if THIS project is open in Xcode)
-│     build.sh / test.sh / run-ios.sh
+│     build.sh / test.sh / run-ios.sh / run-device.sh
 │     embed-commit-sha.sh           Stamps GitCommitSHA into the built Info.plist
 │     release-*.sh, distribute.sh   The release lane (RELEASING.md)
 │     assets/make-icon.swift        Renders the app icon PNG (make icon)
@@ -136,6 +136,7 @@ make format            # rewrite sources with swift-format
 make build-ios         # generate the project if stale, build the app for the simulator (unsigned)
 make run-iphone        # build + install + launch on an iPhone simulator (DEVICE="SE" to pick)
 make run-ipad          # same, iPad (DEVICE="Air")
+make run-device        # build + install + launch on a paired iPhone/iPad (DEVICE="<name>" to pick)
 make icon              # regenerate the app icon PNG
 make generate          # regenerate Yomidori.xcodeproj from project.yml (only if stale)
 make clean             # remove the generated project + build output
@@ -143,9 +144,10 @@ make clean             # remove the generated project + build output
 
 `swift test` runs on the Mac, headless — that's the inner loop. The camera needs
 a real device: the simulator has no camera, so the capture flow is tried on a
-phone over a real book (in the simulator the photo picker stands in for the
-shutter), and only the logic below it is unit-tested. `make release` is the
-release lane, documented in [RELEASING.md](RELEASING.md).
+phone over a real book with `make run-device` (the phone plugged in or on the
+same Wi-Fi, unlocked, in Developer Mode; in the simulator the photo picker
+stands in for the shutter), and only the logic below it is unit-tested.
+`make release` is the release lane, documented in [RELEASING.md](RELEASING.md).
 
 ### Lint & format
 
