@@ -108,6 +108,10 @@ final class Camera: ObservableObject {
             kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA
         ]
         output.alwaysDiscardsLateVideoFrames = true
+        // With the photo preset the output delivers preview-sized frames by default,
+        // about a megapixel; the still wants the sensor's full frame.
+        output.automaticallyConfiguresOutputBufferDimensions = false
+        output.deliversPreviewSizedOutputBuffers = false
         output.setSampleBufferDelegate(frames, queue: queue)
         guard session.canAddInput(input), session.canAddOutput(output) else { return false }
         session.addInput(input)
