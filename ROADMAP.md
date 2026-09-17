@@ -44,7 +44,6 @@ The whole idea rests on on-device text recognition reading real books: vertical 
 
 ## Store — *out the door*
 
-- [ ] **The mascot icon.** The silver Java sparrow drawn for the icon, source art committed beside the script; the placeholder roundel retires.
 - [ ] **Japanese interface** completed and reviewed by a native ear; the ヨミドリ storefront name.
 - [ ] **Listing tooling** copied from the siblings when a listing exists to sync: `Scripts/asc/` and `make shots`.
 - [ ] **TestFlight, then the App Store.** Privacy answers are all "no" except the camera, which is used on device and never uploaded.

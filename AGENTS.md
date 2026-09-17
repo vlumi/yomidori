@@ -120,9 +120,10 @@ The icon is the one PNG in the repo, and it is *generated*: `make icon` runs
 `Scripts/assets/make-icon.swift` (pure CoreGraphics) into
 `Sources/Shared/Assets.xcassets/AppIcon.appiconset/icon-1024.png`, flattened to
 opaque because App Store Connect silently rejects a transparent icon. To change
-the icon, change the script and re-run — never hand-edit the PNG. The current
-icon is a placeholder; the mascot (the family's silver Java sparrow) is the
-intended art, and its source will be committed beside the script when it exists.
+the icon, change the script and re-run — never hand-edit the PNG. The icon is
+the mascot, the family's silver Java sparrow, drawn head-on and mochi-round on
+a perch; every proportion is a named constant at the top of the script, so a
+tweak is a number, not a redraw.
 
 ## Build, run, test
 
