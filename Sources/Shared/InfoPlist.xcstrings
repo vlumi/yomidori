@@ -4,6 +4,12 @@
     "NSCameraUsageDescription" : {
       "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yomidori takes a still of the page you are reading. The image stays on this device."
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
