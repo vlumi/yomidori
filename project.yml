@@ -36,6 +36,8 @@ targets:
         # the export-compliance prompt.
         ITSAppUsesNonExemptEncryption: false
         LSApplicationCategoryType: public.app-category.education
+        # The one permission the app asks for. Localized in Sources/Shared/InfoPlist.xcstrings.
+        NSCameraUsageDescription: Yomidori takes a still of the page you are reading. The image stays on this device.
         # System-default launch screen (plain background).
         UILaunchScreen: {}
         # All four orientations: a universal (iPhone + iPad) app must support

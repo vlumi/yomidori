@@ -1,0 +1,17 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "NSCameraUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読んでいるページを撮影するためにカメラを使います。画像はこの端末の外には出ません。"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

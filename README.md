@@ -8,7 +8,8 @@ camera at a word you can't read, tap it, and get its reading. The sentence you
 were reading becomes a card, and the cards are what you study.
 
 > **Status: pre-alpha — nothing on the App Store yet.** The repo, the toolchain
-> and the release lane are in place; the app is a name on a screen. How it's
+> and the release lane are in place; the app is the spike's capture screen: a
+> still of the page, and what the two on-device recognizers read from it. How it's
 > built: [ARCHITECTURE.md](ARCHITECTURE.md). How to work on it:
 > [AGENTS.md](AGENTS.md). What's next: [ROADMAP.md](ROADMAP.md).
 
