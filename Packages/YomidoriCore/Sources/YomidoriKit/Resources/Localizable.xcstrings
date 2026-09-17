@@ -1,0 +1,16 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Point at a word, get its reading." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "言葉に向けると、読みがわかる。"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
