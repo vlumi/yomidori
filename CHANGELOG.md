@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 2 — 2026-09-17
+
 - **The still is the sensor's full frame.** Build 1 froze a preview-sized frame of about a megapixel, which is why small print read so badly; the shutter now keeps the full-resolution frame, and reading up close has real pixels to work with.
 - **The camera permission asks in a sentence, in English too.** Build 1 showed English devices the raw key instead of the reason.
 
