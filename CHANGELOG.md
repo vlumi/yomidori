@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The camera permission asks in a sentence, in English too.** Build 1 showed English devices the raw key instead of the reason.
+
 ### build 1 — 2026-09-17
 
 - **The camera reads the page.** Frame a paperback and press the shutter, or choose a screenshot from the photo library; the still freezes on the screen with every line Vision recognized boxed over it, and a tap on a line reads it out large with the recognizer's confidence. A switch at the bottom shows the same still through Live Text instead, with its transcript and its own text selection, or reads up close: tap a word and a full-resolution square around it is read on its own, by both engines, and shown magnified. Pinch the live view to zoom before the shutter; up close the camera goes macro on phones that have it. Both engines run on the device; the image never leaves it. This is the spike the roadmap starts with: which on-device engine, if either, reads a real page and its vertical columns.
