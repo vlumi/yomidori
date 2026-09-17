@@ -67,9 +67,14 @@ the Mac; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
   device: `TextRecognizer` wraps Vision's `VNRecognizeTextRequest` for Japanese
   and yields `RecognizedLine`s, drawn back over the page, tap one to read it;
   `LiveText` wraps VisionKit's `ImageAnalyzer`, the Live Text engine, which
-  yields a transcript and, on iOS, its own text selection over the image. The
-  screen shows either, switched at the bottom; the roadmap's spike is the
-  comparison of the two against a real book.
+  yields a transcript and, on iOS, its own text selection over the image. A
+  third mode reads *up close*: a tap cuts a square around it out of the still at
+  full resolution, a third of the page's longer side, and both engines read only
+  that. Recognizers downscale a whole page before reading, so a dense kanji
+  reaches them at a fraction of the pixels the sensor caught; the crop hands
+  them the pixels back without the reader zooming. The screen shows any of the
+  three, switched at the bottom; the roadmap's spike is the comparison against
+  a real book.
 - **`AppRoot`** (Kit): hosts the capture screen; the place navigation will hang
   from.
 

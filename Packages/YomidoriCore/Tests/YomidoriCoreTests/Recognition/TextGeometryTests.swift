@@ -38,6 +38,45 @@ final class TextGeometryTests: XCTestCase {
         XCTAssertEqual(bottom.width, 97.5)
     }
 
+    func testTapMapsToAnImagePixel() {
+        let frame = CGRect(x: 0, y: 162, width: 390, height: 520)
+        let image = CGSize(width: 3000, height: 4000)
+        // The frame's top-left is the image's first pixel; its centre is the image's centre.
+        XCTAssertEqual(
+            TextGeometry.imagePoint(at: CGPoint(x: 0, y: 162), in: frame, imageSize: image), .zero)
+        XCTAssertEqual(
+            TextGeometry.imagePoint(at: CGPoint(x: 195, y: 422), in: frame, imageSize: image),
+            CGPoint(x: 1500, y: 2000))
+        XCTAssertNil(
+            TextGeometry.imagePoint(at: CGPoint(x: 10, y: 10), in: frame, imageSize: image))
+    }
+
+    func testCropStaysInsideTheImage() {
+        let image = CGSize(width: 3000, height: 4000)
+        XCTAssertEqual(
+            TextGeometry.cropRect(around: CGPoint(x: 1500, y: 2000), side: 1000, in: image),
+            CGRect(x: 1000, y: 1500, width: 1000, height: 1000))
+        // Near a corner the square slides in rather than shrinking.
+        XCTAssertEqual(
+            TextGeometry.cropRect(around: CGPoint(x: 100, y: 3950), side: 1000, in: image),
+            CGRect(x: 0, y: 3000, width: 1000, height: 1000))
+        // A screenshot narrower than the square gives the full width.
+        XCTAssertEqual(
+            TextGeometry.cropRect(
+                around: CGPoint(x: 300, y: 300), side: 1000, in: CGSize(width: 800, height: 2000)),
+            CGRect(x: 0, y: 0, width: 800, height: 1000))
+    }
+
+    func testImageRectBecomesANormalizedBoxAndBack() {
+        let image = CGSize(width: 3000, height: 4000)
+        let crop = CGRect(x: 0, y: 3000, width: 1000, height: 1000)
+        let box = TextGeometry.normalizedBox(for: crop, imageSize: image)
+        // The bottom-left corner of the image, in y-up terms.
+        XCTAssertEqual(box, CGRect(x: 0, y: 0, width: 1 / 3, height: 0.25))
+        let frame = CGRect(x: 0, y: 162, width: 390, height: 520)
+        XCTAssertEqual(TextGeometry.viewRect(for: box, in: frame).maxY, frame.maxY)
+    }
+
     func testTapPicksTheSmallestLineUnderIt() {
         let frame = CGRect(x: 0, y: 0, width: 100, height: 100)
         // A tall column and a short line that sits inside the column's box.
