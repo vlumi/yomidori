@@ -45,10 +45,28 @@ the Mac; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
   day and near-black by night, so the page is what the eye lands on. A `Color`
   initializer resolves the pair through UIKit's trait collection on iOS and
   falls back to the light value on the macOS test build.
-- **`AppRoot`** (Kit): the name, until the camera view replaces it. It exists so
-  the app target, the package, the String Catalog with its Japanese unit, and
-  the whole build-and-release lane are exercised end to end from the first
-  commit.
+- **`RecognizedLine`** and **`TextGeometry`** (Core): one line as a recognizer
+  read it, with its box normalized to the image and y up as Vision reports it;
+  and the one seam where that box meets a view — the aspect-fitted frame a still
+  lands in, the flip to y-down view space, and the hit test that picks the
+  smallest line under a tap. Nothing else in the app does coordinate arithmetic.
+- **The capture screen** (Kit, `Capture/`): the spike's instrument, and the
+  shape of the app to come. `Camera` is the back camera behind a preview that
+  only frames, with one shutter that keeps the next frame of the stream: a frame
+  grab, not a photo capture, so nothing is written to the library and there is
+  no shutter sound (mandatory for photo capture in Japan, where the app is read).
+  `Still` is the frozen frame, upright, so orientation is settled once; from the
+  picker it is decoded upright. A still also comes from the photo picker, which
+  is how a screenshot enters and how the simulator, having no camera, is used.
+  Two recognizers run over every still, both shipped with the OS and both on
+  device: `TextRecognizer` wraps Vision's `VNRecognizeTextRequest` for Japanese
+  and yields `RecognizedLine`s, drawn back over the page, tap one to read it;
+  `LiveText` wraps VisionKit's `ImageAnalyzer`, the Live Text engine, which
+  yields a transcript and, on iOS, its own text selection over the image. The
+  screen shows either, switched at the bottom; the roadmap's spike is the
+  comparison of the two against a real book.
+- **`AppRoot`** (Kit): hosts the capture screen; the place navigation will hang
+  from.
 
 ## Planned
 
@@ -60,11 +78,13 @@ the [ROADMAP.md](ROADMAP.md) says in which order they are tried.
 The camera view only frames. The shutter (on-screen, the volume button, or the
 Camera Control) takes a still, and everything after happens on the photo: the
 other hand is holding a book, text recognition runs once on a sharp frame, and
-the page can be pinched to zoom into small print. Recognition is Vision's
-`VNRecognizeTextRequest` for Japanese, on device, which handles vertical columns
-and small serif print far better than a person counting strokes; it returns
-each line with character positions, which is exactly enough to map a tap to a
-character and a character to a token. A tap highlights the whole token, in a
+the page can be pinched to zoom into small print. Recognition is on device and
+from what the OS ships; which engine is the spike's open question. Vision's
+`VNRecognizeTextRequest` returns each line with character positions, exactly
+enough to map a tap to a character and a character to a token, but on a
+rendered page it read no vertical text at all; the Live Text engine
+(`ImageAnalyzer`) read the same columns cleanly but returns a transcript and a
+selection UI, no positions. A tap highlights the whole token, in a
 column or a line alike; tapping the neighbor extends the highlight over a
 compound the tokenizer split, and the lookup retries on the joined form. Two
 taps at most, never a drag. Everything touchable lives at the bottom of the

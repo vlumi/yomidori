@@ -5,9 +5,9 @@ tap a word, get its reading and pitch, keep the sentence as a card. This file is
 how to *work on* the repo, for humans and AI agents alike.
 
 **Pre-alpha.** The toolchain, the package split and the release lane are in
-place and exercised; the app itself is a name on a screen. The first work is a
-spike, not a feature: whether on-device text recognition reads real paperbacks
-well enough for the whole idea to stand (see [ROADMAP.md](ROADMAP.md)).
+place and exercised; the app itself is the spike's capture screen. The first
+work is a spike, not a feature: whether on-device text recognition reads real
+paperbacks well enough for the whole idea to stand (see [ROADMAP.md](ROADMAP.md)).
 
 Separate project from its siblings [Donpa Squad](https://github.com/vlumi/donpa)
 (Minesweeper), [Puck Around](https://github.com/vlumi/puckaround) (air hockey)
@@ -100,12 +100,14 @@ yomidori/
 │     release-*.sh, distribute.sh   The release lane (RELEASING.md)
 │     assets/make-icon.swift        Renders the app icon PNG (make icon)
 ├── Sources/iOS/                    Thin @main app shell (+ Info.plist, entitlements)
-├── Sources/Shared/                 The asset catalog (AppIcon) + an empty app-level String Catalog
+├── Sources/Shared/                 The asset catalog (AppIcon), the app-level String Catalogs (InfoPlist too)
 └── Packages/YomidoriCore/          Swift package — all the code
     ├── Sources/YomidoriCore/       Pure logic — tested, coverage-gated; grouped by domain as it grows:
-    │   └── Kana.swift              katakana ↔ hiragana, the first of the reading helpers
+    │   ├── Kana.swift              katakana ↔ hiragana, the first of the reading helpers
+    │   └── Recognition/            RecognizedLine, TextGeometry (the Vision-box ↔ view seam)
     ├── Sources/YomidoriKit/        SwiftUI + UIKit + Vision, depends on Core; coverage-ignored
-    │   ├── App/                    AppRoot (the one screen so far), Palette (夜緑 tokens, light + dark)
+    │   ├── App/                    AppRoot (hosts the capture screen), Palette (夜緑 tokens, light + dark)
+    │   ├── Capture/                Camera, Still, TextRecognizer (Vision), LiveText (VisionKit), CaptureView
     │   └── Resources/              Localizable.xcstrings (the Kit's strings, en + ja)
     └── Tests/YomidoriCoreTests/    Grouped by domain, mirroring Core
 ```
@@ -141,8 +143,9 @@ make clean             # remove the generated project + build output
 
 `swift test` runs on the Mac, headless — that's the inner loop. The camera needs
 a real device: the simulator has no camera, so the capture flow is tried on a
-phone over a real book, and only the logic below it is unit-tested. `make release`
-is the release lane, documented in [RELEASING.md](RELEASING.md).
+phone over a real book (in the simulator the photo picker stands in for the
+shutter), and only the logic below it is unit-tested. `make release` is the
+release lane, documented in [RELEASING.md](RELEASING.md).
 
 ### Lint & format
 
