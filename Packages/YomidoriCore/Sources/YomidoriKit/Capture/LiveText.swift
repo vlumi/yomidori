@@ -27,17 +27,26 @@ struct LiveTextImage: UIViewRepresentable {
     let still: Still
     let analysis: ImageAnalysis?
 
-    func makeUIView(context: Context) -> UIImageView {
-        let view = UIImageView(image: UIImage(cgImage: still.image))
+    func makeUIView(context: Context) -> FittedImageView {
+        let view = FittedImageView(image: UIImage(cgImage: still.image))
         view.contentMode = .scaleAspectFit
         view.isUserInteractionEnabled = true
         view.addInteraction(context.coordinator)
         return view
     }
 
-    func updateUIView(_ uiView: UIImageView, context: Context) {
+    func updateUIView(_ uiView: FittedImageView, context: Context) {
         uiView.image = UIImage(cgImage: still.image)
         context.coordinator.analysis = analysis
+    }
+
+    /// An image view with no natural size of its own. UIImageView reports the
+    /// image's pixel size, and SwiftUI would lay a 4000-point still out at that
+    /// size, over everything; this one takes whatever the screen offers.
+    final class FittedImageView: UIImageView {
+        override var intrinsicContentSize: CGSize {
+            CGSize(width: UIView.noIntrinsicMetric, height: UIView.noIntrinsicMetric)
+        }
     }
 
     func makeCoordinator() -> ImageAnalysisInteraction {
