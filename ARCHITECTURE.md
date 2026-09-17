@@ -52,9 +52,12 @@ the Mac; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
   smallest line under a tap. Nothing else in the app does coordinate arithmetic.
 - **The capture screen** (Kit, `Capture/`): the spike's instrument, and the
   shape of the app to come. `Camera` is the back camera behind a preview that
-  only frames, with one shutter that keeps the next frame of the stream: a frame
-  grab, not a photo capture, so nothing is written to the library and there is
-  no shutter sound (mandatory for photo capture in Japan, where the app is read).
+  only frames, with one shutter that keeps the next frame of the stream at the
+  sensor's full resolution: a frame grab, not a photo capture, so nothing is
+  written to the library and there is no shutter sound (mandatory for photo
+  capture in Japan, where the app is read). The video output must be told to
+  deliver full frames; with the photo preset it defaults to preview-sized ones,
+  about a megapixel, which is no still to read small print from.
   On a phone with several back cameras it opens them as one virtual device, so
   the system hands a page held close to the ultra-wide (macro) and a pinch past
   the wide's reach to the telephoto, both optical; autofocus is kept to the near
