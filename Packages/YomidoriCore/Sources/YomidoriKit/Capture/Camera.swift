@@ -28,6 +28,9 @@ final class Camera: ObservableObject {
     private let frames = FrameSink()
     private let queue = DispatchQueue(label: "fi.misaki.yomidori.camera")
     private var configured = false
+    private var device: AVCaptureDevice?
+    private var zoomRange: ClosedRange<CGFloat> = 1...1
+    private var zoomAtPinchStart: CGFloat = 1
     #endif
 
     /// Asks for camera access on first use, then starts the preview.
@@ -68,15 +71,34 @@ final class Camera: ObservableObject {
         #endif
     }
 
+    /// Pinch on the preview: `scale` is relative to where the pinch began.
+    func pinch(scale: CGFloat, began: Bool) {
+        #if os(iOS)
+        queue.async { [self] in
+            guard let device, (try? device.lockForConfiguration()) != nil else { return }
+            defer { device.unlockForConfiguration() }
+            if began { zoomAtPinchStart = device.videoZoomFactor }
+            device.videoZoomFactor = min(
+                max(zoomAtPinchStart * scale, zoomRange.lowerBound), zoomRange.upperBound)
+        }
+        #endif
+    }
+
     private func set(_ access: Access) {
         DispatchQueue.main.async { self.access = access }
     }
 
     #if os(iOS)
+    /// The back camera as one virtual device where the phone has several: the system
+    /// then hands a close page to the ultra-wide (macro) and a pinch past the wide's
+    /// reach to the telephoto, both optical. A single wide camera is the fallback.
     private func configure() -> Bool {
+        let kinds: [AVCaptureDevice.DeviceType] = [
+            .builtInTripleCamera, .builtInDualWideCamera, .builtInWideAngleCamera,
+        ]
         guard
-            let device = AVCaptureDevice.default(
-                .builtInWideAngleCamera, for: .video, position: .back),
+            let device = kinds.lazy
+                .compactMap({ AVCaptureDevice.default($0, for: .video, position: .back) }).first,
             let input = try? AVCaptureDeviceInput(device: device)
         else { return false }
         session.beginConfiguration()
@@ -91,7 +113,28 @@ final class Camera: ObservableObject {
         session.addInput(input)
         session.addOutput(output)
         output.connection(with: .video)?.videoOrientation = .portrait
+        self.device = device
+        focusNear(device)
         return true
+    }
+
+    /// A book is read at arm's length: start at the wide camera's own framing (on a
+    /// virtual device zoom 1 is the ultra-wide), let a pinch go up to 5× from there,
+    /// and keep the autofocus hunting in the near range.
+    private func focusNear(_ device: AVCaptureDevice) {
+        guard (try? device.lockForConfiguration()) != nil else { return }
+        defer { device.unlockForConfiguration() }
+        let wide =
+            device.virtualDeviceSwitchOverVideoZoomFactors.first.map { CGFloat(truncating: $0) }
+            ?? 1
+        zoomRange = wide...min(wide * 5, device.maxAvailableVideoZoomFactor)
+        device.videoZoomFactor = wide
+        if device.isFocusModeSupported(.continuousAutoFocus) {
+            device.focusMode = .continuousAutoFocus
+        }
+        if device.isAutoFocusRangeRestrictionSupported {
+            device.autoFocusRangeRestriction = .near
+        }
     }
     #endif
 }
@@ -145,7 +188,25 @@ struct CameraPreview: UIViewRepresentable {
     func makeUIView(context: Context) -> PreviewView {
         let view = PreviewView()
         view.previewLayer?.videoGravity = .resizeAspect
+        view.addGestureRecognizer(
+            UIPinchGestureRecognizer(target: context.coordinator, action: #selector(Pinch.changed)))
         return view
+    }
+
+    func makeCoordinator() -> Pinch {
+        Pinch(camera: camera)
+    }
+
+    final class Pinch: NSObject {
+        private let camera: Camera
+
+        init(camera: Camera) {
+            self.camera = camera
+        }
+
+        @objc func changed(_ gesture: UIPinchGestureRecognizer) {
+            camera.pinch(scale: gesture.scale, began: gesture.state == .began)
+        }
     }
 
     /// The layer gets the session only once a camera is behind it.
