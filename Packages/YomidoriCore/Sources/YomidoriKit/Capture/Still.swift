@@ -16,6 +16,12 @@ public struct Still: Identifiable {
         CGSize(width: image.width, height: image.height)
     }
 
+    /// The pixels inside `rect` (image coordinates, y down) as a still of their own,
+    /// at full resolution: what the recognizer gets when it reads up close.
+    public func cropped(to rect: CGRect) -> Still? {
+        image.cropping(to: rect).map(Still.init(image:))
+    }
+
     /// An image already upright, as a screenshot taken in-app or a test fixture is.
     public init(image: CGImage) {
         self.image = image
