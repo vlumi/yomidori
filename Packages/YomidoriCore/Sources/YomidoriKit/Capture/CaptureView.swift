@@ -13,6 +13,15 @@ public struct CaptureView: View {
     enum Engine: Hashable {
         case vision
         case liveText
+        case closeUp
+    }
+
+    /// One reading up close: the square around a tap, and what each engine made of it.
+    struct CloseUp {
+        let box: CGRect
+        let crop: Still
+        let vision: String
+        let liveText: String
     }
 
     @StateObject private var camera = Camera()
@@ -22,6 +31,8 @@ public struct CaptureView: View {
     @State private var analysis: ImageAnalysis?
     @State private var selected: Int?
     @State private var recognizing = false
+    @State private var closeUp: CloseUp?
+    @State private var readingCloseUp = false
     @State private var picked: PhotosPickerItem?
 
     public init() {}
@@ -32,9 +43,11 @@ public struct CaptureView: View {
             if let still {
                 switch engine {
                 case .vision:
-                    StillView(still: still, lines: lines, selected: $selected)
+                    visionStill(still)
                 case .liveText:
                     LiveTextImage(still: still, analysis: analysis)
+                case .closeUp:
+                    closeUpStill(still)
                 }
             } else {
                 CameraPreview(camera: camera, access: camera.access).ignoresSafeArea()
@@ -46,6 +59,18 @@ public struct CaptureView: View {
         .onDisappear { camera.stop() }
         .task(id: picked) { await loadPicked() }
         .task(id: still?.id) { await recognize() }
+    }
+
+    private func visionStill(_ still: Still) -> some View {
+        StillView(still: still, lines: lines, selected: selected, highlight: nil) { point, frame in
+            selected = TextGeometry.lineIndex(at: point, in: frame, lines: lines)
+        }
+    }
+
+    private func closeUpStill(_ still: Still) -> some View {
+        StillView(still: still, lines: [], selected: nil, highlight: closeUp?.box) { point, frame in
+            readCloseUp(at: point, in: frame, of: still)
+        }
     }
 
     @ViewBuilder private var cameraNotice: some View {
@@ -73,6 +98,7 @@ public struct CaptureView: View {
                 Picker(selection: $engine) {
                     Text("Vision", bundle: .module).tag(Engine.vision)
                     Text("Live Text", bundle: .module).tag(Engine.liveText)
+                    Text("Close-up", bundle: .module).tag(Engine.closeUp)
                 } label: {
                     Text("Recognizer", bundle: .module)
                 }
@@ -132,6 +158,8 @@ public struct CaptureView: View {
             }
         } else if engine == .liveText {
             transcript
+        } else if engine == .closeUp {
+            closeUpReadout
         } else if let selected, lines.indices.contains(selected) {
             let line = lines[selected]
             VStack(spacing: 4) {
@@ -170,6 +198,65 @@ public struct CaptureView: View {
         }
     }
 
+    @ViewBuilder private var closeUpReadout: some View {
+        if readingCloseUp {
+            ProgressView {
+                Text("Reading up close…", bundle: .module)
+            }
+        } else if let closeUp {
+            HStack(alignment: .top, spacing: 12) {
+                Image(decorative: closeUp.crop.image, scale: 1)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 120, height: 120)
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                VStack(alignment: .leading, spacing: 6) {
+                    engineLine("Live Text", closeUp.liveText)
+                    engineLine("Vision", closeUp.vision)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        } else {
+            Text("Tap a word to read it up close.", bundle: .module)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    private func engineLine(_ name: LocalizedStringKey, _ text: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(name, bundle: .module)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+            Text(verbatim: text.isEmpty ? "—" : text)
+                .font(.body)
+                .textSelection(.enabled)
+                .lineLimit(3)
+        }
+    }
+
+    /// Cut a square around the tap out of the full-resolution still and read only
+    /// that: the character reaches the recognizer at the size the sensor saw it.
+    private func readCloseUp(at point: CGPoint, in frame: CGRect, of still: Still) {
+        guard let pixel = TextGeometry.imagePoint(at: point, in: frame, imageSize: still.size)
+        else {
+            return
+        }
+        let side = max(still.size.width, still.size.height) / 3
+        let rect = TextGeometry.cropRect(around: pixel, side: side, in: still.size)
+        guard let crop = still.cropped(to: rect) else { return }
+        let box = TextGeometry.normalizedBox(for: rect, imageSize: still.size)
+        readingCloseUp = true
+        Task { @MainActor in
+            let lines = (try? await TextRecognizer.recognize(crop)) ?? []
+            let transcript =
+                LiveText.isSupported ? (try? await LiveText.analyze(crop))?.transcript ?? "" : ""
+            closeUp = CloseUp(
+                box: box, crop: crop, vision: lines.map(\.text).joined(separator: " "),
+                liveText: transcript.replacingOccurrences(of: "\n", with: " "))
+            readingCloseUp = false
+        }
+    }
+
     private func takeStill() {
         Task { @MainActor in
             if let taken = await camera.takeStill() {
@@ -197,6 +284,7 @@ public struct CaptureView: View {
         lines = []
         analysis = nil
         selected = nil
+        closeUp = nil
         guard let still else { return }
         recognizing = true
         let recognized = (try? await TextRecognizer.recognize(still)) ?? []
@@ -209,11 +297,14 @@ public struct CaptureView: View {
 }
 
 /// The still, aspect-fitted, with each recognized line boxed over it in night
-/// green; the tapped line is filled.
+/// green, the selected one filled, and an optional square (the close-up) drawn on
+/// top. The tap is reported with the frame the still occupies, for the geometry.
 struct StillView: View {
     let still: Still
     let lines: [RecognizedLine]
-    @Binding var selected: Int?
+    let selected: Int?
+    let highlight: CGRect?
+    let onTap: (CGPoint, CGRect) -> Void
 
     var body: some View {
         GeometryReader { geometry in
@@ -235,12 +326,17 @@ struct StillView: View {
                         .frame(width: rect.width, height: rect.height)
                         .offset(x: rect.minX, y: rect.minY)
                 }
+                if let highlight {
+                    let rect = TextGeometry.viewRect(for: highlight, in: frame)
+                    RoundedRectangle(cornerRadius: 4)
+                        .stroke(Palette.nightGreen, lineWidth: 2)
+                        .frame(width: rect.width, height: rect.height)
+                        .offset(x: rect.minX, y: rect.minY)
+                }
             }
             .frame(width: geometry.size.width, height: geometry.size.height, alignment: .topLeading)
             .contentShape(Rectangle())
-            .onTapGesture { point in
-                selected = TextGeometry.lineIndex(at: point, in: frame, lines: lines)
-            }
+            .onTapGesture { point in onTap(point, frame) }
         }
     }
 }
