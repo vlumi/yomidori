@@ -93,6 +93,13 @@ the Mac; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
   tokens, and ranges point back into the text. Measured equal to MeCab with
   UniDic on the fixture in its tests; the dictionary form and pitch are the
   dictionary layer's to add.
+- **`Deinflector`** (Core): from a stem as the OS's analyzer cuts it to the forms a
+  dictionary might list it under. The stem's last kana says which conjugation
+  rows it can come from, a table gives one candidate per row (頷い → 頷く and
+  頷ぐ, 漂っ → 漂う, 漂つ and 漂る, 点け → 点ける, 存在し → 存在する, 古く → 古い), the
+  word itself comes first for nouns and dictionary forms, and the dictionary
+  decides which exist, so 降り is both 降る and 降りる until a lookup says
+  otherwise. Tested on the stems the tokenizer fixture actually produces.
 - **`MeCabTokenizer`** (its own target): MeCab with IPADic behind the same
   `Tokenizer` protocol, so the two can be switched under the Live Text
   transcript and compared on real pages; it also knows dictionary forms. It is
@@ -175,9 +182,9 @@ THIRD_PARTY_NOTICES.md.
 
 ### From token to card
 
-JMdict is in the app now, built into a SQLite database at build time; what
-remains here is the lookup from a tokenizer's stem to its headword where the
-tokenizer gives no dictionary form, and the meaning views described below.
+JMdict is in the app now, built into a SQLite database at build time, and the
+lookup from a tokenizer's stem to its headword goes through `Deinflector`;
+what remains here is the card, and the meaning views described below.
 
 A card is one **word** (the dictionary form), never one sighting. Its front is a
 sentence as it stood on the page — the OCR text with the word highlighted, and
