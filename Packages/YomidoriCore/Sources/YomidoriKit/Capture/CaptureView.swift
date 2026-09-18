@@ -29,6 +29,7 @@ public struct CaptureView: View {
     @State private var engine: Engine = .vision
     @State private var lines: [RecognizedLine] = []
     @State private var analysis: ImageAnalysis?
+    @StateObject private var selection = LiveTextSelection()
     @State private var selected: Int?
     @State private var recognizing = false
     @State private var closeUp: CloseUp?
@@ -45,7 +46,7 @@ public struct CaptureView: View {
                 case .vision:
                     visionStill(still)
                 case .liveText:
-                    LiveTextImage(still: still, analysis: analysis)
+                    LiveTextImage(still: still, analysis: analysis, selection: selection)
                 case .closeUp:
                     closeUpStill(still)
                 }
@@ -183,7 +184,7 @@ public struct CaptureView: View {
 
     @ViewBuilder private var transcript: some View {
         if let analysis, analysis.hasResults(for: .text) {
-            TranscriptReadout(transcript: analysis.transcript, still: still)
+            TranscriptReadout(transcript: analysis.transcript, still: still, selection: selection)
         } else if LiveText.isSupported {
             Text("Nothing was recognized.", bundle: .module)
                 .foregroundStyle(.secondary)
