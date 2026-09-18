@@ -18,6 +18,8 @@ struct TranscriptReadout: View {
     let transcript: String
     let stills: [Still]
     let currentTranscript: String
+    /// Vision's lines on the page on screen, for the crop of a kept sentence.
+    let currentLines: [RecognizedLine]
     let pageOffset: Int
     @ObservedObject var selection: LiveTextSelection
     @State private var choice: Choice = .system
@@ -202,10 +204,21 @@ struct TranscriptReadout: View {
         let sighting = Sighting(
             sentence: found.sentence.text, surface: token.surface,
             offset: found.sentence.offset(of: found.start, in: transcript),
-            stillIDs: archiveStills(), source: source.isEmpty ? nil : source, date: Date())
+            stillIDs: archiveStills(), cropID: cropSentence(found.sentence.text),
+            source: source.isEmpty ? nil : source, date: Date())
         let headword = entry?.headword ?? token.dictionaryForm ?? token.surface
         let reading = Kana.hiragana(entry?.readings.first ?? token.reading)
         kept = try? store.keep(sighting, headword: headword, reading: reading, entryID: entry?.id)
+    }
+
+    /// The sentence's own lines cut out of the page on screen and saved, where Vision
+    /// placed them; nil on a vertical page, where the whole still stands in.
+    private func cropSentence(_ sentence: String) -> UUID? {
+        guard let still = stills.last,
+            let rect = LineCrop.rect(for: sentence, lines: currentLines, imageSize: still.size),
+            let crop = still.cropped(to: rect)
+        else { return nil }
+        return try? StillArchive.save(crop)
     }
 
     /// Every page's still saved, once each, in page order.
