@@ -36,14 +36,23 @@ let package = Package(
                 .product(name: "IPADic", package: "Mecab-Swift"),
             ]
         ),
+        // The bundled JMdict, read through the system's SQLite. The database itself is
+        // built by Scripts/data/build-jmdict.py into the app target, not into this package,
+        // so `swift test` needs no download; the tests read a fixture built the same way.
+        .target(
+            name: "YomidoriDictionary",
+            dependencies: ["YomidoriCore"],
+            linkerSettings: [.linkedLibrary("sqlite3")]
+        ),
         .target(
             name: "YomidoriKit",
-            dependencies: ["YomidoriCore", "YomidoriMeCab"],
+            dependencies: ["YomidoriCore", "YomidoriMeCab", "YomidoriDictionary"],
             resources: [.process("Resources/Localizable.xcstrings")]
         ),
         .testTarget(
             name: "YomidoriCoreTests",
-            dependencies: ["YomidoriCore", "YomidoriMeCab", "YomidoriKit"]
+            dependencies: ["YomidoriCore", "YomidoriMeCab", "YomidoriDictionary", "YomidoriKit"],
+            resources: [.copy("Dictionary/Fixtures")]
         ),
     ]
 )
