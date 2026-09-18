@@ -30,6 +30,7 @@ public struct CaptureView: View {
     @State private var lines: [RecognizedLine] = []
     @State private var analysis: ImageAnalysis?
     @StateObject private var selection = LiveTextSelection()
+    @State private var openSentence: OpenSentence?
     @State private var selected: Int?
     @State private var recognizing = false
     @State private var closeUp: CloseUp?
@@ -184,7 +185,9 @@ public struct CaptureView: View {
 
     @ViewBuilder private var transcript: some View {
         if let analysis, analysis.hasResults(for: .text) {
-            TranscriptReadout(transcript: analysis.transcript, still: still, selection: selection)
+            TranscriptReadout(
+                transcript: analysis.transcript, still: still, selection: selection,
+                openSentence: $openSentence)
         } else if LiveText.isSupported {
             Text("Nothing was recognized.", bundle: .module)
                 .foregroundStyle(.secondary)

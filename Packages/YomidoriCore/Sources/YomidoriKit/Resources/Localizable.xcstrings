@@ -71,6 +71,26 @@
         }
       }
     },
+    "Continued from the previous page" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前のページから続く"
+          }
+        }
+      }
+    },
+    "Continues on next page" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次のページに続く"
+          }
+        }
+      }
+    },
     "Copy" : {
       "localizations" : {
         "ja" : {
@@ -87,6 +107,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "辞書"
+          }
+        }
+      }
+    },
+    "Discard" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取り消す"
           }
         }
       }
@@ -157,6 +187,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "残す"
+          }
+        }
+      }
+    },
+    "Keep the whole sentence" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文全体を残す"
           }
         }
       }
