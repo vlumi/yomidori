@@ -52,6 +52,17 @@ struct HomeView: View {
                     .padding(.vertical, 6)
                 }
                 .buttonStyle(.bordered)
+                NavigationLink(value: Screen.search) {
+                    Label {
+                        Text("Search", bundle: .module)
+                    } icon: {
+                        Image(systemName: "magnifyingglass")
+                    }
+                    .font(.title3)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 6)
+                }
+                .buttonStyle(.bordered)
                 NavigationLink(value: Screen.about) {
                     Text("About", bundle: .module)
                         .font(.callout)
@@ -73,5 +84,6 @@ enum Screen: Hashable, Codable {
     case capture
     case cards
     case review
+    case search
     case about
 }

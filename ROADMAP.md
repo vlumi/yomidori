@@ -34,7 +34,6 @@ The whole idea rests on on-device text recognition reading real books: vertical 
 
 ## Dictionary — *meaning on request*
 
-- [ ] **Typed search.** For words met off the page: kana and kanji search headwords, Latin searches JMdict glosses; results become cards the same way.
 
 ## Pitch & sound — *the part dictionaries lack*
 

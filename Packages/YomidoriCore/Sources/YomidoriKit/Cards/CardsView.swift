@@ -85,9 +85,15 @@ struct CardView: View {
             }
             ForEach(card.sightings.sorted { $0.date > $1.date }) { sighting in
                 Section {
-                    Text(marked(sighting))
-                        .font(.title3)
-                        .textSelection(.enabled)
+                    if sighting.sentence.isEmpty {
+                        Text("Kept from a search; no sentence yet.", bundle: .module)
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                    } else {
+                        Text(marked(sighting))
+                            .font(.title3)
+                            .textSelection(.enabled)
+                    }
                     ForEach(
                         [sighting.stillID, sighting.continuationStillID].compactMap { $0 },
                         id: \.self

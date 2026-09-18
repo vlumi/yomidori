@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Search for a word.** From home, type kana or kanji to find words that start with it, or English to search the meanings; a result shows the word with its pitch and senses, and can be kept as a card that asks for the word alone until a page supplies a sentence.
 - **Whole sentences, across two pages.** A kept sentence now runs from full stop to full stop, across the page's wrapped lines. When it runs off the page, *Continues on next page* holds it; the next page offers it joined with its own beginning, and the card keeps both pages.
 - **Select a word on the page.** In Live Text mode, a word selected on the page itself, the way text is selected in Photos, is read out below as if tapped in the strip, with its reading, pitch, meaning and Keep, and its line as the sentence. iOS 17 and up; on iOS 16 the words under the transcript remain the way.
 - **The book and the page on every kept sentence.** A field above the transcript takes where you are reading, in your own words, and remembers it; each sentence you keep records it, and the card shows it.

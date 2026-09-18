@@ -68,7 +68,7 @@ describing intent as fact otherwise.
 - **Dictionary data is built, not committed.** `make dictionary` runs
   `Scripts/data/build-jmdict.py`, which downloads JMdict_e and Kanjium's
   accent list once into `.build-data/` and writes
-  `Sources/Shared/Dictionaries/jmdict.sqlite` (~60 MB, gitignored); the project generation depends on it, so `make build-ios`
+  `Sources/Shared/Dictionaries/jmdict.sqlite` (~65 MB with its full-text index, gitignored); the project generation depends on it, so `make build-ios`
   and the run targets build it on first use, and CI does the same. `swift test`
   needs none of this: the dictionary tests read a fixture in the test target,
   built by the same script from `jmdict-fixture.xml` and `accents-fixture.txt`.

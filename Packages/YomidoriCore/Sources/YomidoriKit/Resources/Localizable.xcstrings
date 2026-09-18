@@ -181,6 +181,16 @@
         }
       }
     },
+    "Kana, kanji, or English" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "かな、漢字、または英語"
+          }
+        }
+      }
+    },
     "Keep" : {
       "localizations" : {
         "ja" : {
@@ -207,6 +217,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "残しました"
+          }
+        }
+      }
+    },
+    "Kept from a search; no sentence yet." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "検索から残した言葉。文はまだありません。"
           }
         }
       }
@@ -287,6 +307,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "カードはまだありません。ページの下の言葉をタップして残してください。"
+          }
+        }
+      }
+    },
+    "No matches." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "見つかりません。"
           }
         }
       }
@@ -397,6 +427,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "復習 %lld"
+          }
+        }
+      }
+    },
+    "Search" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "検索"
           }
         }
       }
