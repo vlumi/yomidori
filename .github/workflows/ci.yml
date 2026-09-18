@@ -105,6 +105,17 @@ jobs:
             spm-${{ runner.os }}-${{ env.XCODE_VERSION }}-
       - name: Install XcodeGen
         run: brew install xcodegen
+      # The bundled JMdict is built, not committed. Cache the ~10 MB download by
+      # week; the build itself takes seconds.
+      - name: Cache JMdict download
+        uses: actions/cache@v6
+        with:
+          path: .build-data
+          key: jmdict-${{ hashFiles('Scripts/data/build-jmdict.py') }}-${{ github.run_number }}
+          restore-keys: |
+            jmdict-${{ hashFiles('Scripts/data/build-jmdict.py') }}-
+      - name: Build dictionary
+        run: make dictionary
       - name: Generate project
         run: xcodegen generate
       - name: Build iOS (simulator)

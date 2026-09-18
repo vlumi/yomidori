@@ -61,6 +61,16 @@
         }
       }
     },
+    "Meaning" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "意味"
+          }
+        }
+      }
+    },
     "MeCab could not load its dictionary." : {
       "localizations" : {
         "ja" : {
@@ -77,6 +87,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "カメラがありません。写真を選んでください。"
+          }
+        }
+      }
+    },
+    "Not in the dictionary." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "辞書にありません。"
           }
         }
       }
