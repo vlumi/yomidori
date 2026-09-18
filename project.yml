@@ -22,6 +22,10 @@ targets:
     sources:
       - path: Sources/iOS
       - path: Sources/Shared
+      # The notices every bundled license asks for, shown on the About screen; the
+      # repo's own file, so there is one copy to keep current.
+      - path: THIRD_PARTY_NOTICES.md
+        buildPhase: resources
     entitlements:
       path: Sources/iOS/Yomidori.entitlements
     info:

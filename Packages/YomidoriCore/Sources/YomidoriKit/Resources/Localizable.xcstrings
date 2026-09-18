@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "About" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このアプリについて"
+          }
+        }
+      }
+    },
     "Again" : {
       "localizations" : {
         "ja" : {
@@ -61,12 +71,62 @@
         }
       }
     },
+    "Everything runs on this device: the camera, the text recognition, the dictionaries, your cards. Nothing is sent anywhere." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カメラも、文字の読み取りも、辞書も、カードも、すべてこの端末の中で動きます。どこにも送信しません。"
+          }
+        }
+      }
+    },
+    "Flat: low, then high to the end and beyond." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "平板型：低く始まり、高いまま続きます。"
+          }
+        }
+      }
+    },
     "Good" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "できた"
+          }
+        }
+      }
+    },
+    "Head-high: the first mora high, then low." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "頭高型：最初の拍だけ高く、あとは低くなります。"
+          }
+        }
+      }
+    },
+    "How pitch is drawn" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクセントの表し方"
+          }
+        }
+      }
+    },
+    "JMdict by the Electronic Dictionary Research and Development Group; pitch accents from Kanjium by Uros O.; MeCab and IPADic; Mecab-Swift. Their terms are inside." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Electronic Dictionary Research and Development GroupのJMdict、Uros O.によるKanjiumのアクセントデータ、MeCabとIPADic、Mecab-Swift。各ライセンスは中にあります。"
           }
         }
       }
@@ -87,6 +147,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "残しました"
+          }
+        }
+      }
+    },
+    "Licenses and notices" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ライセンスと表示"
           }
         }
       }
@@ -127,6 +197,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "MeCabの辞書を読み込めませんでした。"
+          }
+        }
+      }
+    },
+    "Mid-high: the drop after the numbered mora." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中高型：数字の拍のあとで下がります。"
           }
         }
       }
@@ -177,6 +257,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "文字が見つかりませんでした。"
+          }
+        }
+      }
+    },
+    "Point at a word, get its reading." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "言葉に向けると、読みがわかる。"
           }
         }
       }
@@ -271,6 +361,16 @@
         }
       }
     },
+    "Tail-high: high to the end, the drop on what follows." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "尾高型：最後まで高く、続く助詞で下がります。"
+          }
+        }
+      }
+    },
     "Tap a line to see what was read." : {
       "localizations" : {
         "ja" : {
@@ -291,6 +391,16 @@
         }
       }
     },
+    "The line runs over the high morae and falls where the accent does; the number is the mora after which it falls, 0 when it never does. Tokyo accent, from Kanjium." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線は高い拍の上を通り、アクセントの位置で下がります。数字は何拍目のあとで下がるかで、0は下がらないことを表します。東京式アクセント、Kanjiumのデータによる。"
+          }
+        }
+      }
+    },
     "Tokenizer" : {
       "localizations" : {
         "ja" : {
@@ -307,6 +417,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vision"
+          }
+        }
+      }
+    },
+    "Whose work this bundles" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同梱しているもの"
           }
         }
       }
