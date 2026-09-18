@@ -271,6 +271,16 @@
         }
       }
     },
+    "Read" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読む"
+          }
+        }
+      }
+    },
     "Reading the page…" : {
       "localizations" : {
         "ja" : {
