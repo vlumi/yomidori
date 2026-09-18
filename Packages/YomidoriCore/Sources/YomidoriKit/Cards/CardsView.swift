@@ -88,11 +88,16 @@ struct CardView: View {
                     Text(marked(sighting))
                         .font(.title3)
                         .textSelection(.enabled)
-                    if let stillID = sighting.stillID, let image = StillArchive.load(stillID) {
-                        Image(decorative: image, scale: 1)
-                            .resizable()
-                            .scaledToFit()
-                            .clipShape(RoundedRectangle(cornerRadius: 6))
+                    ForEach(
+                        [sighting.stillID, sighting.continuationStillID].compactMap { $0 },
+                        id: \.self
+                    ) { id in
+                        if let image = StillArchive.load(id) {
+                            Image(decorative: image, scale: 1)
+                                .resizable()
+                                .scaledToFit()
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                        }
                     }
                 } footer: {
                     Text(

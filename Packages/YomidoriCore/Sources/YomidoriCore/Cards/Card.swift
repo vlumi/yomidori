@@ -47,19 +47,22 @@ public struct Sighting: Identifiable, Hashable, Codable, Sendable {
     public let offset: Int
     /// The still the sentence was read from, kept as an image file by this id.
     public let stillID: UUID?
+    /// The next page's still, when the sentence ran over onto it.
+    public let continuationStillID: UUID?
     /// Where it was read, in the reader's words: a book, a page. Optional.
     public let source: String?
     public let date: Date
 
     public init(
         id: UUID = UUID(), sentence: String, surface: String, offset: Int, stillID: UUID?,
-        source: String?, date: Date
+        continuationStillID: UUID? = nil, source: String?, date: Date
     ) {
         self.id = id
         self.sentence = sentence
         self.surface = surface
         self.offset = offset
         self.stillID = stillID
+        self.continuationStillID = continuationStillID
         self.source = source
         self.date = date
     }

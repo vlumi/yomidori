@@ -140,12 +140,20 @@ use for its own input.
   change: a reader's cards number in the hundreds or low thousands, which one
   file reads in a blink, and one file is what a sync or a backup copies. The
   reading, pitch and meaning are not stored; they are looked up live.
-- **Keeping a word** (Kit): *Keep* beside the tapped word saves the page's line
-  it stands in as the sentence, with the word's form and offset, and the still
+- **`Sentence`** (Core): the sentence around a word, from the previous full stop
+  to the next with its closing quote, across the page's wrapped lines, which in
+  a book are wraps and nothing more; open when the page ends before a full stop.
+  Its continuation on the next page is that page's beginning up to its first
+  full stop. Tested on a page of wrapped lines with quotes.
+- **Keeping a word** (Kit): *Keep* beside the tapped word saves the sentence it
+  stands in, as `Sentence` cuts it, with the word's form and offset, and the still
   it was read from, scaled to two thousand pixels on its longer side as a JPEG
   in Application Support (`StillArchive`). The card's key is the dictionary
   entry's headword and reading when the word was found, else the tokenizer's
-  form. **`CardsView`** lists the cards, newest first, and **`CardView`** shows
+  form. When the sentence is open, *Continues on next page* holds it
+  (`OpenSentence`) with its still; the next still shows the fragment joined with
+  its own beginning and offers to keep the whole, with both stills on the
+  sighting. **`CardsView`** lists the cards, newest first, and **`CardView`** shows
   one: the word with its pitch, every sentence it was met in with the word
   marked, and the still. The crop of the line rather than the whole still is
   still to come.
@@ -259,13 +267,12 @@ another book adds a sentence to the same card, and reviews rotate through them.
 The default question is "how is this read", because that is the gap the app is
 for; a meaning card is an option ticked when the meaning was the gap.
 
-A sentence spanning two pages is glued in the capture flow: when expanding to
-the sentence boundary runs off the end of the last column, the sheet offers
-"continues on next page" and leaves the sentence open; the next still, whether a
-second shutter or a second screenshot shared in, is where the continuation is
-tapped, and the two fragments join with plain concatenation — Japanese has no
-hyphenation — and are re-tokenized. Both crops are kept. E-book screens end
-sentences mid-way exactly as pages do, so the glue is not a paperback feature.
+The two-page glue is built in first form (see *What exists*): the sentence
+left open is joined by plain concatenation with the next page's beginning,
+Japanese having no hyphenation, and both stills are kept. What remains is
+letting the reader choose where the continuation ends when the first full stop
+is not it. E-book screens end sentences mid-way exactly as pages do, so the
+glue is not a paperback feature.
 
 ### Scheduling and storage
 
