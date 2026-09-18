@@ -106,10 +106,18 @@ the Mac; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
   the one third-party runtime dependency (Mecab-Swift, MIT; MeCab under its BSD
   option; IPADic under its own notice, all in THIRD_PARTY_NOTICES.md), pinned to
   a commit and quarantined so that keeping or cutting it is one line.
+- **`PitchAccent`** (Core): Tokyo pitch as dictionaries give it, the mora after
+  which the pitch drops, 0 for flat; it splits a reading into morae (a small kana
+  joins the one before it) and says which morae are high, the three shapes
+  learners know. **`PitchReading`** (Kit) draws that: a line over the high morae
+  dropping where the accent falls, the number in brackets beside it. This is the
+  app's one notation, decided here.
 - **`DictionaryEntry`** (Core) and **`JMdict`** (its own target): a word as
   JMdict has it, kanji forms, readings, senses with parts of speech and glosses,
   and its frequency mark; read from a SQLite database through the system's own
-  SQLite, by exact kanji form or reading, common words first. The database is
+  SQLite, by exact kanji form or reading, common words first. The same database
+  holds Kanjium's accent table, keyed by headword and reading, and the reader
+  answers pitch questions from it. The database is
   built from JMdict_e by `Scripts/data/build-jmdict.py` (standard-library
   Python, a few seconds, ~50 MB) into the app target at build time and never
   committed; its `meta` table carries the source date and the EDRDG attribution.
@@ -225,12 +233,12 @@ glosses, kana or kanji searches headwords, no mode switch.
 
 ### Pitch accent and audio
 
-Word-level pitch comes from UniDic's accent type or Kanjium's database; a
-sentence's contour, which shifts with conjugation and compounding, from
-UniDic's connection rules or Open JTalk's accent estimation, which VOICEVOX
-exposes together with speech. All of it is standard Tokyo accent, which every
-free source and most paid ones are limited to. Notation is decided early: the
-line-over-mora drawing learners know, the downstep number, or both.
+Word-level pitch is in the app, from Kanjium, drawn as the line over the morae
+with the downstep number beside it (see *What exists*). A sentence's contour,
+which shifts with conjugation and compounding, would come from UniDic's
+connection rules or Open JTalk's accent estimation, which VOICEVOX exposes
+together with speech. All of it is standard Tokyo accent, which every free
+source and most paid ones are limited to.
 
 ### Theme
 
