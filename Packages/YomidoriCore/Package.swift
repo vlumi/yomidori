@@ -44,9 +44,15 @@ let package = Package(
             dependencies: ["YomidoriCore"],
             linkerSettings: [.linkedLibrary("sqlite3")]
         ),
+        // manga-ocr through Core ML, behind nothing but a CGImage in and a String out;
+        // present at runtime only when the app bundles the models (see `make models`).
+        .target(
+            name: "YomidoriMangaOCR",
+            dependencies: ["YomidoriCore"]
+        ),
         .target(
             name: "YomidoriKit",
-            dependencies: ["YomidoriCore", "YomidoriMeCab", "YomidoriDictionary"],
+            dependencies: ["YomidoriCore", "YomidoriMeCab", "YomidoriDictionary", "YomidoriMangaOCR"],
             resources: [.process("Resources/Localizable.xcstrings")]
         ),
         .testTarget(

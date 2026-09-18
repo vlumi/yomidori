@@ -93,6 +93,27 @@ final class TextGeometryTests: XCTestCase {
             CGRect(x: 0, y: 850, width: 3000, height: 500))
     }
 
+    func testAWindowAlongALineAroundAPoint() {
+        let line = CGRect(x: 100, y: 1000, width: 2800, height: 100)
+        // Eight characters of a 100-px line, centred on the tap.
+        XCTAssertEqual(
+            TextGeometry.window(in: line, around: CGPoint(x: 1500, y: 1050), characters: 8),
+            CGRect(x: 1100, y: 1000, width: 800, height: 100))
+        // At the line's start the window slides in rather than leaving it.
+        XCTAssertEqual(
+            TextGeometry.window(in: line, around: CGPoint(x: 120, y: 1050), characters: 8).minX, 100
+        )
+        // A short line is taken whole.
+        let short = CGRect(x: 100, y: 1000, width: 300, height: 100)
+        XCTAssertEqual(
+            TextGeometry.window(in: short, around: CGPoint(x: 200, y: 1050), characters: 8), short)
+        // A vertical column windows along its height.
+        let column = CGRect(x: 2500, y: 200, width: 100, height: 3000)
+        XCTAssertEqual(
+            TextGeometry.window(in: column, around: CGPoint(x: 2550, y: 1700), characters: 8),
+            CGRect(x: 2500, y: 1300, width: 100, height: 800))
+    }
+
     func testTapPicksTheSmallestLineUnderIt() {
         let frame = CGRect(x: 0, y: 0, width: 100, height: 100)
         // A tall column and a short line that sits inside the column's box.

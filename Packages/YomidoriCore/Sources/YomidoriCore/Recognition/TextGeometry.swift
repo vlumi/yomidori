@@ -87,6 +87,21 @@ public enum TextGeometry {
             .intersection(CGRect(origin: .zero, size: imageSize))
     }
 
+    /// A window of about `characters` characters along a line, around a point on it:
+    /// along the line's long side, the whole of its short side, kept inside the line.
+    /// What a line reader that wants one bubble's worth of text is given.
+    public static func window(in line: CGRect, around point: CGPoint, characters: CGFloat) -> CGRect
+    {
+        if line.width >= line.height {
+            let width = min(line.width, characters * line.height)
+            let x = min(max(point.x - width / 2, line.minX), line.maxX - width)
+            return CGRect(x: x, y: line.minY, width: width, height: line.height)
+        }
+        let height = min(line.height, characters * line.width)
+        let y = min(max(point.y - height / 2, line.minY), line.maxY - height)
+        return CGRect(x: line.minX, y: y, width: line.width, height: height)
+    }
+
     private static func area(_ rect: CGRect) -> CGFloat {
         rect.width * rect.height
     }

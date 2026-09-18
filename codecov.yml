@@ -23,4 +23,6 @@ comment:
 
 ignore:
   - "Packages/YomidoriCore/Sources/YomidoriKit/**"
+  # Runs a Core ML model the tests do not have (it is built, not committed).
+  - "Packages/YomidoriCore/Sources/YomidoriMangaOCR/**"
   - "Packages/YomidoriCore/Tests/**"

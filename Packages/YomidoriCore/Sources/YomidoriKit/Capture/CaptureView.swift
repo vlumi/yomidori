@@ -2,6 +2,7 @@ import PhotosUI
 import SwiftUI
 import VisionKit
 import YomidoriCore
+import YomidoriMangaOCR
 
 /// The spike: frame a page and press the shutter, or pick a screenshot, and see
 /// what the two recognizers the OS ships read from the still. Vision's lines are
@@ -205,6 +206,9 @@ public struct CaptureView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     engineLine("Live Text", closeUp.liveText)
                     engineLine("Vision", closeUp.vision)
+                    if let manga = closeUp.mangaOCR {
+                        engineLine("manga-ocr", manga)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -236,12 +240,20 @@ public struct CaptureView: View {
             let pixel = TextGeometry.imagePoint(at: point, in: frame, imageSize: still.size)
         else { return }
         let rect: CGRect
+        let window: CGRect
         if let index = TextGeometry.lineIndex(at: point, in: frame, lines: lines) {
             let line = TextGeometry.imageRect(for: lines[index].box, imageSize: still.size)
             rect = TextGeometry.padded(line, by: min(line.width, line.height) * 0.8, in: still.size)
+            // A bubble's worth of the line for manga-ocr: about eight characters around the tap.
+            window = TextGeometry.padded(
+                TextGeometry.window(in: line, around: pixel, characters: 8), by: line.height * 0.5,
+                in: still.size)
         } else {
             let side = max(still.size.width, still.size.height) / 3
             rect = TextGeometry.cropRect(around: pixel, side: side, in: still.size)
+            // No line known (a vertical page): a narrow column around the tap.
+            window = rect.intersection(
+                CGRect(x: pixel.x - side / 8, y: 0, width: side / 4, height: still.size.height))
         }
         guard let crop = still.cropped(to: rect) else { return }
         let box = TextGeometry.normalizedBox(for: rect, imageSize: still.size)
@@ -250,9 +262,12 @@ public struct CaptureView: View {
             let lines = (try? await TextRecognizer.recognize(crop)) ?? []
             let transcript =
                 LiveText.isSupported ? (try? await LiveText.analyze(crop))?.transcript ?? "" : ""
+            let manga = MangaOCR.bundled.flatMap { reader in
+                still.cropped(to: window).flatMap { try? reader.read($0.image) }
+            }
             closeUp = CloseUp(
                 box: box, crop: crop, vision: lines.map(\.text).joined(separator: " "),
-                liveText: transcript.replacingOccurrences(of: "\n", with: " "))
+                liveText: transcript.replacingOccurrences(of: "\n", with: " "), mangaOCR: manga)
             readingCloseUp = false
         }
     }
