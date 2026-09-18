@@ -6,6 +6,7 @@ import YomidoriDictionary
 /// met. Swipe to remove. Tap for the card itself.
 struct CardsView: View {
     @State private var cards: [Card] = []
+    @State private var dueCount = 0
 
     var body: some View {
         List {
@@ -38,11 +39,27 @@ struct CardsView: View {
         .navigationDestination(for: Card.self) { card in
             CardView(card: card)
         }
+        .toolbar {
+            if dueCount > 0 {
+                ToolbarItem(placement: .primaryAction) {
+                    NavigationLink {
+                        ReviewView()
+                    } label: {
+                        Label {
+                            Text("Review \(dueCount)", bundle: .module)
+                        } icon: {
+                            Image(systemName: "checkmark.rectangle.stack")
+                        }
+                    }
+                }
+            }
+        }
         .onAppear(perform: reload)
     }
 
     private func reload() {
         cards = (Cards.store?.cards() ?? []).sorted { $0.created > $1.created }
+        dueCount = Cards.store?.due(at: Date()).count ?? 0
     }
 }
 
