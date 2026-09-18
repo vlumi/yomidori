@@ -148,6 +148,19 @@ the Mac; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
   one: the word with its pitch, every sentence it was met in with the word
   marked, and the still. The crop of the line rather than the whole still is
   still to come.
+- **`FSRS`**, **`Grade`** and **`ReviewState`** (Core): the free spaced
+  repetition scheduler, version 5, with its published default parameters and a
+  desired retention of 90 %. Two grades, Again and Good, mapped to FSRS's 1 and
+  3; the state a card carries is stability, difficulty, due and last review with
+  the counts, nil until the first review, which makes a new card due at once.
+  Intervals are whole days, one at least; a same-day answer uses the short-term
+  rule. Tested for the shapes that matter: a first Good comes back in three
+  days, a first Again tomorrow, intervals grow, a lapse shrinks stability,
+  retrievability is one at review and 90 % at the due date. **`ReviewView`**
+  (Kit) runs the due queue one card at a time: the latest sentence with the word
+  marked as the front, the question being its reading; a tap turns it to the
+  reading with its pitch and the meaning under a fold; two buttons. No streak,
+  no count kept against anyone.
 - **`AppRoot`** (Kit): the capture screen in a navigation stack, the cards a
   push away.
 
@@ -232,12 +245,12 @@ sentences mid-way exactly as pages do, so the glue is not a paperback feature.
 
 ### Scheduling and storage
 
-FSRS, not SM-2: fewer reviews for the same retention, which matters when input
-is a stream from real reading rather than a fixed deck. Two grades are enough
-for readings. No streaks, no daily nag: the queue is whatever is due when the
-app is opened. Storage is decided (see *What exists*): one JSON document,
-local, with iCloud sync as a later option for the iPad; the scheduling state
-joins the card as fields when the scheduler is written.
+The scheduler is built (see *What exists*): FSRS, not SM-2, two grades, no
+streaks, the queue whatever is due when the app is opened. Storage is one JSON
+document, local, with iCloud sync as a later option for the iPad. What remains
+here is the meaning card as a per-word option, and the parameters staying the
+published defaults until there are enough reviews to fit them, which is a
+question for much later.
 
 ### Dictionary and meaning
 
