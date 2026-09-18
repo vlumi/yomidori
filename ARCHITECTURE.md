@@ -161,8 +161,13 @@ the Mac; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
   marked as the front, the question being its reading; a tap turns it to the
   reading with its pitch and the meaning under a fold; two buttons. No streak,
   no count kept against anyone.
-- **`AppRoot`** (Kit): the capture screen in a navigation stack, the cards a
-  push away.
+- **`AboutView`** (Kit): the name, the version with its build and commit, the
+  promise that nothing leaves the device, the pitch notation explained on four
+  words, and the notices every bundled license asks for, which are the
+  repository's own THIRD_PARTY_NOTICES.md bundled as a resource so there is one
+  copy to keep current.
+- **`AppRoot`** (Kit): the capture screen in a navigation stack, the cards and
+  the About screen a push away.
 
 ## Planned
 

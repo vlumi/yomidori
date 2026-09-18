@@ -70,8 +70,8 @@ describing intent as fact otherwise.
   needs none of this: the dictionary tests read a fixture in the test target,
   built by the same script from `jmdict-fixture.xml` and `accents-fixture.txt`.
   JMdict and Kanjium are CC BY-SA 4.0 — the attributions are in
-  [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and in the database's `meta`
-  table.
+  [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), shown on the About screen,
+  and in the database's `meta` table.
 - **Third-party code at runtime: none by default.** Everything ships with the OS
   (Foundation, SwiftUI, UIKit, Vision, AVFoundation). The one exception is
   MeCab with IPADic (the Mecab-Swift package, pinned to a commit), which is in
@@ -79,7 +79,8 @@ describing intent as fact otherwise.
   analyzer is compared in the field; it lives in its own target,
   `YomidoriMeCab`, so nothing else imports it and cutting it is one line in
   `Package.swift`. Its notices are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md),
-  which every bundled license goes into before the About screen exists. Nothing
+  which every bundled license goes into; the file is bundled into the app and
+  shown on the About screen, so editing it is the whole job. Nothing
   else joins without the same write-up in ARCHITECTURE.md. Dev tools (SwiftLint,
   XcodeGen) don't count and aren't SPM deps.
 
