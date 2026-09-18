@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The pitch over the reading.** A tapped word the dictionary knows shows its reading with the Tokyo pitch accent drawn over it, a line over the high morae dropping where the accent falls, and the downstep number beside it; from Kanjium, built into the app with JMdict.
 - **Inflected words find their entry.** A verb or adjective tapped as its stem (頷い, 漂っ, 古く) now opens the entry for its dictionary form (頷く, 漂う, 古い) under *Meaning*, with either tokenizer.
 - **The meaning, one fold away.** Under a tapped word, a "Meaning" fold opens its JMdict entries: headword, readings, and the senses' glosses in English; a word with no entry says so, which is what a misread word looks like. JMdict is built into the app from its source at build time.
 - **ヨミドリ under the icon** on a phone set to Japanese; Yomidori elsewhere, as on the two storefronts.

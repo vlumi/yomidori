@@ -62,16 +62,27 @@ struct TranscriptReadout: View {
         .task(id: "\(choice)|\(transcript)") { tokenize() }
     }
 
-    /// The tapped word, large: its reading, its dictionary form when known, and the
-    /// meaning folded under it, since the reading is what was asked for.
+    /// The tapped word, large: its reading with its pitch drawn over it where the
+    /// dictionary knows the word, its dictionary form when known, and the meaning
+    /// folded under it, since the reading is what was asked for.
     private func word(_ token: Token) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
+        let dictionary = JMdict.bundled
+        let entries = dictionary.map { matches(for: token, in: $0) } ?? []
+        let accent = dictionary.flatMap { dictionary -> PitchAccent? in
+            guard let entry = entries.first, let reading = entry.readings.first else { return nil }
+            return dictionary.pitchAccents(for: entry.headword, reading: reading).first
+        }
+        return VStack(alignment: .leading, spacing: 4) {
             HStack(alignment: .firstTextBaseline, spacing: 12) {
                 Text(verbatim: token.surface)
                     .font(.title)
-                Text(verbatim: token.reading)
-                    .font(.title3)
-                    .foregroundStyle(Palette.nightGreen)
+                if let accent, let reading = entries.first?.readings.first {
+                    PitchReading(reading: Kana.hiragana(reading), accent: accent)
+                } else {
+                    Text(verbatim: token.reading)
+                        .font(.title3)
+                        .foregroundStyle(Palette.nightGreen)
+                }
                 if let form = token.dictionaryForm {
                     Text(verbatim: form)
                         .font(.title3)
@@ -79,9 +90,9 @@ struct TranscriptReadout: View {
                 }
             }
             .textSelection(.enabled)
-            if let dictionary = JMdict.bundled {
+            if dictionary != nil {
                 DisclosureGroup {
-                    meaning(of: token, in: dictionary)
+                    meaning(entries)
                 } label: {
                     Text("Meaning", bundle: .module)
                         .font(.caption)
@@ -95,12 +106,16 @@ struct TranscriptReadout: View {
     /// The word's entries: the tokenizer's dictionary form first, then the word as it
     /// stands and the forms its stem can be deinflected to, then its reading. A word
     /// with no entry is either rare or misread.
-    private func meaning(of token: Token, in dictionary: some WordDictionary) -> some View {
+    private func matches(for token: Token, in dictionary: some WordDictionary) -> [DictionaryEntry]
+    {
         let candidates =
             [token.dictionaryForm].compactMap { $0 } + Deinflector.candidates(for: token.surface)
             + [token.reading]
-        let entries = candidates.lazy.map(dictionary.entries(matching:)).first { !$0.isEmpty } ?? []
-        return VStack(alignment: .leading, spacing: 6) {
+        return candidates.lazy.map(dictionary.entries(matching:)).first { !$0.isEmpty } ?? []
+    }
+
+    private func meaning(_ entries: [DictionaryEntry]) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
             if entries.isEmpty {
                 Text("Not in the dictionary.", bundle: .module)
                     .font(.callout)
