@@ -50,6 +50,11 @@ $(MODELS): Scripts/data/build-mangaocr.py $(OCR_VENV)/bin/python
 .PHONY: models
 models: $(MODELS)  ## Convert manga-ocr to Core ML into the app (python3.13 + a local venv; ~210 MB; optional)
 
+.PHONY: clean-models
+clean-models:  ## Remove the converted models and nothing else (the reverse of make models)
+	@rm -rf Sources/Shared/Models
+	@echo "removed Sources/Shared/Models; the next make models rebuilds them (the venv in .build-data stays)"
+
 # File target: the generated project depends on its inputs, so `make` skips the
 # regen when nothing changed (and reruns it when project.yml etc. are edited).
 Yomidori.xcodeproj: $(PROJECT_INPUTS) $(DICTIONARY)
@@ -97,7 +102,7 @@ icon:  ## Regenerate the app icon PNG (pure CoreGraphics; flattened opaque)
 .PHONY: clean
 clean:  ## Remove the generated project + local build output
 	@rm -rf Yomidori.xcodeproj .build-xcode Packages/YomidoriCore/.build dist
-	@echo "removed Yomidori.xcodeproj, .build-xcode, package .build, dist (the dictionary and its download stay; delete Sources/Shared/Dictionaries and .build-data by hand)"
+	@echo "removed Yomidori.xcodeproj, .build-xcode, package .build, dist (the dictionary, the models and the downloads stay: make clean-models, or delete Sources/Shared/Dictionaries and .build-data by hand)"
 
 ##@ Release lane
 ##~ Cut a build: make release — runs preflight → publish → tag → distribute

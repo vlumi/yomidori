@@ -175,6 +175,7 @@ make run-device        # build + install + launch on a paired iPhone/iPad (DEVIC
 make icon              # regenerate the app icon PNG
 make dictionary        # build the bundled JMdict database (downloads JMdict_e once)
 make models            # convert manga-ocr to Core ML into the app (optional; python3.13 + venv; ~210 MB)
+make clean-models      # remove them again, and nothing else
 make generate          # regenerate Yomidori.xcodeproj from project.yml (only if stale)
 make clean             # remove the generated project + build output
 ```
