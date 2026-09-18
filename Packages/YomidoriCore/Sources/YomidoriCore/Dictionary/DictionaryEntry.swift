@@ -3,8 +3,8 @@ import Foundation
 /// One dictionary entry: a word, as JMdict has it. Kanji forms and readings in
 /// the dictionary's order (the first of each is the headword shown), and senses,
 /// each a part of speech and its glosses. `common` is JMdict's own frequency mark.
-public struct DictionaryEntry: Equatable, Sendable, Identifiable {
-    public struct Sense: Equatable, Sendable {
+public struct DictionaryEntry: Hashable, Sendable, Identifiable {
+    public struct Sense: Hashable, Sendable {
         public let partsOfSpeech: [String]
         public let glosses: [String]
 
@@ -41,4 +41,27 @@ public protocol WordDictionary {
     /// The pitch accents recorded for a headword read a given way, the usual one first;
     /// empty when the accent data has no such word.
     func pitchAccents(for headword: String, reading: String) -> [PitchAccent]
+    /// Typed search: kana or kanji finds headwords and readings that start with it,
+    /// anything else searches the English glosses. Common words first, at most `limit`.
+    func search(_ query: String, limit: Int) -> [DictionaryEntry]
+}
+
+/// What a typed query is asking for.
+public enum SearchQuery {
+    public enum Kind: Equatable {
+        case japanese
+        case gloss
+        case empty
+    }
+
+    /// Japanese when the query has any kana or kanji; otherwise a gloss search.
+    public static func kind(of query: String) -> Kind {
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return .empty }
+        let japanese = trimmed.unicodeScalars.contains { scalar in
+            (0x3040...0x30FF).contains(scalar.value) || (0x3400...0x9FFF).contains(scalar.value)
+                || (0xF900...0xFAFF).contains(scalar.value)
+        }
+        return japanese ? .japanese : .gloss
+    }
 }

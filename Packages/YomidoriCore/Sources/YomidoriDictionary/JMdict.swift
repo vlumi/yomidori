@@ -78,6 +78,49 @@ public final class JMdict: WordDictionary {
         }
     }
 
+    public func search(_ query: String, limit: Int) -> [DictionaryEntry] {
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        switch SearchQuery.kind(of: trimmed) {
+        case .empty:
+            return []
+        case .japanese:
+            return queue.sync {
+                // A prefix as a range, so the indexes serve it. JMdict spells loanwords in
+                // katakana, so a hiragana query is tried as katakana too.
+                let katakana = Kana.katakana(trimmed)
+                let ids = rows(
+                    """
+                    SELECT DISTINCT e.id FROM entry e
+                    LEFT JOIN kanji k ON k.entry = e.id
+                    LEFT JOIN reading r ON r.entry = e.id
+                    WHERE (k.text >= ?1 AND k.text < ?2) OR (r.text >= ?1 AND r.text < ?2)
+                       OR (r.text >= ?3 AND r.text < ?4)
+                    ORDER BY e.common DESC, length(COALESCE(k.text, r.text)), e.id
+                    LIMIT \(limit)
+                    """,
+                    binds: [trimmed, trimmed + "\u{10FFFF}", katakana, katakana + "\u{10FFFF}"]
+                ).compactMap { Int($0[0]) }
+                return ids.map(entry(id:))
+            }
+        case .gloss:
+            return queue.sync {
+                let terms = trimmed.split(separator: " ")
+                    .map { "\"" + $0.replacingOccurrences(of: "\"", with: "") + "\"*" }
+                let ids = rows(
+                    """
+                    SELECT DISTINCT s.entry FROM gloss_fts f
+                    JOIN sense s ON s.rowid = f.rowid
+                    JOIN entry e ON e.id = s.entry
+                    WHERE gloss_fts MATCH ?1
+                    ORDER BY e.common DESC, bm25(gloss_fts), e.id
+                    LIMIT \(limit)
+                    """, binds: [terms.joined(separator: " ")]
+                ).compactMap { Int($0[0]) }
+                return ids.map(entry(id:))
+            }
+        }
+    }
+
     private func entry(id: Int) -> DictionaryEntry {
         let idText = String(id)
         let kanji = rows("SELECT text FROM kanji WHERE entry = ?1 ORDER BY ord", bind: idText).map {
@@ -101,12 +144,17 @@ public final class JMdict: WordDictionary {
 
     /// Every row of a query as its columns' text; one optional text bound to ?1.
     private func rows(_ sql: String, bind: String?) -> [[String]] {
+        rows(sql, binds: bind.map { [$0] } ?? [])
+    }
+
+    /// Every row of a query as its columns' text; texts bound to ?1, ?2, … in order.
+    private func rows(_ sql: String, binds: [String]) -> [[String]] {
         var statement: OpaquePointer?
         guard sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK else { return [] }
         defer { sqlite3_finalize(statement) }
-        if let bind {
-            sqlite3_bind_text(
-                statement, 1, bind, -1, unsafeBitCast(-1, to: sqlite3_destructor_type.self))
+        let transient = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
+        for (index, bind) in binds.enumerated() {
+            sqlite3_bind_text(statement, Int32(index + 1), bind, -1, transient)
         }
         var result: [[String]] = []
         while sqlite3_step(statement) == SQLITE_ROW {

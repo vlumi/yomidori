@@ -53,6 +53,18 @@ final class JMdictTests: XCTestCase {
         XCTAssertTrue(dictionary.pitchAccents(for: "街皮", reading: "がいひ").isEmpty)
     }
 
+    func testTypedSearchByKanjiKanaAndGloss() {
+        XCTAssertEqual(dictionary.search("樹", limit: 10).map(\.headword), ["樹皮"])
+        XCTAssertEqual(dictionary.search("うな", limit: 10).map(\.headword), ["頷く"])
+        // Common words first among the prefix matches.
+        XCTAssertEqual(
+            Array(dictionary.search("生", limit: 10).map(\.headword).prefix(2)), ["生", "生地"])
+        XCTAssertEqual(dictionary.search("nod", limit: 10).map(\.headword), ["頷く"])
+        XCTAssertEqual(dictionary.search("raw fresh", limit: 10).map(\.headword), ["生"])
+        XCTAssertTrue(dictionary.search("   ", limit: 10).isEmpty)
+        XCTAssertTrue(dictionary.search("xyzzy", limit: 10).isEmpty)
+    }
+
     func testMetaNamesTheSourceAndLicense() {
         XCTAssertEqual(dictionary.meta["source"], "JMdict_e (EDRDG)")
         XCTAssertEqual(dictionary.meta["created"], "2026-09-17")
