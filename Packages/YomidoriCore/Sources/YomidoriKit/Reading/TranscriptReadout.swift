@@ -27,6 +27,8 @@ struct TranscriptReadout: View {
     /// Where each line starts in the transcript, so a token maps back into it.
     @State private var lineStarts: [String.Index] = []
     @State private var selected: Token?
+    /// The recognized text is behind a fold, closed by default: the word is what is asked for.
+    @AppStorage("transcriptExpanded") private var expanded = false
     @State private var kept: Card?
     /// The archive id of each still saved so far, by the still's own id, so a retake
     /// never keeps a stale page and a page is saved once.
@@ -44,8 +46,12 @@ struct TranscriptReadout: View {
                     Text("Tokenizer", bundle: .module)
                 }
                 .pickerStyle(.segmented)
-                .frame(maxWidth: 200)
-                Spacer()
+                .frame(maxWidth: 170)
+                TextField(text: $source) {
+                    Text("Book, page", bundle: .module)
+                }
+                .textFieldStyle(.roundedBorder)
+                .font(.callout)
                 Button {
                     Clipboard.copy(transcript)
                 } label: {
@@ -55,14 +61,10 @@ struct TranscriptReadout: View {
                         Image(systemName: "doc.on.doc")
                     }
                 }
+                .labelStyle(.iconOnly)
                 .buttonStyle(.bordered)
                 .controlSize(.small)
             }
-            TextField(text: $source) {
-                Text("Book, page", bundle: .module)
-            }
-            .textFieldStyle(.roundedBorder)
-            .font(.callout)
             if let selected {
                 word(selected)
             }
@@ -70,15 +72,20 @@ struct TranscriptReadout: View {
                 Text("MeCab could not load its dictionary.", bundle: .module)
                     .foregroundStyle(.secondary)
             }
-            ScrollView {
+            DisclosureGroup(isExpanded: $expanded) {
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(lines.indices, id: \.self) { index in
                         TokenFlow(tokens: lines[index], selected: $selected)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 4)
+            } label: {
+                Text("Recognized text", bundle: .module)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
-            .frame(maxHeight: 240)
+            .tint(.secondary)
         }
         .task(id: "\(choice)|\(transcript)") { tokenize() }
         .task(id: "\(choice)|\(selection.text)") { showSelection() }

@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A drawer you size yourself.** Under a frozen page, the readout is a drawer with a handle: drag it down for the page while looking for a word, up for the reading and the meaning once found; it remembers. The recognized text sits behind a fold, closed unless you open it.
 ### build 3 — 2026-09-18
 
 - **A home screen.** The app opens on its name with one big *Read* button, *Cards* with how many are due, and *About*; the camera starts only when you ask. Reopened after a restart, it returns to the screen you were on.
