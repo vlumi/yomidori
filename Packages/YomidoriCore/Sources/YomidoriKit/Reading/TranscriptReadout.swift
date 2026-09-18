@@ -92,10 +92,13 @@ struct TranscriptReadout: View {
         }
     }
 
-    /// The word's entries: the dictionary form first, then the word as it stands, then
-    /// its reading. A word with no entry is either rare or misread.
+    /// The word's entries: the tokenizer's dictionary form first, then the word as it
+    /// stands and the forms its stem can be deinflected to, then its reading. A word
+    /// with no entry is either rare or misread.
     private func meaning(of token: Token, in dictionary: some WordDictionary) -> some View {
-        let candidates = [token.dictionaryForm, token.surface, token.reading].compactMap { $0 }
+        let candidates =
+            [token.dictionaryForm].compactMap { $0 } + Deinflector.candidates(for: token.surface)
+            + [token.reading]
         let entries = candidates.lazy.map(dictionary.entries(matching:)).first { !$0.isEmpty } ?? []
         return VStack(alignment: .leading, spacing: 6) {
             if entries.isEmpty {

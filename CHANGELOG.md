@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Inflected words find their entry.** A verb or adjective tapped as its stem (頷い, 漂っ, 古く) now opens the entry for its dictionary form (頷く, 漂う, 古い) under *Meaning*, with either tokenizer.
 - **The meaning, one fold away.** Under a tapped word, a "Meaning" fold opens its JMdict entries: headword, readings, and the senses' glosses in English; a word with no entry says so, which is what a misread word looks like. JMdict is built into the app from its source at build time.
 - **ヨミドリ under the icon** on a phone set to Japanese; Yomidori elsewhere, as on the two storefronts.
 - **The frozen page zooms.** Pinch the still to zoom and drag it to pan, in every mode, so a small word is easy to hit; a double tap brings the page back.
