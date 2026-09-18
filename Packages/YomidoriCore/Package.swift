@@ -5,7 +5,7 @@ let package = Package(
     name: "YomidoriCore",
     defaultLocalization: "en",
     // iOS 16 is the app's floor (an iPhone 8 still reads). macOS is listed only so
-    // `swift test` runs headless on the Mac — there is no Mac app, and never will be.
+    // `swift test` runs headless on the Mac, and a Mac app is planned (see ROADMAP).
     platforms: [
         .iOS(.v16),
         .macOS(.v14),

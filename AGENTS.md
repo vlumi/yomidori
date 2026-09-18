@@ -41,9 +41,12 @@ describing intent as fact otherwise.
 - **Platforms:** iOS 16+ / iPadOS 16+ — iPhone and iPad. **The floor is iOS 16
   so an iPhone 8 still runs it**; Vision's Japanese text recognition arrived in
   iOS 16, so the floor costs nothing the app needs. Anything newer goes behind a
-  wrapper (see *iOS 16 compatibility*). **No Mac, no watch, no TV.** `YomidoriKit`
-  still *compiles* on macOS 14, because `swift test` runs on the Mac — UIKit- and
-  camera-only code sits behind `#if os(iOS)` / `#if canImport(UIKit)`.
+  wrapper (see *iOS 16 compatibility*). **No watch, no TV.** A Mac app is
+  planned (ROADMAP's *Mac* section): no camera, a pasted text or screenshot as
+  the still, the same cards over iCloud, reviews on a keyboard. Until it has a
+  target, `YomidoriKit` compiles on macOS 14 because `swift test` runs on the
+  Mac — UIKit- and camera-only code sits behind `#if os(iOS)` /
+  `#if canImport(UIKit)`, and keeping it that way is what keeps the Mac cheap.
 - **Toolchain:** Xcode 26 / Swift 6 toolchain (Swift 5 language mode),
   **XcodeGen** (`.xcodeproj` generated, gitignored, never committed). The team
   ID IS committed in `project.yml` (it's not a secret, and the release lane's
