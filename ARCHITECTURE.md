@@ -129,6 +129,16 @@ the Mac; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
   entries for its dictionary form, else the word as it stands, else its reading,
   and "not in the dictionary" where none matches, which is what a misread word
   looks like. The first shape of the reading sheet.
+- **`Card`**, **`Sighting`** and **`FileCardStore`** (Core): a card is one word
+  in its dictionary form with its reading, the key together; a sighting is the
+  word as it was met once, the sentence as it stood on the page, the word's form
+  and offset in it, the still it came from by id, a source in the reader's
+  words, and when. Keeping a word already kept adds a sighting, never a card;
+  the same kanji read another way is another card. The store is one JSON
+  document in Application Support, written whole and atomically on every
+  change: a reader's cards number in the hundreds or low thousands, which one
+  file reads in a blink, and one file is what a sync or a backup copies. The
+  reading, pitch and meaning are not stored; they are looked up live.
 - **`AppRoot`** (Kit): hosts the capture screen; the place navigation will hang
   from.
 
@@ -216,9 +226,9 @@ sentences mid-way exactly as pages do, so the glue is not a paperback feature.
 FSRS, not SM-2: fewer reviews for the same retention, which matters when input
 is a stream from real reading rather than a fixed deck. Two grades are enough
 for readings. No streaks, no daily nag: the queue is whatever is due when the
-app is opened. Storage is local, with iCloud sync as a later option for the
-iPad; the model is small enough that plain files or SQLite suffice, and the
-choice is made when the card model is written, not before.
+app is opened. Storage is decided (see *What exists*): one JSON document,
+local, with iCloud sync as a later option for the iPad; the scheduling state
+joins the card as fields when the scheduler is written.
 
 ### Dictionary and meaning
 
