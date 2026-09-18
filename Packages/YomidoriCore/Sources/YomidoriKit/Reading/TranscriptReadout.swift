@@ -14,9 +14,12 @@ struct TranscriptReadout: View {
     }
 
     let transcript: String
+    let still: Still?
     @State private var choice: Choice = .system
     @State private var lines: [[Token]] = []
     @State private var selected: Token?
+    @State private var kept: Card?
+    @State private var stillID: UUID?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -88,6 +91,8 @@ struct TranscriptReadout: View {
                         .font(.title3)
                         .foregroundStyle(.secondary)
                 }
+                Spacer()
+                keepButton(token, entry: entries.first)
             }
             .textSelection(.enabled)
             if dictionary != nil {
@@ -101,6 +106,50 @@ struct TranscriptReadout: View {
                 .tint(.secondary)
             }
         }
+    }
+
+    /// Keep the word as a card, with the line it stands in as the sentence and the
+    /// still it was read from; a word already kept says so.
+    @ViewBuilder private func keepButton(_ token: Token, entry: DictionaryEntry?) -> some View {
+        if let kept, kept.sightings.last?.surface == token.surface {
+            Label {
+                Text("Kept", bundle: .module)
+            } icon: {
+                Image(systemName: "checkmark")
+            }
+            .font(.callout)
+            .foregroundStyle(.secondary)
+        } else if Cards.store != nil {
+            Button {
+                keep(token, entry: entry)
+            } label: {
+                Label {
+                    Text("Keep", bundle: .module)
+                } icon: {
+                    Image(systemName: "plus.rectangle.on.rectangle")
+                }
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+        }
+    }
+
+    private func keep(_ token: Token, entry: DictionaryEntry?) {
+        guard let store = Cards.store,
+            let lineIndex = lines.firstIndex(where: { $0.contains(token) })
+        else { return }
+        let line = String(
+            transcript.split(separator: "\n", omittingEmptySubsequences: true)[lineIndex])
+        if stillID == nil, let still {
+            stillID = try? StillArchive.save(still)
+        }
+        let sighting = Sighting(
+            sentence: line, surface: token.surface,
+            offset: line.distance(from: line.startIndex, to: token.range.lowerBound),
+            stillID: stillID, source: nil, date: Date())
+        let headword = entry?.headword ?? token.dictionaryForm ?? token.surface
+        let reading = Kana.hiragana(entry?.readings.first ?? token.reading)
+        kept = try? store.keep(sighting, headword: headword, reading: reading, entryID: entry?.id)
     }
 
     /// The word's entries: the tokenizer's dictionary form first, then the word as it
