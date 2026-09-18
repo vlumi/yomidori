@@ -36,7 +36,6 @@ The whole idea rests on on-device text recognition reading real books: vertical 
 
 - [ ] **The system dictionary.** A button on the sheet opens the built-in 大辞林 entry through the reference library view; the app shows it only when the dictionary is installed and has the term.
 - [ ] **Typed search.** For words met off the page: kana and kanji search headwords, Latin searches JMdict glosses; results become cards the same way.
-- [ ] **Attribution screen.** JMdict, the tokenizer's dictionary, Kanjium: the credits each license requires, on the About screen from the first build that bundles them. JMdict and IPADic are bundled now, their notices in THIRD_PARTY_NOTICES.md; the screen is owed before any external build.
 
 ## Pitch & sound — *the part dictionaries lack*
 

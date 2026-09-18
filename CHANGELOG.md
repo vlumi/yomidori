@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **About.** Top left of the camera: the version, the promise that nothing leaves the device, how the pitch line is read, and the licenses and notices of everything bundled, JMdict, Kanjium, MeCab, IPADic and Mecab-Swift.
 - **Review what is due.** From *Cards*, *Review* runs the cards whose time has come, one at a time: the sentence from the page with the word marked, then a tap for the reading with its pitch and the meaning, then *Again* or *Good*. The scheduler is FSRS; a new card comes back in three days after a *Good*, tomorrow after an *Again*, and the intervals grow from there. No streaks, no reminders.
 - **Keep a word.** Beside a tapped word, *Keep* makes a card of it: the line it stands in as the sentence, with the word marked, and the page it was read from. A word kept again gets another sentence on the same card. *Cards*, top right, lists them and opens each with its reading and pitch, its sentences and its pages; swipe to remove.
 - **The pitch over the reading.** A tapped word the dictionary knows shows its reading with the Tokyo pitch accent drawn over it, a line over the high morae dropping where the accent falls, and the downstep number beside it; from Kanjium, built into the app with JMdict.
