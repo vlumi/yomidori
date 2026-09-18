@@ -15,6 +15,9 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 ### Unreleased (next build)
 
 - **A third reader up close.** Reading up close now also shows what manga-ocr, an on-device model built for Japanese lines, makes of the few characters around the tap, beside Vision and Live Text; it reads vertical print and bold print where the others stumble. Only in builds that bundle the model.
+- **Ask the meaning too.** A switch on a card makes it also ask what the word means, as its own question with its own schedule; the reading is shown on that question's front, the senses and the dictionary on its back. Off by default: the reading is what the app is for.
+- **Type the reading.** A switch on the review asks for the reading typed in kana instead of tapped; it is checked strictly, katakana counting as hiragana, and the verdict shows with the answer, with the grade it suggests ready to press.
+- **The sentence as it stood on the page.** A kept word's card now carries a crop of the sentence's own lines out of the page, shown under the text on the front of a review; on a vertical page, where lines have no positions yet, the whole page stands in as before.
 - **The volume buttons are a shutter.** Either volume button, or the Camera Control on phones that have one, freezes the page, so the book stays in the other hand. iOS 17.2 and up; before that the shutter is on screen.
 - **Search for a word.** From home, type kana or kanji to find words that start with it, or English to search the meanings; a result shows the word with its pitch and senses, and can be kept as a card that asks for the word alone until a page supplies a sentence.
 - **Whole sentences, across pages.** A kept sentence now runs from full stop to full stop across the page's wrapped lines. *Add next page* on a frozen page takes the next still and reads the two as one text, so a word or a sentence cut by the page turn is whole; the card keeps every page.

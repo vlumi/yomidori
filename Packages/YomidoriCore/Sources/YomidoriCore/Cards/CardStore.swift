@@ -13,11 +13,34 @@ public protocol CardStore {
     func update(_ card: Card) throws
 }
 
+/// One question of one card, in the review queue.
+public struct ReviewItem: Hashable, Sendable {
+    public let card: Card
+    public let question: Question
+
+    public init(card: Card, question: Question) {
+        self.card = card
+        self.question = question
+    }
+}
+
 extension CardStore {
     /// The cards due at `date`, the longest overdue first, then the oldest.
     public func due(at date: Date) -> [Card] {
         cards().filter { $0.isDue(at: date) }
             .sorted { ($0.review?.due ?? $0.created) < ($1.review?.due ?? $1.created) }
+    }
+
+    /// Every question due at `date`, the longest overdue first; a card asking both
+    /// contributes two items, the reading before the meaning.
+    public func dueItems(at date: Date) -> [ReviewItem] {
+        cards().flatMap { card in
+            card.dueQuestions(at: date).map { ReviewItem(card: card, question: $0) }
+        }
+        .sorted {
+            ($0.card.state(for: $0.question)?.due ?? $0.card.created)
+                < ($1.card.state(for: $1.question)?.due ?? $1.card.created)
+        }
     }
 }
 

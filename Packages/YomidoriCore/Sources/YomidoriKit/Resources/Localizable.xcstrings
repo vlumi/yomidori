@@ -31,6 +31,16 @@
         }
       }
     },
+    "Ask the meaning too" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "意味も問う"
+          }
+        }
+      }
+    },
     "Book, page" : {
       "localizations" : {
         "ja" : {
@@ -87,6 +97,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "コピー"
+          }
+        }
+      }
+    },
+    "Correct" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正解"
           }
         }
       }
@@ -301,6 +321,16 @@
         }
       }
     },
+    "Not quite. You typed %@." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "残念。入力は %@ でした。"
+          }
+        }
+      }
+    },
     "Nothing due. Read on." : {
       "localizations" : {
         "ja" : {
@@ -411,6 +441,16 @@
         }
       }
     },
+    "Show the meaning" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "意味を見る"
+          }
+        }
+      }
+    },
     "Show the reading" : {
       "localizations" : {
         "ja" : {
@@ -501,6 +541,16 @@
         }
       }
     },
+    "The reading is always asked. With this on, the word is also asked for its meaning, on its own schedule." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読みはいつも問われます。これをオンにすると、意味も別の予定で問われます。"
+          }
+        }
+      }
+    },
     "Tokenizer" : {
       "localizations" : {
         "ja" : {
@@ -511,12 +561,32 @@
         }
       }
     },
+    "Type the reading" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読みを入力"
+          }
+        }
+      }
+    },
     "Vision" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vision"
+          }
+        }
+      }
+    },
+    "What does it mean?" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どういう意味？"
           }
         }
       }

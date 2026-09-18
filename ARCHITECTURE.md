@@ -148,8 +148,14 @@ use for its own input.
   a book are wraps and nothing more; open when the page ends before a full stop.
   Its continuation on the next page is that page's beginning up to its first
   full stop. Tested on a page of wrapped lines with quotes.
+- **`LineCrop`** (Core): where a sentence sits on the still, as the union of the
+  recognized lines whose text is part of it, padded by a line's thickness; a line
+  counts when a run of it is in the sentence, six characters or six tenths of the
+  shorter, since the recognizer and the sentence rarely agree on every character.
+  Nil where no line matches, the vertical case, and the whole still stands in.
 - **Keeping a word** (Kit): *Keep* beside the tapped word saves the sentence it
-  stands in, as `Sentence` cuts it, with the word's form and offset, and the still
+  stands in, as `Sentence` cuts it, with the word's form and offset, the crop of
+  its lines where `LineCrop` finds them, shown on the card's front, and the still
   it was read from, scaled to two thousand pixels on its longer side as a JPEG
   in Application Support (`StillArchive`). The card's key is the dictionary
   entry's headword and reading when the word was found, else the tokenizer's
@@ -159,8 +165,7 @@ use for its own input.
   runs on; a kept sighting carries every page's still, saved once each.
   **`CardsView`** lists the cards, newest first, and **`CardView`** shows
   one: the word with its pitch, every sentence it was met in with the word
-  marked, and the still. The crop of the line rather than the whole still is
-  still to come.
+  marked, the crop, and the still.
 - **`FSRS`**, **`Grade`** and **`ReviewState`** (Core): the free spaced
   repetition scheduler, version 5, with its published default parameters and a
   desired retention of 90 %. Two grades, Again and Good, mapped to FSRS's 1 and
@@ -173,7 +178,15 @@ use for its own input.
   (Kit) runs the due queue one card at a time: the latest sentence with the word
   marked as the front, the question being its reading; a tap turns it to the
   reading with its pitch and the meaning under a fold; two buttons. No streak,
-  no count kept against anyone.
+  no count kept against anyone. With *Type the reading* on, remembered, the
+  front takes the reading typed in kana instead, `ReadingCheck` (Core) judges it
+  strictly with katakana and half-width folded, the verdict shows with the
+  back, and the grade it suggests is the prominent button; every review is then
+  a few words of kana typing on vocabulary actually met. A card can also ask
+  what the word means, a switch on the card, off by default since the reading
+  is the gap the app is for: a second question with its own schedule, the
+  reading given away on its front, the senses and the system dictionary on its
+  back. The queue is of questions, not cards.
 - **`AboutView`** (Kit): the name, the version with its build and commit, the
   promise that nothing leaves the device, the pitch notation explained on four
   words, and the notices every bundled license asks for, which are the
@@ -298,11 +311,11 @@ pages do, so the glue is not a paperback feature.
 ### Scheduling and storage
 
 The scheduler is built (see *What exists*): FSRS, not SM-2, two grades, no
-streaks, the queue whatever is due when the app is opened. Storage is one JSON
-document, local, with iCloud sync as a later option for the iPad. What remains
-here is the meaning card as a per-word option, and the parameters staying the
-published defaults until there are enough reviews to fit them, which is a
-question for much later.
+streaks, the queue whatever is due when the app is opened, the meaning as a
+second question per word when asked for. Storage is one JSON document, local,
+with iCloud sync as a later option for the iPad. What remains here is the
+parameters staying the published defaults until there are enough reviews to
+fit them, which is a question for much later.
 
 ### Dictionary and meaning
 

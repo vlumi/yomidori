@@ -54,14 +54,14 @@ struct CardsView: View {
 
     private func reload() {
         cards = (Cards.store?.cards() ?? []).sorted { $0.created > $1.created }
-        dueCount = Cards.store?.due(at: Date()).count ?? 0
+        dueCount = Cards.store?.dueItems(at: Date()).count ?? 0
     }
 }
 
 /// One card: the word with its reading and pitch, and every sentence it was met in,
 /// the word marked in each, with the still it was read from.
 struct CardView: View {
-    let card: Card
+    @State var card: Card
 
     var body: some View {
         List {
@@ -83,6 +83,17 @@ struct CardView: View {
                 }
                 .textSelection(.enabled)
             }
+            Section {
+                Toggle(isOn: $card.asksMeaning) {
+                    Text("Ask the meaning too", bundle: .module)
+                }
+                .tint(Palette.nightGreen)
+            } footer: {
+                Text(
+                    // swiftlint:disable:next line_length
+                    "The reading is always asked. With this on, the word is also asked for its meaning, on its own schedule.",
+                    bundle: .module)
+            }
             ForEach(card.sightings.sorted { $0.date > $1.date }) { sighting in
                 Section {
                     if sighting.sentence.isEmpty {
@@ -94,7 +105,8 @@ struct CardView: View {
                             .font(.title3)
                             .textSelection(.enabled)
                     }
-                    ForEach(sighting.stillIDs, id: \.self) { id in
+                    let images = [sighting.cropID].compactMap { $0 } + sighting.stillIDs
+                    ForEach(images, id: \.self) { id in
                         if let image = StillArchive.load(id) {
                             Image(decorative: image, scale: 1)
                                 .resizable()
@@ -112,6 +124,7 @@ struct CardView: View {
             }
         }
         .navigationTitle(Text(verbatim: card.headword))
+        .task(id: card.asksMeaning) { try? Cards.store?.update(card) }
     }
 
     /// The sentence with the word as it stood on the page in night green.

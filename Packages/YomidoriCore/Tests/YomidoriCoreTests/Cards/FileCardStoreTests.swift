@@ -96,6 +96,23 @@ final class FileCardStoreTests: XCTestCase {
         try old.write(to: url, atomically: true, encoding: .utf8)
         let card = try XCTUnwrap(FileCardStore(url: url).cards().first)
         XCTAssertEqual(card.sightings[0].stillIDs, [still])
+        XCTAssertNil(card.sightings[0].cropID)
+    }
+
+    func testAMeaningQuestionIsItsOwnItemWithItsOwnSchedule() throws {
+        let store = FileCardStore(url: url)
+        var card = try store.keep(
+            sighting("樹皮の匂いがした。", "樹皮"), headword: "樹皮", reading: "じゅひ", entryID: nil)
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        XCTAssertEqual(store.dueItems(at: now).map(\.question), [.reading])
+        card.asksMeaning = true
+        try store.update(card)
+        XCTAssertEqual(store.dueItems(at: now).map(\.question), [.reading, .meaning])
+        card.setState(FSRS.review(nil, grade: .good, at: now), for: .meaning)
+        try store.update(card)
+        XCTAssertEqual(store.dueItems(at: now).map(\.question), [.reading])
+        XCTAssertEqual(FileCardStore(url: url).cards()[0].meaningReview?.reviews, 1)
+        XCTAssertNil(FileCardStore(url: url).cards()[0].review)
     }
 
     func testTheFileIsReadableJSON() throws {
