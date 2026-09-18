@@ -63,14 +63,15 @@ describing intent as fact otherwise.
   phone. This is a product rule as much as a privacy one ([PRIVACY.md](PRIVACY.md)
   promises it).
 - **Dictionary data is built, not committed.** `make dictionary` runs
-  `Scripts/data/build-jmdict.py`, which downloads JMdict_e once into
-  `.build-data/` and writes `Sources/Shared/Dictionaries/jmdict.sqlite`
-  (~50 MB, gitignored); the project generation depends on it, so `make build-ios`
+  `Scripts/data/build-jmdict.py`, which downloads JMdict_e and Kanjium's
+  accent list once into `.build-data/` and writes
+  `Sources/Shared/Dictionaries/jmdict.sqlite` (~60 MB, gitignored); the project generation depends on it, so `make build-ios`
   and the run targets build it on first use, and CI does the same. `swift test`
   needs none of this: the dictionary tests read a fixture in the test target,
-  built by the same script from `jmdict-fixture.xml`. JMdict is CC BY-SA 4.0 —
-  the attribution is in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and in
-  the database's `meta` table.
+  built by the same script from `jmdict-fixture.xml` and `accents-fixture.txt`.
+  JMdict and Kanjium are CC BY-SA 4.0 — the attributions are in
+  [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and in the database's `meta`
+  table.
 - **Third-party code at runtime: none by default.** Everything ships with the OS
   (Foundation, SwiftUI, UIKit, Vision, AVFoundation). The one exception is
   MeCab with IPADic (the Mecab-Swift package, pinned to a commit), which is in
@@ -112,7 +113,7 @@ yomidori/
 │     embed-commit-sha.sh           Stamps GitCommitSHA into the built Info.plist
 │     release-*.sh, distribute.sh   The release lane (RELEASING.md)
 │     assets/make-icon.swift        Renders the app icon PNG (make icon)
-│     data/build-jmdict.py          JMdict XML → the bundled SQLite (make dictionary)
+│     data/build-jmdict.py          JMdict XML + Kanjium accents → the bundled SQLite (make dictionary)
 ├── Sources/iOS/                    Thin @main app shell (+ Info.plist, entitlements)
 ├── Sources/Shared/                 The asset catalog (AppIcon), the app-level String Catalogs (InfoPlist too)
 │     Dictionaries/jmdict.sqlite    Built by make dictionary; gitignored
@@ -120,14 +121,14 @@ yomidori/
     ├── Sources/YomidoriCore/       Pure logic — tested, coverage-gated; grouped by domain as it grows:
     │   ├── Kana.swift              katakana ↔ hiragana, the first of the reading helpers
     │   ├── Dictionary/             DictionaryEntry, the WordDictionary protocol
-    │   ├── Reading/                Token, the Tokenizer protocol, SystemTokenizer (the OS's analyzer)
+    │   ├── Reading/                Token, Tokenizer, SystemTokenizer, Deinflector, PitchAccent
     │   └── Recognition/            RecognizedLine, TextGeometry (the Vision-box ↔ view seam)
     ├── Sources/YomidoriDictionary/ JMdict, the SQLite reader over the bundled database (system SQLite)
     ├── Sources/YomidoriMeCab/      MeCab + IPADic behind Tokenizer — the one third-party dependency, quarantined
     ├── Sources/YomidoriKit/        SwiftUI + UIKit + Vision, depends on Core, Dictionary and MeCab; coverage-ignored
     │   ├── App/                    AppRoot, Palette (夜緑 tokens), Compat (platform-only wrappers)
     │   ├── Capture/                Camera, Still, TextRecognizer (Vision), LiveText (VisionKit), CaptureView
-    │   ├── Reading/                TokenFlow (words with readings, wrapping)
+    │   ├── Reading/                TokenFlow, TranscriptReadout, PitchReading (the accent line over kana)
     │   └── Resources/              Localizable.xcstrings (the Kit's strings, en + ja)
     └── Tests/YomidoriCoreTests/    Grouped by domain, mirroring Core
 ```
@@ -229,6 +230,9 @@ Agent-specific mechanics on top of that:
 - **Comments minimal:** explain only what isn't obvious from the code. No
   historical / roadmap ("lands later") narration in source — that goes in
   commit messages and the docs.
+- **Pitch is drawn one way**: a line over the high morae with a drop where the
+  accent falls, and the downstep number in brackets beside it (`PitchReading`).
+  Tokyo accent, from Kanjium, keyed by headword and reading.
 - **Readings are hiragana when shown, katakana when stored** — dictionaries
   give katakana, readers expect hiragana; `Kana` converts at the edge, once.
 - **Unicode-scalar work stays in Core**, tested against real Japanese strings

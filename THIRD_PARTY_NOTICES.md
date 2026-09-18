@@ -10,6 +10,12 @@ The dictionary data is JMdict_e, built into `jmdict.sqlite` by `Scripts/data/bui
 
 JMdict is © the Electronic Dictionary Research and Development Group and is distributed under the [Creative Commons Attribution-ShareAlike 4.0 licence](https://creativecommons.org/licenses/by-sa/4.0/). The same statement and licence are carried in the database's `meta` table.
 
+## Kanjium (pitch accent)
+
+The pitch accent data is the `accents.txt` list from [Kanjium](https://github.com/mifunetoshiro/kanjium) by Uros O., built into the same `jmdict.sqlite` at build time, under the [Creative Commons Attribution-ShareAlike 4.0 licence](https://creativecommons.org/licenses/by-sa/4.0/). Its author asks for this statement, which the database's `meta` table also carries:
+
+> The pitch accent notation, verb particle data, phonetics, homonyms and other additions or modifications to EDICT, KANJIDIC or KRADFILE were provided by Uros O. through his free database.
+
 ## Mecab-Swift
 
 <https://github.com/shinjukunian/Mecab-Swift> — MIT License.

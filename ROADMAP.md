@@ -40,7 +40,6 @@ The whole idea rests on on-device text recognition reading real books: vertical 
 
 ## Pitch & sound — *the part dictionaries lack*
 
-- [ ] **Word pitch.** The accent type or downstep number from the dictionary, drawn over the kana of the reading; notation decided once for the whole app.
 - [ ] **Sentence contour and speech**, later and offline: accent phrases from Open JTalk's estimation or UniDic's connection rules, spoken through VOICEVOX, generated on a Mac and bundled or skipped — nothing runs a model on the phone.
 
 ## Store — *out the door*

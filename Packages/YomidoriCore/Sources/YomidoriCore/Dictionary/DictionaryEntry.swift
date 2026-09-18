@@ -38,4 +38,7 @@ public struct DictionaryEntry: Equatable, Sendable, Identifiable {
 public protocol WordDictionary {
     /// Entries whose kanji form or reading is exactly `text`, common words first.
     func entries(matching text: String) -> [DictionaryEntry]
+    /// The pitch accents recorded for a headword read a given way, the usual one first;
+    /// empty when the accent data has no such word.
+    func pitchAccents(for headword: String, reading: String) -> [PitchAccent]
 }

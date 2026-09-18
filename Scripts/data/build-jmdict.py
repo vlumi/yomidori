@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
-"""Turn JMdict's XML into the compact SQLite database the app bundles.
+"""Turn JMdict's XML and Kanjium's accent list into the SQLite database the app bundles.
 
-    Scripts/data/build-jmdict.py [--source FILE|URL] [--output FILE]
+    Scripts/data/build-jmdict.py [--source FILE|URL] [--accents FILE|URL] [--output FILE]
 
-The source is JMdict_e (the English-only edition) as .gz or plain XML; by default
-it is downloaded once into .build-data/ and reused. The output is a read-only
-database of entries with their kanji forms, readings and senses, indexed by
-headword and by reading, plus a meta table naming the source, its date and its
-license. Standard library only.
+The source is JMdict_e (the English-only edition) as .gz or plain XML, the accents
+Kanjium's accents.txt; both are downloaded once into .build-data/ and reused. The
+output is a read-only database of entries with their kanji forms, readings and
+senses, indexed by headword and by reading; an accent table of downstep positions
+keyed by headword and reading; and a meta table naming the sources, their dates and
+licenses. Standard library only.
 
 JMdict is © the Electronic Dictionary Research and Development Group and used under
-its CC BY-SA 4.0 licence (https://www.edrdg.org/edrdg/licence.html); the meta table
-carries the attribution and THIRD_PARTY_NOTICES.md reproduces it.
+its CC BY-SA 4.0 licence (https://www.edrdg.org/edrdg/licence.html); Kanjium's pitch
+accent data is © Uros O. under CC BY-SA 4.0. The meta table carries both attributions
+and THIRD_PARTY_NOTICES.md reproduces them.
 """
 
 import argparse
@@ -24,7 +26,8 @@ import urllib.request
 import xml.etree.ElementTree as ET
 
 DEFAULT_SOURCE = "http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz"
-CACHE = ".build-data/JMdict_e.gz"
+DEFAULT_ACCENTS = "https://raw.githubusercontent.com/mifunetoshiro/kanjium/master/data/source_files/raw/accents.txt"
+CACHE_DIR = ".build-data"
 DEFAULT_OUTPUT = "Sources/Shared/Dictionaries/jmdict.sqlite"
 PRIORITY = ("news1", "ichi1", "spec1", "spec2", "gai1")  # the tags that mark a common word
 
@@ -39,20 +42,41 @@ CREATE INDEX kanji_entry ON kanji (entry);
 CREATE INDEX reading_text ON reading (text);
 CREATE INDEX reading_entry ON reading (entry);
 CREATE INDEX sense_entry ON sense (entry);
+CREATE TABLE accent (headword TEXT NOT NULL, reading TEXT NOT NULL, downsteps TEXT NOT NULL);
+CREATE INDEX accent_word ON accent (headword, reading);
 """
 
 
 def fetch(source):
-    """The source as bytes of XML, downloading and caching a URL once."""
+    """The source as bytes, downloading a URL once into the cache and reusing it."""
     if re.match(r"^https?://", source):
-        if not os.path.exists(CACHE):
-            os.makedirs(os.path.dirname(CACHE), exist_ok=True)
-            print(f"downloading {source} → {CACHE}", file=sys.stderr)
-            urllib.request.urlretrieve(source, CACHE)
-        source = CACHE
+        cached = os.path.join(CACHE_DIR, os.path.basename(source))
+        if not os.path.exists(cached):
+            os.makedirs(CACHE_DIR, exist_ok=True)
+            print(f"downloading {source} → {cached}", file=sys.stderr)
+            urllib.request.urlretrieve(source, cached)
+        source = cached
     with open(source, "rb") as f:
         data = f.read()
     return gzip.decompress(data) if source.endswith(".gz") else data
+
+
+def accent_rows(text):
+    """Kanjium's accents.txt: headword, reading, accents; a kana headword has an empty
+    reading, and an accent list may carry part-of-speech tags like (名)3, which are
+    dropped: what stays is the downstep mora of each accent in the file's order, 0 flat."""
+    for line in text.splitlines():
+        parts = line.split("\t")
+        if len(parts) != 3:
+            continue
+        headword, reading, accents = parts
+        numbers = []
+        for n in re.sub(r"\([^)]*\)", "", accents).split(","):
+            n = n.strip()
+            if n.isdigit() and n not in numbers:
+                numbers.append(n)
+        if numbers:
+            yield headword, reading or headword, ",".join(numbers)
 
 
 def entity_codes(xml_bytes):
@@ -62,7 +86,7 @@ def entity_codes(xml_bytes):
     return {text: code for code, text in re.findall(r'<!ENTITY (\S+) "([^"]+)">', head)}
 
 
-def build(xml_bytes, output):
+def build(xml_bytes, accents_text, output):
     codes = entity_codes(xml_bytes)
     created = re.search(r"JMdict created: (\d{4}-\d{2}-\d{2})", xml_bytes[:400_000].decode("utf-8", errors="ignore"))
     if os.path.exists(output):
@@ -76,8 +100,13 @@ def build(xml_bytes, output):
             ("created", created.group(1) if created else "unknown"),
             ("license", "CC BY-SA 4.0 — https://www.edrdg.org/edrdg/licence.html"),
             ("attribution", "This application uses the JMdict dictionary files. These files are the property of the Electronic Dictionary Research and Development Group, and are used in conformance with the Group's licence."),
+            ("accents_source", "Kanjium accents.txt (Uros O.)"),
+            ("accents_license", "CC BY-SA 4.0 — https://github.com/mifunetoshiro/kanjium"),
+            ("accents_attribution", "The pitch accent notation, verb particle data, phonetics, homonyms and other additions or modifications to EDICT, KANJIDIC or KRADFILE were provided by Uros O. through his free database."),
         ],
     )
+    if accents_text is not None:
+        db.executemany("INSERT INTO accent VALUES (?, ?, ?)", accent_rows(accents_text))
     count = 0
     for _, entry in ET.iterparse(_bytes_stream(xml_bytes)):
         if entry.tag != "entry":
@@ -115,10 +144,12 @@ def _bytes_stream(data):
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--source", default=DEFAULT_SOURCE, help="JMdict_e as .gz or .xml, a path or a URL")
+    parser.add_argument("--accents", default=DEFAULT_ACCENTS, help="Kanjium's accents.txt, a path or a URL; 'none' to skip")
     parser.add_argument("--output", default=DEFAULT_OUTPUT)
     args = parser.parse_args()
     os.makedirs(os.path.dirname(args.output) or ".", exist_ok=True)
-    count = build(fetch(args.source), args.output)
+    accents = None if args.accents == "none" else fetch(args.accents).decode("utf-8")
+    count = build(fetch(args.source), accents, args.output)
     size = os.path.getsize(args.output) / 1e6
     print(f"wrote {args.output}: {count} entries, {size:.1f} MB")
 
