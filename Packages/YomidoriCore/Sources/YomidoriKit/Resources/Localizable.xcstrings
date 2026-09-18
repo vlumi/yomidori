@@ -21,6 +21,16 @@
         }
       }
     },
+    "Book, page" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本、ページ"
+          }
+        }
+      }
+    },
     "Camera access is off. Turn it on in Settings to frame a page." : {
       "localizations" : {
         "ja" : {
