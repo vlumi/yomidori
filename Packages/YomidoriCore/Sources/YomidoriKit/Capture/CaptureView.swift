@@ -10,27 +10,15 @@ import YomidoriCore
 /// answers the roadmap's first question: does on-device recognition read a real
 /// paperback, columns included.
 public struct CaptureView: View {
-    enum Engine: Hashable {
-        case vision
-        case liveText
-        case closeUp
-    }
-
-    /// One reading up close: the square around a tap, and what each engine made of it.
-    struct CloseUp {
-        let box: CGRect
-        let crop: Still
-        let vision: String
-        let liveText: String
-    }
-
     @StateObject private var camera = Camera()
     @State private var still: Still?
     @State private var engine: Engine = .vision
     @State private var lines: [RecognizedLine] = []
     @State private var analysis: ImageAnalysis?
     @StateObject private var selection = LiveTextSelection()
-    @State private var openSentence: OpenSentence?
+    /// Pages already read in this spread, before the still on screen; their text joins
+    /// the current page's at the seam so a word or sentence cut by the page turn is whole.
+    @State private var pages: [Page] = []
     @State private var selected: Int?
     @State private var recognizing = false
     @State private var closeUp: CloseUp?
@@ -53,7 +41,10 @@ public struct CaptureView: View {
                 }
             } else {
                 CameraPreview(camera: camera, access: camera.access).ignoresSafeArea()
-                cameraNotice
+                CameraNotice(access: camera.access)
+                if !pages.isEmpty {
+                    SpreadNotice(startOver: startOver)
+                }
             }
         }
         .safeAreaInset(edge: .bottom) { controls }
@@ -74,25 +65,6 @@ public struct CaptureView: View {
 
     private func selectLine(at point: CGPoint, in frame: CGRect) {
         selected = TextGeometry.lineIndex(at: point, in: frame, lines: lines)
-    }
-
-    @ViewBuilder private var cameraNotice: some View {
-        switch camera.access {
-        case .denied:
-            notice("Camera access is off. Turn it on in Settings to frame a page.")
-        case .unavailable:
-            notice("No camera here. Choose a photo instead.")
-        case .undetermined, .ready:
-            EmptyView()
-        }
-    }
-
-    private func notice(_ key: LocalizedStringKey) -> some View {
-        Text(key, bundle: .module)
-            .font(.callout)
-            .multilineTextAlignment(.center)
-            .foregroundStyle(Palette.silver)
-            .padding(24)
     }
 
     private var controls: some View {
@@ -144,6 +116,22 @@ public struct CaptureView: View {
                         }
                     }
                     .buttonStyle(.bordered)
+                    if analysis != nil {
+                        Button(action: addPage) {
+                            Label {
+                                Text("Add next page", bundle: .module)
+                            } icon: {
+                                Image(systemName: "plus.rectangle.portrait")
+                            }
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                    if !pages.isEmpty {
+                        Button(action: startOver) {
+                            Text("Start over", bundle: .module)
+                        }
+                        .buttonStyle(.borderless)
+                    }
                 }
             }
         }
@@ -186,8 +174,12 @@ public struct CaptureView: View {
     @ViewBuilder private var transcript: some View {
         if let analysis, analysis.hasResults(for: .text) {
             TranscriptReadout(
-                transcript: analysis.transcript, still: still, selection: selection,
-                openSentence: $openSentence)
+                transcript: Spread.join(pages.map(\.transcript) + [analysis.transcript]),
+                stills: pages.map(\.still) + [still].compactMap { $0 },
+                currentTranscript: analysis.transcript,
+                pageOffset: Spread.offset(
+                    ofPage: pages.count, in: pages.map(\.transcript) + [analysis.transcript]),
+                selection: selection)
         } else if LiveText.isSupported {
             Text("Nothing was recognized.", bundle: .module)
                 .foregroundStyle(.secondary)
@@ -270,6 +262,21 @@ public struct CaptureView: View {
                 camera.stop()
                 still = taken
             }
+        }
+    }
+
+    /// Keep this page's text and take the next: the camera comes back, and the next
+    /// still joins this one in the readout.
+    private func addPage() {
+        guard let still, let analysis else { return }
+        pages.append(Page(still: still, transcript: analysis.transcript))
+        retake()
+    }
+
+    private func startOver() {
+        pages = []
+        if still != nil {
+            retake()
         }
     }
 
