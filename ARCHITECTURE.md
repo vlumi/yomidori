@@ -150,10 +150,11 @@ use for its own input.
   it was read from, scaled to two thousand pixels on its longer side as a JPEG
   in Application Support (`StillArchive`). The card's key is the dictionary
   entry's headword and reading when the word was found, else the tokenizer's
-  form. When the sentence is open, *Continues on next page* holds it
-  (`OpenSentence`) with its still; the next still shows the fragment joined with
-  its own beginning and offers to keep the whole, with both stills on the
-  sighting. **`CardsView`** lists the cards, newest first, and **`CardView`** shows
+  form. A spread of several pages is read as one text: *Add next page* keeps
+  this page's text and takes the next, and `Spread` joins the pages at the seam
+  with no break, so a word cut by the page turn tokenizes whole and a sentence
+  runs on; a kept sighting carries every page's still, saved once each.
+  **`CardsView`** lists the cards, newest first, and **`CardView`** shows
   one: the word with its pitch, every sentence it was met in with the word
   marked, and the still. The crop of the line rather than the whole still is
   still to come.
@@ -276,12 +277,11 @@ another book adds a sentence to the same card, and reviews rotate through them.
 The default question is "how is this read", because that is the gap the app is
 for; a meaning card is an option ticked when the meaning was the gap.
 
-The two-page glue is built in first form (see *What exists*): the sentence
-left open is joined by plain concatenation with the next page's beginning,
-Japanese having no hyphenation, and both stills are kept. What remains is
-letting the reader choose where the continuation ends when the first full stop
-is not it. E-book screens end sentences mid-way exactly as pages do, so the
-glue is not a paperback feature.
+The two-page glue is built (see *What exists*) as attaching pages: the next
+still's text joins the current one at the seam by plain concatenation, Japanese
+having no hyphenation, so a word or a sentence cut by the page turn is whole, and
+every page's still is kept. E-book screens end sentences mid-way exactly as
+pages do, so the glue is not a paperback feature.
 
 ### Scheduling and storage
 

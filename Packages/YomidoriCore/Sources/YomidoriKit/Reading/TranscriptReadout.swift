@@ -13,18 +13,22 @@ struct TranscriptReadout: View {
         case mecab
     }
 
+    /// The pages' text joined at the seams (`Spread`), the pages' stills in order, the
+    /// page on screen's own transcript, and where it starts in the joined text.
     let transcript: String
-    let still: Still?
+    let stills: [Still]
+    let currentTranscript: String
+    let pageOffset: Int
     @ObservedObject var selection: LiveTextSelection
-    /// A sentence left open on the previous page, waiting for this one.
-    @Binding var openSentence: OpenSentence?
     @State private var choice: Choice = .system
     @State private var lines: [[Token]] = []
     /// Where each line starts in the transcript, so a token maps back into it.
     @State private var lineStarts: [String.Index] = []
     @State private var selected: Token?
     @State private var kept: Card?
-    @State private var stillID: UUID?
+    /// The archive id of each still saved so far, by the still's own id, so a retake
+    /// never keeps a stale page and a page is saved once.
+    @State private var archived: [UUID: UUID] = [:]
     /// Where the reader is: a book and a page, in their words, kept between stills and launches.
     @AppStorage("source") private var source = ""
 
@@ -57,9 +61,6 @@ struct TranscriptReadout: View {
             }
             .textFieldStyle(.roundedBorder)
             .font(.callout)
-            if let openSentence {
-                continued(openSentence)
-            }
             if let selected {
                 word(selected)
             }
@@ -91,7 +92,7 @@ struct TranscriptReadout: View {
             choice == .system ? SystemTokenizer() : MeCabTokenizer.shared
         guard let word = tokenizer?.tokens(in: text).first(where: \.isWord) else { return }
         // Prefer the strip's own token for the line it stands in, so Keep knows the sentence.
-        if let lineIndex = lineIndex(of: selection.range),
+        if let lineIndex = lineIndex(ofSelection: selection.range),
             let match = lines[lineIndex].first(where: { $0.surface == word.surface })
         {
             selected = match
@@ -100,14 +101,16 @@ struct TranscriptReadout: View {
         }
     }
 
-    /// The transcript line a range of the transcript falls in.
-    private func lineIndex(of range: Range<String.Index>?) -> Int? {
-        guard let range, range.lowerBound < transcript.endIndex else { return nil }
-        let before = transcript[transcript.startIndex..<range.lowerBound]
-        let newlines = before.filter { $0 == "\n" }.count
-        let empties = before.split(separator: "\n", omittingEmptySubsequences: false).dropLast()
-            .filter(\.isEmpty).count
-        return newlines - empties
+    /// The joined text's line that a selection on the page on screen falls in.
+    private func lineIndex(ofSelection range: Range<String.Index>?) -> Int? {
+        guard let range, range.lowerBound <= currentTranscript.endIndex else { return nil }
+        let offset =
+            pageOffset
+            + currentTranscript.distance(from: currentTranscript.startIndex, to: range.lowerBound)
+        guard offset < transcript.count else { return nil }
+        let before = transcript.prefix(offset)
+        return before.split(separator: "\n", omittingEmptySubsequences: false).dropLast()
+            .filter { !$0.isEmpty }.count
     }
 
     /// The tapped word, large: its reading with its pitch drawn over it where the
@@ -178,19 +181,6 @@ struct TranscriptReadout: View {
             }
             .buttonStyle(.bordered)
             .controlSize(.small)
-            if sentence(around: token)?.sentence.isOpen == true {
-                Button {
-                    leaveOpen(token, entry: entry)
-                } label: {
-                    Label {
-                        Text("Continues on next page", bundle: .module)
-                    } icon: {
-                        Image(systemName: "arrow.turn.down.right")
-                    }
-                }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
-            }
         }
     }
 
@@ -209,73 +199,23 @@ struct TranscriptReadout: View {
 
     private func keep(_ token: Token, entry: DictionaryEntry?) {
         guard let store = Cards.store, let found = sentence(around: token) else { return }
-        if stillID == nil, let still {
-            stillID = try? StillArchive.save(still)
-        }
         let sighting = Sighting(
             sentence: found.sentence.text, surface: token.surface,
             offset: found.sentence.offset(of: found.start, in: transcript),
-            stillID: stillID, source: source.isEmpty ? nil : source, date: Date())
+            stillIDs: archiveStills(), source: source.isEmpty ? nil : source, date: Date())
         let headword = entry?.headword ?? token.dictionaryForm ?? token.surface
         let reading = Kana.hiragana(entry?.readings.first ?? token.reading)
         kept = try? store.keep(sighting, headword: headword, reading: reading, entryID: entry?.id)
     }
 
-    /// Leave the sentence open for the next page instead of keeping it now.
-    private func leaveOpen(_ token: Token, entry: DictionaryEntry?) {
-        guard let found = sentence(around: token) else { return }
-        if stillID == nil, let still {
-            stillID = try? StillArchive.save(still)
+    /// Every page's still saved, once each, in page order.
+    private func archiveStills() -> [UUID] {
+        stills.compactMap { still in
+            if let id = archived[still.id] { return id }
+            guard let id = try? StillArchive.save(still) else { return nil }
+            archived[still.id] = id
+            return id
         }
-        openSentence = OpenSentence(
-            fragment: found.sentence.text, surface: token.surface,
-            offset: found.sentence.offset(of: found.start, in: transcript),
-            headword: entry?.headword ?? token.dictionaryForm ?? token.surface,
-            reading: Kana.hiragana(entry?.readings.first ?? token.reading), entryID: entry?.id,
-            stillID: stillID, source: source.isEmpty ? nil : source)
-    }
-
-    /// The previous page's open sentence, with this page's beginning as its end.
-    private func continued(_ open: OpenSentence) -> some View {
-        let continuation = Sentence.continuation(of: transcript)
-        return VStack(alignment: .leading, spacing: 6) {
-            Text("Continued from the previous page", bundle: .module)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Text(verbatim: open.fragment + continuation.text)
-                .font(.callout)
-            HStack {
-                Button {
-                    keepWhole(open, continuation: continuation)
-                } label: {
-                    Text("Keep the whole sentence", bundle: .module)
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.small)
-                Button {
-                    openSentence = nil
-                } label: {
-                    Text("Discard", bundle: .module)
-                }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
-            }
-        }
-        .padding(10)
-        .background(Palette.nightGreen.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
-    }
-
-    private func keepWhole(_ open: OpenSentence, continuation: Sentence) {
-        guard let store = Cards.store else { return }
-        if stillID == nil, let still {
-            stillID = try? StillArchive.save(still)
-        }
-        let sighting = Sighting(
-            sentence: open.fragment + continuation.text, surface: open.surface, offset: open.offset,
-            stillID: open.stillID, continuationStillID: stillID, source: open.source, date: Date())
-        kept = try? store.keep(
-            sighting, headword: open.headword, reading: open.reading, entryID: open.entryID)
-        openSentence = nil
     }
 
     /// The word's entries: the tokenizer's dictionary form first, then the word as it

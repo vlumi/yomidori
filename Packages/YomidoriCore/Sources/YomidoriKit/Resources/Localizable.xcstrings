@@ -11,6 +11,16 @@
         }
       }
     },
+    "Add next page" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次のページを足す"
+          }
+        }
+      }
+    },
     "Again" : {
       "localizations" : {
         "ja" : {
@@ -71,26 +81,6 @@
         }
       }
     },
-    "Continued from the previous page" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "前のページから続く"
-          }
-        }
-      }
-    },
-    "Continues on next page" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "次のページに続く"
-          }
-        }
-      }
-    },
     "Copy" : {
       "localizations" : {
         "ja" : {
@@ -107,16 +97,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "辞書"
-          }
-        }
-      }
-    },
-    "Discard" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "取り消す"
           }
         }
       }
@@ -197,16 +177,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "残す"
-          }
-        }
-      }
-    },
-    "Keep the whole sentence" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文全体を残す"
           }
         }
       }
@@ -461,6 +431,16 @@
         }
       }
     },
+    "Start over" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最初から"
+          }
+        }
+      }
+    },
     "System" : {
       "localizations" : {
         "ja" : {
@@ -477,6 +457,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "尾高型：最後まで高く、続く助詞で下がります。"
+          }
+        }
+      }
+    },
+    "Take the next page, or start over." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次のページを撮るか、最初からやり直してください。"
           }
         }
       }
