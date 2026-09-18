@@ -1,0 +1,81 @@
+import XCTest
+
+@testable import YomidoriCore
+
+final class FileCardStoreTests: XCTestCase {
+    private var url: URL!
+
+    override func setUp() {
+        url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("cards-\(UUID().uuidString).json")
+    }
+
+    override func tearDown() {
+        try? FileManager.default.removeItem(at: url)
+    }
+
+    private func sighting(
+        _ sentence: String, _ surface: String, date: Date = Date(timeIntervalSince1970: 1_000_000)
+    ) -> Sighting {
+        let offset = sentence.distance(
+            from: sentence.startIndex, to: sentence.range(of: surface)!.lowerBound)
+        return Sighting(
+            sentence: sentence, surface: surface, offset: offset, stillID: nil,
+            source: "羊をめぐる冒険 p.12", date: date)
+    }
+
+    func testAnEmptyStoreHasNoCards() {
+        let store = FileCardStore(url: url)
+        XCTAssertEqual(store.cards(), [])
+        XCTAssertNil(store.card(headword: "頷く", reading: "うなずく"))
+    }
+
+    func testKeepingAWordMakesOneCardAndASecondSightingJoinsIt() throws {
+        let store = FileCardStore(url: url)
+        let first = try store.keep(
+            sighting("彼女は黙って頷いた。", "頷い"), headword: "頷く", reading: "うなずく", entryID: 1270080)
+        XCTAssertEqual(first.sightings.count, 1)
+        XCTAssertEqual(first.sightings[0].offset, 6)
+        let second = try store.keep(
+            sighting("僕は何も言わずに頷いた。", "頷い", date: Date(timeIntervalSince1970: 2_000_000)),
+            headword: "頷く", reading: "うなずく", entryID: 1270080)
+        XCTAssertEqual(second.id, first.id)
+        XCTAssertEqual(second.sightings.count, 2)
+        XCTAssertEqual(store.cards().count, 1)
+        XCTAssertEqual(store.cards()[0].created, first.sightings[0].date)
+    }
+
+    func testTheSameKanjiWithAnotherReadingIsAnotherCard() throws {
+        let store = FileCardStore(url: url)
+        try store.keep(sighting("生地を買った。", "生地"), headword: "生地", reading: "きじ", entryID: 1)
+        try store.keep(sighting("生地を訪ねた。", "生地"), headword: "生地", reading: "せいち", entryID: 2)
+        XCTAssertEqual(store.cards().count, 2)
+    }
+
+    func testCardsSurviveAReopenAndDatesKeepTheirInstant() throws {
+        try FileCardStore(url: url).keep(
+            sighting("樹皮の匂いがした。", "樹皮"), headword: "樹皮", reading: "じゅひ", entryID: 1330370)
+        let reopened = FileCardStore(url: url)
+        let card = try XCTUnwrap(reopened.card(headword: "樹皮", reading: "じゅひ"))
+        XCTAssertEqual(card.sightings[0].sentence, "樹皮の匂いがした。")
+        XCTAssertEqual(card.sightings[0].date, Date(timeIntervalSince1970: 1_000_000))
+        XCTAssertEqual(card.sightings[0].source, "羊をめぐる冒険 p.12")
+    }
+
+    func testRemovingACard() throws {
+        let store = FileCardStore(url: url)
+        let card = try store.keep(
+            sighting("樹皮の匂いがした。", "樹皮"), headword: "樹皮", reading: "じゅひ", entryID: nil)
+        try store.remove(card)
+        XCTAssertEqual(store.cards(), [])
+        XCTAssertEqual(FileCardStore(url: url).cards(), [])
+    }
+
+    func testTheFileIsReadableJSON() throws {
+        try FileCardStore(url: url).keep(
+            sighting("樹皮の匂いがした。", "樹皮"), headword: "樹皮", reading: "じゅひ", entryID: 1330370)
+        let text = try String(contentsOf: url, encoding: .utf8)
+        XCTAssertTrue(text.contains("\"headword\" : \"樹皮\""))
+        XCTAssertTrue(text.contains("1970-01-12T13:46:40Z"))
+    }
+}
