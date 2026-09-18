@@ -20,6 +20,8 @@ public struct AppRoot: View {
                         CardsView()
                     case .review:
                         ReviewView()
+                    case .search:
+                        SearchView()
                     case .about:
                         AboutView()
                     }

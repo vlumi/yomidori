@@ -26,16 +26,7 @@ struct ReviewView: View {
 
     private func review(_ card: Card) -> some View {
         VStack(alignment: .leading, spacing: 20) {
-            if let sighting = card.sightings.max(by: { $0.date < $1.date }) {
-                Text(marked(sighting, hidden: !revealed))
-                    .font(.title2)
-                    .textSelection(.enabled)
-                if let source = sighting.source {
-                    Text(verbatim: source)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
+            front(card)
             Spacer()
             if revealed {
                 back(card)
@@ -70,6 +61,27 @@ struct ReviewView: View {
         }
         .padding(24)
         .tint(Palette.nightGreen)
+    }
+
+    /// The front: the latest sentence with the word marked, or the word alone when
+    /// the card came from a search and has no sentence yet.
+    @ViewBuilder private func front(_ card: Card) -> some View {
+        if let sighting = card.sightings.max(by: { $0.date < $1.date }),
+            !sighting.sentence.isEmpty
+        {
+            Text(marked(sighting, hidden: !revealed))
+                .font(.title2)
+                .textSelection(.enabled)
+            if let source = sighting.source {
+                Text(verbatim: source)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        } else {
+            Text(verbatim: card.headword)
+                .font(.largeTitle)
+                .foregroundStyle(Palette.nightGreen)
+        }
     }
 
     private func back(_ card: Card) -> some View {

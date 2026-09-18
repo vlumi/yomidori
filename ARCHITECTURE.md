@@ -182,6 +182,15 @@ use for its own input.
   selection changes, so the image's coordinator polls it four times a second
   while that mode is showing and stops when it goes. Reading the selection is
   iOS 17 and up; on iOS 16 the strip below stays the way to a word.
+- **Typed search** (`SearchView`, `EntryView` in Kit; `SearchQuery` and
+  `WordDictionary.search` in Core): for words met off the page. Kana or kanji
+  finds headwords and readings that start with it, a hiragana query tried as
+  katakana too since JMdict spells loanwords so; anything else searches the
+  English glosses through a full-text index the build script adds to the
+  database. No mode switch, the query says which; common words first. A result
+  opens as a tapped word does, with its pitch, senses and the system dictionary,
+  and *Keep* makes a card with no sentence yet, which the review then asks by
+  the word alone until a page supplies one.
 - **`DictionaryButton`** (Kit): beside a tapped word, on a card and on the
   review's back, a button that opens the system's own dictionaries on the
   headword through the reference library view, スーパー大辞林 among them on a
@@ -286,11 +295,9 @@ question for much later.
 ### Dictionary and meaning
 
 The meaning is one tap away, never on the card by default. The system
-dictionary button is built (see *What exists*); JMdict supplies the English
-gloss under the fold, and Japanese Wiktionary may one day supply a ja gloss
-where it has one, since 大辞林 is a view and cannot be quoted.
-A typed search box serves words met off the page; Latin input searches JMdict's
-glosses, kana or kanji searches headwords, no mode switch.
+dictionary button and the typed search are built (see *What exists*); JMdict
+supplies the English gloss under the fold, and Japanese Wiktionary may one day
+supply a ja gloss where it has one, since 大辞林 is a view and cannot be quoted.
 
 ### Pitch accent and audio
 

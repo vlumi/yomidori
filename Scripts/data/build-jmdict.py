@@ -44,6 +44,7 @@ CREATE INDEX reading_entry ON reading (entry);
 CREATE INDEX sense_entry ON sense (entry);
 CREATE TABLE accent (headword TEXT NOT NULL, reading TEXT NOT NULL, downsteps TEXT NOT NULL);
 CREATE INDEX accent_word ON accent (headword, reading);
+CREATE VIRTUAL TABLE gloss_fts USING fts5(gloss, content='sense', content_rowid='rowid', tokenize='unicode61');
 """
 
 
@@ -129,6 +130,8 @@ def build(xml_bytes, accents_text, output):
                 db.execute("INSERT INTO sense VALUES (?, ?, ?, ?)", (entry_id, i, " ".join(pos), "; ".join(glosses)))
         entry.clear()
         count += 1
+    # The full-text index over the glosses, for typed search in English.
+    db.execute("INSERT INTO gloss_fts(gloss_fts) VALUES ('rebuild')")
     db.commit()
     db.execute("VACUUM")
     db.close()
