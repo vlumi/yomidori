@@ -6,7 +6,7 @@ import XCTest
 /// wants, and the reading the system analyzer gives for each in context.
 final class SystemTokenizerTests: XCTestCase {
     private func reading(of word: String, in sentence: String) -> String? {
-        SystemTokenizer.tokens(in: sentence).first { $0.surface == word }?.reading
+        SystemTokenizer().tokens(in: sentence).first { $0.surface == word }?.reading
     }
 
     private struct Case {
@@ -57,12 +57,12 @@ final class SystemTokenizerTests: XCTestCase {
     }
 
     func testInflectionsAreCutFromTheirStem() {
-        let surfaces = SystemTokenizer.tokens(in: "彼は黙って頷いた。").filter(\.isWord).map(\.surface)
+        let surfaces = SystemTokenizer().tokens(in: "彼は黙って頷いた。").filter(\.isWord).map(\.surface)
         XCTAssertEqual(surfaces, ["彼", "は", "黙っ", "て", "頷い", "た"])
     }
 
     func testPunctuationIsKeptButIsNotAWord() {
-        let tokens = SystemTokenizer.tokens(in: "「はい」と彼は言った。")
+        let tokens = SystemTokenizer().tokens(in: "「はい」と彼は言った。")
         XCTAssertEqual(tokens.map(\.surface).joined(), "「はい」と彼は言った。")
         XCTAssertEqual(tokens.filter { !$0.isWord }.map(\.surface), ["「", "」", "。"])
         XCTAssertEqual(tokens.first { $0.surface == "。" }?.reading, "。")
@@ -70,7 +70,7 @@ final class SystemTokenizerTests: XCTestCase {
 
     func testRangesPointBackIntoTheSentence() {
         let sentence = "樹皮の匂い"
-        let tokens = SystemTokenizer.tokens(in: sentence)
+        let tokens = SystemTokenizer().tokens(in: sentence)
         for token in tokens {
             XCTAssertEqual(String(sentence[token.range]), token.surface)
         }
