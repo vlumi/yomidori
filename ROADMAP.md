@@ -34,7 +34,6 @@ The whole idea rests on on-device text recognition reading real books: vertical 
 
 ## Dictionary — *meaning on request*
 
-- [ ] **The system dictionary.** A button on the sheet opens the built-in 大辞林 entry through the reference library view; the app shows it only when the dictionary is installed and has the term.
 - [ ] **Typed search.** For words met off the page: kana and kanji search headwords, Latin searches JMdict glosses; results become cards the same way.
 
 ## Pitch & sound — *the part dictionaries lack*

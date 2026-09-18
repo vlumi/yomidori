@@ -166,6 +166,12 @@ the Mac; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
   words, and the notices every bundled license asks for, which are the
   repository's own THIRD_PARTY_NOTICES.md bundled as a resource so there is one
   copy to keep current.
+- **`DictionaryButton`** (Kit): beside a tapped word, on a card and on the
+  review's back, a button that opens the system's own dictionaries on the
+  headword through the reference library view, スーパー大辞林 among them on a
+  Japanese phone: the ja-ja meaning at a quality no free data matches, as a view
+  the app never quotes. Present only when an installed dictionary has the term;
+  absent on the macOS test build, which has no such library.
 - **`HomeView`** and **`AppRoot`** (Kit): a fresh start opens on home, the name
   and the bird's reading, one big *Read* button, *Cards* with what is due, and
   *About*; the camera starts only when asked, so the permission prompt comes
@@ -264,12 +270,10 @@ question for much later.
 
 ### Dictionary and meaning
 
-The meaning is one tap away, never on the card by default. iOS ships Sanseido's
-スーパー大辞林 as a system dictionary, and `UIReferenceLibraryViewController`
-shows its entry for a term offline with no license: the ja-ja meaning a reader
-wants, at the quality no free data matches. It is a view, not data, so cards
-cannot quote it; where a short gloss belongs on a card, JMdict supplies an
-English one, and Japanese Wiktionary may supply a ja gloss where it has one.
+The meaning is one tap away, never on the card by default. The system
+dictionary button is built (see *What exists*); JMdict supplies the English
+gloss under the fold, and Japanese Wiktionary may one day supply a ja gloss
+where it has one, since 大辞林 is a view and cannot be quoted.
 A typed search box serves words met off the page; Latin input searches JMdict's
 glosses, kana or kanji searches headwords, no mode switch.
 

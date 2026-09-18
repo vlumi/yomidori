@@ -71,6 +71,16 @@
         }
       }
     },
+    "Dictionary" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "辞書"
+          }
+        }
+      }
+    },
     "Everything runs on this device: the camera, the text recognition, the dictionaries, your cards. Nothing is sent anywhere." : {
       "localizations" : {
         "ja" : {

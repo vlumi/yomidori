@@ -92,6 +92,8 @@ struct TranscriptReadout: View {
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
+                DictionaryButton(
+                    term: entries.first?.headword ?? token.dictionaryForm ?? token.surface)
                 keepButton(token, entry: entries.first)
             }
             .textSelection(.enabled)

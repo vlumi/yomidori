@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The system dictionary, one tap away.** Beside a tapped word, on a card and on the back of a review, *Dictionary* opens the phone's own dictionary on the word, スーパー大辞林 when it is installed, for the Japanese meaning; the button appears only when the dictionary has the word.
 - **A home screen.** The app opens on its name with one big *Read* button, *Cards* with how many are due, and *About*; the camera starts only when you ask. Reopened after a restart, it returns to the screen you were on.
 - **About.** Top left of the camera: the version, the promise that nothing leaves the device, how the pitch line is read, and the licenses and notices of everything bundled, JMdict, Kanjium, MeCab, IPADic and Mecab-Swift.
 - **Review what is due.** From *Cards*, *Review* runs the cards whose time has come, one at a time: the sentence from the page with the word marked, then a tap for the reading with its pitch and the meaning, then *Again* or *Good*. The scheduler is FSRS; a new card comes back in three days after a *Good*, tomorrow after an *Again*, and the intervals grow from there. No streaks, no reminders.
