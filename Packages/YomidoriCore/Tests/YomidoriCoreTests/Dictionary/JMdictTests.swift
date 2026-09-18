@@ -43,9 +43,20 @@ final class JMdictTests: XCTestCase {
         XCTAssertFalse(dictionary.entries(matching: "街").isEmpty)
     }
 
+    func testPitchAccentsComeByHeadwordAndReading() {
+        XCTAssertEqual(dictionary.pitchAccents(for: "樹皮", reading: "じゅひ").map(\.downstep), [1])
+        XCTAssertEqual(dictionary.pitchAccents(for: "頷く", reading: "うなずく").map(\.downstep), [3, 0])
+        XCTAssertEqual(dictionary.pitchAccents(for: "街", reading: "がい").map(\.downstep), [1])
+        // Kanjium leaves the reading empty for a kana headword, and tags accents by part of speech.
+        XCTAssertEqual(
+            dictionary.pitchAccents(for: "かさかさ", reading: "かさかさ").map(\.downstep), [1, 0])
+        XCTAssertTrue(dictionary.pitchAccents(for: "街皮", reading: "がいひ").isEmpty)
+    }
+
     func testMetaNamesTheSourceAndLicense() {
         XCTAssertEqual(dictionary.meta["source"], "JMdict_e (EDRDG)")
         XCTAssertEqual(dictionary.meta["created"], "2026-09-17")
         XCTAssertTrue(dictionary.meta["license"]?.contains("CC BY-SA 4.0") == true)
+        XCTAssertTrue(dictionary.meta["accents_attribution"]?.contains("Uros O.") == true)
     }
 }
