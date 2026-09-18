@@ -81,6 +81,15 @@ the Mac; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
   reads better than a square that halves the glyphs at its edges. The screen shows any of the
   three, switched at the bottom; the roadmap's spike is the comparison against
   a real book.
+- **`Token`** and **`SystemTokenizer`** (Core): a sentence cut into words by the
+  OS's own Japanese analyzer, each with its reading in context as hiragana. The
+  analyzer is reached through `CFStringTokenizer`, which offers a Latin
+  transcription per word; ICU turns that back into kana without loss, づ and
+  ず, おう and おお kept apart. Inflections come cut from their stem (頷い + た),
+  punctuation is kept as non-word tokens so the sentence rebuilds from its
+  tokens, and ranges point back into the text. Measured equal to MeCab with
+  UniDic on the fixture in its tests; the dictionary form and pitch are the
+  dictionary layer's to add.
 - **`AppRoot`** (Kit): hosts the capture screen; the place navigation will hang
   from.
 
@@ -127,6 +136,7 @@ the roadmap:
 
 | | readings | pitch | size | license |
 | --- | --- | --- | --- | --- |
+| The OS's analyzer (`CFStringTokenizer`, Latin transcription → kana) | yes, in context; measured equal to UniDic's on the fixture | no | none | none |
 | MeCab + UniDic | yes, per lexeme | yes, with compound rules | large (the lite dictionary is tens of MB, the full one far more) | BSD/LGPL/GPL |
 | MeCab + IPADIC | yes | no | ~50 MB | BSD-style |
 | Apple `NLTokenizer` + JMdict furigana data | segmentation only from Apple; readings from data | no | small | JMdict CC BY-SA 4.0 |
