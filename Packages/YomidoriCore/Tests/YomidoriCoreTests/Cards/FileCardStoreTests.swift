@@ -20,7 +20,7 @@ final class FileCardStoreTests: XCTestCase {
         let offset = sentence.distance(
             from: sentence.startIndex, to: sentence.range(of: surface)!.lowerBound)
         return Sighting(
-            sentence: sentence, surface: surface, offset: offset, stillID: nil,
+            sentence: sentence, surface: surface, offset: offset, stillIDs: [],
             source: "羊をめぐる冒険 p.12", date: date)
     }
 
@@ -83,6 +83,19 @@ final class FileCardStoreTests: XCTestCase {
         XCTAssertEqual(
             FileCardStore(url: url).due(at: now.addingTimeInterval(4 * 86_400)).map(\.id), [card.id]
         )
+    }
+
+    func testTheOldOneStillShapeStillDecodes() throws {
+        let still = UUID()
+        let old = """
+            [{"id":"\(UUID().uuidString)","headword":"樹皮","reading":"じゅひ","entryID":1,
+              "created":"2026-09-18T00:00:00Z",
+              "sightings":[{"id":"\(UUID().uuidString)","sentence":"樹皮。","surface":"樹皮","offset":0,
+                            "stillID":"\(still.uuidString)","date":"2026-09-18T00:00:00Z"}]}]
+            """
+        try old.write(to: url, atomically: true, encoding: .utf8)
+        let card = try XCTUnwrap(FileCardStore(url: url).cards().first)
+        XCTAssertEqual(card.sightings[0].stillIDs, [still])
     }
 
     func testTheFileIsReadableJSON() throws {

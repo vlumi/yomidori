@@ -45,25 +45,57 @@ public struct Sighting: Identifiable, Hashable, Codable, Sendable {
     /// in characters, so the front can highlight it without re-tokenizing.
     public let surface: String
     public let offset: Int
-    /// The still the sentence was read from, kept as an image file by this id.
-    public let stillID: UUID?
-    /// The next page's still, when the sentence ran over onto it.
-    public let continuationStillID: UUID?
+    /// The stills the sentence was read from, in page order, kept as image files by id.
+    public let stillIDs: [UUID]
     /// Where it was read, in the reader's words: a book, a page. Optional.
     public let source: String?
     public let date: Date
 
     public init(
-        id: UUID = UUID(), sentence: String, surface: String, offset: Int, stillID: UUID?,
-        continuationStillID: UUID? = nil, source: String?, date: Date
+        id: UUID = UUID(), sentence: String, surface: String, offset: Int, stillIDs: [UUID],
+        source: String?, date: Date
     ) {
         self.id = id
         self.sentence = sentence
         self.surface = surface
         self.offset = offset
-        self.stillID = stillID
-        self.continuationStillID = continuationStillID
+        self.stillIDs = stillIDs
         self.source = source
         self.date = date
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, sentence, surface, offset, stillIDs, source, date
+        // The one-still shape of the first cards, and the two-still one after it.
+        case stillID, continuationStillID
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(UUID.self, forKey: .id)
+        sentence = try c.decode(String.self, forKey: .sentence)
+        surface = try c.decode(String.self, forKey: .surface)
+        offset = try c.decode(Int.self, forKey: .offset)
+        source = try c.decodeIfPresent(String.self, forKey: .source)
+        date = try c.decode(Date.self, forKey: .date)
+        if let ids = try c.decodeIfPresent([UUID].self, forKey: .stillIDs) {
+            stillIDs = ids
+        } else {
+            stillIDs = [
+                try c.decodeIfPresent(UUID.self, forKey: .stillID),
+                try c.decodeIfPresent(UUID.self, forKey: .continuationStillID),
+            ].compactMap { $0 }
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(id, forKey: .id)
+        try c.encode(sentence, forKey: .sentence)
+        try c.encode(surface, forKey: .surface)
+        try c.encode(offset, forKey: .offset)
+        try c.encode(stillIDs, forKey: .stillIDs)
+        try c.encodeIfPresent(source, forKey: .source)
+        try c.encode(date, forKey: .date)
     }
 }
