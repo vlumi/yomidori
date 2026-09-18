@@ -8,6 +8,17 @@ public struct AppRoot: View {
         NavigationStack {
             CaptureView()
                 .toolbar {
+                    ToolbarItem(placement: .navigation) {
+                        NavigationLink {
+                            AboutView()
+                        } label: {
+                            Label {
+                                Text("About", bundle: .module)
+                            } icon: {
+                                Image(systemName: "info.circle")
+                            }
+                        }
+                    }
                     ToolbarItem(placement: .primaryAction) {
                         NavigationLink {
                             CardsView()

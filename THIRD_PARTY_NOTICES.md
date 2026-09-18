@@ -1,6 +1,6 @@
 # Third-party notices
 
-Yomidori is MIT licensed (see [LICENSE](LICENSE)). It bundles the following third-party software and data, reproduced here as their licenses require. The About screen will show the same when it exists.
+Yomidori is MIT licensed (see [LICENSE](LICENSE)). It bundles the following third-party software and data, reproduced here as their licenses require. This file is bundled into the app and shown on its About screen.
 
 ## JMdict
 
