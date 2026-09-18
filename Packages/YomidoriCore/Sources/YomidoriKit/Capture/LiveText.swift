@@ -20,6 +20,15 @@ enum LiveText {
     }
 }
 
+/// What is selected on the still in Live Text mode: the text, and where it sits in
+/// the transcript, so the line it belongs to can be found. Live Text tells no one
+/// when the selection changes, so the interaction's owner polls it while showing.
+@MainActor
+final class LiveTextSelection: ObservableObject {
+    @Published var text = ""
+    @Published var range: Range<String.Index>?
+}
+
 #if os(iOS)
 /// The still with Live Text's own selection over it, in a scroll view that pinches
 /// to zoom as Photos does: tap, drag or double-tap the words to see how the engine
@@ -27,6 +36,7 @@ enum LiveText {
 struct LiveTextImage: UIViewRepresentable {
     let still: Still
     let analysis: ImageAnalysis?
+    let selection: LiveTextSelection
 
     func makeUIView(context: Context) -> ZoomingImageView {
         let view = ZoomingImageView(image: UIImage(cgImage: still.image))
@@ -40,14 +50,38 @@ struct LiveTextImage: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator()
+        Coordinator(selection: selection)
+    }
+
+    static func dismantleUIView(_ uiView: ZoomingImageView, coordinator: Coordinator) {
+        coordinator.stop()
     }
 
     @MainActor final class Coordinator {
         let interaction = ImageAnalysisInteraction()
+        private let selection: LiveTextSelection
+        private var timer: Timer?
 
-        init() {
+        init(selection: LiveTextSelection) {
+            self.selection = selection
             interaction.preferredInteractionTypes = .textSelection
+            timer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
+                Task { @MainActor in self?.poll() }
+            }
+        }
+
+        /// The selection is readable from iOS 17; on iOS 16 the strip below stays the way.
+        private func poll() {
+            guard #available(iOS 17, *) else { return }
+            let text = interaction.selectedText
+            guard text != selection.text else { return }
+            selection.text = text
+            selection.range = interaction.selectedRanges.first
+        }
+
+        func stop() {
+            timer?.invalidate()
+            timer = nil
         }
     }
 
@@ -100,6 +134,7 @@ struct LiveTextImage: UIViewRepresentable {
 struct LiveTextImage: View {
     let still: Still
     let analysis: ImageAnalysis?
+    let selection: LiveTextSelection
 
     var body: some View {
         Image(decorative: still.image, scale: 1).resizable().scaledToFit()

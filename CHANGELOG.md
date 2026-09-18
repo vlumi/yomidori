@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Select a word on the page.** In Live Text mode, a word selected on the page itself, the way text is selected in Photos, is read out below as if tapped in the strip, with its reading, pitch, meaning and Keep, and its line as the sentence. iOS 17 and up; on iOS 16 the words under the transcript remain the way.
 - **The book and the page on every kept sentence.** A field above the transcript takes where you are reading, in your own words, and remembers it; each sentence you keep records it, and the card shows it.
 - **The system dictionary, one tap away.** Beside a tapped word, on a card and on the back of a review, *Dictionary* opens the phone's own dictionary on the word, スーパー大辞林 when it is installed, for the Japanese meaning; the button appears only when the dictionary has the word.
 - **A home screen.** The app opens on its name with one big *Read* button, *Cards* with how many are due, and *About*; the camera starts only when you ask. Reopened after a restart, it returns to the screen you were on.

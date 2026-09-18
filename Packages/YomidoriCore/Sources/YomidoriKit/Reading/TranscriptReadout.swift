@@ -15,6 +15,7 @@ struct TranscriptReadout: View {
 
     let transcript: String
     let still: Still?
+    @ObservedObject var selection: LiveTextSelection
     @State private var choice: Choice = .system
     @State private var lines: [[Token]] = []
     @State private var selected: Token?
@@ -70,6 +71,36 @@ struct TranscriptReadout: View {
             .frame(maxHeight: 240)
         }
         .task(id: "\(choice)|\(transcript)") { tokenize() }
+        .task(id: "\(choice)|\(selection.text)") { showSelection() }
+    }
+
+    /// A word selected on the still itself, through Live Text's own selection, shown
+    /// as if tapped in the strip: the selection's line is the sentence, and its first
+    /// word the word. A selection of nothing changes nothing.
+    private func showSelection() {
+        let text = selection.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return }
+        let tokenizer: (any Tokenizer)? =
+            choice == .system ? SystemTokenizer() : MeCabTokenizer.shared
+        guard let word = tokenizer?.tokens(in: text).first(where: \.isWord) else { return }
+        // Prefer the strip's own token for the line it stands in, so Keep knows the sentence.
+        if let lineIndex = lineIndex(of: selection.range),
+            let match = lines[lineIndex].first(where: { $0.surface == word.surface })
+        {
+            selected = match
+        } else {
+            selected = word
+        }
+    }
+
+    /// The transcript line a range of the transcript falls in.
+    private func lineIndex(of range: Range<String.Index>?) -> Int? {
+        guard let range, range.lowerBound < transcript.endIndex else { return nil }
+        let before = transcript[transcript.startIndex..<range.lowerBound]
+        let newlines = before.filter { $0 == "\n" }.count
+        let empties = before.split(separator: "\n", omittingEmptySubsequences: false).dropLast()
+            .filter(\.isEmpty).count
+        return newlines - empties
     }
 
     /// The tapped word, large: its reading with its pitch drawn over it where the

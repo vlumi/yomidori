@@ -166,6 +166,13 @@ the Mac; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
   words, and the notices every bundled license asks for, which are the
   repository's own THIRD_PARTY_NOTICES.md bundled as a resource so there is one
   copy to keep current.
+- **Selecting on the page** (Kit, `LiveTextSelection`): in Live Text mode the
+  word selected on the still itself, through the engine's own selection, is the
+  word the readout shows, with its line as the sentence for Keep; the selection's
+  range into the transcript finds the line. Live Text tells no one when the
+  selection changes, so the image's coordinator polls it four times a second
+  while that mode is showing and stops when it goes. Reading the selection is
+  iOS 17 and up; on iOS 16 the strip below stays the way to a word.
 - **`DictionaryButton`** (Kit): beside a tapped word, on a card and on the
   review's back, a button that opens the system's own dictionaries on the
   headword through the reference library view, スーパー大辞林 among them on a
