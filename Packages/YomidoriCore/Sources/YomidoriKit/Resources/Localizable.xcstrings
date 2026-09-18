@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Again" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "もう一度"
+          }
+        }
+      }
+    },
     "Camera access is off. Turn it on in Settings to frame a page." : {
       "localizations" : {
         "ja" : {
@@ -47,6 +57,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "コピー"
+          }
+        }
+      }
+    },
+    "Good" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "できた"
           }
         }
       }
@@ -141,6 +161,16 @@
         }
       }
     },
+    "Nothing due. Read on." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日の分はありません。読書を続けてください。"
+          }
+        }
+      }
+    },
     "Nothing was recognized." : {
       "localizations" : {
         "ja" : {
@@ -187,6 +217,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "撮り直す"
+          }
+        }
+      }
+    },
+    "Review" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "復習"
+          }
+        }
+      }
+    },
+    "Review %lld" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "復習 %lld"
+          }
+        }
+      }
+    },
+    "Show the reading" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読みを見る"
           }
         }
       }
