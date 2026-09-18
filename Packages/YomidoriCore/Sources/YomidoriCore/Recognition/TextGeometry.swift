@@ -71,6 +71,22 @@ public enum TextGeometry {
             height: rect.height / imageSize.height)
     }
 
+    /// The reverse of `normalizedBox(for:imageSize:)`: a recognizer's box as image pixels, y down.
+    public static func imageRect(for box: CGRect, imageSize: CGSize) -> CGRect {
+        CGRect(
+            x: box.minX * imageSize.width,
+            y: (1 - box.maxY) * imageSize.height,
+            width: box.width * imageSize.width,
+            height: box.height * imageSize.height)
+    }
+
+    /// The rect grown by `margin` on every side and kept inside the image, so a line
+    /// is read whole, with the paper around it, and never a half-glyph at the edge.
+    public static func padded(_ rect: CGRect, by margin: CGFloat, in imageSize: CGSize) -> CGRect {
+        rect.insetBy(dx: -margin, dy: -margin)
+            .intersection(CGRect(origin: .zero, size: imageSize))
+    }
+
     private static func area(_ rect: CGRect) -> CGFloat {
         rect.width * rect.height
     }
