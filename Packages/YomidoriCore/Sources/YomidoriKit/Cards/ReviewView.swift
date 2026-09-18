@@ -8,7 +8,7 @@ import YomidoriDictionary
 /// meaning under a fold. Two answers, and the scheduler decides when it comes back.
 /// No streak, no count kept against anyone; when the queue is empty, it says so.
 struct ReviewView: View {
-    @State private var queue: [Card] = []
+    @State private var queue: [ReviewItem] = []
     @State private var revealed = false
     /// Typed answers: the reading typed in kana and checked strictly, every review a
     /// few words of kana typing on vocabulary actually met. Remembered.
@@ -19,8 +19,8 @@ struct ReviewView: View {
 
     var body: some View {
         Group {
-            if let card = queue.first {
-                review(card)
+            if let item = queue.first {
+                review(item)
             } else {
                 Text("Nothing due. Read on.", bundle: .module)
                     .foregroundStyle(.secondary)
@@ -42,38 +42,30 @@ struct ReviewView: View {
         .onAppear(perform: reload)
     }
 
-    private func review(_ card: Card) -> some View {
-        VStack(alignment: .leading, spacing: 20) {
+    private func review(_ item: ReviewItem) -> some View {
+        let card = item.card
+        return VStack(alignment: .leading, spacing: 20) {
             front(card)
+            if item.question == .meaning {
+                askedMeaning(card)
+            }
             Spacer()
             if revealed {
                 if let verdict {
                     verdictLine(verdict)
                 }
-                back(card)
+                if item.question == .reading {
+                    back(card)
+                } else {
+                    meaningBack(card)
+                }
                 HStack(spacing: 16) {
-                    gradeButton(card, .again, prominent: verdict == false)
-                    gradeButton(card, .good, prominent: verdict != false)
+                    gradeButton(item, .again, prominent: verdict == false)
+                    gradeButton(item, .good, prominent: verdict != false)
                 }
                 .controlSize(.large)
-            } else if typedAnswers {
-                TextField(text: $answer) {
-                    Text("Type the reading", bundle: .module)
-                }
-                .textFieldStyle(.roundedBorder)
-                .font(.title2)
-                .focused($typing)
-                .submitLabel(.done)
-                .onSubmit { check(card) }
-                .onAppear { typing = true }
             } else {
-                Button {
-                    revealed = true
-                } label: {
-                    Text("Show the reading", bundle: .module).frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
+                prompt(item)
             }
             Text(verbatim: "\(queue.count)")
                 .font(.caption)
@@ -82,6 +74,34 @@ struct ReviewView: View {
         }
         .padding(24)
         .tint(Palette.nightGreen)
+    }
+
+    /// Before the reveal: the kana field when typing answers to a reading, else the button.
+    @ViewBuilder private func prompt(_ item: ReviewItem) -> some View {
+        let card = item.card
+        if typedAnswers, item.question == .reading {
+            TextField(text: $answer) {
+                Text("Type the reading", bundle: .module)
+            }
+            .textFieldStyle(.roundedBorder)
+            .font(.title2)
+            .focused($typing)
+            .submitLabel(.done)
+            .onSubmit { check(card) }
+            .onAppear { typing = true }
+        } else {
+            Button {
+                revealed = true
+            } label: {
+                if item.question == .reading {
+                    Text("Show the reading", bundle: .module).frame(maxWidth: .infinity)
+                } else {
+                    Text("Show the meaning", bundle: .module).frame(maxWidth: .infinity)
+                }
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+        }
     }
 
     /// The front: the latest sentence with the word marked, or the word alone when
@@ -119,24 +139,62 @@ struct ReviewView: View {
         .foregroundStyle(correct ? Palette.nightGreen : .secondary)
     }
 
-    @ViewBuilder private func gradeButton(_ card: Card, _ grade: Grade, prominent: Bool)
+    @ViewBuilder private func gradeButton(_ item: ReviewItem, _ grade: Grade, prominent: Bool)
         -> some View
     {
         let label = Text(grade == .again ? "Again" : "Good", bundle: .module).frame(
             maxWidth: .infinity)
         if prominent {
             Button {
-                answer(card, grade)
+                answer(item, grade)
             } label: {
                 label
             }.buttonStyle(.borderedProminent)
         } else {
             Button {
-                answer(card, grade)
+                answer(item, grade)
             } label: {
                 label
             }.buttonStyle(.bordered)
         }
+    }
+
+    /// A meaning question gives the reading away; the question is what the word means.
+    private func askedMeaning(_ card: Card) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
+            Text(verbatim: card.headword)
+                .font(.title)
+            Text(verbatim: card.reading)
+                .font(.title3)
+                .foregroundStyle(Palette.nightGreen)
+            Text("What does it mean?", bundle: .module)
+                .font(.callout)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    /// The meaning's back: the senses, and the system dictionary.
+    private func meaningBack(_ card: Card) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            if let entry = dictionaryEntry(card) {
+                ForEach(entry.senses.prefix(4).indices, id: \.self) { index in
+                    Text(
+                        verbatim:
+                            "\(index + 1). \(entry.senses[index].glosses.joined(separator: "; "))"
+                    )
+                    .font(.callout)
+                }
+            } else {
+                Text("Not in the dictionary.", bundle: .module)
+                    .foregroundStyle(.secondary)
+            }
+            DictionaryButton(term: card.headword)
+        }
+    }
+
+    private func dictionaryEntry(_ card: Card) -> DictionaryEntry? {
+        JMdict.bundled?.entries(matching: card.headword)
+            .first { $0.readings.map(Kana.hiragana).contains(card.reading) }
     }
 
     private func check(_ card: Card) {
@@ -201,9 +259,11 @@ struct ReviewView: View {
         return text
     }
 
-    private func answer(_ card: Card, _ grade: Grade) {
-        var reviewed = card
-        reviewed.review = FSRS.review(card.review, grade: grade, at: Date())
+    private func answer(_ item: ReviewItem, _ grade: Grade) {
+        var reviewed = item.card
+        reviewed.setState(
+            FSRS.review(item.card.state(for: item.question), grade: grade, at: Date()),
+            for: item.question)
         try? Cards.store?.update(reviewed)
         revealed = false
         answer = ""
@@ -212,7 +272,7 @@ struct ReviewView: View {
     }
 
     private func reload() {
-        queue = Cards.store?.due(at: Date()) ?? []
+        queue = Cards.store?.dueItems(at: Date()) ?? []
         revealed = false
     }
 }
