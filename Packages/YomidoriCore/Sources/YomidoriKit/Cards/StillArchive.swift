@@ -1,0 +1,68 @@
+import CoreGraphics
+import Foundation
+import ImageIO
+import UniformTypeIdentifiers
+import YomidoriCore
+
+/// The stills that cards were read from, as JPEG files in Application Support,
+/// one per id, scaled down so a page is a megabyte or two rather than twelve.
+/// Plain ImageIO, so it runs wherever Core does.
+enum StillArchive {
+    static let longestSide: CGFloat = 2000
+
+    static func directory() throws -> URL {
+        let base = try FileManager.default.url(
+            for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil,
+            create: true)
+        let directory = base.appendingPathComponent("Stills", isDirectory: true)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        return directory
+    }
+
+    static func url(for id: UUID) throws -> URL {
+        try directory().appendingPathComponent("\(id.uuidString).jpg")
+    }
+
+    /// Saves the still and returns the id it is kept under.
+    @discardableResult
+    static func save(_ still: Still) throws -> UUID {
+        let id = UUID()
+        let destination = try url(for: id)
+        guard
+            let sink = CGImageDestinationCreateWithURL(
+                destination as CFURL, UTType.jpeg.identifier as CFString, 1, nil)
+        else { throw CocoaError(.fileWriteUnknown) }
+        let scale = min(1, longestSide / max(still.size.width, still.size.height))
+        let image = scale < 1 ? scaled(still.image, by: scale) ?? still.image : still.image
+        CGImageDestinationAddImage(
+            sink, image, [kCGImageDestinationLossyCompressionQuality: 0.85] as CFDictionary)
+        guard CGImageDestinationFinalize(sink) else { throw CocoaError(.fileWriteUnknown) }
+        return id
+    }
+
+    static func load(_ id: UUID) -> CGImage? {
+        guard let url = try? url(for: id),
+            let source = CGImageSourceCreateWithURL(url as CFURL, nil)
+        else { return nil }
+        return CGImageSourceCreateImageAtIndex(source, 0, nil)
+    }
+
+    private static func scaled(_ image: CGImage, by scale: CGFloat) -> CGImage? {
+        let width = Int(CGFloat(image.width) * scale)
+        let height = Int(CGFloat(image.height) * scale)
+        guard
+            let context = CGContext(
+                data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
+                space: CGColorSpaceCreateDeviceRGB(),
+                bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)
+        else { return nil }
+        context.interpolationQuality = .high
+        context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+        return context.makeImage()
+    }
+}
+
+/// The app's one card store, opened once.
+enum Cards {
+    static let store: FileCardStore? = try? FileCardStore.inApplicationSupport()
+}

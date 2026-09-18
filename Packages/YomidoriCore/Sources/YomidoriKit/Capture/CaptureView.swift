@@ -183,7 +183,7 @@ public struct CaptureView: View {
 
     @ViewBuilder private var transcript: some View {
         if let analysis, analysis.hasResults(for: .text) {
-            TranscriptReadout(transcript: analysis.transcript)
+            TranscriptReadout(transcript: analysis.transcript, still: still)
         } else if LiveText.isSupported {
             Text("Nothing was recognized.", bundle: .module)
                 .foregroundStyle(.secondary)
