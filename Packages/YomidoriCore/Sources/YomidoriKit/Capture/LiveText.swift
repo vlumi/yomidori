@@ -21,23 +21,34 @@ enum LiveText {
 }
 
 #if os(iOS)
-/// The still with Live Text's own selection over it: tap, drag or double-tap the
-/// words as in Photos, to see how the engine segments what it read.
+/// The still with Live Text's own selection over it, in a scroll view that pinches
+/// to zoom as Photos does: tap, drag or double-tap the words to see how the engine
+/// segments what it read.
 struct LiveTextImage: UIViewRepresentable {
     let still: Still
     let analysis: ImageAnalysis?
 
-    func makeUIView(context: Context) -> FittedImageView {
-        let view = FittedImageView(image: UIImage(cgImage: still.image))
-        view.contentMode = .scaleAspectFit
-        view.isUserInteractionEnabled = true
-        view.addInteraction(context.coordinator)
+    func makeUIView(context: Context) -> ZoomingImageView {
+        let view = ZoomingImageView(image: UIImage(cgImage: still.image))
+        view.imageView.addInteraction(context.coordinator.interaction)
         return view
     }
 
-    func updateUIView(_ uiView: FittedImageView, context: Context) {
-        uiView.image = UIImage(cgImage: still.image)
-        context.coordinator.analysis = analysis
+    func updateUIView(_ uiView: ZoomingImageView, context: Context) {
+        uiView.imageView.image = UIImage(cgImage: still.image)
+        context.coordinator.interaction.analysis = analysis
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
+    @MainActor final class Coordinator {
+        let interaction = ImageAnalysisInteraction()
+
+        init() {
+            interaction.preferredInteractionTypes = .textSelection
+        }
     }
 
     /// An image view with no natural size of its own. UIImageView reports the
@@ -49,10 +60,40 @@ struct LiveTextImage: UIViewRepresentable {
         }
     }
 
-    func makeCoordinator() -> ImageAnalysisInteraction {
-        let interaction = ImageAnalysisInteraction()
-        interaction.preferredInteractionTypes = .textSelection
-        return interaction
+    /// A scroll view whose only content is the image, filling it and zooming it.
+    final class ZoomingImageView: UIScrollView, UIScrollViewDelegate {
+        let imageView: FittedImageView
+
+        init(image: UIImage) {
+            imageView = FittedImageView(image: image)
+            super.init(frame: .zero)
+            imageView.contentMode = .scaleAspectFit
+            imageView.isUserInteractionEnabled = true
+            addSubview(imageView)
+            delegate = self
+            minimumZoomScale = 1
+            maximumZoomScale = 6
+            showsHorizontalScrollIndicator = false
+            showsVerticalScrollIndicator = false
+            bouncesZoom = true
+        }
+
+        @available(*, unavailable)
+        required init?(coder: NSCoder) {
+            fatalError("not used")
+        }
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            if zoomScale == 1 {
+                imageView.frame = bounds
+                contentSize = bounds.size
+            }
+        }
+
+        func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+            imageView
+        }
     }
 }
 #else

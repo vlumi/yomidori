@@ -78,7 +78,10 @@ the Mac; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
   Recognizers downscale a whole page before reading, so a dense kanji reaches
   them at a fraction of the pixels the sensor caught; the crop hands them the
   pixels back without the reader zooming, and a whole line with clean margins
-  reads better than a square that halves the glyphs at its edges. The screen shows any of the
+  reads better than a square that halves the glyphs at its edges. In every
+  mode the frozen still pinches to zoom and drags to pan, a double tap bringing
+  it back; the tap on a line or a word is reported in the still's own
+  coordinates whatever the zoom, so the geometry seam knows nothing of it. The screen shows any of the
   three, switched at the bottom; the roadmap's spike is the comparison against
   a real book.
 - **`Token`** and **`SystemTokenizer`** (Core): a sentence cut into words by the

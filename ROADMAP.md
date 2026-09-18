@@ -21,7 +21,7 @@ The whole idea rests on on-device text recognition reading real books: vertical 
 ## Freeze & tap — *the reading, one-handed*
 
 - [ ] **Freeze the page.** Camera view that only frames; shutter on screen (done), on the volume button and on the Camera Control; the still is what everything works on, pinch to zoom (done, with macro up close on phones that have it).
-- [ ] **Tap a word.** A tap anywhere on a token highlights the whole token, vertical or horizontal; a second tap on a neighbor extends over a compound. The reading appears in a bottom sheet in large kana, meaning collapsed under it. The recognized characters are editable in the sheet, and the transcript can be copied out. The frozen still pinches to zoom and pans, so a small word is easy to hit.
+- [ ] **Tap a word.** A tap anywhere on a token highlights the whole token, vertical or horizontal; a second tap on a neighbor extends over a compound. The reading appears in a bottom sheet in large kana, meaning collapsed under it. The recognized characters are editable in the sheet; the transcript copies out (done). The frozen still pinches to zoom and pans, so a small word is easy to hit (done).
 - [ ] **Reach.** Everything touchable in the thumb's arc; the page can be swiped so the top of a column comes down.
 - [ ] **A screenshot as the still.** Reading on the same device — an e-book app, a web page — the still comes from a screenshot instead of the camera: the photo picker inside the app first, then a share extension so Share → Yomidori from the screenshot preview lands straight on the freeze-and-tap screen. Everything after the still is the same code, the vertical columns of an e-book novel included; screenshots are only sharper than any camera frame.
 
