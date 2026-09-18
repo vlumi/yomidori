@@ -14,10 +14,12 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     public let entryID: Int?
     public var sightings: [Sighting]
     public let created: Date
+    /// The scheduler's memory of the card; nil until the first review, and due at once then.
+    public var review: ReviewState?
 
     public init(
         id: UUID = UUID(), headword: String, reading: String, entryID: Int?,
-        sightings: [Sighting], created: Date
+        sightings: [Sighting], created: Date, review: ReviewState? = nil
     ) {
         self.id = id
         self.headword = headword
@@ -25,6 +27,12 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         self.entryID = entryID
         self.sightings = sightings
         self.created = created
+        self.review = review
+    }
+
+    /// Whether the card is due at `date`: never reviewed, or its due date has come.
+    public func isDue(at date: Date) -> Bool {
+        review.map { $0.due <= date } ?? true
     }
 }
 

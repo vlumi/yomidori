@@ -9,6 +9,16 @@ public protocol CardStore {
     @discardableResult
     func keep(_ sighting: Sighting, headword: String, reading: String, entryID: Int?) throws -> Card
     func remove(_ card: Card) throws
+    /// Replaces the card with the same id, as after a review.
+    func update(_ card: Card) throws
+}
+
+extension CardStore {
+    /// The cards due at `date`, the longest overdue first, then the oldest.
+    public func due(at date: Date) -> [Card] {
+        cards().filter { $0.isDue(at: date) }
+            .sorted { ($0.review?.due ?? $0.created) < ($1.review?.due ?? $1.created) }
+    }
 }
 
 /// The cards as one JSON document, written whole and atomically on every change.
@@ -68,6 +78,15 @@ public final class FileCardStore: CardStore {
     public func remove(_ card: Card) throws {
         try queue.sync {
             try save(all().filter { $0.id != card.id })
+        }
+    }
+
+    public func update(_ card: Card) throws {
+        try queue.sync {
+            var cards = all()
+            guard let index = cards.firstIndex(where: { $0.id == card.id }) else { return }
+            cards[index] = card
+            try save(cards)
         }
     }
 
