@@ -75,6 +75,12 @@ describing intent as fact otherwise.
   JMdict and Kanjium are CC BY-SA 4.0 — the attributions are in
   [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), shown on the About screen,
   and in the database's `meta` table.
+- **manga-ocr is optional and built, not committed.** `make models` converts
+  the model to Core ML into `Sources/Shared/Models/` (~210 MB, gitignored) with
+  Homebrew's `python@3.13` and a local venv; the app hides the engine when the
+  models are absent, so CI and a fresh clone build without them, and a release
+  cut without them ships without the engine (the preflight says so). MIT; the
+  notice is in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 - **Third-party code at runtime: none by default.** Everything ships with the OS
   (Foundation, SwiftUI, UIKit, Vision, AVFoundation). The one exception is
   MeCab with IPADic (the Mecab-Swift package, pinned to a commit), which is in
@@ -118,9 +124,11 @@ yomidori/
 │     release-*.sh, distribute.sh   The release lane (RELEASING.md)
 │     assets/make-icon.swift        Renders the app icon PNG (make icon)
 │     data/build-jmdict.py          JMdict XML + Kanjium accents → the bundled SQLite (make dictionary)
+│     data/build-mangaocr.py        manga-ocr → Core ML (make models; optional)
 ├── Sources/iOS/                    Thin @main app shell (+ Info.plist, entitlements)
 ├── Sources/Shared/                 The asset catalog (AppIcon), the app-level String Catalogs (InfoPlist too)
 │     Dictionaries/jmdict.sqlite    Built by make dictionary; gitignored
+│     Models/                       manga-ocr's Core ML packages, by make models; gitignored, optional
 └── Packages/YomidoriCore/          Swift package — all the code
     ├── Sources/YomidoriCore/       Pure logic — tested, coverage-gated; grouped by domain as it grows:
     │   ├── Kana.swift              katakana ↔ hiragana, the first of the reading helpers
@@ -129,6 +137,7 @@ yomidori/
     │   └── Recognition/            RecognizedLine, TextGeometry (the Vision-box ↔ view seam)
     ├── Sources/YomidoriDictionary/ JMdict, the SQLite reader over the bundled database (system SQLite)
     ├── Sources/YomidoriMeCab/      MeCab + IPADic behind Tokenizer — the one third-party dependency, quarantined
+    ├── Sources/YomidoriMangaOCR/   manga-ocr through Core ML: a CGImage in, a String out; coverage-ignored
     ├── Sources/YomidoriKit/        SwiftUI + UIKit + Vision, depends on Core, Dictionary and MeCab; coverage-ignored
     │   ├── App/                    AppRoot, Palette (夜緑 tokens), Compat (platform-only wrappers)
     │   ├── Capture/                Camera, Still, TextRecognizer (Vision), LiveText (VisionKit), CaptureView
@@ -165,6 +174,7 @@ make run-ipad          # same, iPad (DEVICE="Air")
 make run-device        # build + install + launch on a paired iPhone/iPad (DEVICE="<name>" to pick)
 make icon              # regenerate the app icon PNG
 make dictionary        # build the bundled JMdict database (downloads JMdict_e once)
+make models            # convert manga-ocr to Core ML into the app (optional; python3.13 + venv; ~210 MB)
 make generate          # regenerate Yomidori.xcodeproj from project.yml (only if stale)
 make clean             # remove the generated project + build output
 ```

@@ -21,11 +21,11 @@ before it is built.
 
 ## Two targets, one seam
 
-| | `YomidoriCore` | `YomidoriDictionary` | `YomidoriMeCab` | `YomidoriKit` |
-| --- | --- | --- | --- | --- |
-| holds | kana and reading helpers, the token model and the OS's tokenizer, the dictionary entry model; later the card model and the scheduler | `JMdict`, the reader over the bundled SQLite database, behind Core's `WordDictionary` | MeCab with IPADic behind Core's `Tokenizer`, the one third-party dependency, kept apart so it can be cut | SwiftUI screens, the camera, Vision text recognition, the palette |
-| imports | Foundation | YomidoriCore, the system's SQLite3 | YomidoriCore, Mecab-Swift | SwiftUI, UIKit and Vision (iOS only), YomidoriCore, YomidoriDictionary, YomidoriMeCab |
-| tested | headless, coverage-gated | headless, on a fixture built by the same script | headless, on the same fixture | coverage-ignored |
+| | `YomidoriCore` | `YomidoriDictionary` | `YomidoriMeCab` | `YomidoriMangaOCR` | `YomidoriKit` |
+| --- | --- | --- | --- | --- | --- |
+| holds | kana and reading helpers, the token model and the OS's tokenizer, the dictionary entry model, the cards and the scheduler | `JMdict`, the reader over the bundled SQLite database, behind Core's `WordDictionary` | MeCab with IPADic behind Core's `Tokenizer`, the one third-party dependency, kept apart so it can be cut | manga-ocr through Core ML, a `CGImage` in and a `String` out, present only when the models are bundled | SwiftUI screens, the camera, Vision text recognition, the palette |
+| imports | Foundation | YomidoriCore, the system's SQLite3 | YomidoriCore, Mecab-Swift | YomidoriCore, CoreML | SwiftUI, UIKit and Vision (iOS only), YomidoriCore, YomidoriDictionary, YomidoriMeCab, YomidoriMangaOCR |
+| tested | headless, coverage-gated | headless, on a fixture built by the same script | headless, on the same fixture | coverage-ignored (the models are not in the tests) | coverage-ignored |
 
 The rule: **testable logic goes in YomidoriCore.** The Kit compiles on macOS
 too, today because `swift test` runs on the Mac and later for the Mac app the
@@ -195,6 +195,15 @@ use for its own input.
   opens as a tapped word does, with its pitch, senses and the system dictionary,
   and *Keep* makes a card with no sentence yet, which the review then asks by
   the word alone until a page supplies one.
+- **`MangaOCR`** (its own target): manga-ocr, a vision transformer reading one
+  line or bubble of Japanese at a time, vertical included, converted to Core ML
+  by `Scripts/data/build-mangaocr.py`: the encoder as it is, the decoder
+  re-expressed as one cache-free step with an explicit mask, the vocabulary
+  beside them; ~210 MB at half precision, MIT, optional at build and absent from
+  the engine list when not bundled. In Close-up it reads a window of about eight
+  characters along the line around the tap (`TextGeometry.window`), which is the
+  bubble's worth it was trained on; a whole long line squeezed into its 224
+  pixels fails, so it is never given one. Nothing leaves the device.
 - **`DictionaryButton`** (Kit): beside a tapped word, on a card and on the
   review's back, a button that opens the system's own dictionaries on the
   headword through the reference library view, スーパー大辞林 among them on a
