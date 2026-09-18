@@ -63,7 +63,10 @@ use for its own input.
   the system hands a page held close to the ultra-wide (macro) and a pinch past
   the wide's reach to the telephoto, both optical; autofocus is kept to the near
   range, since a book is read at arm's length. The pinch on the preview is the
-  zoom-before-capture that small print needs.
+  zoom-before-capture that small print needs. From iOS 17.2 the volume buttons
+  and the Camera Control press the shutter too, through the capture event
+  interaction the system offers camera apps, so the book stays in the other hand;
+  before that the shutter is on screen only.
   `Still` is the frozen frame, upright, so orientation is settled once; from the
   picker it is decoded upright. A still also comes from the photo picker, which
   is how a screenshot enters and how the simulator, having no camera, is used.

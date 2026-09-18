@@ -40,7 +40,8 @@ public struct CaptureView: View {
                     closeUpStill(still)
                 }
             } else {
-                CameraPreview(camera: camera, access: camera.access).ignoresSafeArea()
+                CameraPreview(camera: camera, access: camera.access, shutter: takeStill)
+                    .ignoresSafeArea()
                 CameraNotice(access: camera.access)
                 if !pages.isEmpty {
                     SpreadNotice(startOver: startOver)
