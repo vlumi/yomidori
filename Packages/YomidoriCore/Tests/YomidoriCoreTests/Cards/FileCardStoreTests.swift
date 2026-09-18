@@ -71,6 +71,20 @@ final class FileCardStoreTests: XCTestCase {
         XCTAssertEqual(FileCardStore(url: url).cards(), [])
     }
 
+    func testANewCardIsDueAndAReviewedOneWaitsUntilItsDate() throws {
+        let store = FileCardStore(url: url)
+        var card = try store.keep(
+            sighting("樹皮の匂いがした。", "樹皮"), headword: "樹皮", reading: "じゅひ", entryID: nil)
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        XCTAssertEqual(store.due(at: now).map(\.id), [card.id])
+        card.review = FSRS.review(nil, grade: .good, at: now)
+        try store.update(card)
+        XCTAssertTrue(store.due(at: now).isEmpty)
+        XCTAssertEqual(
+            FileCardStore(url: url).due(at: now.addingTimeInterval(4 * 86_400)).map(\.id), [card.id]
+        )
+    }
+
     func testTheFileIsReadableJSON() throws {
         try FileCardStore(url: url).keep(
             sighting("樹皮の匂いがした。", "樹皮"), headword: "樹皮", reading: "じゅひ", entryID: 1330370)
