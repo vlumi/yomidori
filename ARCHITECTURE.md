@@ -71,11 +71,14 @@ the Mac; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
   and yields `RecognizedLine`s, drawn back over the page, tap one to read it;
   `LiveText` wraps VisionKit's `ImageAnalyzer`, the Live Text engine, which
   yields a transcript and, on iOS, its own text selection over the image. A
-  third mode reads *up close*: a tap cuts a square around it out of the still at
-  full resolution, a third of the page's longer side, and both engines read only
-  that. Recognizers downscale a whole page before reading, so a dense kanji
-  reaches them at a fraction of the pixels the sensor caught; the crop hands
-  them the pixels back without the reader zooming. The screen shows any of the
+  third mode reads *up close*: a tap cuts the line under it, as the page pass
+  found it, out of the still at full resolution with the paper around it, and
+  both engines read only that; where no line was found (a vertical column, which
+  only Live Text reads and without positions) a square around the tap stands in.
+  Recognizers downscale a whole page before reading, so a dense kanji reaches
+  them at a fraction of the pixels the sensor caught; the crop hands them the
+  pixels back without the reader zooming, and a whole line with clean margins
+  reads better than a square that halves the glyphs at its edges. The screen shows any of the
   three, switched at the bottom; the roadmap's spike is the comparison against
   a real book.
 - **`AppRoot`** (Kit): hosts the capture screen; the place navigation will hang
