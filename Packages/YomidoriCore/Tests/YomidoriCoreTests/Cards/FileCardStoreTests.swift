@@ -96,6 +96,7 @@ final class FileCardStoreTests: XCTestCase {
         try old.write(to: url, atomically: true, encoding: .utf8)
         let card = try XCTUnwrap(FileCardStore(url: url).cards().first)
         XCTAssertEqual(card.sightings[0].stillIDs, [still])
+        XCTAssertNil(card.sightings[0].cropID)
     }
 
     func testAMeaningQuestionIsItsOwnItemWithItsOwnSchedule() throws {
