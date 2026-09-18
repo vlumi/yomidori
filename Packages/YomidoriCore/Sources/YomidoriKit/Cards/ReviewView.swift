@@ -86,6 +86,8 @@ struct ReviewView: View {
                         .font(.title2)
                         .foregroundStyle(Palette.nightGreen)
                 }
+                Spacer()
+                DictionaryButton(term: card.headword)
             }
             .textSelection(.enabled)
             if let entry = JMdict.bundled?.entries(matching: card.headword).first(where: {

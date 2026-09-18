@@ -78,6 +78,8 @@ struct CardView: View {
                             .font(.title3)
                             .foregroundStyle(Palette.nightGreen)
                     }
+                    Spacer()
+                    DictionaryButton(term: card.headword)
                 }
                 .textSelection(.enabled)
             }
