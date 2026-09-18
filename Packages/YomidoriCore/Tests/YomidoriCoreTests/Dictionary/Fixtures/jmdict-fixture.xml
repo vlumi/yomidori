@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A hand-made sliver of JMdict_e, in its format, for the dictionary tests.
+     Rebuild the .sqlite beside it with Scripts/data/build-jmdict.py, giving this
+     file as the source and the .sqlite as the output.
+     JMdict created: 2026-09-17 -->
+<!DOCTYPE JMdict [
+<!ENTITY n "noun (common) (futsuumeishi)">
+<!ENTITY adj-no "nouns which may take the genitive case particle 'no'">
+<!ENTITY v5k "Godan verb with 'ku' ending">
+<!ENTITY vi "intransitive verb">
+<!ENTITY exp "expressions (phrases, clauses, etc.)">
+]>
+<JMdict>
+<entry>
+<ent_seq>1330370</ent_seq>
+<k_ele><keb>樹皮</keb></k_ele>
+<r_ele><reb>じゅひ</reb></r_ele>
+<sense><pos>&n;</pos><gloss>bark (of a tree)</gloss></sense>
+</entry>
+<entry>
+<ent_seq>1270080</ent_seq>
+<k_ele><keb>頷く</keb></k_ele>
+<k_ele><keb>肯く</keb></k_ele>
+<r_ele><reb>うなずく</reb></r_ele>
+<sense><pos>&v5k;</pos><pos>&vi;</pos><gloss>to nod</gloss><gloss>to bow one's head in assent</gloss><gloss>to agree</gloss></sense>
+</entry>
+<entry>
+<ent_seq>1401490</ent_seq>
+<k_ele><keb>相槌</keb></k_ele>
+<k_ele><keb>相づち</keb></k_ele>
+<r_ele><reb>あいづち</reb></r_ele>
+<sense><pos>&n;</pos><gloss>sounds given during a conversation to indicate comprehension</gloss><gloss>back-channeling</gloss></sense>
+<sense><gloss>two smiths hammering at an object in turn</gloss></sense>
+</entry>
+<entry>
+<ent_seq>1378250</ent_seq>
+<k_ele><keb>生地</keb><ke_pri>news1</ke_pri><ke_pri>nf14</ke_pri></k_ele>
+<r_ele><reb>きじ</reb><re_pri>news1</re_pri></r_ele>
+<sense><pos>&n;</pos><gloss>cloth</gloss><gloss>fabric</gloss><gloss>material</gloss><gloss>texture</gloss></sense>
+<sense><gloss>dough</gloss><gloss>batter</gloss></sense>
+<sense><gloss>inherent quality</gloss><gloss>one's true character</gloss></sense>
+</entry>
+<entry>
+<ent_seq>1378420</ent_seq>
+<k_ele><keb>生</keb><ke_pri>ichi1</ke_pri></k_ele>
+<r_ele><reb>なま</reb><re_pri>ichi1</re_pri></r_ele>
+<sense><pos>&adj-no;</pos><pos>&n;</pos><gloss>raw</gloss><gloss>uncooked</gloss><gloss>fresh</gloss></sense>
+<sense><gloss>natural</gloss><gloss>as it is</gloss><gloss>unedited</gloss><gloss>unprocessed</gloss></sense>
+</entry>
+<entry>
+<ent_seq>1382420</ent_seq>
+<k_ele><keb>街</keb><ke_pri>ichi1</ke_pri></k_ele>
+<r_ele><reb>まち</reb><re_pri>ichi1</re_pri></r_ele>
+<r_ele><reb>がい</reb></r_ele>
+<sense><pos>&n;</pos><gloss>town</gloss><gloss>street</gloss><gloss>district</gloss></sense>
+</entry>
+</JMdict>
