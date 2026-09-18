@@ -16,6 +16,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### build 2 — 2026-09-17
 
+- **Words and their readings under the transcript.** The Live Text transcript is shown as its words, each with its reading over it, and a tap shows the word large with its reading and dictionary form; a switch runs the same page through the OS's own analyzer or through MeCab with IPADic, to compare them on real pages, and the transcript copies out with one button.
 - **The still is the sensor's full frame.** Build 1 froze a preview-sized frame of about a megapixel, which is why small print read so badly; the shutter now keeps the full-resolution frame, and reading up close has real pixels to work with.
 - **The camera permission asks in a sentence, in English too.** Build 1 showed English devices the raw key instead of the reason.
 

@@ -21,11 +21,11 @@ before it is built.
 
 ## Two targets, one seam
 
-| | `YomidoriCore` | `YomidoriKit` |
-| --- | --- | --- |
-| holds | kana and reading helpers; later the token model, the card model, the scheduler, the dictionary lookups | SwiftUI screens, the camera, Vision text recognition, the palette |
-| imports | Foundation | SwiftUI, UIKit and Vision (iOS only), YomidoriCore |
-| tested | headless, coverage-gated | coverage-ignored |
+| | `YomidoriCore` | `YomidoriMeCab` | `YomidoriKit` |
+| --- | --- | --- | --- |
+| holds | kana and reading helpers, the token model and the OS's tokenizer; later the card model, the scheduler, the dictionary lookups | MeCab with IPADic behind Core's `Tokenizer`, the one third-party dependency, kept apart so it can be cut | SwiftUI screens, the camera, Vision text recognition, the palette |
+| imports | Foundation | YomidoriCore, Mecab-Swift | SwiftUI, UIKit and Vision (iOS only), YomidoriCore, YomidoriMeCab |
+| tested | headless, coverage-gated | headless, on the same fixture | coverage-ignored |
 
 The rule: **testable logic goes in YomidoriCore.** The Kit compiles on macOS
 too — not for a Mac app (there will be none) but because `swift test` runs on
@@ -90,6 +90,16 @@ the Mac; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
   tokens, and ranges point back into the text. Measured equal to MeCab with
   UniDic on the fixture in its tests; the dictionary form and pitch are the
   dictionary layer's to add.
+- **`MeCabTokenizer`** (its own target): MeCab with IPADic behind the same
+  `Tokenizer` protocol, so the two can be switched under the Live Text
+  transcript and compared on real pages; it also knows dictionary forms. It is
+  the one third-party runtime dependency (Mecab-Swift, MIT; MeCab under its BSD
+  option; IPADic under its own notice, all in THIRD_PARTY_NOTICES.md), pinned to
+  a commit and quarantined so that keeping or cutting it is one line.
+- **`TokenFlow`** and **`TranscriptReadout`** (Kit): the transcript as its
+  words, a line per line of the page, wrapping, each word with its reading over
+  it where the reading adds something; a tap fills the word and shows it large
+  with its reading and dictionary form. The first shape of the reading sheet.
 - **`AppRoot`** (Kit): hosts the capture screen; the place navigation will hang
   from.
 
@@ -142,10 +152,12 @@ the roadmap:
 | Apple `NLTokenizer` + JMdict furigana data | segmentation only from Apple; readings from data | no | small | JMdict CC BY-SA 4.0 |
 | Kanjium pitch database | — | yes, keyed to JMdict headwords | small | free |
 
-The likely shape is a C tokenizer wrapped in a Swift module with a trimmed
-dictionary, plus Kanjium for pitch where the dictionary lacks it. Whatever is
-chosen is the one deliberate exception to "no third-party code at runtime", and
-its attribution goes on an About screen; JMdict and Kanjium both require it.
+Both the OS's analyzer and MeCab with IPADic are in the app now, switchable
+under the transcript, so the choice is made on real pages rather than on a
+fixture. Whatever is chosen is the one deliberate exception to "no third-party
+code at runtime", and its attribution goes on an About screen; JMdict and
+Kanjium both require it. Until the About screen exists the notices live in
+THIRD_PARTY_NOTICES.md.
 
 ### From token to card
 
