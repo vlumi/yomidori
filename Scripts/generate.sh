@@ -23,5 +23,11 @@ if ! command -v xcodegen >/dev/null; then
     exit 1
 fi
 
+# The bundled dictionary is built, not committed; the project must be generated
+# with it present or the app ships without it. Every path to a project (make,
+# the release lane) comes through here.
+dictionary="Sources/Shared/Dictionaries/jmdict.sqlite"
+[ -f "$dictionary" ] || Scripts/data/build-jmdict.py --output "$dictionary"
+
 xcodegen generate
 echo "Generated Yomidori.xcodeproj"

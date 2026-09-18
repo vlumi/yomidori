@@ -23,9 +23,19 @@ PROJECT_INPUTS := project.yml \
 	$(wildcard Sources/*/*.entitlements) \
 	$(wildcard Sources/*/*.xcstrings)
 
+# The bundled dictionary is built from JMdict, not committed (50 MB); the project
+# must exist on disk before XcodeGen runs, or the app is generated without it.
+DICTIONARY := Sources/Shared/Dictionaries/jmdict.sqlite
+
+$(DICTIONARY): Scripts/data/build-jmdict.py
+	@Scripts/data/build-jmdict.py --output $(DICTIONARY)
+
+.PHONY: dictionary
+dictionary: $(DICTIONARY)  ## Build the bundled JMdict database (downloads JMdict_e once into .build-data/)
+
 # File target: the generated project depends on its inputs, so `make` skips the
 # regen when nothing changed (and reruns it when project.yml etc. are edited).
-Yomidori.xcodeproj: $(PROJECT_INPUTS)
+Yomidori.xcodeproj: $(PROJECT_INPUTS) $(DICTIONARY)
 	@Scripts/generate.sh
 
 .PHONY: generate
@@ -70,7 +80,7 @@ icon:  ## Regenerate the app icon PNG (pure CoreGraphics; flattened opaque)
 .PHONY: clean
 clean:  ## Remove the generated project + local build output
 	@rm -rf Yomidori.xcodeproj .build-xcode Packages/YomidoriCore/.build dist
-	@echo "removed Yomidori.xcodeproj, .build-xcode, package .build, dist"
+	@echo "removed Yomidori.xcodeproj, .build-xcode, package .build, dist (the dictionary and its download stay; delete Sources/Shared/Dictionaries and .build-data by hand)"
 
 ##@ Release lane
 ##~ Cut a build: make release — runs preflight → publish → tag → distribute
