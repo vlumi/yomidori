@@ -16,10 +16,15 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     public let created: Date
     /// The scheduler's memory of the card; nil until the first review, and due at once then.
     public var review: ReviewState?
+    /// Whether the card also asks what the word means, as its own question with its
+    /// own schedule; off by default, since the reading is the gap the app is for.
+    public var asksMeaning: Bool
+    public var meaningReview: ReviewState?
 
     public init(
         id: UUID = UUID(), headword: String, reading: String, entryID: Int?,
-        sightings: [Sighting], created: Date, review: ReviewState? = nil
+        sightings: [Sighting], created: Date, review: ReviewState? = nil, asksMeaning: Bool = false,
+        meaningReview: ReviewState? = nil
     ) {
         self.id = id
         self.headword = headword
@@ -28,12 +33,56 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         self.sightings = sightings
         self.created = created
         self.review = review
+        self.asksMeaning = asksMeaning
+        self.meaningReview = meaningReview
     }
 
     /// Whether the card is due at `date`: never reviewed, or its due date has come.
     public func isDue(at date: Date) -> Bool {
         review.map { $0.due <= date } ?? true
     }
+
+    /// The questions the card is due to ask at `date`, the reading first.
+    public func dueQuestions(at date: Date) -> [Question] {
+        var questions: [Question] = []
+        if isDue(at: date) { questions.append(.reading) }
+        if asksMeaning, meaningReview.map({ $0.due <= date }) ?? true { questions.append(.meaning) }
+        return questions
+    }
+
+    /// The scheduler state for a question, and its update.
+    public func state(for question: Question) -> ReviewState? {
+        question == .reading ? review : meaningReview
+    }
+
+    public mutating func setState(_ state: ReviewState, for question: Question) {
+        if question == .reading { review = state } else { meaningReview = state }
+    }
+
+    // The first cards were written without the meaning fields; they read as off.
+    private enum CodingKeys: String, CodingKey {
+        case id, headword, reading, entryID, sightings, created, review, asksMeaning, meaningReview
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(UUID.self, forKey: .id)
+        headword = try c.decode(String.self, forKey: .headword)
+        reading = try c.decode(String.self, forKey: .reading)
+        entryID = try c.decodeIfPresent(Int.self, forKey: .entryID)
+        sightings = try c.decode([Sighting].self, forKey: .sightings)
+        created = try c.decode(Date.self, forKey: .created)
+        review = try c.decodeIfPresent(ReviewState.self, forKey: .review)
+        asksMeaning = try c.decodeIfPresent(Bool.self, forKey: .asksMeaning) ?? false
+        meaningReview = try c.decodeIfPresent(ReviewState.self, forKey: .meaningReview)
+    }
+}
+
+/// What a review asks of a card: how the word is read, always; what it means, when
+/// the reader turned that on for the word.
+public enum Question: String, Codable, Sendable, Hashable {
+    case reading
+    case meaning
 }
 
 /// The word as it was met once: the sentence as it stood on the page, where in it
