@@ -301,8 +301,11 @@ public struct CaptureView: View {
 
 /// The still, aspect-fitted, with each recognized line boxed over it in night
 /// green, the selected one filled, and an optional square (the close-up) drawn on
-/// top. The tap is reported with the frame the still occupies, for the geometry.
+/// top. It pinches to zoom and drags to pan; a double tap brings it back. The tap
+/// is reported in the still's own coordinates with the frame it occupies, whatever
+/// the zoom, so the geometry seam needs no knowledge of it.
 struct StillView: View {
+    @State private var zoom = Zoom()
     let still: Still
     let lines: [RecognizedLine]
     let selected: Int?
@@ -339,7 +342,12 @@ struct StillView: View {
             }
             .frame(width: geometry.size.width, height: geometry.size.height, alignment: .topLeading)
             .contentShape(Rectangle())
-            .onTapGesture { point in onTap(point, frame) }
+            .gesture(
+                SpatialTapGesture(count: 2).onEnded { _ in zoom = Zoom() }
+                    .exclusively(before: SpatialTapGesture().onEnded { onTap($0.location, frame) })
+            )
+            .zoomable($zoom, in: geometry.size)
+            .clipped()
         }
     }
 }
