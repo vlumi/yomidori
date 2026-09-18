@@ -93,6 +93,12 @@ struct ReviewView: View {
             Text(marked(sighting, hidden: !revealed))
                 .font(.title2)
                 .textSelection(.enabled)
+            if let cropID = sighting.cropID, let image = StillArchive.load(cropID) {
+                Image(decorative: image, scale: 1)
+                    .resizable()
+                    .scaledToFit()
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+            }
             if let source = sighting.source {
                 Text(verbatim: source)
                     .font(.caption)

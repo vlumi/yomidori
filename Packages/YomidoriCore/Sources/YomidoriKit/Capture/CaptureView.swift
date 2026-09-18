@@ -177,7 +177,7 @@ public struct CaptureView: View {
             TranscriptReadout(
                 transcript: Spread.join(pages.map(\.transcript) + [analysis.transcript]),
                 stills: pages.map(\.still) + [still].compactMap { $0 },
-                currentTranscript: analysis.transcript,
+                currentTranscript: analysis.transcript, currentLines: lines,
                 pageOffset: Spread.offset(
                     ofPage: pages.count, in: pages.map(\.transcript) + [analysis.transcript]),
                 selection: selection)
