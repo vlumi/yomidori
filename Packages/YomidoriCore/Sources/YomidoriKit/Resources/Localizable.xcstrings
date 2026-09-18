@@ -11,6 +11,16 @@
         }
       }
     },
+    "Cards" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード"
+          }
+        }
+      }
+    },
     "Choose a photo" : {
       "localizations" : {
         "ja" : {
@@ -37,6 +47,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "コピー"
+          }
+        }
+      }
+    },
+    "Keep" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "残す"
+          }
+        }
+      }
+    },
+    "Kept" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "残しました"
           }
         }
       }
@@ -87,6 +117,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "カメラがありません。写真を選んでください。"
+          }
+        }
+      }
+    },
+    "No cards yet. Tap a word under a page and keep it." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードはまだありません。ページの下の言葉をタップして残してください。"
           }
         }
       }
