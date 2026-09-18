@@ -28,9 +28,10 @@ before it is built.
 | tested | headless, coverage-gated | headless, on a fixture built by the same script | headless, on the same fixture | coverage-ignored |
 
 The rule: **testable logic goes in YomidoriCore.** The Kit compiles on macOS
-too — not for a Mac app (there will be none) but because `swift test` runs on
-the Mac; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
-`#if canImport(UIKit)` with a fallback.
+too, today because `swift test` runs on the Mac and later for the Mac app the
+roadmap plans; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
+`#if canImport(UIKit)` with a fallback, which is the same seam a Mac target will
+use for its own input.
 
 ## What exists
 
