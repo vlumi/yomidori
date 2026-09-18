@@ -61,6 +61,23 @@ public final class JMdict: WordDictionary {
         }
     }
 
+    public func pitchAccents(for headword: String, reading: String) -> [PitchAccent] {
+        queue.sync {
+            var statement: OpaquePointer?
+            let sql = "SELECT downsteps FROM accent WHERE headword = ?1 AND reading = ?2"
+            guard sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK else { return [] }
+            defer { sqlite3_finalize(statement) }
+            let transient = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
+            sqlite3_bind_text(statement, 1, headword, -1, transient)
+            sqlite3_bind_text(statement, 2, Kana.hiragana(reading), -1, transient)
+            guard sqlite3_step(statement) == SQLITE_ROW,
+                let text = sqlite3_column_text(statement, 0)
+            else { return [] }
+            return String(cString: text).split(separator: ",").compactMap { Int($0) }
+                .map(PitchAccent.init(downstep:))
+        }
+    }
+
     private func entry(id: Int) -> DictionaryEntry {
         let idText = String(id)
         let kanji = rows("SELECT text FROM kanji WHERE entry = ?1 ORDER BY ord", bind: idText).map {
