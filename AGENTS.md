@@ -63,11 +63,15 @@ describing intent as fact otherwise.
   phone. This is a product rule as much as a privacy one ([PRIVACY.md](PRIVACY.md)
   promises it).
 - **Third-party code at runtime: none by default.** Everything ships with the OS
-  (Foundation, SwiftUI, UIKit, Vision, AVFoundation). The one *planned* exception
-  is the tokenizer and its dictionaries, which have no first-party equivalent
-  with readings; that decision and its licensing live in ARCHITECTURE.md's
-  *Planned* chapter, and nothing else joins it without the same write-up. Dev
-  tools (SwiftLint, XcodeGen) don't count and aren't SPM deps.
+  (Foundation, SwiftUI, UIKit, Vision, AVFoundation). The one exception is
+  MeCab with IPADic (the Mecab-Swift package, pinned to a commit), which is in
+  the app as the *alternative* tokenizer while the choice against the OS's own
+  analyzer is compared in the field; it lives in its own target,
+  `YomidoriMeCab`, so nothing else imports it and cutting it is one line in
+  `Package.swift`. Its notices are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md),
+  which every bundled license goes into before the About screen exists. Nothing
+  else joins without the same write-up in ARCHITECTURE.md. Dev tools (SwiftLint,
+  XcodeGen) don't count and aren't SPM deps.
 
 ## Architecture: from a tap to a card
 
@@ -104,10 +108,13 @@ yomidori/
 └── Packages/YomidoriCore/          Swift package — all the code
     ├── Sources/YomidoriCore/       Pure logic — tested, coverage-gated; grouped by domain as it grows:
     │   ├── Kana.swift              katakana ↔ hiragana, the first of the reading helpers
+    │   ├── Reading/                Token, the Tokenizer protocol, SystemTokenizer (the OS's analyzer)
     │   └── Recognition/            RecognizedLine, TextGeometry (the Vision-box ↔ view seam)
-    ├── Sources/YomidoriKit/        SwiftUI + UIKit + Vision, depends on Core; coverage-ignored
-    │   ├── App/                    AppRoot (hosts the capture screen), Palette (夜緑 tokens, light + dark)
+    ├── Sources/YomidoriMeCab/      MeCab + IPADic behind Tokenizer — the one third-party dependency, quarantined
+    ├── Sources/YomidoriKit/        SwiftUI + UIKit + Vision, depends on Core and MeCab; coverage-ignored
+    │   ├── App/                    AppRoot, Palette (夜緑 tokens), Compat (platform-only wrappers)
     │   ├── Capture/                Camera, Still, TextRecognizer (Vision), LiveText (VisionKit), CaptureView
+    │   ├── Reading/                TokenFlow (words with readings, wrapping)
     │   └── Resources/              Localizable.xcstrings (the Kit's strings, en + ja)
     └── Tests/YomidoriCoreTests/    Grouped by domain, mirroring Core
 ```
