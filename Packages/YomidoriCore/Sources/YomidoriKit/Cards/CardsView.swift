@@ -94,7 +94,8 @@ struct CardView: View {
                             .font(.title3)
                             .textSelection(.enabled)
                     }
-                    ForEach(sighting.stillIDs, id: \.self) { id in
+                    let images = [sighting.cropID].compactMap { $0 } + sighting.stillIDs
+                    ForEach(images, id: \.self) { id in
                         if let image = StillArchive.load(id) {
                             Image(decorative: image, scale: 1)
                                 .resizable()
