@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **ヨミドリ under the icon** on a phone set to Japanese; Yomidori elsewhere, as on the two storefronts.
 - **The frozen page zooms.** Pinch the still to zoom and drag it to pan, in every mode, so a small word is easy to hit; a double tap brings the page back.
 - **Words and their readings under the transcript.** The Live Text transcript is shown as its words, each with its reading over it, and a tap shows the word large with its reading and dictionary form; a switch runs the same page through the OS's own analyzer or through MeCab with IPADic, to compare them on real pages, and the transcript copies out with one button.
 - **The close-up reads the whole line.** Reading up close now cuts the whole line under the tap out of the still, with the paper around it, instead of a square that halved the glyphs at its edges; a word near the end of a line reads as well as one in the middle.
