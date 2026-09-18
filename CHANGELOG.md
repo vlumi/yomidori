@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 3 — 2026-09-18
+
 - **A home screen.** The app opens on its name with one big *Read* button, *Cards* with how many are due, and *About*; the camera starts only when you ask. Reopened after a restart, it returns to the screen you were on.
 - **About.** Top left of the camera: the version, the promise that nothing leaves the device, how the pitch line is read, and the licenses and notices of everything bundled, JMdict, Kanjium, MeCab, IPADic and Mecab-Swift.
 - **Keep a word.** Beside a tapped word, *Keep* makes a card of it: the line it stands in as the sentence, with the word marked, and the page it was read from. A word kept again gets another sentence on the same card. *Cards*, top right, lists them and opens each with its reading and pitch, its sentences and its pages; swipe to remove.
