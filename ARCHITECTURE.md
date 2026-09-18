@@ -21,11 +21,11 @@ before it is built.
 
 ## Two targets, one seam
 
-| | `YomidoriCore` | `YomidoriMeCab` | `YomidoriKit` |
-| --- | --- | --- | --- |
-| holds | kana and reading helpers, the token model and the OS's tokenizer; later the card model, the scheduler, the dictionary lookups | MeCab with IPADic behind Core's `Tokenizer`, the one third-party dependency, kept apart so it can be cut | SwiftUI screens, the camera, Vision text recognition, the palette |
-| imports | Foundation | YomidoriCore, Mecab-Swift | SwiftUI, UIKit and Vision (iOS only), YomidoriCore, YomidoriMeCab |
-| tested | headless, coverage-gated | headless, on the same fixture | coverage-ignored |
+| | `YomidoriCore` | `YomidoriDictionary` | `YomidoriMeCab` | `YomidoriKit` |
+| --- | --- | --- | --- | --- |
+| holds | kana and reading helpers, the token model and the OS's tokenizer, the dictionary entry model; later the card model and the scheduler | `JMdict`, the reader over the bundled SQLite database, behind Core's `WordDictionary` | MeCab with IPADic behind Core's `Tokenizer`, the one third-party dependency, kept apart so it can be cut | SwiftUI screens, the camera, Vision text recognition, the palette |
+| imports | Foundation | YomidoriCore, the system's SQLite3 | YomidoriCore, Mecab-Swift | SwiftUI, UIKit and Vision (iOS only), YomidoriCore, YomidoriDictionary, YomidoriMeCab |
+| tested | headless, coverage-gated | headless, on a fixture built by the same script | headless, on the same fixture | coverage-ignored |
 
 The rule: **testable logic goes in YomidoriCore.** The Kit compiles on macOS
 too — not for a Mac app (there will be none) but because `swift test` runs on
@@ -99,10 +99,21 @@ the Mac; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
   the one third-party runtime dependency (Mecab-Swift, MIT; MeCab under its BSD
   option; IPADic under its own notice, all in THIRD_PARTY_NOTICES.md), pinned to
   a commit and quarantined so that keeping or cutting it is one line.
+- **`DictionaryEntry`** (Core) and **`JMdict`** (its own target): a word as
+  JMdict has it, kanji forms, readings, senses with parts of speech and glosses,
+  and its frequency mark; read from a SQLite database through the system's own
+  SQLite, by exact kanji form or reading, common words first. The database is
+  built from JMdict_e by `Scripts/data/build-jmdict.py` (standard-library
+  Python, a few seconds, ~50 MB) into the app target at build time and never
+  committed; its `meta` table carries the source date and the EDRDG attribution.
+  The tests read a sliver built by the same script from a hand-made XML.
 - **`TokenFlow`** and **`TranscriptReadout`** (Kit): the transcript as its
   words, a line per line of the page, wrapping, each word with its reading over
   it where the reading adds something; a tap fills the word and shows it large
-  with its reading and dictionary form. The first shape of the reading sheet.
+  with its reading and dictionary form, and under a fold, its meaning: the
+  entries for its dictionary form, else the word as it stands, else its reading,
+  and "not in the dictionary" where none matches, which is what a misread word
+  looks like. The first shape of the reading sheet.
 - **`AppRoot`** (Kit): hosts the capture screen; the place navigation will hang
   from.
 
@@ -163,6 +174,10 @@ Kanjium both require it. Until the About screen exists the notices live in
 THIRD_PARTY_NOTICES.md.
 
 ### From token to card
+
+JMdict is in the app now, built into a SQLite database at build time; what
+remains here is the lookup from a tokenizer's stem to its headword where the
+tokenizer gives no dictionary form, and the meaning views described below.
 
 A card is one **word** (the dictionary form), never one sighting. Its front is a
 sentence as it stood on the page — the OCR text with the word highlighted, and

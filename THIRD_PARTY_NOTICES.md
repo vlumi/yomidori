@@ -2,6 +2,14 @@
 
 Yomidori is MIT licensed (see [LICENSE](LICENSE)). It bundles the following third-party software and data, reproduced here as their licenses require. The About screen will show the same when it exists.
 
+## JMdict
+
+The dictionary data is JMdict_e, built into `jmdict.sqlite` by `Scripts/data/build-jmdict.py` at build time and not committed here.
+
+> This application uses the [JMdict](https://www.edrdg.org/jmdict/j_jmdict.html) dictionary files. These files are the property of the [Electronic Dictionary Research and Development Group](https://www.edrdg.org/), and are used in conformance with the Group's [licence](https://www.edrdg.org/edrdg/licence.html).
+
+JMdict is © the Electronic Dictionary Research and Development Group and is distributed under the [Creative Commons Attribution-ShareAlike 4.0 licence](https://creativecommons.org/licenses/by-sa/4.0/). The same statement and licence are carried in the database's `meta` table.
+
 ## Mecab-Swift
 
 <https://github.com/shinjukunian/Mecab-Swift> — MIT License.
