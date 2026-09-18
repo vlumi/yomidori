@@ -182,7 +182,11 @@ use for its own input.
   front takes the reading typed in kana instead, `ReadingCheck` (Core) judges it
   strictly with katakana and half-width folded, the verdict shows with the
   back, and the grade it suggests is the prominent button; every review is then
-  a few words of kana typing on vocabulary actually met.
+  a few words of kana typing on vocabulary actually met. A card can also ask
+  what the word means, a switch on the card, off by default since the reading
+  is the gap the app is for: a second question with its own schedule, the
+  reading given away on its front, the senses and the system dictionary on its
+  back. The queue is of questions, not cards.
 - **`AboutView`** (Kit): the name, the version with its build and commit, the
   promise that nothing leaves the device, the pitch notation explained on four
   words, and the notices every bundled license asks for, which are the
@@ -298,11 +302,11 @@ pages do, so the glue is not a paperback feature.
 ### Scheduling and storage
 
 The scheduler is built (see *What exists*): FSRS, not SM-2, two grades, no
-streaks, the queue whatever is due when the app is opened. Storage is one JSON
-document, local, with iCloud sync as a later option for the iPad. What remains
-here is the meaning card as a per-word option, and the parameters staying the
-published defaults until there are enough reviews to fit them, which is a
-question for much later.
+streaks, the queue whatever is due when the app is opened, the meaning as a
+second question per word when asked for. Storage is one JSON document, local,
+with iCloud sync as a later option for the iPad. What remains here is the
+parameters staying the published defaults until there are enough reviews to
+fit them, which is a question for much later.
 
 ### Dictionary and meaning
 

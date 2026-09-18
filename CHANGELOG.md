@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Ask the meaning too.** A switch on a card makes it also ask what the word means, as its own question with its own schedule; the reading is shown on that question's front, the senses and the dictionary on its back. Off by default: the reading is what the app is for.
 - **Type the reading.** A switch on the review asks for the reading typed in kana instead of tapped; it is checked strictly, katakana counting as hiragana, and the verdict shows with the answer, with the grade it suggests ready to press.
 - **The sentence as it stood on the page.** A kept word's card now carries a crop of the sentence's own lines out of the page, shown under the text on the front of a review; on a vertical page, where lines have no positions yet, the whole page stands in as before.
 - **The volume buttons are a shutter.** Either volume button, or the Camera Control on phones that have one, freezes the page, so the book stays in the other hand. iOS 17.2 and up; before that the shutter is on screen.
