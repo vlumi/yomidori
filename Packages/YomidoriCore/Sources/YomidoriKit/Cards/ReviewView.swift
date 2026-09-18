@@ -10,6 +10,12 @@ import YomidoriDictionary
 struct ReviewView: View {
     @State private var queue: [Card] = []
     @State private var revealed = false
+    /// Typed answers: the reading typed in kana and checked strictly, every review a
+    /// few words of kana typing on vocabulary actually met. Remembered.
+    @AppStorage("typedAnswers") private var typedAnswers = false
+    @State private var answer = ""
+    @State private var verdict: Bool?
+    @FocusState private var typing: Bool
 
     var body: some View {
         Group {
@@ -21,6 +27,18 @@ struct ReviewView: View {
             }
         }
         .navigationTitle(Text("Review", bundle: .module))
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Toggle(isOn: $typedAnswers) {
+                    Label {
+                        Text("Type the reading", bundle: .module)
+                    } icon: {
+                        Image(systemName: "keyboard")
+                    }
+                }
+                .toggleStyle(.button)
+            }
+        }
         .onAppear(perform: reload)
     }
 
@@ -29,22 +47,25 @@ struct ReviewView: View {
             front(card)
             Spacer()
             if revealed {
+                if let verdict {
+                    verdictLine(verdict)
+                }
                 back(card)
                 HStack(spacing: 16) {
-                    Button {
-                        answer(card, .again)
-                    } label: {
-                        Text("Again", bundle: .module).frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.bordered)
-                    Button {
-                        answer(card, .good)
-                    } label: {
-                        Text("Good", bundle: .module).frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
+                    gradeButton(card, .again, prominent: verdict == false)
+                    gradeButton(card, .good, prominent: verdict != false)
                 }
                 .controlSize(.large)
+            } else if typedAnswers {
+                TextField(text: $answer) {
+                    Text("Type the reading", bundle: .module)
+                }
+                .textFieldStyle(.roundedBorder)
+                .font(.title2)
+                .focused($typing)
+                .submitLabel(.done)
+                .onSubmit { check(card) }
+                .onAppear { typing = true }
             } else {
                 Button {
                     revealed = true
@@ -88,6 +109,45 @@ struct ReviewView: View {
                 .font(.largeTitle)
                 .foregroundStyle(Palette.nightGreen)
         }
+    }
+
+    /// Whether the typed reading was the card's; the wrong one is shown as typed.
+    private func verdictLine(_ correct: Bool) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: correct ? "checkmark.circle.fill" : "xmark.circle")
+            if correct {
+                Text("Correct", bundle: .module)
+            } else {
+                Text("Not quite. You typed \(answer).", bundle: .module)
+            }
+        }
+        .font(.callout)
+        .foregroundStyle(correct ? Palette.nightGreen : .secondary)
+    }
+
+    @ViewBuilder private func gradeButton(_ card: Card, _ grade: Grade, prominent: Bool)
+        -> some View
+    {
+        let label = Text(grade == .again ? "Again" : "Good", bundle: .module).frame(
+            maxWidth: .infinity)
+        if prominent {
+            Button {
+                answer(card, grade)
+            } label: {
+                label
+            }.buttonStyle(.borderedProminent)
+        } else {
+            Button {
+                answer(card, grade)
+            } label: {
+                label
+            }.buttonStyle(.bordered)
+        }
+    }
+
+    private func check(_ card: Card) {
+        verdict = ReadingCheck.matches(typed: answer, reading: card.reading)
+        revealed = true
     }
 
     private func back(_ card: Card) -> some View {
@@ -152,6 +212,8 @@ struct ReviewView: View {
         reviewed.review = FSRS.review(card.review, grade: grade, at: Date())
         try? Cards.store?.update(reviewed)
         revealed = false
+        answer = ""
+        verdict = nil
         queue.removeFirst()
     }
 

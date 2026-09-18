@@ -178,7 +178,11 @@ use for its own input.
   (Kit) runs the due queue one card at a time: the latest sentence with the word
   marked as the front, the question being its reading; a tap turns it to the
   reading with its pitch and the meaning under a fold; two buttons. No streak,
-  no count kept against anyone.
+  no count kept against anyone. With *Type the reading* on, remembered, the
+  front takes the reading typed in kana instead, `ReadingCheck` (Core) judges it
+  strictly with katakana and half-width folded, the verdict shows with the
+  back, and the grade it suggests is the prominent button; every review is then
+  a few words of kana typing on vocabulary actually met.
 - **`AboutView`** (Kit): the name, the version with its build and commit, the
   promise that nothing leaves the device, the pitch notation explained on four
   words, and the notices every bundled license asks for, which are the

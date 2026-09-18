@@ -91,6 +91,16 @@
         }
       }
     },
+    "Correct" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正解"
+          }
+        }
+      }
+    },
     "Dictionary" : {
       "localizations" : {
         "ja" : {
@@ -301,6 +311,16 @@
         }
       }
     },
+    "Not quite. You typed %@." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "残念。入力は %@ でした。"
+          }
+        }
+      }
+    },
     "Nothing due. Read on." : {
       "localizations" : {
         "ja" : {
@@ -507,6 +527,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "分かち書き"
+          }
+        }
+      }
+    },
+    "Type the reading" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読みを入力"
           }
         }
       }
