@@ -20,6 +20,8 @@ struct TranscriptReadout: View {
     @State private var selected: Token?
     @State private var kept: Card?
     @State private var stillID: UUID?
+    /// Where the reader is: a book and a page, in their words, kept between stills and launches.
+    @AppStorage("source") private var source = ""
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -45,6 +47,11 @@ struct TranscriptReadout: View {
                 .buttonStyle(.bordered)
                 .controlSize(.small)
             }
+            TextField(text: $source) {
+                Text("Book, page", bundle: .module)
+            }
+            .textFieldStyle(.roundedBorder)
+            .font(.callout)
             if let selected {
                 word(selected)
             }
@@ -148,7 +155,7 @@ struct TranscriptReadout: View {
         let sighting = Sighting(
             sentence: line, surface: token.surface,
             offset: line.distance(from: line.startIndex, to: token.range.lowerBound),
-            stillID: stillID, source: nil, date: Date())
+            stillID: stillID, source: source.isEmpty ? nil : source, date: Date())
         let headword = entry?.headword ?? token.dictionaryForm ?? token.surface
         let reading = Kana.hiragana(entry?.readings.first ?? token.reading)
         kept = try? store.keep(sighting, headword: headword, reading: reading, entryID: entry?.id)
