@@ -1,0 +1,33 @@
+import Foundation
+
+/// The OS's own Japanese morphological analyzer, through `CFStringTokenizer`: word
+/// boundaries and, for each word, a Latin transcription of its reading in context,
+/// which ICU turns back into hiragana losslessly (づ and ず, おう and おお stay apart).
+/// No third-party code, no dictionary to bundle; what it lacks is the dictionary
+/// form and pitch, which the dictionary layer adds on top.
+public enum SystemTokenizer {
+    public static func tokens(in text: String) -> [Token] {
+        let cfText = text as CFString
+        let tokenizer = CFStringTokenizerCreate(
+            nil, cfText, CFRangeMake(0, CFStringGetLength(cfText)),
+            kCFStringTokenizerUnitWordBoundary, Locale(identifier: "ja") as CFLocale)
+        var tokens: [Token] = []
+        while CFStringTokenizerAdvanceToNextToken(tokenizer).rawValue != 0 {
+            let cfRange = CFStringTokenizerGetCurrentTokenRange(tokenizer)
+            let start = String.Index(utf16Offset: cfRange.location, in: text)
+            let end = String.Index(utf16Offset: cfRange.location + cfRange.length, in: text)
+            let surface = String(text[start..<end])
+            let isWord = surface.unicodeScalars.contains { CharacterSet.letters.contains($0) }
+            let latin =
+                CFStringTokenizerCopyCurrentTokenAttribute(
+                    tokenizer, kCFStringTokenizerAttributeLatinTranscription) as? String
+            let reading =
+                isWord
+                ? latin?.applyingTransform(.latinToHiragana, reverse: false) ?? surface
+                : surface
+            tokens.append(
+                Token(surface: surface, reading: reading, range: start..<end, isWord: isWord))
+        }
+        return tokens
+    }
+}
