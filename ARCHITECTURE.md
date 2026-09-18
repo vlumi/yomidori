@@ -166,8 +166,13 @@ the Mac; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
   words, and the notices every bundled license asks for, which are the
   repository's own THIRD_PARTY_NOTICES.md bundled as a resource so there is one
   copy to keep current.
-- **`AppRoot`** (Kit): the capture screen in a navigation stack, the cards and
-  the About screen a push away.
+- **`HomeView`** and **`AppRoot`** (Kit): a fresh start opens on home, the name
+  and the bird's reading, one big *Read* button, *Cards* with what is due, and
+  *About*; the camera starts only when asked, so the permission prompt comes
+  with its reason and a review costs no battery. The navigation path is kept in
+  scene storage and restored on launch, so the app reopens where it was left,
+  the camera included; the frozen still is not restored, being a second's work
+  to take again.
 
 ## Planned
 

@@ -36,15 +36,10 @@ struct CardsView: View {
             }
         }
         .navigationTitle(Text("Cards", bundle: .module))
-        .navigationDestination(for: Card.self) { card in
-            CardView(card: card)
-        }
         .toolbar {
             if dueCount > 0 {
                 ToolbarItem(placement: .primaryAction) {
-                    NavigationLink {
-                        ReviewView()
-                    } label: {
+                    NavigationLink(value: Screen.review) {
                         Label {
                             Text("Review \(dueCount)", bundle: .module)
                         } icon: {
