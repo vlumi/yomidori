@@ -39,3 +39,6 @@ __pycache__/
 # Dictionary data: the JMdict download cache and the database built from it (make dictionary)
 .build-data/
 Sources/Shared/Dictionaries/jmdict.sqlite
+
+# manga-ocr converted to Core ML (make models); ~210 MB, optional
+Sources/Shared/Models/

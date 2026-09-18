@@ -19,6 +19,7 @@ help:  ## List the available commands
 
 # Inputs xcodegen reads — regenerate the project when any of these change.
 PROJECT_INPUTS := project.yml \
+	$(wildcard Sources/Shared/Models/*) \
 	$(wildcard Sources/*/Info.plist) \
 	$(wildcard Sources/*/*.entitlements) \
 	$(wildcard Sources/*/*.xcstrings)
@@ -32,6 +33,22 @@ $(DICTIONARY): Scripts/data/build-jmdict.py
 
 .PHONY: dictionary
 dictionary: $(DICTIONARY)  ## Build the bundled JMdict database (downloads JMdict_e once into .build-data/)
+
+# The manga-ocr models, converted to Core ML into the app target and not committed
+# (~210 MB). Optional: the app hides the engine when they are absent, so CI and a
+# fresh clone build without them. Needs Homebrew's python@3.13; the venv is local.
+MODELS := Sources/Shared/Models/MangaOCREncoder.mlpackage
+OCR_VENV := .build-data/ocr-venv
+
+$(OCR_VENV)/bin/python: Scripts/data/mangaocr-requirements.txt
+	@python3.13 -m venv $(OCR_VENV) && $(OCR_VENV)/bin/pip install -q --upgrade pip \
+		&& $(OCR_VENV)/bin/pip install -q -r Scripts/data/mangaocr-requirements.txt
+
+$(MODELS): Scripts/data/build-mangaocr.py $(OCR_VENV)/bin/python
+	@$(OCR_VENV)/bin/python Scripts/data/build-mangaocr.py --output Sources/Shared/Models
+
+.PHONY: models
+models: $(MODELS)  ## Convert manga-ocr to Core ML into the app (python3.13 + a local venv; ~210 MB; optional)
 
 # File target: the generated project depends on its inputs, so `make` skips the
 # regen when nothing changed (and reruns it when project.yml etc. are edited).
