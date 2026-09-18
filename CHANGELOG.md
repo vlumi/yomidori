@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 4 — 2026-09-18
+
 - **A drawer you size yourself.** Under a frozen page, the readout is a drawer with a handle: drag it down for the page while looking for a word, up for the reading and the meaning once found; it remembers. The recognized text sits behind a fold, closed unless you open it.
 ### build 3 — 2026-09-18
 
