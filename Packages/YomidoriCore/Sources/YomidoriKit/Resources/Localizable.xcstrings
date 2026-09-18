@@ -31,6 +31,16 @@
         }
       }
     },
+    "Copy" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コピー"
+          }
+        }
+      }
+    },
     "Live Text" : {
       "localizations" : {
         "ja" : {
@@ -47,6 +57,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "この端末ではテキスト認識表示を使えません。"
+          }
+        }
+      }
+    },
+    "MeCab could not load its dictionary." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MeCabの辞書を読み込めませんでした。"
           }
         }
       }
@@ -121,6 +141,16 @@
         }
       }
     },
+    "System" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "システム"
+          }
+        }
+      }
+    },
     "Tap a line to see what was read." : {
       "localizations" : {
         "ja" : {
@@ -137,6 +167,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "言葉をタップすると、拡大して読み取ります。"
+          }
+        }
+      }
+    },
+    "Tokenizer" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分かち書き"
           }
         }
       }

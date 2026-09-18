@@ -183,13 +183,7 @@ public struct CaptureView: View {
 
     @ViewBuilder private var transcript: some View {
         if let analysis, analysis.hasResults(for: .text) {
-            ScrollView {
-                Text(verbatim: analysis.transcript)
-                    .font(.body)
-                    .textSelection(.enabled)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .frame(maxHeight: 160)
+            TranscriptReadout(transcript: analysis.transcript)
         } else if LiveText.isSupported {
             Text("Nothing was recognized.", bundle: .module)
                 .foregroundStyle(.secondary)
