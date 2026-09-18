@@ -139,8 +139,17 @@ the Mac; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
   change: a reader's cards number in the hundreds or low thousands, which one
   file reads in a blink, and one file is what a sync or a backup copies. The
   reading, pitch and meaning are not stored; they are looked up live.
-- **`AppRoot`** (Kit): hosts the capture screen; the place navigation will hang
-  from.
+- **Keeping a word** (Kit): *Keep* beside the tapped word saves the page's line
+  it stands in as the sentence, with the word's form and offset, and the still
+  it was read from, scaled to two thousand pixels on its longer side as a JPEG
+  in Application Support (`StillArchive`). The card's key is the dictionary
+  entry's headword and reading when the word was found, else the tokenizer's
+  form. **`CardsView`** lists the cards, newest first, and **`CardView`** shows
+  one: the word with its pitch, every sentence it was met in with the word
+  marked, and the still. The crop of the line rather than the whole still is
+  still to come.
+- **`AppRoot`** (Kit): the capture screen in a navigation stack, the cards a
+  push away.
 
 ## Planned
 

@@ -4,7 +4,7 @@ import Foundation
 /// form with its reading, never one sighting: meeting the word again in another
 /// book adds a sighting to the same card. The reading and pitch are looked up
 /// live from the dictionary; the sightings are the reader's own.
-public struct Card: Identifiable, Equatable, Codable, Sendable {
+public struct Card: Identifiable, Hashable, Codable, Sendable {
     public let id: UUID
     /// The dictionary form, as JMdict lists it: the card's key together with the reading.
     public let headword: String
@@ -30,7 +30,7 @@ public struct Card: Identifiable, Equatable, Codable, Sendable {
 
 /// The word as it was met once: the sentence as it stood on the page, where in it
 /// the word sits and how it was spelled there, the still it came from, and when.
-public struct Sighting: Identifiable, Equatable, Codable, Sendable {
+public struct Sighting: Identifiable, Hashable, Codable, Sendable {
     public let id: UUID
     public let sentence: String
     /// The word's form on the page (頷いた, not 頷く) and where it starts in `sentence`,
