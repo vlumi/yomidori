@@ -391,6 +391,16 @@
         }
       }
     },
+    "Recognized text" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み取った文字"
+          }
+        }
+      }
+    },
     "Recognizer" : {
       "localizations" : {
         "ja" : {

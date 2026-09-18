@@ -25,53 +25,45 @@ public struct CaptureView: View {
     @State private var closeUp: CloseUp?
     @State private var readingCloseUp = false
     @State private var picked: PhotosPickerItem?
+    /// How much of the screen the drawer under a still takes; dragged, and remembered.
+    @AppStorage("readoutFraction") private var readoutFraction = 0.32
 
     public init() {}
 
     public var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            if let still {
-                switch engine {
-                case .vision:
-                    visionStill(still)
-                case .liveText:
-                    LiveTextImage(still: still, analysis: analysis, selection: selection)
-                case .closeUp:
-                    closeUpStill(still)
-                }
-            } else {
-                CameraPreview(camera: camera, access: camera.access, shutter: takeStill)
-                    .ignoresSafeArea()
-                CameraNotice(access: camera.access)
-                if !pages.isEmpty {
-                    SpreadNotice(startOver: startOver)
+        GeometryReader { geometry in
+            ZStack {
+                Color.black.ignoresSafeArea()
+                if let still {
+                    switch engine {
+                    case .vision:
+                        visionStill(still)
+                    case .liveText:
+                        LiveTextImage(still: still, analysis: analysis, selection: selection)
+                    case .closeUp:
+                        closeUpStill(still)
+                    }
+                } else {
+                    CameraPreview(camera: camera, access: camera.access, shutter: takeStill)
+                        .ignoresSafeArea()
+                    CameraNotice(access: camera.access)
+                    if !pages.isEmpty {
+                        SpreadNotice(startOver: startOver)
+                    }
                 }
             }
+            .safeAreaInset(edge: .bottom) { controls(screenHeight: geometry.size.height) }
+            .onAppear { camera.start() }
+            .onDisappear { camera.stop() }
+            .task(id: picked) { await loadPicked() }
+            .task(id: still?.id) { await recognize() }
         }
-        .safeAreaInset(edge: .bottom) { controls }
-        .onAppear { camera.start() }
-        .onDisappear { camera.stop() }
-        .task(id: picked) { await loadPicked() }
-        .task(id: still?.id) { await recognize() }
     }
 
-    private func visionStill(_ still: Still) -> some View {
-        StillView(still: still, lines: lines, selected: selected, highlight: nil, onTap: selectLine)
-    }
-
-    private func closeUpStill(_ still: Still) -> some View {
-        StillView(
-            still: still, lines: lines, selected: nil, highlight: closeUp?.box, onTap: readCloseUp)
-    }
-
-    private func selectLine(at point: CGPoint, in frame: CGRect) {
-        selected = TextGeometry.lineIndex(at: point, in: frame, lines: lines)
-    }
-
-    private var controls: some View {
-        VStack(spacing: 16) {
-            if still != nil {
+    /// The engine switch, the readout and the still's size, scrolling inside the drawer.
+    private var drawerContent: some View {
+        ScrollView {
+            VStack(spacing: 12) {
                 Picker(selection: $engine) {
                     Text("Vision", bundle: .module).tag(Engine.vision)
                     Text("Live Text", bundle: .module).tag(Engine.liveText)
@@ -87,59 +79,93 @@ public struct CaptureView: View {
                         .foregroundStyle(.tertiary)
                 }
             }
-            HStack {
-                if still == nil {
-                    PhotosPicker(selection: $picked, matching: .images) {
-                        Label {
-                            Text("Choose a photo", bundle: .module)
-                        } icon: {
-                            Image(systemName: "photo.on.rectangle")
-                        }
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    /// Under the camera the picker and the shutter; under a still retake, next page, start over.
+    private var buttons: some View {
+        HStack {
+            if still == nil {
+                PhotosPicker(selection: $picked, matching: .images) {
+                    Label {
+                        Text("Choose a photo", bundle: .module)
+                    } icon: {
+                        Image(systemName: "photo.on.rectangle")
                     }
-                    .labelStyle(.iconOnly)
-                    .font(.title2)
-                    .frame(maxWidth: .infinity)
-                    Button(action: takeStill) {
-                        Circle()
-                            .strokeBorder(Palette.nightGreen, lineWidth: 4)
-                            .background(Circle().fill(.white))
-                            .frame(width: 72, height: 72)
+                }
+                .labelStyle(.iconOnly)
+                .font(.title2)
+                .frame(maxWidth: .infinity)
+                Button(action: takeStill) {
+                    Circle()
+                        .strokeBorder(Palette.nightGreen, lineWidth: 4)
+                        .background(Circle().fill(.white))
+                        .frame(width: 72, height: 72)
+                }
+                .accessibilityLabel(Text("Shutter", bundle: .module))
+                .disabled(camera.access != .ready)
+                .opacity(camera.access == .ready ? 1 : 0.4)
+                Color.clear.frame(maxWidth: .infinity, maxHeight: 1)
+            } else {
+                Button(action: retake) {
+                    Label {
+                        Text("Retake", bundle: .module)
+                    } icon: {
+                        Image(systemName: "camera")
                     }
-                    .accessibilityLabel(Text("Shutter", bundle: .module))
-                    .disabled(camera.access != .ready)
-                    .opacity(camera.access == .ready ? 1 : 0.4)
-                    Color.clear.frame(maxWidth: .infinity, maxHeight: 1)
-                } else {
-                    Button(action: retake) {
+                }
+                .buttonStyle(.bordered)
+                if analysis != nil {
+                    Button(action: addPage) {
                         Label {
-                            Text("Retake", bundle: .module)
+                            Text("Add next page", bundle: .module)
                         } icon: {
-                            Image(systemName: "camera")
+                            Image(systemName: "plus.rectangle.portrait")
                         }
                     }
                     .buttonStyle(.bordered)
-                    if analysis != nil {
-                        Button(action: addPage) {
-                            Label {
-                                Text("Add next page", bundle: .module)
-                            } icon: {
-                                Image(systemName: "plus.rectangle.portrait")
-                            }
-                        }
-                        .buttonStyle(.bordered)
+                }
+                if !pages.isEmpty {
+                    Button(action: startOver) {
+                        Text("Start over", bundle: .module)
                     }
-                    if !pages.isEmpty {
-                        Button(action: startOver) {
-                            Text("Start over", bundle: .module)
-                        }
-                        .buttonStyle(.borderless)
-                    }
+                    .buttonStyle(.borderless)
                 }
             }
         }
+    }
+
+    private func visionStill(_ still: Still) -> some View {
+        StillView(still: still, lines: lines, selected: selected, highlight: nil, onTap: selectLine)
+    }
+
+    private func closeUpStill(_ still: Still) -> some View {
+        StillView(
+            still: still, lines: lines, selected: nil, highlight: closeUp?.box, onTap: readCloseUp)
+    }
+
+    private func selectLine(at point: CGPoint, in frame: CGRect) {
+        selected = TextGeometry.lineIndex(at: point, in: frame, lines: lines)
+    }
+
+    /// The drawer: under a still it is as tall as the reader dragged it, its handle on
+    /// top, the readout scrolling inside and the buttons fixed at the bottom; under the
+    /// camera it is just the shutter row.
+    private func controls(screenHeight: CGFloat) -> some View {
+        VStack(spacing: 12) {
+            if still != nil {
+                DrawerHandle(fraction: $readoutFraction, screenHeight: screenHeight)
+            }
+            if still != nil {
+                drawerContent
+            }
+            buttons
+        }
         .padding(.horizontal, 24)
-        .padding(.vertical, 16)
+        .padding(.vertical, 12)
         .frame(maxWidth: .infinity)
+        .frame(height: still == nil ? nil : max(180, screenHeight * readoutFraction))
         .background(Palette.page)
         .tint(Palette.nightGreen)
     }
@@ -204,10 +230,10 @@ public struct CaptureView: View {
                     .frame(maxWidth: 160, maxHeight: 120)
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                 VStack(alignment: .leading, spacing: 6) {
-                    engineLine("Live Text", closeUp.liveText)
-                    engineLine("Vision", closeUp.vision)
+                    EngineLine(name: "Live Text", text: closeUp.liveText)
+                    EngineLine(name: "Vision", text: closeUp.vision)
                     if let manga = closeUp.mangaOCR {
-                        engineLine("manga-ocr", manga)
+                        EngineLine(name: "manga-ocr", text: manga)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -215,18 +241,6 @@ public struct CaptureView: View {
         } else {
             Text("Tap a word to read it up close.", bundle: .module)
                 .foregroundStyle(.secondary)
-        }
-    }
-
-    private func engineLine(_ name: LocalizedStringKey, _ text: String) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(name, bundle: .module)
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-            Text(verbatim: text.isEmpty ? "—" : text)
-                .font(.body)
-                .textSelection(.enabled)
-                .lineLimit(3)
         }
     }
 

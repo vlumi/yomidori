@@ -82,7 +82,10 @@ use for its own input.
   Recognizers downscale a whole page before reading, so a dense kanji reaches
   them at a fraction of the pixels the sensor caught; the crop hands them the
   pixels back without the reader zooming, and a whole line with clean margins
-  reads better than a square that halves the glyphs at its edges. In every
+  reads better than a square that halves the glyphs at its edges. The readout
+  sits in a drawer under the still whose height the reader drags and the app
+  remembers, most of the screen for the page while looking for a word, more
+  drawer once it is found, its content scrolling and its buttons fixed. In every
   mode the frozen still pinches to zoom and drags to pan, a double tap bringing
   it back; the tap on a line or a word is reported in the still's own
   coordinates whatever the zoom, so the geometry seam knows nothing of it. The screen shows any of the
@@ -128,7 +131,8 @@ use for its own input.
   The tests read a sliver built by the same script from a hand-made XML.
 - **`TokenFlow`** and **`TranscriptReadout`** (Kit): the transcript as its
   words, a line per line of the page, wrapping, each word with its reading over
-  it where the reading adds something; a tap fills the word and shows it large
+  it where the reading adds something, behind a fold that is closed by default
+  since the word asked about is what the drawer is for; a tap fills the word and shows it large
   with its reading and dictionary form, and under a fold, its meaning: the
   entries for its dictionary form, else the word as it stands, else its reading,
   and "not in the dictionary" where none matches, which is what a misread word
