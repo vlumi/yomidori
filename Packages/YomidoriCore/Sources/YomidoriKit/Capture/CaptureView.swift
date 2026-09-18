@@ -62,15 +62,16 @@ public struct CaptureView: View {
     }
 
     private func visionStill(_ still: Still) -> some View {
-        StillView(still: still, lines: lines, selected: selected, highlight: nil) { point, frame in
-            selected = TextGeometry.lineIndex(at: point, in: frame, lines: lines)
-        }
+        StillView(still: still, lines: lines, selected: selected, highlight: nil, onTap: selectLine)
     }
 
     private func closeUpStill(_ still: Still) -> some View {
-        StillView(still: still, lines: [], selected: nil, highlight: closeUp?.box) { point, frame in
-            readCloseUp(at: point, in: frame, of: still)
-        }
+        StillView(
+            still: still, lines: lines, selected: nil, highlight: closeUp?.box, onTap: readCloseUp)
+    }
+
+    private func selectLine(at point: CGPoint, in frame: CGRect) {
+        selected = TextGeometry.lineIndex(at: point, in: frame, lines: lines)
     }
 
     @ViewBuilder private var cameraNotice: some View {
@@ -208,7 +209,7 @@ public struct CaptureView: View {
                 Image(decorative: closeUp.crop.image, scale: 1)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 120, height: 120)
+                    .frame(maxWidth: 160, maxHeight: 120)
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                 VStack(alignment: .leading, spacing: 6) {
                     engineLine("Live Text", closeUp.liveText)
@@ -234,15 +235,23 @@ public struct CaptureView: View {
         }
     }
 
-    /// Cut a square around the tap out of the full-resolution still and read only
-    /// that: the character reaches the recognizer at the size the sensor saw it.
-    private func readCloseUp(at point: CGPoint, in frame: CGRect, of still: Still) {
-        guard let pixel = TextGeometry.imagePoint(at: point, in: frame, imageSize: still.size)
-        else {
-            return
+    /// Cut the line under the tap out of the full-resolution still, whole and with
+    /// the paper around it, and read only that: the character reaches the recognizer
+    /// at the size the sensor saw it, and no glyph is halved at a crop's edge. Where
+    /// the page pass found no line there (a vertical column, say), a square around
+    /// the tap stands in.
+    private func readCloseUp(at point: CGPoint, in frame: CGRect) {
+        guard let still,
+            let pixel = TextGeometry.imagePoint(at: point, in: frame, imageSize: still.size)
+        else { return }
+        let rect: CGRect
+        if let index = TextGeometry.lineIndex(at: point, in: frame, lines: lines) {
+            let line = TextGeometry.imageRect(for: lines[index].box, imageSize: still.size)
+            rect = TextGeometry.padded(line, by: min(line.width, line.height) * 0.8, in: still.size)
+        } else {
+            let side = max(still.size.width, still.size.height) / 3
+            rect = TextGeometry.cropRect(around: pixel, side: side, in: still.size)
         }
-        let side = max(still.size.width, still.size.height) / 3
-        let rect = TextGeometry.cropRect(around: pixel, side: side, in: still.size)
         guard let crop = still.cropped(to: rect) else { return }
         let box = TextGeometry.normalizedBox(for: rect, imageSize: still.size)
         readingCloseUp = true

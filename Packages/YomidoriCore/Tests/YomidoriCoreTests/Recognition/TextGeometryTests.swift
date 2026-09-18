@@ -77,6 +77,22 @@ final class TextGeometryTests: XCTestCase {
         XCTAssertEqual(TextGeometry.viewRect(for: box, in: frame).maxY, frame.maxY)
     }
 
+    func testBoxBecomesImagePixelsAndBack() {
+        let image = CGSize(width: 3000, height: 4000)
+        let box = CGRect(x: 0.1, y: 0.7, width: 0.8, height: 0.05)
+        let rect = TextGeometry.imageRect(for: box, imageSize: image)
+        XCTAssertEqual(rect, CGRect(x: 300, y: 1000, width: 2400, height: 200))
+        XCTAssertEqual(TextGeometry.normalizedBox(for: rect, imageSize: image), box)
+    }
+
+    func testPaddingStopsAtTheImageEdge() {
+        let image = CGSize(width: 3000, height: 4000)
+        let line = CGRect(x: 100, y: 1000, width: 2800, height: 200)
+        XCTAssertEqual(
+            TextGeometry.padded(line, by: 150, in: image),
+            CGRect(x: 0, y: 850, width: 3000, height: 500))
+    }
+
     func testTapPicksTheSmallestLineUnderIt() {
         let frame = CGRect(x: 0, y: 0, width: 100, height: 100)
         // A tall column and a short line that sits inside the column's box.
