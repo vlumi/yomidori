@@ -5,8 +5,10 @@ import Foundation
 /// which ICU turns back into hiragana losslessly (づ and ず, おう and おお stay apart).
 /// No third-party code, no dictionary to bundle; what it lacks is the dictionary
 /// form and pitch, which the dictionary layer adds on top.
-public enum SystemTokenizer {
-    public static func tokens(in text: String) -> [Token] {
+public struct SystemTokenizer: Tokenizer {
+    public init() {}
+
+    public func tokens(in text: String) -> [Token] {
         let cfText = text as CFString
         let tokenizer = CFStringTokenizerCreate(
             nil, cfText, CFRangeMake(0, CFStringGetLength(cfText)),
