@@ -110,9 +110,7 @@ struct ReviewView: View {
         if let sighting = card.sightings.max(by: { $0.date < $1.date }),
             !sighting.sentence.isEmpty
         {
-            Text(marked(sighting, hidden: !revealed))
-                .font(.title2)
-                .textSelection(.enabled)
+            MarkedSentence(sighting: sighting, font: .title2)
             if let cropID = sighting.cropID, let image = StillArchive.load(cropID) {
                 Image(decorative: image, scale: 1)
                     .resizable()
@@ -199,8 +197,7 @@ struct ReviewView: View {
     }
 
     private func dictionaryEntry(_ card: Card) -> DictionaryEntry? {
-        JMdict.bundled?.entries(matching: card.headword)
-            .first { $0.readings.map(Kana.hiragana).contains(card.reading) }
+        JMdict.bundled?.entry(headword: card.headword, reading: card.reading)
     }
 
     private func check(_ card: Card) {
@@ -226,9 +223,7 @@ struct ReviewView: View {
                 DictionaryButton(term: card.headword)
             }
             .textSelection(.enabled)
-            if let entry = JMdict.bundled?.entries(matching: card.headword).first(where: {
-                $0.readings.map(Kana.hiragana).contains(card.reading)
-            }) {
+            if let entry = dictionaryEntry(card) {
                 DisclosureGroup {
                     VStack(alignment: .leading, spacing: 2) {
                         ForEach(entry.senses.prefix(4).indices, id: \.self) { index in
@@ -248,21 +243,6 @@ struct ReviewView: View {
                 .tint(.secondary)
             }
         }
-    }
-
-    /// The sentence with the word marked in night green; on the front the word stays
-    /// as it stood, since reading it is the question.
-    private func marked(_ sighting: Sighting, hidden: Bool) -> AttributedString {
-        var text = AttributedString(sighting.sentence)
-        let count = sighting.sentence.count
-        guard sighting.offset >= 0, sighting.offset + sighting.surface.count <= count else {
-            return text
-        }
-        let start = text.index(text.startIndex, offsetByCharacters: sighting.offset)
-        let end = text.index(start, offsetByCharacters: sighting.surface.count)
-        text[start..<end].foregroundColor = Palette.nightGreen
-        text[start..<end].font = .title2.bold()
-        return text
     }
 
     private func answer(_ item: ReviewItem, _ grade: Grade) {

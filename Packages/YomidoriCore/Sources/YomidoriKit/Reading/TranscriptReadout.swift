@@ -24,8 +24,7 @@ struct TranscriptReadout: View {
     @ObservedObject var selection: LiveTextSelection
     @State private var choice: Choice = .system
     @State private var lines: [[Token]] = []
-    /// Where each line starts in the transcript, so a token maps back into it.
-    @State private var lineStarts: [String.Index] = []
+    @State private var transcriptLines = TranscriptLines("")
     @State private var selected: Token?
     /// The recognized text is behind a fold, closed by default: the word is what is asked for.
     @AppStorage("transcriptExpanded") private var expanded = false
@@ -116,10 +115,7 @@ struct TranscriptReadout: View {
         let offset =
             pageOffset
             + currentTranscript.distance(from: currentTranscript.startIndex, to: range.lowerBound)
-        guard offset < transcript.count else { return nil }
-        let before = transcript.prefix(offset)
-        return before.split(separator: "\n", omittingEmptySubsequences: false).dropLast()
-            .filter { !$0.isEmpty }.count
+        return transcriptLines.lineIndex(atOffset: offset, in: transcript)
     }
 
     /// The tapped word, large: its reading with its pitch drawn over it where the
@@ -127,11 +123,8 @@ struct TranscriptReadout: View {
     /// folded under it, since the reading is what was asked for.
     private func word(_ token: Token) -> some View {
         let dictionary = JMdict.bundled
-        let entries = dictionary.map { matches(for: token, in: $0) } ?? []
-        let accent = dictionary.flatMap { dictionary -> PitchAccent? in
-            guard let entry = entries.first, let reading = entry.readings.first else { return nil }
-            return dictionary.pitchAccents(for: entry.headword, reading: reading).first
-        }
+        let entries = dictionary.map { $0.entries(for: token) } ?? []
+        let accent = entries.first.flatMap { dictionary?.pitchAccent(of: $0) }
         return VStack(alignment: .leading, spacing: 4) {
             HStack(alignment: .firstTextBaseline, spacing: 12) {
                 Text(verbatim: token.surface)
@@ -196,13 +189,10 @@ struct TranscriptReadout: View {
     /// The sentence around a token, in the whole transcript, and where the token
     /// starts in it.
     private func sentence(around token: Token) -> (sentence: Sentence, start: String.Index)? {
-        guard let lineIndex = lines.firstIndex(where: { $0.contains(token) }),
-            lineIndex < lineStarts.count
-        else { return nil }
-        let line = String(
-            transcript.split(separator: "\n", omittingEmptySubsequences: true)[lineIndex])
+        guard let lineIndex = lines.firstIndex(where: { $0.contains(token) }) else { return nil }
+        let line = transcriptLines.lines[lineIndex]
         let offset = line.distance(from: line.startIndex, to: token.range.lowerBound)
-        let start = transcript.index(lineStarts[lineIndex], offsetBy: offset)
+        let start = transcriptLines.index(inLine: lineIndex, offset: offset, in: transcript)
         return (Sentence.around(start, in: transcript), start)
     }
 
@@ -238,17 +228,6 @@ struct TranscriptReadout: View {
         }
     }
 
-    /// The word's entries: the tokenizer's dictionary form first, then the word as it
-    /// stands and the forms its stem can be deinflected to, then its reading. A word
-    /// with no entry is either rare or misread.
-    private func matches(for token: Token, in dictionary: some WordDictionary) -> [DictionaryEntry]
-    {
-        let candidates =
-            [token.dictionaryForm].compactMap { $0 } + Deinflector.candidates(for: token.surface)
-            + [token.reading]
-        return candidates.lazy.map(dictionary.entries(matching:)).first { !$0.isEmpty } ?? []
-    }
-
     private func meaning(_ entries: [DictionaryEntry]) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             if entries.isEmpty {
@@ -280,8 +259,7 @@ struct TranscriptReadout: View {
         selected = nil
         let tokenizer: (any Tokenizer)? =
             choice == .system ? SystemTokenizer() : MeCabTokenizer.shared
-        let rawLines = transcript.split(separator: "\n", omittingEmptySubsequences: true)
-        lines = rawLines.map { tokenizer?.tokens(in: String($0)) ?? [] }
-        lineStarts = rawLines.map(\.startIndex)
+        transcriptLines = TranscriptLines(transcript)
+        lines = transcriptLines.lines.map { tokenizer?.tokens(in: $0) ?? [] }
     }
 }
