@@ -46,6 +46,30 @@ public protocol WordDictionary {
     func search(_ query: String, limit: Int) -> [DictionaryEntry]
 }
 
+extension WordDictionary {
+    /// The entry for a word read a given way: the headword's entries, the first whose
+    /// readings include the reading, katakana counting as its hiragana.
+    public func entry(headword: String, reading: String) -> DictionaryEntry? {
+        entries(matching: headword).first { $0.readings.map(Kana.hiragana).contains(reading) }
+    }
+
+    /// The entries for a word as the tokenizer cut it: the tokenizer's dictionary form
+    /// first, then the word as it stands and the forms its stem deinflects to, then its
+    /// reading; the first candidate with any entries wins.
+    public func entries(for token: Token) -> [DictionaryEntry] {
+        let candidates =
+            [token.dictionaryForm].compactMap { $0 } + Deinflector.candidates(for: token.surface)
+            + [token.reading]
+        return candidates.lazy.map(entries(matching:)).first { !$0.isEmpty } ?? []
+    }
+
+    /// The usual pitch accent of an entry, by its headword and first reading.
+    public func pitchAccent(of entry: DictionaryEntry) -> PitchAccent? {
+        guard let reading = entry.readings.first else { return nil }
+        return pitchAccents(for: entry.headword, reading: Kana.hiragana(reading)).first
+    }
+}
+
 /// What a typed query is asking for.
 public enum SearchQuery {
     public enum Kind: Equatable {

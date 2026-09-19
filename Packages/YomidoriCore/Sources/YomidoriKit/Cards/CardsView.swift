@@ -101,9 +101,7 @@ struct CardView: View {
                             .font(.callout)
                             .foregroundStyle(.secondary)
                     } else {
-                        Text(marked(sighting))
-                            .font(.title3)
-                            .textSelection(.enabled)
+                        MarkedSentence(sighting: sighting)
                     }
                     let images = [sighting.cropID].compactMap { $0 } + sighting.stillIDs
                     ForEach(images, id: \.self) { id in
@@ -127,18 +125,4 @@ struct CardView: View {
         .task(id: card.asksMeaning) { try? Cards.store?.update(card) }
     }
 
-    /// The sentence with the word as it stood on the page in night green.
-    private func marked(_ sighting: Sighting) -> AttributedString {
-        var text = AttributedString(sighting.sentence)
-        let characters = Array(sighting.sentence)
-        guard sighting.offset >= 0, sighting.offset + sighting.surface.count <= characters.count
-        else {
-            return text
-        }
-        let start = text.index(text.startIndex, offsetByCharacters: sighting.offset)
-        let end = text.index(start, offsetByCharacters: sighting.surface.count)
-        text[start..<end].foregroundColor = Palette.nightGreen
-        text[start..<end].font = .title3.bold()
-        return text
-    }
 }

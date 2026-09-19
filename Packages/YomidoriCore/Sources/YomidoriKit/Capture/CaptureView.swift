@@ -251,24 +251,11 @@ public struct CaptureView: View {
     /// the tap stands in.
     private func readCloseUp(at point: CGPoint, in frame: CGRect) {
         guard let still,
-            let pixel = TextGeometry.imagePoint(at: point, in: frame, imageSize: still.size)
+            let geometry = CloseUpGeometry(
+                tap: point, in: frame, lines: lines, imageSize: still.size)
         else { return }
-        let rect: CGRect
-        let window: CGRect
-        if let index = TextGeometry.lineIndex(at: point, in: frame, lines: lines) {
-            let line = TextGeometry.imageRect(for: lines[index].box, imageSize: still.size)
-            rect = TextGeometry.padded(line, by: min(line.width, line.height) * 0.8, in: still.size)
-            // A bubble's worth of the line for manga-ocr: about eight characters around the tap.
-            window = TextGeometry.padded(
-                TextGeometry.window(in: line, around: pixel, characters: 8), by: line.height * 0.5,
-                in: still.size)
-        } else {
-            let side = max(still.size.width, still.size.height) / 3
-            rect = TextGeometry.cropRect(around: pixel, side: side, in: still.size)
-            // No line known (a vertical page): a narrow column around the tap.
-            window = rect.intersection(
-                CGRect(x: pixel.x - side / 8, y: 0, width: side / 4, height: still.size.height))
-        }
+        let rect = geometry.crop
+        let window = geometry.window
         guard let crop = still.cropped(to: rect) else { return }
         let box = TextGeometry.normalizedBox(for: rect, imageSize: still.size)
         readingCloseUp = true

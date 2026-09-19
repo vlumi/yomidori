@@ -64,6 +64,9 @@ targets:
         # 0 = never released; the first `make release` cuts build 1.
         CURRENT_PROJECT_VERSION: "4"
         GENERATE_INFOPLIST_FILE: NO
+        # The Core ML models are loaded by URL; no generated classes, and no warning
+        # about which language to generate them in.
+        COREML_CODEGEN_LANGUAGE: None
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         # Team committed on purpose (it's not a secret): the release lane
         # archives headlessly with automatic signing, and the generated
