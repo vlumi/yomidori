@@ -103,6 +103,14 @@ public struct Sighting: Identifiable, Hashable, Codable, Sendable {
     public let source: String?
     public let date: Date
 
+    /// The word's range in the sentence, as the offset and surface place it; nil when
+    /// the sentence has been edited out from under them.
+    public var surfaceRange: Range<String.Index>? {
+        guard offset >= 0, offset + surface.count <= sentence.count else { return nil }
+        let start = sentence.index(sentence.startIndex, offsetBy: offset)
+        return start..<sentence.index(start, offsetBy: surface.count)
+    }
+
     public init(
         id: UUID = UUID(), sentence: String, surface: String, offset: Int, stillIDs: [UUID],
         cropID: UUID? = nil, source: String?, date: Date

@@ -65,6 +65,20 @@ final class JMdictTests: XCTestCase {
         XCTAssertTrue(dictionary.search("xyzzy", limit: 10).isEmpty)
     }
 
+    func testAnEntryByHeadwordAndReadingAndForAToken() {
+        XCTAssertEqual(dictionary.entry(headword: "街", reading: "がい")?.readings, ["まち", "がい"])
+        XCTAssertNil(dictionary.entry(headword: "街", reading: "みち"))
+        let stem = Token(
+            surface: "頷い", reading: "うなずい", range: "頷い".startIndex..<"頷い".endIndex, isWord: true)
+        XCTAssertEqual(dictionary.entries(for: stem).first?.headword, "頷く")
+        let known = Token(
+            surface: "頷い", reading: "うなずい", range: "頷い".startIndex..<"頷い".endIndex, isWord: true,
+            dictionaryForm: "頷く")
+        XCTAssertEqual(dictionary.entries(for: known).first?.headword, "頷く")
+        XCTAssertEqual(
+            dictionary.pitchAccent(of: dictionary.entries(matching: "樹皮")[0])?.downstep, 1)
+    }
+
     func testMetaNamesTheSourceAndLicense() {
         XCTAssertEqual(dictionary.meta["source"], "JMdict_e (EDRDG)")
         XCTAssertEqual(dictionary.meta["created"], "2026-09-17")
