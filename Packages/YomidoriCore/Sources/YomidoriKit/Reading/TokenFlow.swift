@@ -1,8 +1,6 @@
 import SwiftUI
 import YomidoriCore
 
-/// One line of text as its tokens, wrapping like text: each word with its reading
-/// over it where the reading says something the word does not, the tapped word filled.
 struct TokenFlow: View {
     let tokens: [Token]
     @Binding var selected: Token?
@@ -32,7 +30,6 @@ struct TokenFlow: View {
     }
 }
 
-/// Rows of subviews that wrap at the width offered, left to right, top to bottom.
 struct FlowLayout: Layout {
     var spacing: CGFloat = 4
 

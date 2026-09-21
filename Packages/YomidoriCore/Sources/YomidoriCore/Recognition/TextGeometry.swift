@@ -1,11 +1,8 @@
 import CoreGraphics
 
-/// The seam between the recognizer's coordinates and the screen. Vision reports
-/// boxes normalized to the image with y up; the still is drawn aspect-fitted into
-/// a view with y down. Everything that maps a tap to text goes through here.
+/// Vision's boxes are normalized to the image with y up; the still is drawn aspect-fitted
+/// in a view with y down.
 public enum TextGeometry {
-    /// Where an image of `imageSize` lands when aspect-fitted and centered in a
-    /// view of `bounds`. Zero when either size is empty.
     public static func fittedFrame(of imageSize: CGSize, in bounds: CGSize) -> CGRect {
         guard imageSize.width > 0, imageSize.height > 0, bounds.width > 0, bounds.height > 0
         else { return .zero }
@@ -18,7 +15,6 @@ public enum TextGeometry {
             height: size.height)
     }
 
-    /// A normalized, y-up box as a rect in the view the image is drawn in.
     public static func viewRect(for box: CGRect, in frame: CGRect) -> CGRect {
         CGRect(
             x: frame.minX + box.minX * frame.width,
@@ -27,8 +23,7 @@ public enum TextGeometry {
             height: box.height * frame.height)
     }
 
-    /// The line under a point in view space, or nil outside every line. Where boxes
-    /// overlap the smallest wins, so a short line inside a long one stays tappable.
+    /// Where boxes overlap the smallest wins, so a short line inside a long one stays tappable.
     public static func lineIndex(at point: CGPoint, in frame: CGRect, lines: [RecognizedLine])
         -> Int?
     {
@@ -37,8 +32,7 @@ public enum TextGeometry {
             .min { area(lines[$0].box) < area(lines[$1].box) }
     }
 
-    /// The image pixel under a point in the view, y down as `CGImage` counts rows.
-    /// Nil outside the image's frame.
+    /// Image pixels, y down.
     public static func imagePoint(at point: CGPoint, in frame: CGRect, imageSize: CGSize)
         -> CGPoint?
     {
@@ -48,8 +42,7 @@ public enum TextGeometry {
             y: (point.y - frame.minY) / frame.height * imageSize.height)
     }
 
-    /// A square of `side` pixels around a point, kept inside the image: slid in at
-    /// the edges, shrunk only where the image itself is smaller.
+    /// Slid in at the edges, shrunk only where the image itself is smaller.
     public static func cropRect(around point: CGPoint, side: CGFloat, in imageSize: CGSize)
         -> CGRect
     {
@@ -61,8 +54,6 @@ public enum TextGeometry {
             width: width, height: height)
     }
 
-    /// A rect in image pixels (y down) as the normalized y-up box the recognizer
-    /// uses, so `viewRect(for:in:)` can draw it too.
     public static func normalizedBox(for rect: CGRect, imageSize: CGSize) -> CGRect {
         CGRect(
             x: rect.minX / imageSize.width,
@@ -71,7 +62,6 @@ public enum TextGeometry {
             height: rect.height / imageSize.height)
     }
 
-    /// The reverse of `normalizedBox(for:imageSize:)`: a recognizer's box as image pixels, y down.
     public static func imageRect(for box: CGRect, imageSize: CGSize) -> CGRect {
         CGRect(
             x: box.minX * imageSize.width,
@@ -80,16 +70,12 @@ public enum TextGeometry {
             height: box.height * imageSize.height)
     }
 
-    /// The rect grown by `margin` on every side and kept inside the image, so a line
-    /// is read whole, with the paper around it, and never a half-glyph at the edge.
     public static func padded(_ rect: CGRect, by margin: CGFloat, in imageSize: CGSize) -> CGRect {
         rect.insetBy(dx: -margin, dy: -margin)
             .intersection(CGRect(origin: .zero, size: imageSize))
     }
 
-    /// A window of about `characters` characters along a line, around a point on it:
-    /// along the line's long side, the whole of its short side, kept inside the line.
-    /// What a line reader that wants one bubble's worth of text is given.
+    /// Along the line's long side, the whole of its short side, kept inside the line.
     public static func window(in line: CGRect, around point: CGPoint, characters: CGFloat) -> CGRect
     {
         if line.width >= line.height {

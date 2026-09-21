@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// Why there is no live image: no camera here, or no permission.
 struct CameraNotice: View {
     let access: Camera.Access
 

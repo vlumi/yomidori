@@ -1,8 +1,6 @@
 import SwiftUI
 import YomidoriCore
 
-/// Where the app opens on a fresh start: the name, one big button to read, the
-/// cards with what is due, and About below. The camera waits until asked.
 struct HomeView: View {
     @State private var dueCount = 0
 
@@ -79,7 +77,6 @@ struct HomeView: View {
     }
 }
 
-/// The screens a push away from home. Codable, so the path survives a restart.
 enum Screen: Hashable, Codable {
     case capture
     case cards

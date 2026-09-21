@@ -1,8 +1,6 @@
 import SwiftUI
 import YomidoriCore
 
-/// The tapped word, large, with its reading, its pitch when the dictionary knows it,
-/// the dictionary and Keep, and the meaning under a fold.
 struct WordReadout: View {
     let token: Token
     let entries: [DictionaryEntry]
@@ -27,7 +25,6 @@ struct WordReadout: View {
         }
     }
 
-    /// The entry's reading under the pitch line, the tokenizer's otherwise.
     private var reading: String {
         if accent != nil, let reading = entries.first?.readings.first {
             return Kana.hiragana(reading)

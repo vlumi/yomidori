@@ -1,29 +1,23 @@
 import Foundation
 
-/// From a word as the tokenizer cut it to the forms a dictionary might list it
-/// under. The OS's analyzer cuts an inflected verb at its stem (頷い + た, 漂っ + て),
-/// so the stem's last kana says which conjugation rows it can come from; each row
-/// gives one candidate, and the dictionary decides which exist (降り is both 降る
-/// and 降りる). The word itself is always the first candidate, for nouns and for
-/// anything already in its dictionary form.
+/// The forms a dictionary might list a tokenizer's cut under. The OS's analyzer cuts an
+/// inflected verb at its stem (頷い + た), so the stem's last kana says which conjugation
+/// rows it can come from; the dictionary decides which exist (降り is both 降る and 降りる).
 public enum Deinflector {
-    /// What a stem's last kana can turn into: endings that replace it, and whether
-    /// the stem can also be an ichidan stem that just takes る.
     private struct Row {
         let replacing: [String]
         let takesRu: Bool
     }
 
     private static let rows: [Character: Row] = [
-        // The continuative of く/ぐ verbs before た/て: 頷い(た), 泳い(だ); or an ichidan
-        // stem ending in い: 用い(る).
+        /// く/ぐ verbs before た/て (頷い, 泳い), or an ichidan stem in い (用い).
         "い": Row(replacing: ["く", "ぐ"], takesRu: true),
         // The t-form stem of う/つ/る verbs: 漂っ, 待っ, 黙っ; and 行っ from 行く.
         "っ": Row(replacing: ["う", "つ", "る", "く"], takesRu: false),
         // The n-form stem of む/ぶ/ぬ verbs: 微笑ん, 飛ん, 死ん.
         "ん": Row(replacing: ["む", "ぶ", "ぬ"], takesRu: false),
-        // The i-row: a godan masu-stem (指し → 指す, 打ち → 打つ), a suru verb's noun
-        // (存在し → 存在する), or an ichidan stem (起き → 起きる, 降り → 降りる).
+        /// A godan masu-stem (指し → 指す), a suru verb's noun (存在し), or an ichidan stem
+        /// (起き).
         "し": Row(replacing: ["す", "する"], takesRu: true),
         "き": Row(replacing: ["く"], takesRu: true),
         "ぎ": Row(replacing: ["ぐ"], takesRu: true),

@@ -1,10 +1,6 @@
 import SwiftUI
 import YomidoriCore
 
-/// A reading in kana with its pitch drawn over it the way learners' dictionaries
-/// print it: a line over the high morae, dropping where the accent falls; the
-/// downstep number beside it for those who read that instead. The app's one
-/// notation.
 struct PitchReading: View {
     let reading: String
     let accent: PitchAccent
@@ -36,8 +32,7 @@ struct PitchReading: View {
     }
 }
 
-/// The line over one mora: along its top when high, with a vertical stroke at its
-/// end where the pitch drops or at its start where it rises into the next mora.
+/// A stroke at the mora's end where the pitch drops, at its start where it rises.
 private struct PitchMark: View {
     let high: Bool
     let dropsAfter: Bool

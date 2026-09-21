@@ -3,11 +3,10 @@ import IPADic
 import Mecab_Swift
 import YomidoriCore
 
-/// MeCab with IPADic, the alternative to the OS's analyzer, kept so the two can be
-/// compared on real pages. IPADic knows dictionary forms and parts of speech and is
-/// old (2007); an unknown word comes back without a reading, and keeps its surface.
+/// IPADic knows dictionary forms and parts of speech; an unknown word comes back without
+/// a reading.
 public final class MeCabTokenizer: YomidoriCore.Tokenizer {
-    /// Loading the dictionary takes a moment and tens of megabytes; once per app.
+    /// Loading the dictionary takes tens of megabytes; once per app.
     public static let shared: MeCabTokenizer? = try? MeCabTokenizer()
 
     private let mecab: Mecab_Swift.Tokenizer

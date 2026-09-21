@@ -1,19 +1,14 @@
 import Foundation
 
-/// Keeps the cards. One card per word; keeping a word already kept adds a sighting.
 public protocol CardStore {
     func cards() -> [Card]
     func card(headword: String, reading: String) -> Card?
-    /// Adds the sighting to the word's card, creating the card if there is none, and
-    /// returns the card as it now stands.
     @discardableResult
     func keep(_ sighting: Sighting, headword: String, reading: String, entryID: Int?) throws -> Card
     func remove(_ card: Card) throws
-    /// Replaces the card with the same id, as after a review.
     func update(_ card: Card) throws
 }
 
-/// One question of one card, in the review queue.
 public struct ReviewItem: Hashable, Sendable {
     public let card: Card
     public let question: Question
@@ -25,14 +20,13 @@ public struct ReviewItem: Hashable, Sendable {
 }
 
 extension CardStore {
-    /// The cards due at `date`, the longest overdue first, then the oldest.
+    /// The longest overdue first, then the oldest.
     public func due(at date: Date) -> [Card] {
         cards().filter { $0.isDue(at: date) }
             .sorted { ($0.review?.due ?? $0.created) < ($1.review?.due ?? $1.created) }
     }
 
-    /// Every question due at `date`, the longest overdue first; a card asking both
-    /// contributes two items, the reading before the meaning.
+    /// A card asking both contributes two items, the reading first.
     public func dueItems(at date: Date) -> [ReviewItem] {
         cards().flatMap { card in
             card.dueQuestions(at: date).map { ReviewItem(card: card, question: $0) }
@@ -44,21 +38,16 @@ extension CardStore {
     }
 }
 
-/// The cards as one JSON document, written whole and atomically on every change.
-/// A reader's cards number in the hundreds or low thousands, which a single file
-/// reads in a blink, and one file is what a sync or a backup copies. Everything
-/// local, nothing leaves the device.
+/// One JSON document, written whole and atomically on every change.
 public final class FileCardStore: CardStore {
     private let url: URL
     private var loaded: [Card]?
     private let queue = DispatchQueue(label: "fi.misaki.yomidori.cards")
 
-    /// The store at `url`, created empty on first write if the file does not exist.
     public init(url: URL) {
         self.url = url
     }
 
-    /// The app's store, in Application Support.
     public static func inApplicationSupport(fileManager: FileManager = .default) throws
         -> FileCardStore
     {

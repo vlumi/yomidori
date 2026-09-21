@@ -1,8 +1,6 @@
 import SwiftUI
 import YomidoriCore
 
-/// A word as a title: the headword, its reading with the pitch drawn over it when
-/// known, the dictionary form when the tokenizer gave one, and whatever trails.
 struct WordTitle<Trailing: View>: View {
     let headword: String
     let reading: String

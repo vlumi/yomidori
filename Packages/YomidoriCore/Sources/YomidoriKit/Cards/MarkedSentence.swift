@@ -1,7 +1,6 @@
 import SwiftUI
 import YomidoriCore
 
-/// A kept sentence with the word as it stood on the page in night green.
 struct MarkedSentence: View {
     let sighting: Sighting
     var font: Font = .title3

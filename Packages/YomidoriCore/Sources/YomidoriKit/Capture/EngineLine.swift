@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// One engine's reading in the close-up readout: the engine's name small, the text under it.
 struct EngineLine: View {
     let name: LocalizedStringKey
     let text: String

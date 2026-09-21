@@ -1,8 +1,6 @@
 import SwiftUI
 import YomidoriCore
 
-/// What the app is, what it promises, how it draws pitch, and whose work it
-/// bundles: the notices each license asks for, from the repository's own file.
 struct AboutView: View {
     var body: some View {
         List {

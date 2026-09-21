@@ -1,8 +1,6 @@
 import Foundation
 
-/// The block structure of a Markdown document, as much of it as a notices page
-/// needs: headings, block quotes, fenced code, and paragraphs. Inline marks inside
-/// a paragraph or heading are left for the text renderer, which understands them.
+/// Headings, block quotes, fenced code and paragraphs; inline marks are left to the renderer.
 public enum MarkdownBlock: Equatable, Sendable {
     case heading(level: Int, text: String)
     case quote(String)
@@ -17,8 +15,8 @@ public enum MarkdownBlock: Equatable, Sendable {
         return parser.finish()
     }
 
-    /// Line by line: a fence swallows everything to the next fence; a heading stands
-    /// alone; quote lines and text lines gather until a blank line or a change of kind.
+    /// A fence swallows everything to the next fence; quote and text lines gather until a
+    /// blank line or a change of kind.
     private struct Parser {
         var blocks: [MarkdownBlock] = []
         var paragraph: [String] = []

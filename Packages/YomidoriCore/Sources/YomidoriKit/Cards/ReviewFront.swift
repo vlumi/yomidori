@@ -1,8 +1,6 @@
 import SwiftUI
 import YomidoriCore
 
-/// The front of a card: the latest sentence with the word marked, its crop and its
-/// source, or the word alone when the card came from a search and has no sentence.
 struct ReviewFront: View {
     let card: Card
 
@@ -29,7 +27,6 @@ struct ReviewFront: View {
     }
 }
 
-/// A meaning question gives the reading away; the question is what the word means.
 struct MeaningQuestion: View {
     let card: Card
 

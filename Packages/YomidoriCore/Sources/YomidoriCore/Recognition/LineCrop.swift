@@ -1,9 +1,8 @@
 import CoreGraphics
 import Foundation
 
-/// Where a sentence sits on the still: the union of the recognized lines whose text
-/// is part of it, padded by a line's thickness, in image pixels. Nil when no line
-/// matches, which is the vertical case Vision cannot see; the whole still stands in.
+/// The union of the recognized lines whose text is part of the sentence, in image pixels;
+/// nil when none matches.
 public enum LineCrop {
     public static func rect(
         for sentence: String, lines: [RecognizedLine], imageSize: CGSize
@@ -19,11 +18,9 @@ public enum LineCrop {
         return TextGeometry.padded(union, by: thickness * 0.8, in: imageSize)
     }
 
-    /// A line belongs to the sentence when a run of it is in the sentence: the whole
-    /// of a short line, six characters of a longer one (the line that carries the
-    /// sentence's beginning or end shares only that much with it), or six tenths of
-    /// whichever is shorter, since the recognizer's line and the sentence rarely
-    /// agree on every character.
+    /// A line belongs when a run of it is in the sentence: all of a short line, six characters
+    /// of a longer one (the line carrying the sentence's end shares only that much), or six
+    /// tenths of the shorter, since recognizer and sentence rarely agree on every character.
     static func matches(_ line: String, in sentence: String) -> Bool {
         guard line.count >= 2 else { return false }
         if sentence.contains(line) { return true }

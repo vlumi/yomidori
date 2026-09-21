@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The close-up: the crop magnified beside what each engine read from it.
 struct CloseUpReadout: View {
     let reading: Bool
     let closeUp: CaptureView.CloseUp?

@@ -1,7 +1,6 @@
 import SwiftUI
 import YomidoriCore
 
-/// An entry's senses, numbered, glosses joined; the first few.
 struct SensesList: View {
     let entry: DictionaryEntry
     var limit = 4
@@ -18,7 +17,6 @@ struct SensesList: View {
     }
 }
 
-/// The meaning folded away, since the reading is what was asked for.
 struct MeaningFold<Content: View>: View {
     @ViewBuilder var content: () -> Content
 

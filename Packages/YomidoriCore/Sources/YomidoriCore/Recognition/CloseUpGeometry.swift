@@ -1,10 +1,7 @@
 import CoreGraphics
 
-/// What a tap on the still gives the close-up readers: the crop the page readers get,
-/// the whole line under the tap padded by its thickness, and the window the line
-/// reader gets, about eight characters of that line around the tap. Where no line
-/// was recognized (a vertical page), a square around the tap and a narrow column of
-/// it stand in.
+/// The crop is the tapped line padded by its thickness, the window about eight characters
+/// of it around the tap. With no recognized line, a square around the tap and a column of it.
 public struct CloseUpGeometry: Equatable {
     public let crop: CGRect
     public let window: CGRect

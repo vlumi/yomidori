@@ -1,13 +1,11 @@
 import SwiftUI
 
-/// Where a zoomed view stands: its scale and how far it has been dragged.
 struct Zoom: Equatable {
     var scale: CGFloat = 1
     var offset: CGSize = .zero
 
     static let range: ClosedRange<CGFloat> = 1...6
 
-    /// The offset kept so the content never leaves the view empty on a side.
     func clamped(in bounds: CGSize) -> Zoom {
         let slackX = bounds.width * (scale - 1) / 2
         let slackY = bounds.height * (scale - 1) / 2
@@ -19,8 +17,6 @@ struct Zoom: Equatable {
     }
 }
 
-/// Pinch to zoom and drag to pan the view this modifies, about its centre. A
-/// no-op off iOS, where the test build has no gestures to give it.
 struct Zoomable: ViewModifier {
     @Binding var zoom: Zoom
     let bounds: CGSize

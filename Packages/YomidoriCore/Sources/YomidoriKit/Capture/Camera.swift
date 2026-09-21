@@ -7,12 +7,8 @@ import AVKit
 import UIKit
 #endif
 
-/// The back camera as a source of stills: a live preview that only frames, and a
-/// shutter that keeps the next frame of the stream. It is a frame grab, not a
-/// photo capture: nothing is written to the library, and there is no shutter
-/// sound (mandatory for photo capture in Japan, where the app is read). Off iOS
-/// (the macOS test build, the simulator) there is no camera, and the screen
-/// offers the photo picker instead.
+/// A frame grab, not a photo capture: nothing is written to the library and there is no
+/// shutter sound (mandatory for photo capture in Japan). Off iOS there is no camera.
 final class Camera: ObservableObject {
     enum Access {
         case undetermined
@@ -34,7 +30,6 @@ final class Camera: ObservableObject {
     private var zoomAtPinchStart: CGFloat = 1
     #endif
 
-    /// Asks for camera access on first use, then starts the preview.
     func start() {
         #if os(iOS)
         AVCaptureDevice.requestAccess(for: .video) { [self] granted in
@@ -59,7 +54,6 @@ final class Camera: ObservableObject {
         #endif
     }
 
-    /// The next frame of the stream, as the preview shows it. Nil if none arrives.
     func takeStill() async -> Still? {
         #if os(iOS)
         let frames = frames
@@ -72,7 +66,7 @@ final class Camera: ObservableObject {
         #endif
     }
 
-    /// Pinch on the preview: `scale` is relative to where the pinch began.
+    /// `scale` is relative to where the pinch began.
     func pinch(scale: CGFloat, began: Bool) {
         #if os(iOS)
         queue.async { [self] in
@@ -90,9 +84,8 @@ final class Camera: ObservableObject {
     }
 
     #if os(iOS)
-    /// The back camera as one virtual device where the phone has several: the system
-    /// then hands a close page to the ultra-wide (macro) and a pinch past the wide's
-    /// reach to the telephoto, both optical. A single wide camera is the fallback.
+    /// One virtual device where the phone has several, so a close page goes to the ultra-wide
+    /// (macro) and a pinch past the wide's reach to the telephoto, both optical.
     private func configure() -> Bool {
         let kinds: [AVCaptureDevice.DeviceType] = [
             .builtInTripleCamera, .builtInDualWideCamera, .builtInWideAngleCamera,
@@ -123,9 +116,8 @@ final class Camera: ObservableObject {
         return true
     }
 
-    /// A book is read at arm's length: start at the wide camera's own framing (on a
-    /// virtual device zoom 1 is the ultra-wide), let a pinch go up to 5× from there,
-    /// and keep the autofocus hunting in the near range.
+    /// On a virtual device zoom 1 is the ultra-wide, so start at the wide camera's own framing;
+    /// keep the autofocus in the near range.
     private func focusNear(_ device: AVCaptureDevice) {
         guard (try? device.lockForConfiguration()) != nil else { return }
         defer { device.unlockForConfiguration() }

@@ -5,10 +5,7 @@ import VisionKit
 import UIKit
 #endif
 
-/// The other recognizer the OS ships: the Live Text engine behind the Camera and
-/// Photos apps, which reads vertical Japanese where Vision's request does not. It
-/// returns the page as a transcript and, on iOS, its own selection UI over the
-/// image, but no positions, so it is measured here beside Vision, not chosen yet.
+/// VisionKit's Live Text: reads vertical Japanese where Vision does not, but gives no positions.
 enum LiveText {
     static var isSupported: Bool {
         ImageAnalyzer.isSupported

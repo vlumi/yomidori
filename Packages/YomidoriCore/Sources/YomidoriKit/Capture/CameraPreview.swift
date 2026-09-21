@@ -8,11 +8,9 @@ import UIKit
 
 #if os(iOS)
 
-/// The live camera frame, letterboxed so what is seen is what the still holds.
-/// `access` is passed as a value so SwiftUI updates the view when it changes;
-/// a class reference alone reads as unchanged and the update is skipped.
-/// The volume buttons and the Camera Control press the shutter too, from iOS 17.2,
-/// where the system hands capture apps those presses; a book stays in the other hand.
+/// `access` is passed as a value so SwiftUI updates the view when it changes; a class
+/// reference alone reads as unchanged. The volume buttons and the Camera Control press the
+/// shutter from iOS 17.2, where the system hands capture apps those presses.
 struct CameraPreview: UIViewRepresentable {
     let camera: Camera
     let access: Camera.Access

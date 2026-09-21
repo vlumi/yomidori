@@ -1,9 +1,6 @@
 import Foundation
 import YomidoriCore
 
-/// Makes the sighting for a kept word: the sentence around it in the whole transcript
-/// and the word's place in it, every page's still saved once, and the crop of the
-/// sentence's lines where the page reader placed them.
 struct SentenceKeeper {
     let transcript: String
     let transcriptLines: TranscriptLines

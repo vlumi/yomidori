@@ -4,11 +4,8 @@ import SwiftUI
 import UIKit
 #endif
 
-/// The system's own dictionaries, スーパー大辞林 among them on a Japanese phone, through
-/// the reference library view: a Japanese meaning at a quality no free data
-/// matches, shown as a view, never quoted. Off iOS there is no such library.
+/// The system's own dictionaries, shown as a view and never quoted; none off iOS.
 enum ReferenceLibrary {
-    /// Whether an installed system dictionary has an entry for the term.
     static func hasDefinition(for term: String) -> Bool {
         #if os(iOS)
         UIReferenceLibraryViewController.dictionaryHasDefinition(forTerm: term)
