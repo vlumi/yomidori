@@ -10,6 +10,14 @@ The dictionary data is JMdict_e, built into `jmdict.sqlite` by `Scripts/data/bui
 
 JMdict is © the Electronic Dictionary Research and Development Group and is distributed under the [Creative Commons Attribution-ShareAlike 4.0 licence](https://creativecommons.org/licenses/by-sa/4.0/). The same statement and licence are carried in the database's `meta` table.
 
+## KANJIDIC2 and KRADFILE
+
+The kanji data (readings, meanings, stroke counts, school grades, and the components each kanji is made of) is KANJIDIC2 and KRADFILE, built into the same `jmdict.sqlite` at build time and not committed here.
+
+> This application uses the [KANJIDIC](https://www.edrdg.org/wiki/index.php/KANJIDIC_Project) and [KRADFILE](https://www.edrdg.org/krad/kradinf.html) dictionary files. These files are the property of the [Electronic Dictionary Research and Development Group](https://www.edrdg.org/), and are used in conformance with the Group's [licence](https://www.edrdg.org/edrdg/licence.html).
+
+Both are © the Electronic Dictionary Research and Development Group and distributed under the [Creative Commons Attribution-ShareAlike 4.0 licence](https://creativecommons.org/licenses/by-sa/4.0/). The statement is carried in the database's `meta` table too.
+
 ## Kanjium (pitch accent)
 
 The pitch accent data is the `accents.txt` list from [Kanjium](https://github.com/mifunetoshiro/kanjium) by Uros O., built into the same `jmdict.sqlite` at build time, under the [Creative Commons Attribution-ShareAlike 4.0 licence](https://creativecommons.org/licenses/by-sa/4.0/). Its author asks for this statement, which the database's `meta` table also carries:

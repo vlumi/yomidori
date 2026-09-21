@@ -79,6 +79,34 @@ final class JMdictTests: XCTestCase {
             dictionary.pitchAccent(of: dictionary.entries(matching: "樹皮")[0])?.downstep, 1)
     }
 
+    func testAKanjiWithItsReadingsMeaningsFactsAndComponents() throws {
+        let kanji = try XCTUnwrap(dictionary.kanji("樹"))
+        XCTAssertEqual(kanji.onReadings, ["ジュ"])
+        XCTAssertEqual(kanji.kunReadings, ["き", "う.える"])
+        XCTAssertEqual(kanji.nanori, ["いつき", "たつ"])
+        XCTAssertEqual(kanji.meanings, ["timber trees", "wood"])
+        XCTAssertEqual(kanji.strokes, 16)
+        XCTAssertEqual(kanji.grade, 6)
+        XCTAssertEqual(kanji.jlpt, 1)
+        XCTAssertEqual(kanji.frequency, 1150)
+        XCTAssertEqual(kanji.components, ["木", "士", "冖", "寸", "豆"])
+        XCTAssertEqual(dictionary.kanji("皮")?.nanori, [])
+        XCTAssertNil(dictionary.kanji("木"))
+    }
+
+    func testWordsContainingAKanjiOrAWord() {
+        XCTAssertEqual(dictionary.entries(containing: "樹", limit: 10).map(\.headword), ["樹皮"])
+        XCTAssertEqual(dictionary.entries(containing: "生", limit: 10).map(\.headword), ["生地"])
+        XCTAssertTrue(dictionary.entries(containing: "生地", limit: 10).isEmpty)
+    }
+
+    func testHomophonesShareTheReadingAndAreWrittenInKanji() {
+        let town = dictionary.entries(matching: "街")[0]
+        XCTAssertTrue(dictionary.homophones(of: town).isEmpty)
+        let raw = dictionary.entries(matching: "生")[0]
+        XCTAssertEqual(dictionary.homophones(of: raw).map(\.headword), [])
+    }
+
     func testAMissingDatabaseFailsToOpen() {
         let missing = FileManager.default.temporaryDirectory.appendingPathComponent(
             "\(UUID().uuidString).sqlite")
@@ -90,5 +118,6 @@ final class JMdictTests: XCTestCase {
         XCTAssertEqual(dictionary.meta["created"], "2026-09-17")
         XCTAssertTrue(dictionary.meta["license"]?.contains("CC BY-SA 4.0") == true)
         XCTAssertTrue(dictionary.meta["accents_attribution"]?.contains("Uros O.") == true)
+        XCTAssertTrue(dictionary.meta["kanji_attribution"]?.contains("KANJIDIC") == true)
     }
 }

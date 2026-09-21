@@ -27,6 +27,12 @@ public struct AppRoot: View {
                 .navigationDestination(for: Card.self) { card in
                     CardView(card: card)
                 }
+                .navigationDestination(for: DictionaryEntry.self) { entry in
+                    EntryView(entry: entry)
+                }
+                .navigationDestination(for: KanjiEntry.self) { kanji in
+                    KanjiView(kanji: kanji)
+                }
         }
         .tint(Palette.nightGreen)
         .onAppear(perform: restore)

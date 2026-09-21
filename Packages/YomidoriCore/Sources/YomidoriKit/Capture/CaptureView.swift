@@ -36,7 +36,7 @@ public struct CaptureView: View {
                     }
                 }
             }
-            .onAppear { camera.start() }
+            .onAppear { if still == nil { camera.start() } }
             .onDisappear { camera.stop() }
             .task(id: picked) { await loadPicked() }
             .task(id: still?.id) {
