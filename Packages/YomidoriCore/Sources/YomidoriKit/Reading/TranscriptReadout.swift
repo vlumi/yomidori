@@ -24,6 +24,7 @@ struct TranscriptReadout: View {
     @AppStorage("transcriptExpanded") private var expanded = false
     @State private var archived: [UUID: UUID] = [:]
     @AppStorage("source") private var source = ""
+    @AppStorage("keepsPhotos") private var keepsPhotos = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -74,6 +75,16 @@ struct TranscriptReadout: View {
             }
             .textFieldStyle(.roundedBorder)
             .font(.callout)
+            Toggle(isOn: $keepsPhotos) {
+                Label {
+                    Text("Keep the photo too", bundle: .module)
+                } icon: {
+                    Image(systemName: keepsPhotos ? "photo.fill" : "photo")
+                }
+            }
+            .toggleStyle(.button)
+            .labelStyle(.iconOnly)
+            .controlSize(.small)
             Button {
                 Clipboard.copy(transcript)
             } label: {
@@ -133,7 +144,8 @@ struct TranscriptReadout: View {
         let keeper = SentenceKeeper(
             transcript: transcript, transcriptLines: transcriptLines, tokenLines: lines,
             stills: stills,
-            currentLines: currentLines, source: source.isEmpty ? nil : source)
+            currentLines: currentLines, source: source.isEmpty ? nil : source,
+            keepsImages: keepsPhotos)
         guard let store = Cards.store,
             let sighting = keeper.sighting(for: word, archived: &archived)
         else {

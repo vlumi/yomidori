@@ -71,6 +71,16 @@
         }
       }
     },
+    "Cancel" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キャンセル"
+          }
+        }
+      }
+    },
     "Cards" : {
       "localizations" : {
         "ja" : {
@@ -137,6 +147,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "辞書"
+          }
+        }
+      }
+    },
+    "Edit the sentence" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文を直す"
           }
         }
       }
@@ -247,6 +267,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "残す"
+          }
+        }
+      }
+    },
+    "Keep the photo too" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "写真も残す"
           }
         }
       }
@@ -511,6 +541,16 @@
         }
       }
     },
+    "Remove the photos" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "写真を消す"
+          }
+        }
+      }
+    },
     "Retake" : {
       "localizations" : {
         "ja" : {
@@ -547,6 +587,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "同じ読み"
+          }
+        }
+      }
+    },
+    "Save" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存"
           }
         }
       }

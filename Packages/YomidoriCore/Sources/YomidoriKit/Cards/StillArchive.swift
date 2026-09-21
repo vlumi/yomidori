@@ -44,6 +44,18 @@ enum StillArchive {
         return CGImageSourceCreateImageAtIndex(source, 0, nil)
     }
 
+    /// Deletes the files no card refers to any more; a still is shared by every card kept
+    /// from its page.
+    static func remove(_ ids: [UUID], keptBy cards: [Card]) {
+        let referenced = Set(
+            cards.flatMap(\.sightings).flatMap { $0.stillIDs + [$0.cropID].compactMap { $0 } })
+        for id in ids where !referenced.contains(id) {
+            if let url = try? url(for: id) {
+                try? FileManager.default.removeItem(at: url)
+            }
+        }
+    }
+
     private static func scaled(_ image: CGImage, by scale: CGFloat) -> CGImage? {
         let width = Int(CGFloat(image.width) * scale)
         let height = Int(CGFloat(image.height) * scale)
