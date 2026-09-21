@@ -3,6 +3,11 @@ import XCTest
 @testable import YomidoriCore
 
 final class PitchAccentTests: XCTestCase {
+    func testEveryPatternOfAReading() {
+        XCTAssertEqual(PitchAccent.patterns(forMoraCount: 2).map(\.downstep), [0, 1, 2])
+        XCTAssertEqual(PitchAccent.patterns(forMoraCount: 0).map(\.downstep), [0, 1])
+    }
+
     func testMoraeJoinSmallKanaAndKeepTheRest() {
         XCTAssertEqual(PitchAccent.morae(of: "じゅひ"), ["じゅ", "ひ"])
         XCTAssertEqual(PitchAccent.morae(of: "ちゅうちょ"), ["ちゅ", "う", "ちょ"])

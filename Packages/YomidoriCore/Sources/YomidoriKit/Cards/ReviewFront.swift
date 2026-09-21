@@ -27,6 +27,23 @@ struct ReviewFront: View {
     }
 }
 
+struct PitchQuestion: View {
+    let card: Card
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
+            Text(verbatim: card.headword)
+                .font(.title)
+            Text(verbatim: card.reading)
+                .font(.title3)
+                .foregroundStyle(Palette.nightGreen)
+            Text("Which pitch?", bundle: .module)
+                .font(.callout)
+                .foregroundStyle(.secondary)
+        }
+    }
+}
+
 struct MeaningQuestion: View {
     let card: Card
 

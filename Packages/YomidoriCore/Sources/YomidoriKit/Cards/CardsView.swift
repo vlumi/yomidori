@@ -52,6 +52,6 @@ struct CardsView: View {
 
     private func reload() {
         cards = (Cards.store?.cards() ?? []).sorted { $0.created > $1.created }
-        dueCount = Cards.store?.dueItems(at: Date()).count ?? 0
+        dueCount = Cards.dueItems(at: Date()).count
     }
 }

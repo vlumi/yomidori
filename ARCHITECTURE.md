@@ -307,8 +307,9 @@ the crop of the line behind it for when the OCR misread something. Its back is
 the reading in large kana, the pitch mark, the meaning collapsed below (usually
 known already), and the book and page it came from. Meeting the word again in
 another book adds a sentence to the same card, and reviews rotate through them.
-The default question is "how is this read", because that is the gap the app is
-for; a meaning card is an option ticked when the meaning was the gap.
+Every card asks three questions, each on its own schedule: how the word is read,
+what it means, and, where the dictionary knows it, which pitch it takes, picked
+from every pattern its reading allows.
 
 The two-page glue is built (see *What exists*) as attaching pages: the next
 still's text joins the current one at the seam by plain concatenation, Japanese

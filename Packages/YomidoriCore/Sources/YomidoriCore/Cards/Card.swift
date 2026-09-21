@@ -9,13 +9,13 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     public var sightings: [Sighting]
     public let created: Date
     public var review: ReviewState?
-    public var asksMeaning: Bool
     public var meaningReview: ReviewState?
+    public var pitchReview: ReviewState?
 
     public init(
         id: UUID = UUID(), headword: String, reading: String, entryID: Int?,
-        sightings: [Sighting], created: Date, review: ReviewState? = nil, asksMeaning: Bool = false,
-        meaningReview: ReviewState? = nil
+        sightings: [Sighting], created: Date, review: ReviewState? = nil,
+        meaningReview: ReviewState? = nil, pitchReview: ReviewState? = nil
     ) {
         self.id = id
         self.headword = headword
@@ -24,27 +24,36 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         self.sightings = sightings
         self.created = created
         self.review = review
-        self.asksMeaning = asksMeaning
         self.meaningReview = meaningReview
+        self.pitchReview = pitchReview
     }
 
     public func isDue(at date: Date) -> Bool {
         review.map { $0.due <= date } ?? true
     }
 
-    public func dueQuestions(at date: Date) -> [Question] {
-        var questions: [Question] = []
-        if isDue(at: date) { questions.append(.reading) }
-        if asksMeaning, meaningReview.map({ $0.due <= date }) ?? true { questions.append(.meaning) }
-        return questions
+    /// The reading and the meaning are always asked; the pitch only when it is known.
+    public func dueQuestions(at date: Date, asksPitch: Bool) -> [Question] {
+        Question.allCases.filter { question in
+            (question != .pitch || asksPitch)
+                && (state(for: question).map { $0.due <= date } ?? true)
+        }
     }
 
     public func state(for question: Question) -> ReviewState? {
-        question == .reading ? review : meaningReview
+        switch question {
+        case .reading: return review
+        case .meaning: return meaningReview
+        case .pitch: return pitchReview
+        }
     }
 
     public mutating func setState(_ state: ReviewState, for question: Question) {
-        if question == .reading { review = state } else { meaningReview = state }
+        switch question {
+        case .reading: review = state
+        case .meaning: meaningReview = state
+        case .pitch: pitchReview = state
+        }
     }
 
     public mutating func replace(_ sighting: Sighting) {
@@ -52,9 +61,9 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         sightings[index] = sighting
     }
 
-    // The first cards were written without the meaning fields; they read as off.
+    // The first cards were written with the reading's state only.
     private enum CodingKeys: String, CodingKey {
-        case id, headword, reading, entryID, sightings, created, review, asksMeaning, meaningReview
+        case id, headword, reading, entryID, sightings, created, review, meaningReview, pitchReview
     }
 
     public init(from decoder: Decoder) throws {
@@ -66,14 +75,15 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         sightings = try c.decode([Sighting].self, forKey: .sightings)
         created = try c.decode(Date.self, forKey: .created)
         review = try c.decodeIfPresent(ReviewState.self, forKey: .review)
-        asksMeaning = try c.decodeIfPresent(Bool.self, forKey: .asksMeaning) ?? false
         meaningReview = try c.decodeIfPresent(ReviewState.self, forKey: .meaningReview)
+        pitchReview = try c.decodeIfPresent(ReviewState.self, forKey: .pitchReview)
     }
 }
 
-public enum Question: String, Codable, Sendable, Hashable {
+public enum Question: String, Codable, Sendable, Hashable, CaseIterable {
     case reading
     case meaning
+    case pitch
 }
 
 public struct Sighting: Identifiable, Hashable, Codable, Sendable {

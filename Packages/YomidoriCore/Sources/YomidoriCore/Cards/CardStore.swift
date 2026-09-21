@@ -26,10 +26,14 @@ extension CardStore {
             .sorted { ($0.review?.due ?? $0.created) < ($1.review?.due ?? $1.created) }
     }
 
-    /// A card asking both contributes two items, the reading first.
-    public func dueItems(at date: Date) -> [ReviewItem] {
+    /// A card contributes an item per due question, the reading before the meaning before
+    /// the pitch; `asksPitch` says which cards have a pitch to ask.
+    public func dueItems(at date: Date, asksPitch: (Card) -> Bool = { _ in false }) -> [ReviewItem]
+    {
         cards().flatMap { card in
-            card.dueQuestions(at: date).map { ReviewItem(card: card, question: $0) }
+            card.dueQuestions(at: date, asksPitch: asksPitch(card)).map {
+                ReviewItem(card: card, question: $0)
+            }
         }
         .sorted {
             ($0.card.state(for: $0.question)?.due ?? $0.card.created)

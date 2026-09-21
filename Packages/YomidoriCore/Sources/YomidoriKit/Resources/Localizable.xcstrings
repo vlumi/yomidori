@@ -41,16 +41,6 @@
         }
       }
     },
-    "Ask the meaning too" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "意味も問う"
-          }
-        }
-      }
-    },
     "Book, page" : {
       "localizations" : {
         "ja" : {
@@ -721,16 +711,6 @@
         }
       }
     },
-    "The reading is always asked. With this on, the word is also asked for its meaning, on its own schedule." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "読みはいつも問われます。これをオンにすると、意味も別の予定で問われます。"
-          }
-        }
-      }
-    },
     "Tokenizer" : {
       "localizations" : {
         "ja" : {
@@ -767,6 +747,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "どういう意味？"
+          }
+        }
+      }
+    },
+    "Which pitch?" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクセントは？"
           }
         }
       }
