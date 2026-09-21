@@ -18,7 +18,7 @@ public final class JMdict: WordDictionary {
     }
 
     private var db: OpaquePointer?
-    private let queue = DispatchQueue(label: "fi.misaki.yomidori.jmdict")
+    let queue = DispatchQueue(label: "fi.misaki.yomidori.jmdict")
 
     public init(url: URL) throws {
         let flags = SQLITE_OPEN_READONLY | SQLITE_OPEN_NOMUTEX
@@ -118,7 +118,7 @@ public final class JMdict: WordDictionary {
         }
     }
 
-    private func entry(id: Int) -> DictionaryEntry {
+    func entry(id: Int) -> DictionaryEntry {
         let idText = String(id)
         let kanji = rows("SELECT text FROM kanji WHERE entry = ?1 ORDER BY ord", bind: idText).map {
             $0[0]
@@ -139,11 +139,11 @@ public final class JMdict: WordDictionary {
             id: id, kanji: kanji, readings: readings, senses: senses, common: common)
     }
 
-    private func rows(_ sql: String, bind: String?) -> [[String]] {
+    func rows(_ sql: String, bind: String?) -> [[String]] {
         rows(sql, binds: bind.map { [$0] } ?? [])
     }
 
-    private func rows(_ sql: String, binds: [String]) -> [[String]] {
+    func rows(_ sql: String, binds: [String]) -> [[String]] {
         var statement: OpaquePointer?
         guard sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK else { return [] }
         defer { sqlite3_finalize(statement) }

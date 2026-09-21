@@ -124,11 +124,15 @@ use for its own input.
   and its frequency mark; read from a SQLite database through the system's own
   SQLite, by exact kanji form or reading, common words first. The same database
   holds Kanjium's accent table, keyed by headword and reading, and the reader
-  answers pitch questions from it. The database is
+  answers pitch questions from it; and KANJIDIC2's kanji with KRADFILE's
+  components (`KanjiEntry`: readings, meanings, strokes, grade, JLPT level,
+  frequency rank), read by literal. Around a word the reader also finds the
+  words it appears in (a scan of the kanji forms, a few milliseconds) and the
+  words read the same way (the reading index). The database is
   built from JMdict_e by `Scripts/data/build-jmdict.py` (standard-library
-  Python, a few seconds, ~50 MB) into the app target at build time and never
-  committed; its `meta` table carries the source date and the EDRDG attribution.
-  The tests read a sliver built by the same script from a hand-made XML.
+  Python, a few seconds, ~68 MB) into the app target at build time and never
+  committed; its `meta` table carries the source dates and the EDRDG attribution.
+  The tests read a sliver built by the same script from hand-made sources.
 - **`TokenFlow`** and **`TranscriptReadout`** (Kit): the transcript as its
   words, a line per line of the page, wrapping, each word with its reading over
   it where the reading adds something, behind a fold that is closed by default

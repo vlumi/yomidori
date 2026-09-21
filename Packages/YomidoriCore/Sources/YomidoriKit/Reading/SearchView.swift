@@ -13,26 +13,11 @@ struct SearchView: View {
                     .foregroundStyle(.secondary)
             }
             ForEach(results) { entry in
-                NavigationLink(value: entry) {
-                    HStack(alignment: .firstTextBaseline, spacing: 12) {
-                        Text(verbatim: entry.headword)
-                            .font(.title3)
-                        Text(verbatim: Kana.hiragana(entry.readings.first ?? ""))
-                            .foregroundStyle(Palette.nightGreen)
-                        Spacer()
-                        Text(verbatim: entry.senses.first?.glosses.first ?? "")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                    }
-                }
+                NavigationLink(value: entry) { EntryRow(entry: entry) }
             }
         }
         .searchable(text: $query, prompt: Text("Kana, kanji, or English", bundle: .module))
         .navigationTitle(Text("Search", bundle: .module))
-        .navigationDestination(for: DictionaryEntry.self) { entry in
-            EntryView(entry: entry)
-        }
         .task(id: query) {
             try? await Task.sleep(for: .milliseconds(150))
             guard !Task.isCancelled else { return }

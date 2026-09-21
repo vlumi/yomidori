@@ -5,6 +5,7 @@ import YomidoriDictionary
 struct EntryView: View {
     let entry: DictionaryEntry
     @State private var kept = false
+    @State private var details = WordDetails()
 
     private var reading: String {
         Kana.hiragana(entry.readings.first ?? "")
@@ -14,57 +15,40 @@ struct EntryView: View {
         List {
             Section {
                 WordTitle(
-                    headword: entry.headword, reading: reading,
-                    accent: JMdict.bundled?.pitchAccents(for: entry.headword, reading: reading)
-                        .first,
+                    headword: entry.headword, reading: reading, accent: details.accent(of: reading),
                     font: .largeTitle
                 ) {
                     DictionaryButton(term: entry.headword)
-                }
-                if entry.readings.count > 1 || entry.kanji.count > 1 {
-                    Text(
-                        verbatim: (entry.kanji + entry.readings.map(Kana.hiragana)).joined(
-                            separator: "、")
-                    )
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
+                        .labelStyle(.iconOnly)
+                    keepButton
                 }
             }
-            Section {
-                ForEach(entry.senses.indices, id: \.self) { index in
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(verbatim: entry.senses[index].partsOfSpeech.joined(separator: ", "))
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                        Text(
-                            verbatim:
-                                "\(index + 1). \(entry.senses[index].glosses.joined(separator: "; "))"
-                        )
-                    }
-                }
-            }
-            Section {
-                if kept || Cards.store?.card(headword: entry.headword, reading: reading) != nil {
-                    Label {
-                        Text("Kept", bundle: .module)
-                    } icon: {
-                        Image(systemName: "checkmark")
-                    }
-                    .foregroundStyle(.secondary)
-                } else if Cards.store != nil {
-                    Button {
-                        keep()
-                    } label: {
-                        Label {
-                            Text("Keep", bundle: .module)
-                        } icon: {
-                            Image(systemName: "plus.rectangle.on.rectangle")
-                        }
-                    }
-                }
-            }
+            WordSections(headword: entry.headword, details: details)
         }
         .navigationTitle(Text(verbatim: entry.headword))
+        .task(id: entry.id) {
+            details = await WordDetails.load(
+                headword: entry.headword, reading: reading, entry: entry)
+        }
+    }
+
+    @ViewBuilder private var keepButton: some View {
+        if kept || Cards.store?.card(headword: entry.headword, reading: reading) != nil {
+            Image(systemName: "checkmark")
+                .foregroundStyle(.secondary)
+                .accessibilityLabel(Text("Kept", bundle: .module))
+        } else if Cards.store != nil {
+            Button(action: keep) {
+                Label {
+                    Text("Keep", bundle: .module)
+                } icon: {
+                    Image(systemName: "plus.rectangle.on.rectangle")
+                }
+            }
+            .labelStyle(.iconOnly)
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+        }
     }
 
     private func keep() {

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A hand-made sliver of KANJIDIC2, in its format, for the dictionary tests. -->
+<kanjidic2>
+<header><file_version>4</file_version><database_version>2026-260</database_version><date_of_creation>2026-09-17</date_of_creation></header>
+<character>
+<literal>樹</literal>
+<radical><rad_value rad_type="classical">75</rad_value></radical>
+<misc><grade>6</grade><stroke_count>16</stroke_count><freq>1150</freq><jlpt>1</jlpt></misc>
+<reading_meaning>
+<rmgroup>
+<reading r_type="pinyin">shu4</reading>
+<reading r_type="ja_on">ジュ</reading>
+<reading r_type="ja_kun">き</reading>
+<reading r_type="ja_kun">う.える</reading>
+<meaning>timber trees</meaning>
+<meaning>wood</meaning>
+<meaning m_lang="fr">arbre</meaning>
+</rmgroup>
+<nanori>いつき</nanori>
+<nanori>たつ</nanori>
+</reading_meaning>
+</character>
+<character>
+<literal>皮</literal>
+<misc><grade>3</grade><stroke_count>5</stroke_count><freq>1183</freq><jlpt>2</jlpt></misc>
+<reading_meaning>
+<rmgroup>
+<reading r_type="ja_on">ヒ</reading>
+<reading r_type="ja_kun">かわ</reading>
+<meaning>pelt</meaning>
+<meaning>skin</meaning>
+<meaning>hide</meaning>
+<meaning>leather</meaning>
+</rmgroup>
+</reading_meaning>
+</character>
+<character>
+<literal>街</literal>
+<misc><grade>4</grade><stroke_count>12</stroke_count><freq>1005</freq><jlpt>2</jlpt></misc>
+<reading_meaning>
+<rmgroup>
+<reading r_type="ja_on">ガイ</reading>
+<reading r_type="ja_on">カイ</reading>
+<reading r_type="ja_kun">まち</reading>
+<meaning>boulevard</meaning>
+<meaning>street</meaning>
+<meaning>town</meaning>
+</rmgroup>
+</reading_meaning>
+</character>
+</kanjidic2>

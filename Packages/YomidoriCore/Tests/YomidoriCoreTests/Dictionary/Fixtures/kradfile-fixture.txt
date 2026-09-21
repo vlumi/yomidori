@@ -1,0 +1,4 @@
+# A hand-made sliver of KRADFILE, in its format (UTF-8 here; the real file is EUC-JP).
+樹 : 木 士 冖 寸 豆
+皮 : 皮
+街 : 行 土

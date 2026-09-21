@@ -38,9 +38,23 @@ public protocol WordDictionary {
     func pitchAccents(for headword: String, reading: String) -> [PitchAccent]
     /// Kana or kanji as a prefix of headwords and readings; anything else searches the glosses.
     func search(_ query: String, limit: Int) -> [DictionaryEntry]
+    func kanji(_ literal: String) -> KanjiEntry?
+    /// Entries with a kanji form that contains `text` and is not `text`, common words first.
+    func entries(containing text: String, limit: Int) -> [DictionaryEntry]
 }
 
 extension WordDictionary {
+    public func kanji(_ literal: String) -> KanjiEntry? { nil }
+    public func entries(containing text: String, limit: Int) -> [DictionaryEntry] { [] }
+
+    /// Other words read the same way, written in kanji, common first.
+    public func homophones(of entry: DictionaryEntry) -> [DictionaryEntry] {
+        guard let reading = entry.readings.first else { return [] }
+        return entries(matching: Kana.hiragana(reading)).filter {
+            $0.id != entry.id && !$0.kanji.isEmpty
+        }
+    }
+
     /// Katakana readings count as their hiragana.
     public func entry(headword: String, reading: String) -> DictionaryEntry? {
         entries(matching: headword).first { $0.readings.map(Kana.hiragana).contains(reading) }

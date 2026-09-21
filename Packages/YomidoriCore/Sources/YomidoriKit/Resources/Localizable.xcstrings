@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%lld strokes" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld画"
+          }
+        }
+      }
+    },
     "About" : {
       "localizations" : {
         "ja" : {
@@ -91,6 +101,16 @@
         }
       }
     },
+    "Components" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "部品"
+          }
+        }
+      }
+    },
     "Copy" : {
       "localizations" : {
         "ja" : {
@@ -151,6 +171,16 @@
         }
       }
     },
+    "Grade %lld" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "小学%lld年"
+          }
+        }
+      }
+    },
     "Head-high: the first mora high, then low." : {
       "localizations" : {
         "ja" : {
@@ -171,6 +201,16 @@
         }
       }
     },
+    "In names" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名乗り"
+          }
+        }
+      }
+    },
     "JMdict by the Electronic Dictionary Research and Development Group; pitch accents from Kanjium by Uros O.; MeCab and IPADic; Mecab-Swift. Their terms are inside." : {
       "localizations" : {
         "ja" : {
@@ -187,6 +227,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "かな、漢字、または英語"
+          }
+        }
+      }
+    },
+    "Kanji" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "漢字"
           }
         }
       }
@@ -217,6 +267,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "検索から残した言葉。文はまだありません。"
+          }
+        }
+      }
+    },
+    "Kun" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "訓読み"
           }
         }
       }
@@ -277,6 +337,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "中高型：数字の拍のあとで下がります。"
+          }
+        }
+      }
+    },
+    "Name kanji" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "人名用"
           }
         }
       }
@@ -351,12 +421,32 @@
         }
       }
     },
+    "On" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "音読み"
+          }
+        }
+      }
+    },
     "Point at a word, get its reading." : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "言葉に向けると、読みがわかる。"
+          }
+        }
+      }
+    },
+    "Rank %lld" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "頻度%lld位"
           }
         }
       }
@@ -387,6 +477,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "拡大して読み取り中…"
+          }
+        }
+      }
+    },
+    "Readings" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み"
           }
         }
       }
@@ -441,12 +541,32 @@
         }
       }
     },
+    "Same reading" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同じ読み"
+          }
+        }
+      }
+    },
     "Search" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "検索"
+          }
+        }
+      }
+    },
+    "Secondary school" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中学"
           }
         }
       }
@@ -607,6 +727,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "同梱しているもの"
+          }
+        }
+      }
+    },
+    "Words with %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@を含む言葉"
           }
         }
       }

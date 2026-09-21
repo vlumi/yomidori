@@ -4,19 +4,20 @@ import YomidoriDictionary
 
 struct CardView: View {
     @State var card: Card
+    @State private var details = WordDetails()
 
     var body: some View {
         List {
             Section {
                 WordTitle(
                     headword: card.headword, reading: card.reading,
-                    accent: JMdict.bundled?.pitchAccents(for: card.headword, reading: card.reading)
-                        .first,
-                    font: .largeTitle
+                    accent: details.accent(of: card.reading), font: .largeTitle
                 ) {
                     DictionaryButton(term: card.headword)
+                        .labelStyle(.iconOnly)
                 }
             }
+            WordSections(headword: card.headword, details: details)
             Section {
                 Toggle(isOn: $card.asksMeaning) {
                     Text("Ask the meaning too", bundle: .module)
@@ -57,6 +58,9 @@ struct CardView: View {
         }
         .navigationTitle(Text(verbatim: card.headword))
         .task(id: card.asksMeaning) { try? Cards.store?.update(card) }
+        .task(id: card.id) {
+            details = await WordDetails.load(headword: card.headword, reading: card.reading)
+        }
     }
 
 }

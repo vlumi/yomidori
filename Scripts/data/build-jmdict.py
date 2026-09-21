@@ -1,19 +1,22 @@
 #!/usr/bin/env python3
-"""Turn JMdict's XML and Kanjium's accent list into the SQLite database the app bundles.
+"""Turn JMdict, KANJIDIC2, KRADFILE and Kanjium's accent list into the SQLite database
+the app bundles.
 
-    Scripts/data/build-jmdict.py [--source FILE|URL] [--accents FILE|URL] [--output FILE]
+    Scripts/data/build-jmdict.py [--source FILE|URL] [--accents FILE|URL]
+        [--kanjidic FILE|URL] [--kradfile FILE|URL] [--output FILE]
 
 The source is JMdict_e (the English-only edition) as .gz or plain XML, the accents
-Kanjium's accents.txt; both are downloaded once into .build-data/ and reused. The
-output is a read-only database of entries with their kanji forms, readings and
-senses, indexed by headword and by reading; an accent table of downstep positions
-keyed by headword and reading; and a meta table naming the sources, their dates and
-licenses. Standard library only.
+Kanjium's accents.txt, the kanji KANJIDIC2's XML and KRADFILE's component list; all are
+downloaded once into .build-data/ and reused. The output is a read-only database of
+entries with their kanji forms, readings and senses, indexed by headword and by
+reading; an accent table of downstep positions keyed by headword and reading; a kanji
+table of readings, meanings and school facts with a component table beside it; and a
+meta table naming the sources, their dates and licenses. Standard library only.
 
-JMdict is © the Electronic Dictionary Research and Development Group and used under
-its CC BY-SA 4.0 licence (https://www.edrdg.org/edrdg/licence.html); Kanjium's pitch
-accent data is © Uros O. under CC BY-SA 4.0. The meta table carries both attributions
-and THIRD_PARTY_NOTICES.md reproduces them.
+JMdict, KANJIDIC2 and KRADFILE are © the Electronic Dictionary Research and Development
+Group and used under its CC BY-SA 4.0 licence (https://www.edrdg.org/edrdg/licence.html);
+Kanjium's pitch accent data is © Uros O. under CC BY-SA 4.0. The meta table carries the
+attributions and THIRD_PARTY_NOTICES.md reproduces them.
 """
 
 import argparse
@@ -27,6 +30,8 @@ import xml.etree.ElementTree as ET
 
 DEFAULT_SOURCE = "http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz"
 DEFAULT_ACCENTS = "https://raw.githubusercontent.com/mifunetoshiro/kanjium/master/data/source_files/raw/accents.txt"
+DEFAULT_KANJIDIC = "http://www.edrdg.org/kanjidic/kanjidic2.xml.gz"
+DEFAULT_KRADFILE = "http://ftp.edrdg.org/pub/Nihongo/kradfile.gz"
 CACHE_DIR = ".build-data"
 DEFAULT_OUTPUT = "Sources/Shared/Dictionaries/jmdict.sqlite"
 PRIORITY = ("news1", "ichi1", "spec1", "spec2", "gai1")  # the tags that mark a common word
@@ -45,6 +50,9 @@ CREATE INDEX sense_entry ON sense (entry);
 CREATE TABLE accent (headword TEXT NOT NULL, reading TEXT NOT NULL, downsteps TEXT NOT NULL);
 CREATE INDEX accent_word ON accent (headword, reading);
 CREATE VIRTUAL TABLE gloss_fts USING fts5(gloss, content='sense', content_rowid='rowid', tokenize='unicode61');
+CREATE TABLE kanji_info (literal TEXT PRIMARY KEY, onyomi TEXT NOT NULL, kunyomi TEXT NOT NULL, nanori TEXT NOT NULL, meanings TEXT NOT NULL, strokes INTEGER, grade INTEGER, jlpt INTEGER, freq INTEGER);
+CREATE TABLE kanji_component (literal TEXT NOT NULL, ord INTEGER NOT NULL, component TEXT NOT NULL);
+CREATE INDEX kanji_component_literal ON kanji_component (literal);
 """
 
 
@@ -80,6 +88,50 @@ def accent_rows(text):
             yield headword, reading or headword, ",".join(numbers)
 
 
+def kanjidic_rows(xml_bytes):
+    """KANJIDIC2's characters: the literal, its on and kun readings, name readings and
+    English meanings, each list space-joined, and the stroke count, school grade, JLPT
+    level and newspaper frequency rank where the file has them."""
+    for _, character in ET.iterparse(_bytes_stream(xml_bytes)):
+        if character.tag != "character":
+            continue
+        readings = {"ja_on": [], "ja_kun": []}
+        for reading in character.iter("reading"):
+            kind = reading.get("r_type")
+            if kind in readings and reading.text:
+                readings[kind].append(reading.text)
+        meanings = [m.text for m in character.iter("meaning") if m.text and m.get("m_lang") is None]
+        nanori = [n.text for n in character.iter("nanori") if n.text]
+        misc = character.find("misc")
+        number = lambda tag: int(misc.findtext(tag)) if misc is not None and misc.findtext(tag) else None
+        yield (
+            character.findtext("literal"),
+            " ".join(readings["ja_on"]),
+            " ".join(readings["ja_kun"]),
+            " ".join(nanori),
+            "; ".join(meanings),
+            number("stroke_count"),
+            number("grade"),
+            number("jlpt"),
+            number("freq"),
+        )
+        character.clear()
+
+
+def kradfile_rows(data):
+    """KRADFILE's lines, `亜 : ｜ 一 口`; the file is EUC-JP, a fixture may be UTF-8."""
+    try:
+        text = data.decode("utf-8")
+    except UnicodeDecodeError:
+        text = data.decode("euc_jp")
+    for line in text.splitlines():
+        if line.startswith("#") or " : " not in line:
+            continue
+        literal, components = line.split(" : ", 1)
+        for i, component in enumerate(components.split()):
+            yield literal.strip(), i, component
+
+
 def entity_codes(xml_bytes):
     """JMdict spells parts of speech as entities (&n; → "noun (common) (futsuumeishi)");
     the parser expands them, so map the expansions back to their short codes."""
@@ -87,7 +139,7 @@ def entity_codes(xml_bytes):
     return {text: code for code, text in re.findall(r'<!ENTITY (\S+) "([^"]+)">', head)}
 
 
-def build(xml_bytes, accents_text, output):
+def build(xml_bytes, accents_text, kanjidic_bytes, kradfile_bytes, output):
     codes = entity_codes(xml_bytes)
     created = re.search(r"JMdict created: (\d{4}-\d{2}-\d{2})", xml_bytes[:400_000].decode("utf-8", errors="ignore"))
     if os.path.exists(output):
@@ -104,10 +156,17 @@ def build(xml_bytes, accents_text, output):
             ("accents_source", "Kanjium accents.txt (Uros O.)"),
             ("accents_license", "CC BY-SA 4.0 — https://github.com/mifunetoshiro/kanjium"),
             ("accents_attribution", "The pitch accent notation, verb particle data, phonetics, homonyms and other additions or modifications to EDICT, KANJIDIC or KRADFILE were provided by Uros O. through his free database."),
+            ("kanji_source", "KANJIDIC2 and KRADFILE (EDRDG)"),
+            ("kanji_license", "CC BY-SA 4.0 — https://www.edrdg.org/edrdg/licence.html"),
+            ("kanji_attribution", "This application uses the KANJIDIC and KRADFILE dictionary files. These files are the property of the Electronic Dictionary Research and Development Group, and are used in conformance with the Group's licence."),
         ],
     )
     if accents_text is not None:
         db.executemany("INSERT INTO accent VALUES (?, ?, ?)", accent_rows(accents_text))
+    if kanjidic_bytes is not None:
+        db.executemany("INSERT INTO kanji_info VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", kanjidic_rows(kanjidic_bytes))
+    if kradfile_bytes is not None:
+        db.executemany("INSERT INTO kanji_component VALUES (?, ?, ?)", kradfile_rows(kradfile_bytes))
     count = 0
     for _, entry in ET.iterparse(_bytes_stream(xml_bytes)):
         if entry.tag != "entry":
@@ -148,11 +207,15 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--source", default=DEFAULT_SOURCE, help="JMdict_e as .gz or .xml, a path or a URL")
     parser.add_argument("--accents", default=DEFAULT_ACCENTS, help="Kanjium's accents.txt, a path or a URL; 'none' to skip")
+    parser.add_argument("--kanjidic", default=DEFAULT_KANJIDIC, help="KANJIDIC2 as .gz or .xml, a path or a URL; 'none' to skip")
+    parser.add_argument("--kradfile", default=DEFAULT_KRADFILE, help="KRADFILE as .gz or plain, a path or a URL; 'none' to skip")
     parser.add_argument("--output", default=DEFAULT_OUTPUT)
     args = parser.parse_args()
     os.makedirs(os.path.dirname(args.output) or ".", exist_ok=True)
     accents = None if args.accents == "none" else fetch(args.accents).decode("utf-8")
-    count = build(fetch(args.source), accents, args.output)
+    kanjidic = None if args.kanjidic == "none" else fetch(args.kanjidic)
+    kradfile = None if args.kradfile == "none" else fetch(args.kradfile)
+    count = build(fetch(args.source), accents, kanjidic, kradfile, args.output)
     size = os.path.getsize(args.output) / 1e6
     print(f"wrote {args.output}: {count} entries, {size:.1f} MB")
 
