@@ -12,8 +12,7 @@ entries with their kanji forms, readings and senses, indexed by headword and by
 reading; an accent table of downstep positions keyed by headword and reading; a kanji
 table of readings, meanings and school facts with a component table beside it; a stroke
 table of KanjiVG's SVG paths in stroke order with where each number is drawn; and a meta
-table naming the sources, their dates and licenses. Standard library only. KanjiVG's
-"latest release" is resolved through GitHub's API to its -main.zip.
+table naming the sources, their dates and licenses. Standard library only.
 
 JMdict, KANJIDIC2 and KRADFILE are © the Electronic Dictionary Research and Development
 Group and used under its CC BY-SA 4.0 licence (https://www.edrdg.org/edrdg/licence.html);
@@ -35,7 +34,9 @@ DEFAULT_SOURCE = "http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz"
 DEFAULT_ACCENTS = "https://raw.githubusercontent.com/mifunetoshiro/kanjium/master/data/source_files/raw/accents.txt"
 DEFAULT_KANJIDIC = "http://www.edrdg.org/kanjidic/kanjidic2.xml.gz"
 DEFAULT_KRADFILE = "http://ftp.edrdg.org/pub/Nihongo/kradfile.gz"
-DEFAULT_KANJIVG = "https://api.github.com/repos/KanjiVG/kanjivg/releases/latest"
+# Pinned to a release: the "latest" lookup needs GitHub's API, whose unauthenticated
+# rate limit CI runners share and exhaust.
+DEFAULT_KANJIVG = "https://github.com/KanjiVG/kanjivg/releases/download/r20250816/kanjivg-20250816-main.zip"
 CACHE_DIR = ".build-data"
 DEFAULT_OUTPUT = "Sources/Shared/Dictionaries/jmdict.sqlite"
 PRIORITY = ("news1", "ichi1", "spec1", "spec2", "gai1")  # the tags that mark a common word
@@ -126,19 +127,10 @@ def kanjidic_rows(xml_bytes):
 
 def kanjivg_files(source):
     """KanjiVG's kanji/XXXXX.svg files as (codepoint, text): from a directory, a zip, or
-    a URL; the GitHub releases API URL resolves to the release's -main.zip first."""
+    a URL to a zip."""
     import io
-    import json
     import zipfile
 
-    if re.match(r"^https?://api\.github\.com/", source):
-        cached = os.path.join(CACHE_DIR, "kanjivg-release.json")
-        if not os.path.exists(cached):
-            os.makedirs(CACHE_DIR, exist_ok=True)
-            urllib.request.urlretrieve(source, cached)
-        with open(cached) as f:
-            assets = json.load(f)["assets"]
-        source = next(a["browser_download_url"] for a in assets if a["name"].endswith("-main.zip"))
     if os.path.isdir(source):
         for name in sorted(os.listdir(os.path.join(source, "kanji"))):
             if re.fullmatch(r"[0-9a-f]{5}\.svg", name):
@@ -262,7 +254,7 @@ def main():
     parser.add_argument("--accents", default=DEFAULT_ACCENTS, help="Kanjium's accents.txt, a path or a URL; 'none' to skip")
     parser.add_argument("--kanjidic", default=DEFAULT_KANJIDIC, help="KANJIDIC2 as .gz or .xml, a path or a URL; 'none' to skip")
     parser.add_argument("--kradfile", default=DEFAULT_KRADFILE, help="KRADFILE as .gz or plain, a path or a URL; 'none' to skip")
-    parser.add_argument("--kanjivg", default=DEFAULT_KANJIVG, help="KanjiVG as a directory, a zip, a URL, or the releases API URL; 'none' to skip")
+    parser.add_argument("--kanjivg", default=DEFAULT_KANJIVG, help="KanjiVG as a directory, a zip or a URL to a zip; 'none' to skip")
     parser.add_argument("--output", default=DEFAULT_OUTPUT)
     args = parser.parse_args()
     os.makedirs(os.path.dirname(args.output) or ".", exist_ok=True)
