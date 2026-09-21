@@ -1,9 +1,6 @@
 import SwiftUI
 import YomidoriCore
 
-/// The review: the questions due now, one at a time. A tap, or a typed reading,
-/// turns the card over; two answers, and the scheduler decides when it comes back.
-/// No streak, no count kept against anyone; an empty queue says so.
 struct ReviewView: View {
     @State private var queue: [ReviewItem] = []
     @State private var revealed = false
@@ -58,7 +55,6 @@ struct ReviewView: View {
         .tint(Palette.nightGreen)
     }
 
-    /// Before the reveal: the kana field when typing answers to a reading, else the button.
     @ViewBuilder private func prompt(_ item: ReviewItem) -> some View {
         if typedAnswers, item.question == .reading {
             TextField(text: $answer) {
@@ -85,8 +81,6 @@ struct ReviewView: View {
         }
     }
 
-    /// After the reveal: the verdict on a typed answer, the back, and the two grades,
-    /// the one the verdict suggests prominent.
     @ViewBuilder private func answered(_ item: ReviewItem) -> some View {
         if let verdict {
             verdictLine(verdict)

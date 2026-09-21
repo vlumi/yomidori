@@ -1,11 +1,8 @@
 import SwiftUI
 import YomidoriCore
 
-/// The still, aspect-fitted, with each recognized line boxed over it in night
-/// green, the selected one filled, and an optional square (the close-up) drawn on
-/// top. It pinches to zoom and drags to pan; a double tap brings it back. The tap
-/// is reported in the still's own coordinates with the frame it occupies, whatever
-/// the zoom, so the geometry seam needs no knowledge of it.
+/// The tap is reported in the still's own coordinates with the frame it occupies, whatever
+/// the zoom.
 struct StillView: View {
     @State private var zoom = Zoom()
     let still: Still

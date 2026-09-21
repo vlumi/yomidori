@@ -1,8 +1,5 @@
 import SwiftUI
 
-/// The drawer under a still: as tall as the reader dragged it, its handle on top,
-/// the content scrolling inside and the buttons fixed at the bottom. Under the
-/// camera it is just the button row.
 struct CaptureDrawer<Content: View, Buttons: View>: View {
     let hasStill: Bool
     let screenHeight: CGFloat

@@ -40,6 +40,16 @@ final class SentenceTests: XCTestCase {
         XCTAssertEqual(Sentence.continuation(of: "\n\n").text, "")
     }
 
+    func testAClosingQuoteAfterTheFullStopStaysWithTheSentence() {
+        let text = "「はい。」と彼女は言った。"
+        let first = Sentence.around(text.startIndex, in: text)
+        XCTAssertEqual(first.text, "「はい。」")
+        let second = Sentence.around(text.range(of: "彼女")!.lowerBound, in: text)
+        XCTAssertEqual(second.text, "と彼女は言った。")
+        // A closing quote at the very start has no full stop before it to end anything.
+        XCTAssertEqual(Sentence.around(text.startIndex, in: "」だけ。").text, "」だけ。")
+    }
+
     func testTheOffsetCountsCharactersWithoutTheLineBreak() {
         let sentence = Sentence.around(index(of: "漂っ"), in: page)
         XCTAssertEqual(sentence.offset(of: index(of: "漂っ"), in: page), 9)

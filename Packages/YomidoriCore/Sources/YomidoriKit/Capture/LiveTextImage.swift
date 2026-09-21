@@ -6,9 +6,6 @@ import UIKit
 #endif
 
 #if os(iOS)
-/// The still with Live Text's own selection over it, in a scroll view that pinches
-/// to zoom as Photos does: tap, drag or double-tap the words to see how the engine
-/// segments what it read.
 struct LiveTextImage: UIViewRepresentable {
     let still: Still
     let analysis: ImageAnalysis?
@@ -61,16 +58,14 @@ struct LiveTextImage: UIViewRepresentable {
         }
     }
 
-    /// An image view with no natural size of its own. UIImageView reports the
-    /// image's pixel size, and SwiftUI would lay a 4000-point still out at that
-    /// size, over everything; this one takes whatever the screen offers.
+    /// UIImageView's intrinsic size is the image's pixel size, and SwiftUI would lay a
+    /// 4000-point still out at that size; this one has none.
     final class FittedImageView: UIImageView {
         override var intrinsicContentSize: CGSize {
             CGSize(width: UIView.noIntrinsicMetric, height: UIView.noIntrinsicMetric)
         }
     }
 
-    /// A scroll view whose only content is the image, filling it and zooming it.
     final class ZoomingImageView: UIScrollView, UIScrollViewDelegate {
         let imageView: FittedImageView
 

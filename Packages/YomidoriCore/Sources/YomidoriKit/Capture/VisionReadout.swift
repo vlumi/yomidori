@@ -1,7 +1,6 @@
 import SwiftUI
 import YomidoriCore
 
-/// What Vision read: the tapped line large with its confidence, or a hint.
 struct VisionReadout: View {
     let lines: [RecognizedLine]
     let selected: Int?

@@ -2,7 +2,7 @@ import SwiftUI
 import YomidoriCore
 
 extension CaptureView {
-    enum Engine: Hashable {
+    enum Mode: Hashable {
         case vision
         case liveText
         case closeUp

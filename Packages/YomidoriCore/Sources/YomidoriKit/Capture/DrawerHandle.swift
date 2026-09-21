@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// The drawer's handle: drag to size it, most of the screen for the page while
-/// looking for a word, more drawer once the word is found. Between a fifth and four
-/// fifths of the screen; the fraction is the caller's to remember.
+/// Between a fifth and four fifths of the screen; the fraction is the caller's to remember.
 struct DrawerHandle: View {
     @Binding var fraction: Double
     let screenHeight: CGFloat

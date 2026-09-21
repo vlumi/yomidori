@@ -2,8 +2,6 @@ import SwiftUI
 import YomidoriCore
 import YomidoriDictionary
 
-/// One card: the word with its reading and pitch, and every sentence it was met in,
-/// the word marked in each, with the still it was read from.
 struct CardView: View {
     @State var card: Card
 

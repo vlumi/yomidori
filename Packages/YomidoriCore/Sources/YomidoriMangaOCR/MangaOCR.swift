@@ -2,13 +2,9 @@ import CoreGraphics
 import CoreML
 import Foundation
 
-/// manga-ocr on device: a vision transformer that reads one line or bubble of
-/// Japanese at a time, vertical included, converted to Core ML by
-/// `Scripts/data/build-mangaocr.py`. The second opinion on a tapped window, beside
-/// the OS's engines. Present only when the app bundles the models; nothing here
-/// leaves the device.
+/// manga-ocr as Core ML, converted by `Scripts/data/build-mangaocr.py`; reads one line
+/// or bubble at a time, vertical included.
 public final class MangaOCR {
-    /// The models in the app bundle, or nil where they were not built in.
     public static let bundled: MangaOCR? = {
         guard
             let encoder = Bundle.main.url(
@@ -39,7 +35,6 @@ public final class MangaOCR {
             .split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
     }
 
-    /// The text in the image, read greedily one token at a time.
     public func read(_ image: CGImage) throws -> String {
         let pixels = try Self.pixels(of: image)
         let memory = try encoder.prediction(
@@ -74,8 +69,7 @@ public final class MangaOCR {
             .joined()
     }
 
-    /// The image as the model was trained to see it: grey, 224 × 224, scaled to −1…1,
-    /// the one channel repeated three times.
+    /// Grey, 224 × 224, scaled to −1…1, the one channel repeated three times.
     static func pixels(of image: CGImage) throws -> MLMultiArray {
         guard
             let context = CGContext(
@@ -91,8 +85,7 @@ public final class MangaOCR {
             shape: [1, 3, NSNumber(value: side), NSNumber(value: side)], dataType: .float32)
         let out = array.dataPointer.assumingMemoryBound(to: Float32.self)
         let plane = side * side
-        // A bitmap context's memory runs top-down, row 0 the top of the image, as the
-        // model reads it; no flip.
+        /// Bitmap memory runs top-down, as the model reads it; no flip.
         for y in 0..<side {
             for x in 0..<side {
                 let value = (Float32(grey[y * side + x]) / 255 - 0.5) / 0.5

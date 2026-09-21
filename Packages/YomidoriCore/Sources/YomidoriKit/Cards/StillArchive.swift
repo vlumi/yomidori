@@ -4,9 +4,7 @@ import ImageIO
 import UniformTypeIdentifiers
 import YomidoriCore
 
-/// The stills that cards were read from, as JPEG files in Application Support,
-/// one per id, scaled down so a page is a megabyte or two rather than twelve.
-/// Plain ImageIO, so it runs wherever Core does.
+/// JPEGs in Application Support, one per id, scaled down so a page is a megabyte or two.
 enum StillArchive {
     static let longestSide: CGFloat = 2000
 
@@ -23,7 +21,6 @@ enum StillArchive {
         try directory().appendingPathComponent("\(id.uuidString).jpg")
     }
 
-    /// Saves the still and returns the id it is kept under.
     @discardableResult
     static func save(_ still: Still) throws -> UUID {
         let id = UUID()
@@ -62,7 +59,6 @@ enum StillArchive {
     }
 }
 
-/// The app's one card store, opened once.
 enum Cards {
     static let store: FileCardStore? = try? FileCardStore.inApplicationSupport()
 }

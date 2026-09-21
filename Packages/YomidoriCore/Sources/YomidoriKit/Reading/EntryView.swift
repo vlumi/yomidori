@@ -2,9 +2,6 @@ import SwiftUI
 import YomidoriCore
 import YomidoriDictionary
 
-/// One dictionary entry on its own: the word with its pitch, its senses, the system
-/// dictionary, and Keep, which makes a card with no sentence yet; the sentences
-/// come when the word is met on a page.
 struct EntryView: View {
     let entry: DictionaryEntry
     @State private var kept = false

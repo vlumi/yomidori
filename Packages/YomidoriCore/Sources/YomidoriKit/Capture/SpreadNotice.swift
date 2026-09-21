@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// While a spread is open, the camera is for its next page.
 struct SpreadNotice: View {
     let startOver: () -> Void
 

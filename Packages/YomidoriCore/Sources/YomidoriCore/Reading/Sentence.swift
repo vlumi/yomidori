@@ -1,19 +1,15 @@
 import Foundation
 
-/// A sentence as it stood on the page: the text around a word from the previous
-/// full stop to the next, with the page's line breaks dropped, since in a book a
-/// line break is a wrap and Japanese has no space to lose. A sentence with no
-/// full stop before the page ends is open: it continues on the next page.
+/// The text around a word from the previous full stop to the next, line breaks dropped;
+/// open when the page ends before a full stop.
 public struct Sentence: Equatable, Sendable {
     public let text: String
-    /// Where the sentence sits in the text it was cut from, line breaks included.
     public let range: Range<String.Index>
     public let isOpen: Bool
 
     static let terminators: Set<Character> = ["。", "！", "？", "!", "?", "．", "…"]
     static let closers: Set<Character> = ["」", "』", "）", ")", "”", "’"]
 
-    /// The sentence containing `index`.
     public static func around(_ index: String.Index, in text: String) -> Sentence {
         var start = index
         while start > text.startIndex {
@@ -41,8 +37,8 @@ public struct Sentence: Equatable, Sendable {
         return Sentence(text: joined(text[start..<end]), range: start..<end, isOpen: open)
     }
 
-    /// The start of a page that continues a sentence left open on the one before:
-    /// everything up to and including the first full stop, or the whole page.
+    /// The rest of a sentence left open on the page before: up to the first full stop, or the
+    /// whole page.
     public static func continuation(of text: String) -> Sentence {
         guard let first = text.firstIndex(where: { !$0.isNewline }) else {
             return Sentence(text: "", range: text.startIndex..<text.startIndex, isOpen: true)
@@ -50,7 +46,6 @@ public struct Sentence: Equatable, Sendable {
         return around(first, in: text)
     }
 
-    /// The word's position in the sentence's text, in characters, line breaks dropped.
     public func offset(of index: String.Index, in text: String) -> Int {
         text[range.lowerBound..<index].filter { !$0.isNewline }.count
     }

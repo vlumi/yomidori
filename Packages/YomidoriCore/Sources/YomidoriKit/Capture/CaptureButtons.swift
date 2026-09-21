@@ -1,7 +1,6 @@
 import PhotosUI
 import SwiftUI
 
-/// Under the camera: the photo picker, the shutter, and a blank to balance the row.
 struct CameraButtons: View {
     @Binding var picked: PhotosPickerItem?
     let ready: Bool
@@ -33,8 +32,6 @@ struct CameraButtons: View {
     }
 }
 
-/// Under a still: retake, the next page of the spread once the page is read, and
-/// start over once a spread is open.
 struct StillButtons: View {
     let canAddPage: Bool
     let hasPages: Bool

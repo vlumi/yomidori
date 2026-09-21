@@ -3,9 +3,8 @@ import CoreGraphics
 import Foundation
 
 #if os(iOS)
-/// Receives the stream and hands one frame to whoever asked for the next one;
-/// every other frame is dropped. Touched on the camera queue only, which is
-/// what makes it safe to send.
+/// Hands one frame to whoever asked for the next; every other frame is dropped. Touched on
+/// the camera queue only, which is what makes it safe to send.
 final class FrameSink: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate,
     @unchecked Sendable
 {
@@ -25,7 +24,6 @@ final class FrameSink: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate,
         pending.resume(returning: Self.image(from: buffer))
     }
 
-    /// A BGRA pixel buffer copied into a CGImage, with plain CoreGraphics.
     private static func image(from buffer: CVPixelBuffer) -> CGImage? {
         CVPixelBufferLockBaseAddress(buffer, .readOnly)
         defer { CVPixelBufferUnlockBaseAddress(buffer, .readOnly) }

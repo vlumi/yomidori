@@ -2,12 +2,10 @@ import Foundation
 import SQLite3
 import YomidoriCore
 
-/// The bundled JMdict, as the SQLite database `Scripts/data/build-jmdict.py` writes:
-/// opened read-only, queried by exact kanji form or reading. The C API of the
-/// system's SQLite, no third-party code.
+/// The SQLite database `Scripts/data/build-jmdict.py` writes, read through the system's
+/// SQLite C API.
 public final class JMdict: WordDictionary {
-    /// The database in the app bundle, or nil where there is none (the tests' build,
-    /// a checkout that has not run `make dictionary`).
+    /// Nil in a checkout that has not run `make dictionary`.
     public static let bundled: JMdict? = {
         guard let url = Bundle.main.url(forResource: "jmdict", withExtension: "sqlite") else {
             return nil
@@ -35,7 +33,6 @@ public final class JMdict: WordDictionary {
         sqlite3_close(db)
     }
 
-    /// What the database says about itself: source, creation date, license, attribution.
     public var meta: [String: String] {
         queue.sync {
             var result: [String: String] = [:]
@@ -85,8 +82,8 @@ public final class JMdict: WordDictionary {
             return []
         case .japanese:
             return queue.sync {
-                // A prefix as a range, so the indexes serve it. JMdict spells loanwords in
-                // katakana, so a hiragana query is tried as katakana too.
+                /// JMdict spells loanwords in katakana, so a hiragana prefix is tried as
+                /// katakana too.
                 let katakana = Kana.katakana(trimmed)
                 let ids = rows(
                     """
@@ -142,12 +139,10 @@ public final class JMdict: WordDictionary {
             id: id, kanji: kanji, readings: readings, senses: senses, common: common)
     }
 
-    /// Every row of a query as its columns' text; one optional text bound to ?1.
     private func rows(_ sql: String, bind: String?) -> [[String]] {
         rows(sql, binds: bind.map { [$0] } ?? [])
     }
 
-    /// Every row of a query as its columns' text; texts bound to ?1, ?2, … in order.
     private func rows(_ sql: String, binds: [String]) -> [[String]] {
         var statement: OpaquePointer?
         guard sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK else { return [] }

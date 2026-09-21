@@ -1,8 +1,6 @@
 import SwiftUI
 import YomidoriCore
 
-/// The repository's THIRD_PARTY_NOTICES.md, bundled as it is and rendered by its
-/// blocks: headings, the attribution quotes, the license texts as they came.
 struct NoticesView: View {
     var body: some View {
         ScrollView {
@@ -45,7 +43,7 @@ struct NoticesView: View {
         }
     }
 
-    /// Inline Markdown (links, emphasis) as SwiftUI reads it; the raw text if it will not parse.
+    /// The raw text when the inline Markdown will not parse.
     private func inline(_ text: String) -> AttributedString {
         (try? AttributedString(markdown: text)) ?? AttributedString(text)
     }

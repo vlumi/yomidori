@@ -246,9 +246,12 @@ Agent-specific mechanics on top of that:
 
 ## Conventions
 
-- **Comments minimal:** explain only what isn't obvious from the code. No
-  historical / roadmap ("lands later") narration in source — that goes in
-  commit messages and the docs.
+- **Comments minimal:** a comment says only what the code cannot, after the
+  names have done their best: a coordinate convention, an API default that
+  bites, a linguistic rule, a threshold's reason. A type or function whose
+  name says what it is gets no doc comment. No historical / roadmap ("lands
+  later", "compared in the field") narration in source — that goes in commit
+  messages and the docs.
 - **Pitch is drawn one way**: a line over the high morae with a drop where the
   accent falls, and the downstep number in brackets beside it (`PitchReading`).
   Tokyo accent, from Kanjium, keyed by headword and reading.

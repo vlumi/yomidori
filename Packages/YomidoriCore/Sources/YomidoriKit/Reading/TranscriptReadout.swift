@@ -3,24 +3,20 @@ import YomidoriCore
 import YomidoriDictionary
 import YomidoriMeCab
 
-/// The transcript as its words, a line per line of the page; the tapped or selected
-/// word shown large with what the dictionary knows; a switch between the two
-/// tokenizers; the recognized text itself behind a fold.
 struct TranscriptReadout: View {
-    enum Choice: Hashable {
+    enum TokenizerChoice: Hashable {
         case system
         case mecab
     }
 
-    /// The pages' text joined at the seams, the pages' stills in order, the page on
-    /// screen's own transcript and its lines, and where it starts in the joined text.
+    /// `pageOffset` is where the page on screen starts in the joined transcript, in characters.
     let transcript: String
     let stills: [Still]
     let currentTranscript: String
     let currentLines: [RecognizedLine]
     let pageOffset: Int
     @ObservedObject var selection: LiveTextSelection
-    @State private var choice: Choice = .system
+    @State private var choice: TokenizerChoice = .system
     @State private var lines: [[Token]] = []
     @State private var transcriptLines = TranscriptLines("")
     @State private var selected: Token?
@@ -61,8 +57,8 @@ struct TranscriptReadout: View {
     private var header: some View {
         HStack {
             Picker(selection: $choice) {
-                Text("System", bundle: .module).tag(Choice.system)
-                Text(verbatim: "MeCab").tag(Choice.mecab)
+                Text("System", bundle: .module).tag(TokenizerChoice.system)
+                Text(verbatim: "MeCab").tag(TokenizerChoice.mecab)
             } label: {
                 Text("Tokenizer", bundle: .module)
             }
@@ -110,8 +106,7 @@ struct TranscriptReadout: View {
         lines = transcriptLines.lines.map { tokenizer?.tokens(in: $0) ?? [] }
     }
 
-    /// A word selected on the still itself becomes the word shown; the strip's own
-    /// token on that line is preferred, so Keep knows the sentence.
+    /// The strip's own token on that line is preferred, so Keep knows the sentence.
     private func showSelection() {
         let text = selection.text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty, let word = tokenizer?.tokens(in: text).first(where: \.isWord) else {

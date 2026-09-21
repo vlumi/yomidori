@@ -3,14 +3,12 @@ import SwiftUI
 import VisionKit
 import YomidoriCore
 
-/// The page: the camera until the shutter, then the still with what the engines
-/// read from it, in a drawer the reader sizes. Several pages can be read as one.
 public struct CaptureView: View {
     @StateObject private var camera = Camera()
     @StateObject private var selection = LiveTextSelection()
     @State private var still: Still?
     @State private var pages: [Page] = []
-    @State private var engine: Engine = .vision
+    @State private var mode: Mode = .vision
     @State private var lines: [RecognizedLine] = []
     @State private var analysis: ImageAnalysis?
     @State private var selected: Int?
@@ -46,7 +44,7 @@ public struct CaptureView: View {
     }
 
     @ViewBuilder private func stillView(_ still: Still) -> some View {
-        switch engine {
+        switch mode {
         case .vision:
             StillView(
                 still: still, lines: lines, selected: selected, highlight: nil, onTap: selectLine)
@@ -63,10 +61,10 @@ public struct CaptureView: View {
         CaptureDrawer(
             hasStill: still != nil, screenHeight: screenHeight, fraction: $readoutFraction
         ) {
-            Picker(selection: $engine) {
-                Text("Vision", bundle: .module).tag(Engine.vision)
-                Text("Live Text", bundle: .module).tag(Engine.liveText)
-                Text("Close-up", bundle: .module).tag(Engine.closeUp)
+            Picker(selection: $mode) {
+                Text("Vision", bundle: .module).tag(Mode.vision)
+                Text("Live Text", bundle: .module).tag(Mode.liveText)
+                Text("Close-up", bundle: .module).tag(Mode.closeUp)
             } label: {
                 Text("Recognizer", bundle: .module)
             }
@@ -94,7 +92,7 @@ public struct CaptureView: View {
                 Text("Reading the page…", bundle: .module)
             }
         } else {
-            switch engine {
+            switch mode {
             case .vision:
                 VisionReadout(lines: lines, selected: selected)
             case .liveText:

@@ -1,8 +1,6 @@
 import SwiftUI
 import YomidoriCore
 
-/// The root: home, with the screens a push away, and the path kept across a
-/// restart so the app reopens where it was left, the camera included.
 public struct AppRoot: View {
     @State private var path = NavigationPath()
     @SceneStorage("navigationPath") private var storedPath: Data?

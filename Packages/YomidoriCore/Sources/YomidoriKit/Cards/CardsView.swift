@@ -2,8 +2,6 @@ import SwiftUI
 import YomidoriCore
 import YomidoriDictionary
 
-/// The cards kept so far, newest first: the word, its reading, how often it was
-/// met. Swipe to remove. Tap for the card itself.
 struct CardsView: View {
     @State private var cards: [Card] = []
     @State private var dueCount = 0

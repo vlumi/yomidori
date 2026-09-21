@@ -1,10 +1,7 @@
 import Foundation
 
-/// The OS's own Japanese morphological analyzer, through `CFStringTokenizer`: word
-/// boundaries and, for each word, a Latin transcription of its reading in context,
-/// which ICU turns back into hiragana losslessly (づ and ず, おう and おお stay apart).
-/// No third-party code, no dictionary to bundle; what it lacks is the dictionary
-/// form and pitch, which the dictionary layer adds on top.
+/// Words and readings from `CFStringTokenizer`'s Latin transcription, which ICU turns back
+/// into hiragana losslessly (づ and ず, おう and おお stay apart).
 public struct SystemTokenizer: Tokenizer {
     public init() {}
 

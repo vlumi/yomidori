@@ -2,9 +2,6 @@ import SwiftUI
 import YomidoriCore
 import YomidoriDictionary
 
-/// Words met off the page: type kana or kanji for headwords and readings that
-/// start with it, or English for the glosses. No mode switch; the query says which.
-/// A result opens the word as a tapped word would, and can be kept as a card.
 struct SearchView: View {
     @State private var query = ""
     @State private var results: [DictionaryEntry] = []

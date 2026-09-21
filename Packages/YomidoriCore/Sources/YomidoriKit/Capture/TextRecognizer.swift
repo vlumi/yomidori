@@ -1,7 +1,6 @@
 import Vision
 import YomidoriCore
 
-/// Vision's text recognition for Japanese, run once over a still, on the device.
 enum TextRecognizer {
     static func recognize(_ still: Still) async throws -> [RecognizedLine] {
         let image = still.image

@@ -2,8 +2,6 @@ import Foundation
 import YomidoriCore
 import YomidoriMangaOCR
 
-/// Reads a tap up close: the crop by every engine on the page, the window by the
-/// line reader when it is bundled.
 enum CloseUpReader {
     static func read(_ still: Still, at geometry: CloseUpGeometry) async -> CaptureView.CloseUp? {
         guard let crop = still.cropped(to: geometry.crop) else { return nil }

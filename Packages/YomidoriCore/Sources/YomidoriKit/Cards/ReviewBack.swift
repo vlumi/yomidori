@@ -2,8 +2,6 @@ import SwiftUI
 import YomidoriCore
 import YomidoriDictionary
 
-/// The back of a reading question: the word with its pitch, the dictionary, and the
-/// meaning under a fold.
 struct ReadingBack: View {
     let card: Card
 
@@ -25,7 +23,6 @@ struct ReadingBack: View {
     }
 }
 
-/// The back of a meaning question: the senses, and the system dictionary.
 struct MeaningBack: View {
     let card: Card
 

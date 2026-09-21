@@ -1,23 +1,14 @@
 import Foundation
 
-/// One word the reader asked about, kept. A card is the word in its dictionary
-/// form with its reading, never one sighting: meeting the word again in another
-/// book adds a sighting to the same card. The reading and pitch are looked up
-/// live from the dictionary; the sightings are the reader's own.
+/// One word kept, keyed by dictionary form and reading; meeting it again adds a sighting.
 public struct Card: Identifiable, Hashable, Codable, Sendable {
     public let id: UUID
-    /// The dictionary form, as JMdict lists it: the card's key together with the reading.
     public let headword: String
-    /// The reading in hiragana.
     public let reading: String
-    /// The JMdict entry, when the word was found in it.
     public let entryID: Int?
     public var sightings: [Sighting]
     public let created: Date
-    /// The scheduler's memory of the card; nil until the first review, and due at once then.
     public var review: ReviewState?
-    /// Whether the card also asks what the word means, as its own question with its
-    /// own schedule; off by default, since the reading is the gap the app is for.
     public var asksMeaning: Bool
     public var meaningReview: ReviewState?
 
@@ -37,12 +28,10 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         self.meaningReview = meaningReview
     }
 
-    /// Whether the card is due at `date`: never reviewed, or its due date has come.
     public func isDue(at date: Date) -> Bool {
         review.map { $0.due <= date } ?? true
     }
 
-    /// The questions the card is due to ask at `date`, the reading first.
     public func dueQuestions(at date: Date) -> [Question] {
         var questions: [Question] = []
         if isDue(at: date) { questions.append(.reading) }
@@ -50,7 +39,6 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         return questions
     }
 
-    /// The scheduler state for a question, and its update.
     public func state(for question: Question) -> ReviewState? {
         question == .reading ? review : meaningReview
     }
@@ -78,33 +66,23 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     }
 }
 
-/// What a review asks of a card: how the word is read, always; what it means, when
-/// the reader turned that on for the word.
 public enum Question: String, Codable, Sendable, Hashable {
     case reading
     case meaning
 }
 
-/// The word as it was met once: the sentence as it stood on the page, where in it
-/// the word sits and how it was spelled there, the still it came from, and when.
 public struct Sighting: Identifiable, Hashable, Codable, Sendable {
     public let id: UUID
     public let sentence: String
-    /// The word's form on the page (頷いた, not 頷く) and where it starts in `sentence`,
-    /// in characters, so the front can highlight it without re-tokenizing.
+    /// The word's form on the page and where it starts in `sentence`, in characters.
     public let surface: String
     public let offset: Int
-    /// The stills the sentence was read from, in page order, kept as image files by id.
     public let stillIDs: [UUID]
-    /// The crop of the sentence's own lines out of the still, when the recognizer's
-    /// positions allowed one; the card's front shows it under the text.
     public let cropID: UUID?
-    /// Where it was read, in the reader's words: a book, a page. Optional.
     public let source: String?
     public let date: Date
 
-    /// The word's range in the sentence, as the offset and surface place it; nil when
-    /// the sentence has been edited out from under them.
+    /// Nil when the sentence has been edited out from under the offset.
     public var surfaceRange: Range<String.Index>? {
         guard offset >= 0, offset + surface.count <= sentence.count else { return nil }
         let start = sentence.index(sentence.startIndex, offsetBy: offset)
