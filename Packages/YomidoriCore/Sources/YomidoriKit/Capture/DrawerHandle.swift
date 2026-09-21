@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// Between a fifth and four fifths of the screen; the fraction is the caller's to remember.
 struct DrawerHandle: View {
     @Binding var fraction: Double
     let screenHeight: CGFloat
@@ -20,8 +19,10 @@ struct DrawerHandle: View {
                     }
                     .onChanged { value in
                         let start = fractionAtStart ?? fraction
+                        let range = CaptureDrawer<EmptyView, EmptyView>.fractions
                         fraction = min(
-                            max(start - value.translation.height / screenHeight, 0.2), 0.8)
+                            max(start - value.translation.height / screenHeight, range.lowerBound),
+                            range.upperBound)
                     })
     }
 }

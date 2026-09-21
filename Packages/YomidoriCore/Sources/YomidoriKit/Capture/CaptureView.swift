@@ -16,44 +16,89 @@ public struct CaptureView: View {
     @State private var closeUp: CloseUp?
     @State private var readingCloseUp = false
     @State private var picked: PhotosPickerItem?
+    @State private var zoom = Zoom()
+    private let zoomControl = ZoomControl()
     @AppStorage("readoutFraction") private var readoutFraction = 0.32
 
     public init() {}
 
     public var body: some View {
         GeometryReader { geometry in
-            ZStack {
+            ZStack(alignment: .bottom) {
                 Color.black.ignoresSafeArea()
                 if let still {
-                    stillView(still)
+                    stillView(still, in: pageArea(in: geometry.size))
+                    drawer(screenHeight: geometry.size.height)
                 } else {
-                    CameraPreview(camera: camera, access: camera.access, shutter: takeStill)
-                        .ignoresSafeArea()
-                    CameraNotice(access: camera.access)
-                    if !pages.isEmpty {
-                        SpreadNotice(startOver: startOver)
+                    VStack(spacing: 0) {
+                        cameraView
+                        drawer(screenHeight: geometry.size.height)
                     }
                 }
             }
-            .safeAreaInset(edge: .bottom) { drawer(screenHeight: geometry.size.height) }
             .onAppear { camera.start() }
             .onDisappear { camera.stop() }
             .task(id: picked) { await loadPicked() }
-            .task(id: still?.id) { await recognize() }
+            .task(id: still?.id) {
+                zoom =
+                    still.map { Zoom.fillingWidth(of: $0.size, in: pageArea(in: geometry.size)) }
+                    ?? Zoom()
+                await recognize()
+            }
         }
     }
 
-    @ViewBuilder private func stillView(_ still: Still) -> some View {
-        switch mode {
-        case .vision:
-            StillView(
-                still: still, lines: lines, selected: selected, highlight: nil, onTap: selectLine)
-        case .liveText:
-            LiveTextImage(still: still, analysis: analysis, selection: selection)
-        case .closeUp:
-            StillView(
-                still: still, lines: lines, selected: nil, highlight: closeUp?.box,
-                onTap: readCloseUp)
+    /// The page above the drawer at its smallest; a taller drawer lies over the page.
+    private func pageArea(in screen: CGSize) -> CGSize {
+        CGSize(
+            width: screen.width,
+            height: screen.height
+                - CaptureDrawer<EmptyView, EmptyView>.minimumHeight(
+                    screenHeight: screen.height))
+    }
+
+    private var cameraView: some View {
+        ZStack {
+            CameraPreview(camera: camera, access: camera.access, shutter: takeStill)
+                .ignoresSafeArea()
+            CameraNotice(access: camera.access)
+            if !pages.isEmpty {
+                SpreadNotice(startOver: startOver)
+            }
+        }
+    }
+
+    private func stillView(_ still: Still, in area: CGSize) -> some View {
+        Group {
+            switch mode {
+            case .vision:
+                StillView(
+                    zoom: $zoom, still: still, lines: lines, selected: selected, highlight: nil,
+                    onTap: selectLine)
+            case .liveText:
+                LiveTextImage(
+                    still: still, analysis: analysis, selection: selection,
+                    zoomControl: zoomControl)
+            case .closeUp:
+                StillView(
+                    zoom: $zoom, still: still, lines: lines, selected: nil,
+                    highlight: closeUp?.box, onTap: readCloseUp)
+            }
+        }
+        .frame(width: area.width, height: area.height)
+        .frame(maxHeight: .infinity, alignment: .top)
+        .overlay(alignment: .bottomTrailing) {
+            ZoomButtons { factor in zoomPage(by: factor, in: area) }
+                .padding(.trailing, 12)
+                .padding(.bottom, 64)
+        }
+    }
+
+    private func zoomPage(by factor: CGFloat, in area: CGSize) {
+        if mode == .liveText {
+            zoomControl.zoom(by: factor)
+        } else {
+            withAnimation(.easeInOut(duration: 0.2)) { zoom = zoom.stepped(by: factor, in: area) }
         }
     }
 

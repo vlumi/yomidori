@@ -1,5 +1,6 @@
 import SwiftUI
 import VisionKit
+import YomidoriCore
 
 #if os(iOS)
 import UIKit
@@ -10,10 +11,13 @@ struct LiveTextImage: UIViewRepresentable {
     let still: Still
     let analysis: ImageAnalysis?
     let selection: LiveTextSelection
+    let zoomControl: ZoomControl
 
     func makeUIView(context: Context) -> ZoomingImageView {
         let view = ZoomingImageView(image: UIImage(cgImage: still.image))
         view.imageView.addInteraction(context.coordinator.interaction)
+        view.interaction = context.coordinator.interaction
+        zoomControl.zoom = { [weak view] factor in view?.zoom(by: factor) }
         return view
     }
 
@@ -66,8 +70,13 @@ struct LiveTextImage: UIViewRepresentable {
         }
     }
 
+    /// The image view is exactly the fitted image, centred by insets, so Live Text's
+    /// highlights have no letterbox to drift into; the highlights are told to re-measure
+    /// whenever the layout or the zoom changes.
     final class ZoomingImageView: UIScrollView, UIScrollViewDelegate {
         let imageView: FittedImageView
+        var interaction: ImageAnalysisInteraction?
+        private var fittedFor: CGSize = .zero
 
         init(image: UIImage) {
             imageView = FittedImageView(image: image)
@@ -76,8 +85,7 @@ struct LiveTextImage: UIViewRepresentable {
             imageView.isUserInteractionEnabled = true
             addSubview(imageView)
             delegate = self
-            minimumZoomScale = 1
-            maximumZoomScale = 6
+            maximumZoomScale = 8
             showsHorizontalScrollIndicator = false
             showsVerticalScrollIndicator = false
             bouncesZoom = true
@@ -90,14 +98,43 @@ struct LiveTextImage: UIViewRepresentable {
 
         override func layoutSubviews() {
             super.layoutSubviews()
-            if zoomScale == 1 {
-                imageView.frame = bounds
-                contentSize = bounds.size
+            if bounds.size != fittedFor, bounds.width > 0, let image = imageView.image {
+                fittedFor = bounds.size
+                fit(image.size)
             }
+            center()
+            interaction?.setContentsRectNeedsUpdate()
+        }
+
+        /// Opens filling the width, the top of the page at the top, where reading starts.
+        private func fit(_ imageSize: CGSize) {
+            let fitted = TextGeometry.fittedFrame(of: imageSize, in: bounds.size)
+            zoomScale = 1
+            imageView.frame = CGRect(origin: .zero, size: fitted.size)
+            contentSize = fitted.size
+            minimumZoomScale = 1
+            zoomScale = fitted.width > 0 ? max(1, bounds.width / fitted.width) : 1
+            contentOffset = .zero
+        }
+
+        private func center() {
+            let dx = max(0, (bounds.width - contentSize.width) / 2)
+            let dy = max(0, (bounds.height - contentSize.height) / 2)
+            contentInset = UIEdgeInsets(top: dy, left: dx, bottom: dy, right: dx)
+        }
+
+        func zoom(by factor: CGFloat) {
+            let scale = min(max(zoomScale * factor, minimumZoomScale), maximumZoomScale)
+            setZoomScale(scale, animated: true)
         }
 
         func viewForZooming(in scrollView: UIScrollView) -> UIView? {
             imageView
+        }
+
+        func scrollViewDidZoom(_ scrollView: UIScrollView) {
+            center()
+            interaction?.setContentsRectNeedsUpdate()
         }
     }
 }
@@ -106,6 +143,7 @@ struct LiveTextImage: View {
     let still: Still
     let analysis: ImageAnalysis?
     let selection: LiveTextSelection
+    let zoomControl: ZoomControl
 
     var body: some View {
         Image(decorative: still.image, scale: 1).resizable().scaledToFit()
