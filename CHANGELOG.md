@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 5 — 2026-09-21
+
 - **Settings, with a swipe-back switch.** A Settings screen beside About. Swipe back is on, as everywhere on iOS; off, only the back button leaves a screen, so a swipe meant for a word on the page's left edge never pops you home. The typed-answer switch lives there too, as well as in the review's toolbar.
 - **The page stays.** Swiping back to home from a frozen page, by accident or not, and coming back to Read finds the still, its pages, the mode and the zoom as they were left; nothing is read again.
 - **Stroke order.** A kanji's screen draws it stroke by stroke over its faint finished form, each stroke numbered; tap to watch again. The data is KanjiVG, built into the bundled dictionary.
