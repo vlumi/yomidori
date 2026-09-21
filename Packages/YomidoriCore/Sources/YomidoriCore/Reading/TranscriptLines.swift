@@ -30,3 +30,16 @@ public struct TranscriptLines {
         transcript.index(starts[line], offsetBy: offset)
     }
 }
+
+extension TranscriptLines {
+    /// The sentence around a token on one of the lines, with where the token starts in
+    /// the transcript, so a kept sentence knows its word's place.
+    public func sentence(around token: Token, onLine line: Int, in transcript: String)
+        -> (sentence: Sentence, start: String.Index)
+    {
+        let text = lines[line]
+        let offset = text.distance(from: text.startIndex, to: token.range.lowerBound)
+        let start = index(inLine: line, offset: offset, in: transcript)
+        return (Sentence.around(start, in: transcript), start)
+    }
+}

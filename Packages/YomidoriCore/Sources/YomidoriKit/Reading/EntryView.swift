@@ -16,22 +16,14 @@ struct EntryView: View {
     var body: some View {
         List {
             Section {
-                HStack(alignment: .firstTextBaseline, spacing: 12) {
-                    Text(verbatim: entry.headword)
-                        .font(.largeTitle)
-                    if let accent = JMdict.bundled?.pitchAccents(
-                        for: entry.headword, reading: reading
-                    ).first {
-                        PitchReading(reading: reading, accent: accent)
-                    } else {
-                        Text(verbatim: reading)
-                            .font(.title3)
-                            .foregroundStyle(Palette.nightGreen)
-                    }
-                    Spacer()
+                WordTitle(
+                    headword: entry.headword, reading: reading,
+                    accent: JMdict.bundled?.pitchAccents(for: entry.headword, reading: reading)
+                        .first,
+                    font: .largeTitle
+                ) {
                     DictionaryButton(term: entry.headword)
                 }
-                .textSelection(.enabled)
                 if entry.readings.count > 1 || entry.kanji.count > 1 {
                     Text(
                         verbatim: (entry.kanji + entry.readings.map(Kana.hiragana)).joined(

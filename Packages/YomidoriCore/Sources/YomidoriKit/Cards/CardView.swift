@@ -10,22 +10,14 @@ struct CardView: View {
     var body: some View {
         List {
             Section {
-                HStack(alignment: .firstTextBaseline, spacing: 12) {
-                    Text(verbatim: card.headword)
-                        .font(.largeTitle)
-                    if let accent = JMdict.bundled?.pitchAccents(
-                        for: card.headword, reading: card.reading
-                    ).first {
-                        PitchReading(reading: card.reading, accent: accent)
-                    } else {
-                        Text(verbatim: card.reading)
-                            .font(.title3)
-                            .foregroundStyle(Palette.nightGreen)
-                    }
-                    Spacer()
+                WordTitle(
+                    headword: card.headword, reading: card.reading,
+                    accent: JMdict.bundled?.pitchAccents(for: card.headword, reading: card.reading)
+                        .first,
+                    font: .largeTitle
+                ) {
                     DictionaryButton(term: card.headword)
                 }
-                .textSelection(.enabled)
             }
             Section {
                 Toggle(isOn: $card.asksMeaning) {
