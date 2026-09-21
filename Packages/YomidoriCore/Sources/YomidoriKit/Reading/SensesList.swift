@@ -17,6 +17,7 @@ struct SensesList: View {
     }
 }
 
+/// The meaning of a review card, folded so the reading is what is asked for.
 struct MeaningFold<Content: View>: View {
     @ViewBuilder var content: () -> Content
 

@@ -49,10 +49,14 @@ extension WordDictionary {
     /// The tokenizer's dictionary form, then the word and its deinflections, then its reading;
     /// the first candidate with entries wins.
     public func entries(for token: Token) -> [DictionaryEntry] {
-        let candidates =
-            [token.dictionaryForm].compactMap { $0 } + Deinflector.candidates(for: token.surface)
-            + [token.reading]
-        return candidates.lazy.map(entries(matching:)).first { !$0.isEmpty } ?? []
+        entries(
+            forAny: [token.dictionaryForm].compactMap { $0 }
+                + Deinflector.candidates(for: token.surface) + [token.reading])
+    }
+
+    /// The first candidate with entries wins.
+    public func entries(forAny candidates: [String]) -> [DictionaryEntry] {
+        candidates.lazy.map(entries(matching:)).first { !$0.isEmpty } ?? []
     }
 
     public func pitchAccent(of entry: DictionaryEntry) -> PitchAccent? {

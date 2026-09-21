@@ -14,9 +14,11 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Every word in a selection.** Select a run of text on the page and each word in it is listed, a compound the dictionary knows (蛍光灯) as one word and an inflected verb under its dictionary form (照らされていた finds 照らす). The meaning opens on a tap anywhere along the word's row; the dictionary and Keep buttons are icons, so a long reading no longer wraps them. Live Text is the recognizer a page opens in.
 ### build 4 — 2026-09-18
 
 - **A drawer you size yourself.** Under a frozen page, the readout is a drawer with a handle: drag it down for the page while looking for a word, up for the reading and the meaning once found; it remembers. The recognized text sits behind a fold, closed unless you open it.
+
 ### build 3 — 2026-09-18
 
 - **A home screen.** The app opens on its name with one big *Read* button, *Cards* with how many are due, and *About*; the camera starts only when you ask. Reopened after a restart, it returns to the screen you were on.

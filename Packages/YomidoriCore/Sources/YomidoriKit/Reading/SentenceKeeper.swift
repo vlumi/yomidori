@@ -9,11 +9,13 @@ struct SentenceKeeper {
     let currentLines: [RecognizedLine]
     let source: String?
 
-    func sighting(for token: Token, archived: inout [UUID: UUID]) -> Sighting? {
-        guard let line = tokenLines.firstIndex(where: { $0.contains(token) }) else { return nil }
-        let found = transcriptLines.sentence(around: token, onLine: line, in: transcript)
+    func sighting(for word: FoundWord, archived: inout [UUID: UUID]) -> Sighting? {
+        guard let line = tokenLines.firstIndex(where: { $0.contains(word.first) }) else {
+            return nil
+        }
+        let found = transcriptLines.sentence(around: word.first, onLine: line, in: transcript)
         return Sighting(
-            sentence: found.sentence.text, surface: token.surface,
+            sentence: found.sentence.text, surface: word.surface,
             offset: found.sentence.offset(of: found.start, in: transcript),
             stillIDs: stillIDs(archived: &archived), cropID: cropID(for: found.sentence.text),
             source: source, date: Date())

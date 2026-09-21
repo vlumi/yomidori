@@ -1,46 +1,58 @@
 import SwiftUI
 import YomidoriCore
 
+/// One found word as a row: the title, the buttons, and the meaning folded under the row,
+/// which opens on a tap anywhere along it.
 struct WordReadout: View {
-    let token: Token
-    let entries: [DictionaryEntry]
+    let word: FoundWord
     let accent: PitchAccent?
     let kept: Bool
     let canKeep: Bool
     let keep: () -> Void
+    @State private var expanded = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            WordTitle(
-                headword: token.surface, reading: reading, accent: accent,
-                dictionaryForm: token.dictionaryForm
-            ) {
-                DictionaryButton(
-                    term: entries.first?.headword ?? token.dictionaryForm ?? token.surface)
-                keepButton
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .firstTextBaseline, spacing: 10) {
+                WordTitle(
+                    headword: word.surface, reading: reading, accent: accent,
+                    dictionaryForm: word.dictionaryForm
+                ) {
+                    DictionaryButton(term: word.entries.first?.headword ?? headword)
+                        .labelStyle(.iconOnly)
+                    keepButton
+                }
+                Image(systemName: "chevron.right")
+                    .font(.caption.bold())
+                    .foregroundStyle(.secondary)
+                    .rotationEffect(.degrees(expanded ? 90 : 0))
             }
-            if canKeep {
-                MeaningFold { meaning }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                withAnimation(.easeInOut(duration: 0.15)) { expanded.toggle() }
+            }
+            if expanded {
+                meaning
             }
         }
     }
 
+    private var headword: String {
+        word.dictionaryForm ?? word.surface
+    }
+
     private var reading: String {
-        if accent != nil, let reading = entries.first?.readings.first {
+        if accent != nil, let reading = word.entries.first?.readings.first {
             return Kana.hiragana(reading)
         }
-        return token.reading
+        return word.reading
     }
 
     @ViewBuilder private var keepButton: some View {
         if kept {
-            Label {
-                Text("Kept", bundle: .module)
-            } icon: {
-                Image(systemName: "checkmark")
-            }
-            .font(.callout)
-            .foregroundStyle(.secondary)
+            Image(systemName: "checkmark")
+                .foregroundStyle(.secondary)
+                .accessibilityLabel(Text("Kept", bundle: .module))
         } else if canKeep {
             Button(action: keep) {
                 Label {
@@ -49,6 +61,7 @@ struct WordReadout: View {
                     Image(systemName: "plus.rectangle.on.rectangle")
                 }
             }
+            .labelStyle(.iconOnly)
             .buttonStyle(.bordered)
             .controlSize(.small)
         }
@@ -56,12 +69,12 @@ struct WordReadout: View {
 
     private var meaning: some View {
         VStack(alignment: .leading, spacing: 6) {
-            if entries.isEmpty {
+            if word.entries.isEmpty {
                 Text("Not in the dictionary.", bundle: .module)
                     .font(.callout)
                     .foregroundStyle(.secondary)
             }
-            ForEach(entries.prefix(3)) { entry in
+            ForEach(word.entries.prefix(3)) { entry in
                 VStack(alignment: .leading, spacing: 2) {
                     Text(verbatim: "\(entry.headword)  \(entry.readings.joined(separator: "、"))")
                         .font(.callout)
@@ -70,6 +83,7 @@ struct WordReadout: View {
                 }
             }
         }
+        .padding(.leading, 4)
         .textSelection(.enabled)
     }
 }

@@ -8,7 +8,7 @@ public struct CaptureView: View {
     @StateObject private var selection = LiveTextSelection()
     @State private var still: Still?
     @State private var pages: [Page] = []
-    @State private var mode: Mode = .vision
+    @State private var mode: Mode = .liveText
     @State private var lines: [RecognizedLine] = []
     @State private var analysis: ImageAnalysis?
     @State private var selected: Int?
@@ -62,8 +62,8 @@ public struct CaptureView: View {
             hasStill: still != nil, screenHeight: screenHeight, fraction: $readoutFraction
         ) {
             Picker(selection: $mode) {
-                Text("Vision", bundle: .module).tag(Mode.vision)
                 Text("Live Text", bundle: .module).tag(Mode.liveText)
+                Text("Vision", bundle: .module).tag(Mode.vision)
                 Text("Close-up", bundle: .module).tag(Mode.closeUp)
             } label: {
                 Text("Recognizer", bundle: .module)
