@@ -3,6 +3,7 @@ import YomidoriCore
 
 public struct AppRoot: View {
     @State private var path = NavigationPath()
+    @StateObject private var capture = CaptureState()
     @SceneStorage("navigationPath") private var storedPath: Data?
 
     public init() {}
@@ -35,6 +36,7 @@ public struct AppRoot: View {
                 }
         }
         .tint(Palette.nightGreen)
+        .environmentObject(capture)
         .onAppear(perform: restore)
         .task(id: path) { store() }
     }
