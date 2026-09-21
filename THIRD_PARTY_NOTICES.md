@@ -18,6 +18,12 @@ The kanji data (readings, meanings, stroke counts, school grades, and the compon
 
 Both are © the Electronic Dictionary Research and Development Group and distributed under the [Creative Commons Attribution-ShareAlike 4.0 licence](https://creativecommons.org/licenses/by-sa/4.0/). The statement is carried in the database's `meta` table too.
 
+## KanjiVG (stroke order)
+
+The stroke order data is [KanjiVG](https://kanjivg.tagaini.net) by Ulrich Apel, built into the same `jmdict.sqlite` at build time as each kanji's strokes in order, under the [Creative Commons Attribution-ShareAlike 3.0 licence](https://creativecommons.org/licenses/by-sa/3.0/). The statement is carried in the database's `meta` table too.
+
+> The stroke order data is KanjiVG, copyright Ulrich Apel, used under the Creative Commons Attribution-ShareAlike 3.0 licence.
+
 ## Kanjium (pitch accent)
 
 The pitch accent data is the `accents.txt` list from [Kanjium](https://github.com/mifunetoshiro/kanjium) by Uros O., built into the same `jmdict.sqlite` at build time, under the [Creative Commons Attribution-ShareAlike 4.0 licence](https://creativecommons.org/licenses/by-sa/4.0/). Its author asks for this statement, which the database's `meta` table also carries:

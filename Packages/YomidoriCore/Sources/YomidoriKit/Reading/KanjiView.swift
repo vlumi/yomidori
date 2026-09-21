@@ -22,6 +22,14 @@ struct KanjiView: View {
                 }
                 .textSelection(.enabled)
             }
+            if !kanji.strokeOrder.isEmpty {
+                Section {
+                    StrokeOrderView(strokes: kanji.strokeOrder)
+                        .frame(maxWidth: .infinity)
+                } header: {
+                    Text("Stroke order", bundle: .module)
+                }
+            }
             Section {
                 readings(Text("On", bundle: .module), kanji.onReadings)
                 readings(Text("Kun", bundle: .module), kanji.kunReadings)

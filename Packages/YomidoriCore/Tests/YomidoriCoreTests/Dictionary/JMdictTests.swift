@@ -90,6 +90,9 @@ final class JMdictTests: XCTestCase {
         XCTAssertEqual(kanji.jlpt, 1)
         XCTAssertEqual(kanji.frequency, 1150)
         XCTAssertEqual(kanji.components, ["木", "士", "冖", "寸", "豆"])
+        XCTAssertEqual(kanji.strokeOrder.count, 16)
+        XCTAssertEqual(dictionary.kanji("皮")?.strokeOrder.first?.label, CGPoint(x: 17.5, y: 41.5))
+        XCTAssertEqual(dictionary.kanji("皮")?.strokeOrder.first?.path.prefix(6), "M22.41")
         XCTAssertEqual(dictionary.kanji("皮")?.nanori, [])
         XCTAssertNil(dictionary.kanji("木"))
     }
