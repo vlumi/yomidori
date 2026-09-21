@@ -3,22 +3,20 @@ import YomidoriCore
 import YomidoriDictionary
 import YomidoriMeCab
 
-/// The Live Text transcript as its words: a line per line of the page, each word
-/// with its reading, a tap showing the word large with its reading and dictionary
-/// form. A switch runs the same page through the OS's analyzer or through MeCab,
-/// so the two tokenizers are compared on real pages; the transcript copies out.
+/// The transcript as its words, a line per line of the page; the tapped or selected
+/// word shown large with what the dictionary knows; a switch between the two
+/// tokenizers; the recognized text itself behind a fold.
 struct TranscriptReadout: View {
     enum Choice: Hashable {
         case system
         case mecab
     }
 
-    /// The pages' text joined at the seams (`Spread`), the pages' stills in order, the
-    /// page on screen's own transcript, and where it starts in the joined text.
+    /// The pages' text joined at the seams, the pages' stills in order, the page on
+    /// screen's own transcript and its lines, and where it starts in the joined text.
     let transcript: String
     let stills: [Still]
     let currentTranscript: String
-    /// Vision's lines on the page on screen, for the crop of a kept sentence.
     let currentLines: [RecognizedLine]
     let pageOffset: Int
     @ObservedObject var selection: LiveTextSelection
@@ -26,46 +24,16 @@ struct TranscriptReadout: View {
     @State private var lines: [[Token]] = []
     @State private var transcriptLines = TranscriptLines("")
     @State private var selected: Token?
-    /// The recognized text is behind a fold, closed by default: the word is what is asked for.
     @AppStorage("transcriptExpanded") private var expanded = false
     @State private var kept: Card?
-    /// The archive id of each still saved so far, by the still's own id, so a retake
-    /// never keeps a stale page and a page is saved once.
     @State private var archived: [UUID: UUID] = [:]
-    /// Where the reader is: a book and a page, in their words, kept between stills and launches.
     @AppStorage("source") private var source = ""
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Picker(selection: $choice) {
-                    Text("System", bundle: .module).tag(Choice.system)
-                    Text(verbatim: "MeCab").tag(Choice.mecab)
-                } label: {
-                    Text("Tokenizer", bundle: .module)
-                }
-                .pickerStyle(.segmented)
-                .frame(maxWidth: 170)
-                TextField(text: $source) {
-                    Text("Book, page", bundle: .module)
-                }
-                .textFieldStyle(.roundedBorder)
-                .font(.callout)
-                Button {
-                    Clipboard.copy(transcript)
-                } label: {
-                    Label {
-                        Text("Copy", bundle: .module)
-                    } icon: {
-                        Image(systemName: "doc.on.doc")
-                    }
-                }
-                .labelStyle(.iconOnly)
-                .buttonStyle(.bordered)
-                .controlSize(.small)
-            }
+            header
             if let selected {
-                word(selected)
+                wordReadout(selected)
             }
             if choice == .mecab, MeCabTokenizer.shared == nil {
                 Text("MeCab could not load its dictionary.", bundle: .module)
@@ -90,18 +58,67 @@ struct TranscriptReadout: View {
         .task(id: "\(choice)|\(selection.text)") { showSelection() }
     }
 
-    /// A word selected on the still itself, through Live Text's own selection, shown
-    /// as if tapped in the strip: the selection's line is the sentence, and its first
-    /// word the word. A selection of nothing changes nothing.
+    private var header: some View {
+        HStack {
+            Picker(selection: $choice) {
+                Text("System", bundle: .module).tag(Choice.system)
+                Text(verbatim: "MeCab").tag(Choice.mecab)
+            } label: {
+                Text("Tokenizer", bundle: .module)
+            }
+            .pickerStyle(.segmented)
+            .frame(maxWidth: 170)
+            TextField(text: $source) {
+                Text("Book, page", bundle: .module)
+            }
+            .textFieldStyle(.roundedBorder)
+            .font(.callout)
+            Button {
+                Clipboard.copy(transcript)
+            } label: {
+                Label {
+                    Text("Copy", bundle: .module)
+                } icon: {
+                    Image(systemName: "doc.on.doc")
+                }
+            }
+            .labelStyle(.iconOnly)
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+        }
+    }
+
+    private func wordReadout(_ token: Token) -> some View {
+        let dictionary = JMdict.bundled
+        let entries = dictionary.map { $0.entries(for: token) } ?? []
+        return WordReadout(
+            token: token, entries: entries,
+            accent: entries.first.flatMap { dictionary?.pitchAccent(of: $0) },
+            kept: kept?.sightings.last?.surface == token.surface, canKeep: Cards.store != nil
+        ) {
+            keep(token, entry: entries.first)
+        }
+    }
+
+    private var tokenizer: (any Tokenizer)? {
+        choice == .system ? SystemTokenizer() : MeCabTokenizer.shared
+    }
+
+    private func tokenize() {
+        selected = nil
+        transcriptLines = TranscriptLines(transcript)
+        lines = transcriptLines.lines.map { tokenizer?.tokens(in: $0) ?? [] }
+    }
+
+    /// A word selected on the still itself becomes the word shown; the strip's own
+    /// token on that line is preferred, so Keep knows the sentence.
     private func showSelection() {
         let text = selection.text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !text.isEmpty else { return }
-        let tokenizer: (any Tokenizer)? =
-            choice == .system ? SystemTokenizer() : MeCabTokenizer.shared
-        guard let word = tokenizer?.tokens(in: text).first(where: \.isWord) else { return }
-        // Prefer the strip's own token for the line it stands in, so Keep knows the sentence.
-        if let lineIndex = lineIndex(ofSelection: selection.range),
-            let match = lines[lineIndex].first(where: { $0.surface == word.surface })
+        guard !text.isEmpty, let word = tokenizer?.tokens(in: text).first(where: \.isWord) else {
+            return
+        }
+        if let line = lineIndex(ofSelection: selection.range),
+            let match = lines[line].first(where: { $0.surface == word.surface })
         {
             selected = match
         } else {
@@ -109,7 +126,6 @@ struct TranscriptReadout: View {
         }
     }
 
-    /// The joined text's line that a selection on the page on screen falls in.
     private func lineIndex(ofSelection range: Range<String.Index>?) -> Int? {
         guard let range, range.lowerBound <= currentTranscript.endIndex else { return nil }
         let offset =
@@ -118,148 +134,18 @@ struct TranscriptReadout: View {
         return transcriptLines.lineIndex(atOffset: offset, in: transcript)
     }
 
-    /// The tapped word, large: its reading with its pitch drawn over it where the
-    /// dictionary knows the word, its dictionary form when known, and the meaning
-    /// folded under it, since the reading is what was asked for.
-    private func word(_ token: Token) -> some View {
-        let dictionary = JMdict.bundled
-        let entries = dictionary.map { $0.entries(for: token) } ?? []
-        let accent = entries.first.flatMap { dictionary?.pitchAccent(of: $0) }
-        return VStack(alignment: .leading, spacing: 4) {
-            HStack(alignment: .firstTextBaseline, spacing: 12) {
-                Text(verbatim: token.surface)
-                    .font(.title)
-                if let accent, let reading = entries.first?.readings.first {
-                    PitchReading(reading: Kana.hiragana(reading), accent: accent)
-                } else {
-                    Text(verbatim: token.reading)
-                        .font(.title3)
-                        .foregroundStyle(Palette.nightGreen)
-                }
-                if let form = token.dictionaryForm {
-                    Text(verbatim: form)
-                        .font(.title3)
-                        .foregroundStyle(.secondary)
-                }
-                Spacer()
-                DictionaryButton(
-                    term: entries.first?.headword ?? token.dictionaryForm ?? token.surface)
-                keepButton(token, entry: entries.first)
-            }
-            .textSelection(.enabled)
-            if dictionary != nil {
-                DisclosureGroup {
-                    meaning(entries)
-                } label: {
-                    Text("Meaning", bundle: .module)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                .tint(.secondary)
-            }
-        }
-    }
-
-    /// Keep the word as a card, with the line it stands in as the sentence and the
-    /// still it was read from; a word already kept says so.
-    @ViewBuilder private func keepButton(_ token: Token, entry: DictionaryEntry?) -> some View {
-        if let kept, kept.sightings.last?.surface == token.surface {
-            Label {
-                Text("Kept", bundle: .module)
-            } icon: {
-                Image(systemName: "checkmark")
-            }
-            .font(.callout)
-            .foregroundStyle(.secondary)
-        } else if Cards.store != nil {
-            Button {
-                keep(token, entry: entry)
-            } label: {
-                Label {
-                    Text("Keep", bundle: .module)
-                } icon: {
-                    Image(systemName: "plus.rectangle.on.rectangle")
-                }
-            }
-            .buttonStyle(.bordered)
-            .controlSize(.small)
-        }
-    }
-
-    /// The sentence around a token, in the whole transcript, and where the token
-    /// starts in it.
-    private func sentence(around token: Token) -> (sentence: Sentence, start: String.Index)? {
-        guard let lineIndex = lines.firstIndex(where: { $0.contains(token) }) else { return nil }
-        let line = transcriptLines.lines[lineIndex]
-        let offset = line.distance(from: line.startIndex, to: token.range.lowerBound)
-        let start = transcriptLines.index(inLine: lineIndex, offset: offset, in: transcript)
-        return (Sentence.around(start, in: transcript), start)
-    }
-
     private func keep(_ token: Token, entry: DictionaryEntry?) {
-        guard let store = Cards.store, let found = sentence(around: token) else { return }
-        let sighting = Sighting(
-            sentence: found.sentence.text, surface: token.surface,
-            offset: found.sentence.offset(of: found.start, in: transcript),
-            stillIDs: archiveStills(), cropID: cropSentence(found.sentence.text),
-            source: source.isEmpty ? nil : source, date: Date())
+        let keeper = SentenceKeeper(
+            transcript: transcript, transcriptLines: transcriptLines, tokenLines: lines,
+            stills: stills,
+            currentLines: currentLines, source: source.isEmpty ? nil : source)
+        guard let store = Cards.store,
+            let sighting = keeper.sighting(for: token, archived: &archived)
+        else {
+            return
+        }
         let headword = entry?.headword ?? token.dictionaryForm ?? token.surface
         let reading = Kana.hiragana(entry?.readings.first ?? token.reading)
         kept = try? store.keep(sighting, headword: headword, reading: reading, entryID: entry?.id)
-    }
-
-    /// The sentence's own lines cut out of the page on screen and saved, where Vision
-    /// placed them; nil on a vertical page, where the whole still stands in.
-    private func cropSentence(_ sentence: String) -> UUID? {
-        guard let still = stills.last,
-            let rect = LineCrop.rect(for: sentence, lines: currentLines, imageSize: still.size),
-            let crop = still.cropped(to: rect)
-        else { return nil }
-        return try? StillArchive.save(crop)
-    }
-
-    /// Every page's still saved, once each, in page order.
-    private func archiveStills() -> [UUID] {
-        stills.compactMap { still in
-            if let id = archived[still.id] { return id }
-            guard let id = try? StillArchive.save(still) else { return nil }
-            archived[still.id] = id
-            return id
-        }
-    }
-
-    private func meaning(_ entries: [DictionaryEntry]) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            if entries.isEmpty {
-                Text("Not in the dictionary.", bundle: .module)
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-            }
-            ForEach(entries.prefix(3)) { entry in
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(verbatim: "\(entry.headword)  \(entry.readings.joined(separator: "、"))")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                    ForEach(entry.senses.prefix(4).indices, id: \.self) { index in
-                        Text(
-                            verbatim:
-                                "\(index + 1). \(entry.senses[index].glosses.joined(separator: "; "))"
-                        )
-                        .font(.callout)
-                    }
-                }
-            }
-        }
-        .textSelection(.enabled)
-        .padding(.top, 2)
-    }
-
-    /// The transcript's lines through the chosen tokenizer; a page's lines stay lines.
-    private func tokenize() {
-        selected = nil
-        let tokenizer: (any Tokenizer)? =
-            choice == .system ? SystemTokenizer() : MeCabTokenizer.shared
-        transcriptLines = TranscriptLines(transcript)
-        lines = transcriptLines.lines.map { tokenizer?.tokens(in: $0) ?? [] }
     }
 }

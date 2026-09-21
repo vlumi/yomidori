@@ -132,16 +132,20 @@ yomidori/
 └── Packages/YomidoriCore/          Swift package — all the code
     ├── Sources/YomidoriCore/       Pure logic — tested, coverage-gated; grouped by domain as it grows:
     │   ├── Kana.swift              katakana ↔ hiragana, the first of the reading helpers
-    │   ├── Dictionary/             DictionaryEntry, the WordDictionary protocol
-    │   ├── Reading/                Token, Tokenizer, SystemTokenizer, Deinflector, PitchAccent
-    │   └── Recognition/            RecognizedLine, TextGeometry (the Vision-box ↔ view seam)
+    │   ├── Cards/                  Card, Sighting, the CardStore protocol and its JSON file
+    │   ├── Dictionary/             DictionaryEntry, the WordDictionary protocol and its lookups
+    │   ├── Reading/                Token, Tokenizer, SystemTokenizer, Deinflector, PitchAccent, Sentence, Spread, TranscriptLines
+    │   ├── Recognition/            RecognizedLine, TextGeometry, LineCrop, CloseUpGeometry (the Vision-box ↔ view seam)
+    │   ├── Scheduling/             FSRS, ReadingCheck
+    │   └── Text/                   MarkdownBlocks
     ├── Sources/YomidoriDictionary/ JMdict, the SQLite reader over the bundled database (system SQLite)
     ├── Sources/YomidoriMeCab/      MeCab + IPADic behind Tokenizer — the one third-party dependency, quarantined
     ├── Sources/YomidoriMangaOCR/   manga-ocr through Core ML: a CGImage in, a String out; coverage-ignored
-    ├── Sources/YomidoriKit/        SwiftUI + UIKit + Vision, depends on Core, Dictionary and MeCab; coverage-ignored
-    │   ├── App/                    AppRoot, Palette (夜緑 tokens), Compat (platform-only wrappers)
-    │   ├── Capture/                Camera, Still, TextRecognizer (Vision), LiveText (VisionKit), CaptureView
-    │   ├── Reading/                TokenFlow, TranscriptReadout, PitchReading (the accent line over kana)
+    ├── Sources/YomidoriKit/        SwiftUI + UIKit + Vision, depends on Core, Dictionary, MeCab and MangaOCR; coverage-ignored
+    │   ├── App/                    AppRoot, HomeView, AboutView, NoticesView, AppInfo, Palette, Compat — one type per file
+    │   ├── Capture/                Camera, CameraPreview, FrameSink, Still, TextRecognizer, LiveText*, CaptureView and its drawer, buttons, readouts and reader
+    │   ├── Cards/                  CardsView, CardView, ReviewView with its front and back, MarkedSentence, StillArchive
+    │   ├── Reading/                TranscriptReadout, WordReadout, SentenceKeeper, TokenFlow, WordTitle, SensesList, PitchReading, SearchView, EntryView, DictionaryButton
     │   └── Resources/              Localizable.xcstrings (the Kit's strings, en + ja)
     └── Tests/YomidoriCoreTests/    Grouped by domain, mirroring Core
 ```

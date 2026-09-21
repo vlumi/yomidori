@@ -1,0 +1,55 @@
+import SwiftUI
+import YomidoriCore
+
+/// The still, aspect-fitted, with each recognized line boxed over it in night
+/// green, the selected one filled, and an optional square (the close-up) drawn on
+/// top. It pinches to zoom and drags to pan; a double tap brings it back. The tap
+/// is reported in the still's own coordinates with the frame it occupies, whatever
+/// the zoom, so the geometry seam needs no knowledge of it.
+struct StillView: View {
+    @State private var zoom = Zoom()
+    let still: Still
+    let lines: [RecognizedLine]
+    let selected: Int?
+    let highlight: CGRect?
+    let onTap: (CGPoint, CGRect) -> Void
+
+    var body: some View {
+        GeometryReader { geometry in
+            let frame = TextGeometry.fittedFrame(of: still.size, in: geometry.size)
+            ZStack(alignment: .topLeading) {
+                Image(decorative: still.image, scale: 1)
+                    .resizable()
+                    .frame(width: frame.width, height: frame.height)
+                    .offset(x: frame.minX, y: frame.minY)
+                ForEach(lines.indices, id: \.self) { index in
+                    let rect = TextGeometry.viewRect(for: lines[index].box, in: frame)
+                    let isSelected = index == selected
+                    RoundedRectangle(cornerRadius: 3)
+                        .fill(Palette.nightGreen.opacity(isSelected ? 0.35 : 0.12))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 3)
+                                .stroke(Palette.nightGreen, lineWidth: isSelected ? 2 : 1)
+                        )
+                        .frame(width: rect.width, height: rect.height)
+                        .offset(x: rect.minX, y: rect.minY)
+                }
+                if let highlight {
+                    let rect = TextGeometry.viewRect(for: highlight, in: frame)
+                    RoundedRectangle(cornerRadius: 4)
+                        .stroke(Palette.nightGreen, lineWidth: 2)
+                        .frame(width: rect.width, height: rect.height)
+                        .offset(x: rect.minX, y: rect.minY)
+                }
+            }
+            .frame(width: geometry.size.width, height: geometry.size.height, alignment: .topLeading)
+            .contentShape(Rectangle())
+            .gesture(
+                SpatialTapGesture(count: 2).onEnded { _ in zoom = Zoom() }
+                    .exclusively(before: SpatialTapGesture().onEnded { onTap($0.location, frame) })
+            )
+            .zoomable($zoom, in: geometry.size)
+            .clipped()
+        }
+    }
+}

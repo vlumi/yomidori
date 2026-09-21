@@ -1,0 +1,43 @@
+import SwiftUI
+import YomidoriCore
+import YomidoriDictionary
+
+/// The back of a reading question: the word with its pitch, the dictionary, and the
+/// meaning under a fold.
+struct ReadingBack: View {
+    let card: Card
+
+    var body: some View {
+        let dictionary = JMdict.bundled
+        let entry = dictionary?.entry(headword: card.headword, reading: card.reading)
+        VStack(alignment: .leading, spacing: 8) {
+            WordTitle(
+                headword: card.headword, reading: card.reading,
+                accent: dictionary?.pitchAccents(for: card.headword, reading: card.reading).first,
+                font: .largeTitle
+            ) {
+                DictionaryButton(term: card.headword)
+            }
+            if let entry {
+                MeaningFold { SensesList(entry: entry) }
+            }
+        }
+    }
+}
+
+/// The back of a meaning question: the senses, and the system dictionary.
+struct MeaningBack: View {
+    let card: Card
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            if let entry = JMdict.bundled?.entry(headword: card.headword, reading: card.reading) {
+                SensesList(entry: entry)
+            } else {
+                Text("Not in the dictionary.", bundle: .module)
+                    .foregroundStyle(.secondary)
+            }
+            DictionaryButton(term: card.headword)
+        }
+    }
+}

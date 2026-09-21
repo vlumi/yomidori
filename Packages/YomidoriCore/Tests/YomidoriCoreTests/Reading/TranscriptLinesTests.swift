@@ -21,4 +21,13 @@ final class TranscriptLinesTests: XCTestCase {
         XCTAssertNil(lines.lineIndex(atOffset: 99, in: transcript))
         XCTAssertEqual(transcript[lines.index(inLine: 1, offset: 3, in: transcript)], "漂")
     }
+
+    func testTheSentenceAroundATokenOnALine() {
+        let lines = TranscriptLines(transcript)
+        let tokens = SystemTokenizer().tokens(in: lines.lines[1])
+        let token = tokens.first { $0.surface == "漂っ" }!
+        let found = lines.sentence(around: token, onLine: 1, in: transcript)
+        XCTAssertEqual(found.sentence.text, "樹皮の匂いが部屋に漂っていた。")
+        XCTAssertEqual(found.sentence.offset(of: found.start, in: transcript), 9)
+    }
 }
