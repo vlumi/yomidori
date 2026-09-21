@@ -79,6 +79,12 @@ final class JMdictTests: XCTestCase {
             dictionary.pitchAccent(of: dictionary.entries(matching: "樹皮")[0])?.downstep, 1)
     }
 
+    func testAMissingDatabaseFailsToOpen() {
+        let missing = FileManager.default.temporaryDirectory.appendingPathComponent(
+            "\(UUID().uuidString).sqlite")
+        XCTAssertThrowsError(try JMdict(url: missing))
+    }
+
     func testMetaNamesTheSourceAndLicense() {
         XCTAssertEqual(dictionary.meta["source"], "JMdict_e (EDRDG)")
         XCTAssertEqual(dictionary.meta["created"], "2026-09-17")
