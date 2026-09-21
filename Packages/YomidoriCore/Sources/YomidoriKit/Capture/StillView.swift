@@ -4,7 +4,7 @@ import YomidoriCore
 /// The tap is reported in the still's own coordinates with the frame it occupies, whatever
 /// the zoom.
 struct StillView: View {
-    @State private var zoom = Zoom()
+    @Binding var zoom: Zoom
     let still: Still
     let lines: [RecognizedLine]
     let selected: Int?

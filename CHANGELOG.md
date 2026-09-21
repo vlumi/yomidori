@@ -14,7 +14,9 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The drawer lies over the page.** Dragging it no longer relays the page out under it, so the drag is smooth and the still keeps its zoom; the page is sized for the drawer at its smallest. A still opens filling the width, its top in view, and two buttons beside it zoom in and out one-handed. Live Text's selection highlight re-measures on every layout and zoom, so it no longer drifts off its word.
 - **Every word in a selection.** Select a run of text on the page and each word in it is listed, a compound the dictionary knows (蛍光灯) as one word and an inflected verb under its dictionary form (照らされていた finds 照らす). The meaning opens on a tap anywhere along the word's row; the dictionary and Keep buttons are icons, so a long reading no longer wraps them. Live Text is the recognizer a page opens in.
+
 ### build 4 — 2026-09-18
 
 - **A drawer you size yourself.** Under a frozen page, the readout is a drawer with a handle: drag it down for the page while looking for a word, up for the reading and the meaning once found; it remembers. The recognized text sits behind a fold, closed unless you open it.

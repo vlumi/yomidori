@@ -610,6 +610,26 @@
           }
         }
       }
+    },
+    "Zoom in" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拡大する"
+          }
+        }
+      }
+    },
+    "Zoom out" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縮小する"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
