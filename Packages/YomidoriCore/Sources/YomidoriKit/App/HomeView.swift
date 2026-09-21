@@ -73,7 +73,7 @@ struct HomeView: View {
             .padding(.bottom, 32)
         }
         .background(Palette.page.ignoresSafeArea())
-        .onAppear { dueCount = Cards.store?.dueItems(at: Date()).count ?? 0 }
+        .onAppear { dueCount = Cards.dueItems(at: Date()).count }
     }
 }
 

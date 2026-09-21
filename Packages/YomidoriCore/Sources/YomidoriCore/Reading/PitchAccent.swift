@@ -21,6 +21,11 @@ public struct PitchAccent: Equatable, Sendable {
         return result
     }
 
+    /// Every pattern a reading of `count` morae can take: flat, then a drop after each mora.
+    public static func patterns(forMoraCount count: Int) -> [PitchAccent] {
+        (0...max(count, 1)).map(PitchAccent.init(downstep:))
+    }
+
     /// Flat starts low and stays high; a drop after the first mora starts high and stays low;
     /// a drop after mora n is low, high up to n, low after.
     public func highs(forMoraCount count: Int) -> [Bool] {

@@ -1,5 +1,6 @@
 import SwiftUI
 import YomidoriCore
+import YomidoriDictionary
 
 struct ReviewView: View {
     @State private var queue: [ReviewItem] = []
@@ -37,8 +38,10 @@ struct ReviewView: View {
     private func review(_ item: ReviewItem) -> some View {
         VStack(alignment: .leading, spacing: 20) {
             ReviewFront(card: item.card)
-            if item.question == .meaning {
-                MeaningQuestion(card: item.card)
+            switch item.question {
+            case .reading: EmptyView()
+            case .meaning: MeaningQuestion(card: item.card)
+            case .pitch: PitchQuestion(card: item.card)
             }
             Spacer()
             if revealed {
@@ -56,7 +59,13 @@ struct ReviewView: View {
     }
 
     @ViewBuilder private func prompt(_ item: ReviewItem) -> some View {
-        if typedAnswers, item.question == .reading {
+        if item.question == .pitch {
+            PitchChoices(reading: item.card.reading) { picked in
+                answer = "[\(picked.downstep)]"
+                verdict = Cards.accents(of: item.card).contains(picked)
+                revealed = true
+            }
+        } else if typedAnswers, item.question == .reading {
             TextField(text: $answer) {
                 Text("Type the reading", bundle: .module)
             }
@@ -85,10 +94,10 @@ struct ReviewView: View {
         if let verdict {
             verdictLine(verdict)
         }
-        if item.question == .reading {
-            ReadingBack(card: item.card)
-        } else {
-            MeaningBack(card: item.card)
+        switch item.question {
+        case .reading: ReadingBack(card: item.card)
+        case .meaning: MeaningBack(card: item.card)
+        case .pitch: PitchBack(card: item.card, accents: Cards.accents(of: item.card))
         }
         HStack(spacing: 16) {
             gradeButton(item, .again, prominent: verdict == false)
@@ -148,7 +157,7 @@ struct ReviewView: View {
     }
 
     private func reload() {
-        queue = Cards.store?.dueItems(at: Date()) ?? []
+        queue = Cards.dueItems(at: Date())
         revealed = false
     }
 }

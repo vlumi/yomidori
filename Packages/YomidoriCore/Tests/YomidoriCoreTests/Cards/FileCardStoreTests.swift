@@ -99,20 +99,34 @@ final class FileCardStoreTests: XCTestCase {
         XCTAssertNil(card.sightings[0].cropID)
     }
 
-    func testAMeaningQuestionIsItsOwnItemWithItsOwnSchedule() throws {
+    func testEachQuestionIsItsOwnItemWithItsOwnSchedule() throws {
         let store = FileCardStore(url: url)
         var card = try store.keep(
             sighting("樹皮の匂いがした。", "樹皮"), headword: "樹皮", reading: "じゅひ", entryID: nil)
         let now = Date(timeIntervalSince1970: 1_700_000_000)
-        XCTAssertEqual(store.dueItems(at: now).map(\.question), [.reading])
-        card.asksMeaning = true
-        try store.update(card)
         XCTAssertEqual(store.dueItems(at: now).map(\.question), [.reading, .meaning])
+        XCTAssertEqual(
+            store.dueItems(at: now, asksPitch: { _ in true }).map(\.question),
+            [.reading, .meaning, .pitch])
         card.setState(FSRS.review(nil, grade: .good, at: now), for: .meaning)
+        card.setState(FSRS.review(nil, grade: .good, at: now), for: .pitch)
         try store.update(card)
-        XCTAssertEqual(store.dueItems(at: now).map(\.question), [.reading])
-        XCTAssertEqual(FileCardStore(url: url).cards()[0].meaningReview?.reviews, 1)
-        XCTAssertNil(FileCardStore(url: url).cards()[0].review)
+        XCTAssertEqual(
+            store.dueItems(at: now, asksPitch: { _ in true }).map(\.question), [.reading])
+        let reopened = FileCardStore(url: url).cards()[0]
+        XCTAssertEqual(reopened.meaningReview?.reviews, 1)
+        XCTAssertEqual(reopened.pitchReview?.reviews, 1)
+        XCTAssertNil(reopened.review)
+    }
+
+    func testACardWrittenWithTheMeaningToggleStillDecodes() throws {
+        let old = """
+            [{"id":"\(UUID().uuidString)","headword":"樹皮","reading":"じゅひ","entryID":1,
+              "created":"2026-09-18T00:00:00Z","asksMeaning":false,"sightings":[]}]
+            """
+        try old.write(to: url, atomically: true, encoding: .utf8)
+        let card = try XCTUnwrap(FileCardStore(url: url).cards().first)
+        XCTAssertEqual(card.dueQuestions(at: Date(), asksPitch: false), [.reading, .meaning])
     }
 
     func testTheFileIsReadableJSON() throws {

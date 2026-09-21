@@ -23,6 +23,22 @@ struct ReadingBack: View {
     }
 }
 
+/// The patterns the dictionary gives, the usual one first.
+struct PitchBack: View {
+    let card: Card
+    let accents: [PitchAccent]
+
+    var body: some View {
+        HStack(spacing: 16) {
+            Text(verbatim: card.headword)
+                .font(.title)
+            ForEach(accents, id: \.downstep) { accent in
+                PitchReading(reading: card.reading, accent: accent)
+            }
+        }
+    }
+}
+
 struct MeaningBack: View {
     let card: Card
 

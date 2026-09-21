@@ -3,6 +3,7 @@ import Foundation
 import ImageIO
 import UniformTypeIdentifiers
 import YomidoriCore
+import YomidoriDictionary
 
 /// JPEGs in Application Support, one per id, scaled down so a page is a megabyte or two.
 enum StillArchive {
@@ -73,4 +74,13 @@ enum StillArchive {
 
 enum Cards {
     static let store: FileCardStore? = try? FileCardStore.inApplicationSupport()
+
+    /// The pitch is asked of the cards whose accent the dictionary knows.
+    static func dueItems(at date: Date) -> [ReviewItem] {
+        store?.dueItems(at: date, asksPitch: { !accents(of: $0).isEmpty }) ?? []
+    }
+
+    static func accents(of card: Card) -> [PitchAccent] {
+        JMdict.bundled?.pitchAccents(for: card.headword, reading: card.reading) ?? []
+    }
 }
