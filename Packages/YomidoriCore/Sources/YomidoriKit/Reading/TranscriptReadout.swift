@@ -19,17 +19,20 @@ struct TranscriptReadout: View {
     @State private var choice: TokenizerChoice = .system
     @State private var lines: [[Token]] = []
     @State private var transcriptLines = TranscriptLines("")
-    @State private var selected: Token?
+    @State private var words: [FoundWord] = []
+    @State private var keptSurfaces: Set<String> = []
     @AppStorage("transcriptExpanded") private var expanded = false
-    @State private var kept: Card?
     @State private var archived: [UUID: UUID] = [:]
     @AppStorage("source") private var source = ""
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             header
-            if let selected {
-                wordReadout(selected)
+            ForEach(words.indices, id: \.self) { index in
+                if index > 0 {
+                    Divider()
+                }
+                wordReadout(words[index])
             }
             if choice == .mecab, MeCabTokenizer.shared == nil {
                 Text("MeCab could not load its dictionary.", bundle: .module)
@@ -38,7 +41,9 @@ struct TranscriptReadout: View {
             DisclosureGroup(isExpanded: $expanded) {
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(lines.indices, id: \.self) { index in
-                        TokenFlow(tokens: lines[index], selected: $selected)
+                        TokenFlow(tokens: lines[index], selected: words.first?.first) { token in
+                            words = WordFinder.words(in: [token], dictionary: JMdict.bundled)
+                        }
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -84,15 +89,12 @@ struct TranscriptReadout: View {
         }
     }
 
-    private func wordReadout(_ token: Token) -> some View {
-        let dictionary = JMdict.bundled
-        let entries = dictionary.map { $0.entries(for: token) } ?? []
-        return WordReadout(
-            token: token, entries: entries,
-            accent: entries.first.flatMap { dictionary?.pitchAccent(of: $0) },
-            kept: kept?.sightings.last?.surface == token.surface, canKeep: Cards.store != nil
+    private func wordReadout(_ word: FoundWord) -> some View {
+        WordReadout(
+            word: word, accent: word.entries.first.flatMap { JMdict.bundled?.pitchAccent(of: $0) },
+            kept: keptSurfaces.contains(word.surface), canKeep: Cards.store != nil
         ) {
-            keep(token, entry: entries.first)
+            keep(word)
         }
     }
 
@@ -101,23 +103,21 @@ struct TranscriptReadout: View {
     }
 
     private func tokenize() {
-        selected = nil
+        words = []
+        keptSurfaces = []
         transcriptLines = TranscriptLines(transcript)
         lines = transcriptLines.lines.map { tokenizer?.tokens(in: $0) ?? [] }
     }
 
-    /// The strip's own token on that line is preferred, so Keep knows the sentence.
+    /// The strip's own tokens on that line are preferred, so Keep knows the sentence.
     private func showSelection() {
         let text = selection.text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !text.isEmpty, let word = tokenizer?.tokens(in: text).first(where: \.isWord) else {
-            return
-        }
-        if let line = lineIndex(ofSelection: selection.range),
-            let match = lines[line].first(where: { $0.surface == word.surface })
-        {
-            selected = match
+        guard !text.isEmpty, let tokens = tokenizer?.tokens(in: text) else { return }
+        let found = WordFinder.words(in: tokens, dictionary: JMdict.bundled)
+        if let line = lineIndex(ofSelection: selection.range) {
+            words = found.map { $0.aligned(to: lines[line]) ?? $0 }
         } else {
-            selected = word
+            words = found
         }
     }
 
@@ -129,18 +129,23 @@ struct TranscriptReadout: View {
         return transcriptLines.lineIndex(atOffset: offset, in: transcript)
     }
 
-    private func keep(_ token: Token, entry: DictionaryEntry?) {
+    private func keep(_ word: FoundWord) {
         let keeper = SentenceKeeper(
             transcript: transcript, transcriptLines: transcriptLines, tokenLines: lines,
             stills: stills,
             currentLines: currentLines, source: source.isEmpty ? nil : source)
         guard let store = Cards.store,
-            let sighting = keeper.sighting(for: token, archived: &archived)
+            let sighting = keeper.sighting(for: word, archived: &archived)
         else {
             return
         }
-        let headword = entry?.headword ?? token.dictionaryForm ?? token.surface
-        let reading = Kana.hiragana(entry?.readings.first ?? token.reading)
-        kept = try? store.keep(sighting, headword: headword, reading: reading, entryID: entry?.id)
+        let entry = word.entries.first
+        let headword = entry?.headword ?? word.dictionaryForm ?? word.surface
+        let reading = Kana.hiragana(entry?.readings.first ?? word.reading)
+        guard
+            (try? store.keep(sighting, headword: headword, reading: reading, entryID: entry?.id))
+                != nil
+        else { return }
+        keptSurfaces.insert(word.surface)
     }
 }

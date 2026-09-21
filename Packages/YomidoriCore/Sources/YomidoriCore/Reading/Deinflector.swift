@@ -10,14 +10,14 @@ public enum Deinflector {
     }
 
     private static let rows: [Character: Row] = [
-        /// く/ぐ verbs before た/て (頷い, 泳い), or an ichidan stem in い (用い).
+        // く/ぐ verbs before た/て (頷い, 泳い), or an ichidan stem in い (用い).
         "い": Row(replacing: ["く", "ぐ"], takesRu: true),
         // The t-form stem of う/つ/る verbs: 漂っ, 待っ, 黙っ; and 行っ from 行く.
         "っ": Row(replacing: ["う", "つ", "る", "く"], takesRu: false),
         // The n-form stem of む/ぶ/ぬ verbs: 微笑ん, 飛ん, 死ん.
         "ん": Row(replacing: ["む", "ぶ", "ぬ"], takesRu: false),
-        /// A godan masu-stem (指し → 指す), a suru verb's noun (存在し), or an ichidan stem
-        /// (起き).
+        // A godan masu-stem (指し → 指す), a suru verb's noun (存在し), or an ichidan stem
+        // (起き).
         "し": Row(replacing: ["す", "する"], takesRu: true),
         "き": Row(replacing: ["く"], takesRu: true),
         "ぎ": Row(replacing: ["ぐ"], takesRu: true),
@@ -42,7 +42,16 @@ public enum Deinflector {
         "え": Row(replacing: [], takesRu: true),
         // An i-adjective's adverbial (古く) or its past stem cut before っ (寒か).
         "く": Row(replacing: ["い"], takesRu: false),
-        "か": Row(replacing: ["い"], takesRu: false),
+        // The a-row: a godan stem before ない/れる/せる (照らさ → 照らす, 書か → 書く).
+        "か": Row(replacing: ["い", "く"], takesRu: false),
+        "さ": Row(replacing: ["す"], takesRu: false),
+        "が": Row(replacing: ["ぐ"], takesRu: false),
+        "た": Row(replacing: ["つ"], takesRu: false),
+        "な": Row(replacing: ["ぬ"], takesRu: false),
+        "ば": Row(replacing: ["ぶ"], takesRu: false),
+        "ま": Row(replacing: ["む"], takesRu: false),
+        "ら": Row(replacing: ["る"], takesRu: false),
+        "わ": Row(replacing: ["う"], takesRu: false),
     ]
 
     public static func candidates(for surface: String) -> [String] {

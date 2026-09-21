@@ -3,7 +3,8 @@ import YomidoriCore
 
 struct TokenFlow: View {
     let tokens: [Token]
-    @Binding var selected: Token?
+    let selected: Token?
+    let onTap: (Token) -> Void
 
     var body: some View {
         FlowLayout(spacing: 4) {
@@ -24,7 +25,7 @@ struct TokenFlow: View {
                     RoundedRectangle(cornerRadius: 4)
                         .fill(token == selected ? Palette.nightGreen.opacity(0.25) : .clear)
                 )
-                .onTapGesture { selected = token.isWord ? token : nil }
+                .onTapGesture { onTap(token) }
             }
         }
     }
