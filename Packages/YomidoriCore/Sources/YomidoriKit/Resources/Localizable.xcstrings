@@ -211,6 +211,16 @@
         }
       }
     },
+    "In a review, the reading is typed in kana and checked, instead of shown on a tap." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "復習で読みをかなで入力して答え合わせします。タップで表示する代わりに。"
+          }
+        }
+      }
+    },
     "In names" : {
       "localizations" : {
         "ja" : {
@@ -611,6 +621,16 @@
         }
       }
     },
+    "Settings" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定"
+          }
+        }
+      }
+    },
     "Show the meaning" : {
       "localizations" : {
         "ja" : {
@@ -657,6 +677,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "書き順"
+          }
+        }
+      }
+    },
+    "Swipe back" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スワイプで戻る"
+          }
+        }
+      }
+    },
+    "Swiping in from the left edge goes back a screen, as everywhere on iOS. Off, only the back button does, so a swipe meant for a word never leaves the page." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左端からのスワイプで前の画面に戻ります（iOSの標準）。オフにすると戻るボタンだけが戻るので、言葉を選ぼうとしたスワイプでページを離れることがありません。"
           }
         }
       }
