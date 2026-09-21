@@ -651,6 +651,16 @@
         }
       }
     },
+    "Stroke order" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書き順"
+          }
+        }
+      }
+    },
     "System" : {
       "localizations" : {
         "ja" : {

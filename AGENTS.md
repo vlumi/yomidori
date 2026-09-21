@@ -66,14 +66,15 @@ describing intent as fact otherwise.
   phone. This is a product rule as much as a privacy one ([PRIVACY.md](PRIVACY.md)
   promises it).
 - **Dictionary data is built, not committed.** `make dictionary` runs
-  `Scripts/data/build-jmdict.py`, which downloads JMdict_e, KANJIDIC2, KRADFILE
-  and Kanjium's accent list once into `.build-data/` and writes
-  `Sources/Shared/Dictionaries/jmdict.sqlite` (~68 MB with its full-text index, gitignored); the project generation depends on it, so `make build-ios`
+  `Scripts/data/build-jmdict.py`, which downloads JMdict_e, KANJIDIC2, KRADFILE,
+  KanjiVG (its latest release, through GitHub's API) and Kanjium's accent list
+  once into `.build-data/` and writes
+  `Sources/Shared/Dictionaries/jmdict.sqlite` (~78 MB with its full-text index and the strokes, gitignored); the project generation depends on it, so `make build-ios`
   and the run targets build it on first use, and CI does the same. `swift test`
   needs none of this: the dictionary tests read a fixture in the test target,
   built by the same script from the `*-fixture.*` files beside it (the command
   is in the XML's header comment).
-  JMdict, KANJIDIC2, KRADFILE and Kanjium are CC BY-SA 4.0 — the attributions are in
+  JMdict, KANJIDIC2, KRADFILE and Kanjium are CC BY-SA 4.0 and KanjiVG CC BY-SA 3.0 — the attributions are in
   [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), shown on the About screen,
   and in the database's `meta` table.
 - **manga-ocr is optional and built, not committed.** `make models` converts
@@ -124,7 +125,7 @@ yomidori/
 │     embed-commit-sha.sh           Stamps GitCommitSHA into the built Info.plist
 │     release-*.sh, distribute.sh   The release lane (RELEASING.md)
 │     assets/make-icon.swift        Renders the app icon PNG (make icon)
-│     data/build-jmdict.py          JMdict, KANJIDIC2, KRADFILE, Kanjium accents → the bundled SQLite (make dictionary)
+│     data/build-jmdict.py          JMdict, KANJIDIC2, KRADFILE, KanjiVG, Kanjium accents → the bundled SQLite (make dictionary)
 │     data/build-mangaocr.py        manga-ocr → Core ML (make models; optional)
 ├── Sources/iOS/                    Thin @main app shell (+ Info.plist, entitlements)
 ├── Sources/Shared/                 The asset catalog (AppIcon), the app-level String Catalogs (InfoPlist too)

@@ -1,7 +1,21 @@
 import Foundation
 
-/// One kanji as KANJIDIC2 has it, with KRADFILE's components. Kun readings keep KANJIDIC's
-/// marks: a dot before the okurigana (う.える), a hyphen where the kanji is a prefix or suffix.
+/// One stroke as KanjiVG draws it: SVG path data in a 109 × 109 box, and where its number
+/// is printed.
+public struct KanjiStroke: Hashable, Sendable {
+    public static let boxSide: CGFloat = 109
+    public let path: String
+    public let label: CGPoint?
+
+    public init(path: String, label: CGPoint?) {
+        self.path = path
+        self.label = label
+    }
+}
+
+/// One kanji as KANJIDIC2 has it, with KRADFILE's components and KanjiVG's strokes. Kun
+/// readings keep KANJIDIC's marks: a dot before the okurigana (う.える), a hyphen where the
+/// kanji is a prefix or suffix.
 public struct KanjiEntry: Hashable, Sendable {
     public let literal: String
     public let onReadings: [String]
@@ -13,11 +27,12 @@ public struct KanjiEntry: Hashable, Sendable {
     public let jlpt: Int?
     public let frequency: Int?
     public let components: [String]
+    public let strokeOrder: [KanjiStroke]
 
     public init(
         literal: String, onReadings: [String], kunReadings: [String], nanori: [String],
         meanings: [String], strokes: Int?, grade: Int?, jlpt: Int?, frequency: Int?,
-        components: [String]
+        components: [String], strokeOrder: [KanjiStroke] = []
     ) {
         self.literal = literal
         self.onReadings = onReadings
@@ -29,6 +44,7 @@ public struct KanjiEntry: Hashable, Sendable {
         self.jlpt = jlpt
         self.frequency = frequency
         self.components = components
+        self.strokeOrder = strokeOrder
     }
 
     /// The kanji in a text, each once, in order.

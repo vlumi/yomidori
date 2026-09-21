@@ -2,8 +2,9 @@
 <!-- A hand-made sliver of JMdict_e, in its format, for the dictionary tests.
      Rebuild the .sqlite beside it with Scripts/data/build-jmdict.py, giving this
      file as the source, accents-fixture.txt as the accents, kanjidic-fixture.xml
-     as the kanjidic, kradfile-fixture.txt as the kradfile and the .sqlite as the
-     output (the flags are named after them).
+     as the kanjidic, kradfile-fixture.txt as the kradfile, the kanjivg-fixture
+     directory as the kanjivg and the .sqlite as the output (the flags are named
+     after them).
      JMdict created: 2026-09-17 -->
 <!DOCTYPE JMdict [
 <!ENTITY n "noun (common) (futsuumeishi)">
