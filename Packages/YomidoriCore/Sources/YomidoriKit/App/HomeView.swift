@@ -61,10 +61,15 @@ struct HomeView: View {
                     .padding(.vertical, 6)
                 }
                 .buttonStyle(.bordered)
-                NavigationLink(value: Screen.about) {
-                    Text("About", bundle: .module)
-                        .font(.callout)
+                HStack(spacing: 24) {
+                    NavigationLink(value: Screen.settings) {
+                        Text("Settings", bundle: .module)
+                    }
+                    NavigationLink(value: Screen.about) {
+                        Text("About", bundle: .module)
+                    }
                 }
+                .font(.callout)
                 .padding(.top, 8)
             }
             .controlSize(.large)
@@ -83,4 +88,5 @@ enum Screen: Hashable, Codable {
     case review
     case search
     case about
+    case settings
 }

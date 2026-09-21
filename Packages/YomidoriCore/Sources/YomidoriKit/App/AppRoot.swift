@@ -11,28 +11,34 @@ public struct AppRoot: View {
     public var body: some View {
         NavigationStack(path: $path) {
             HomeView()
+                .swipeBackSetting()
                 .navigationDestination(for: Screen.self) { screen in
-                    switch screen {
-                    case .capture:
-                        CaptureView().clearNavigationBar()
-                    case .cards:
-                        CardsView()
-                    case .review:
-                        ReviewView()
-                    case .search:
-                        SearchView()
-                    case .about:
-                        AboutView()
+                    Group {
+                        switch screen {
+                        case .capture:
+                            CaptureView().clearNavigationBar()
+                        case .cards:
+                            CardsView()
+                        case .review:
+                            ReviewView()
+                        case .search:
+                            SearchView()
+                        case .about:
+                            AboutView()
+                        case .settings:
+                            SettingsView()
+                        }
                     }
+                    .swipeBackSetting()
                 }
                 .navigationDestination(for: Card.self) { card in
-                    CardView(card: card)
+                    CardView(card: card).swipeBackSetting()
                 }
                 .navigationDestination(for: DictionaryEntry.self) { entry in
-                    EntryView(entry: entry)
+                    EntryView(entry: entry).swipeBackSetting()
                 }
                 .navigationDestination(for: KanjiEntry.self) { kanji in
-                    KanjiView(kanji: kanji)
+                    KanjiView(kanji: kanji).swipeBackSetting()
                 }
         }
         .tint(Palette.nightGreen)
