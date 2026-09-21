@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Photos on request, sentences you can fix.** A card keeps the page photo and the crop only while the photo toggle beside the book field is on; off by default. On a card, each sentence has a pencil to correct what the recognizer read (the word is found again in the corrected text) and, where photos were kept, a button to drop them.
 - **Kanji, and the words around a word.** A word's screen, on a card or from a search, now lists every reading with its pitch, the meaning, each kanji in the word, the other words read the same way with their pitch side by side (はし: 橋, 箸, 端), and the words it appears in. A kanji opens on its own: on and kun readings, name readings, meanings, stroke count, school grade, JLPT level and frequency, the components it is made of, and the words it is in. The data is KANJIDIC2 and KRADFILE, built into the bundled dictionary.
 - **Tap to focus.** A tap on the live image focuses and meters on that spot; when the page moves, the camera goes back to following it.
 - **The drawer lies over the page.** Dragging it no longer relays the page out under it, so the drag is smooth and the still keeps its zoom; the page is sized for the drawer at its smallest. A still opens filling the width, its top in view, and two buttons beside it zoom in and out one-handed. Live Text's selection highlight re-measures on every layout and zoom, so it no longer drifts off its word.

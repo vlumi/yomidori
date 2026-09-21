@@ -8,6 +8,7 @@ struct SentenceKeeper {
     let stills: [Still]
     let currentLines: [RecognizedLine]
     let source: String?
+    let keepsImages: Bool
 
     func sighting(for word: FoundWord, archived: inout [UUID: UUID]) -> Sighting? {
         guard let line = tokenLines.firstIndex(where: { $0.contains(word.first) }) else {
@@ -17,7 +18,8 @@ struct SentenceKeeper {
         return Sighting(
             sentence: found.sentence.text, surface: word.surface,
             offset: found.sentence.offset(of: found.start, in: transcript),
-            stillIDs: stillIDs(archived: &archived), cropID: cropID(for: found.sentence.text),
+            stillIDs: keepsImages ? stillIDs(archived: &archived) : [],
+            cropID: keepsImages ? cropID(for: found.sentence.text) : nil,
             source: source, date: Date())
     }
 

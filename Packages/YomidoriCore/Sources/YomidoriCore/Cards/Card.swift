@@ -47,6 +47,11 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         if question == .reading { review = state } else { meaningReview = state }
     }
 
+    public mutating func replace(_ sighting: Sighting) {
+        guard let index = sightings.firstIndex(where: { $0.id == sighting.id }) else { return }
+        sightings[index] = sighting
+    }
+
     // The first cards were written without the meaning fields; they read as off.
     private enum CodingKeys: String, CodingKey {
         case id, headword, reading, entryID, sightings, created, review, asksMeaning, meaningReview
@@ -87,6 +92,32 @@ public struct Sighting: Identifiable, Hashable, Codable, Sendable {
         guard offset >= 0, offset + surface.count <= sentence.count else { return nil }
         let start = sentence.index(sentence.startIndex, offsetBy: offset)
         return start..<sentence.index(start, offsetBy: surface.count)
+    }
+
+    /// The sighting with its sentence rewritten; the word is found again in the new text,
+    /// at the old place when it is still there, else at its first occurrence, else nowhere.
+    public func withSentence(_ text: String) -> Sighting {
+        let sentence = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let unchanged = Sighting(
+            id: id, sentence: sentence, surface: surface, offset: offset, stillIDs: stillIDs,
+            cropID: cropID, source: source, date: date)
+        if let range = unchanged.surfaceRange, sentence[range] == surface { return unchanged }
+        let offset = sentence.range(of: surface).map {
+            sentence.distance(from: sentence.startIndex, to: $0.lowerBound)
+        }
+        return Sighting(
+            id: id, sentence: sentence, surface: surface, offset: offset ?? -1, stillIDs: stillIDs,
+            cropID: cropID, source: source, date: date)
+    }
+
+    public func withoutImages() -> Sighting {
+        Sighting(
+            id: id, sentence: sentence, surface: surface, offset: offset, stillIDs: [], cropID: nil,
+            source: source, date: date)
+    }
+
+    public var hasImages: Bool {
+        !stillIDs.isEmpty || cropID != nil
     }
 
     public init(
