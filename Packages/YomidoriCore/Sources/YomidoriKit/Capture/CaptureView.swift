@@ -6,21 +6,47 @@ import YomidoriCore
 public struct CaptureView: View {
     @StateObject private var camera = Camera()
     @StateObject private var selection = LiveTextSelection()
-    @State private var still: Still?
-    @State private var pages: [Page] = []
-    @State private var mode: Mode = .liveText
-    @State private var lines: [RecognizedLine] = []
-    @State private var analysis: ImageAnalysis?
-    @State private var selected: Int?
+    @EnvironmentObject private var page: CaptureState
     @State private var recognizing = false
-    @State private var closeUp: CloseUp?
     @State private var readingCloseUp = false
     @State private var picked: PhotosPickerItem?
-    @State private var zoom = Zoom()
     private let zoomControl = ZoomControl()
     @AppStorage("readoutFraction") private var readoutFraction = 0.32
 
     public init() {}
+
+    private var still: Still? {
+        get { page.still }
+        nonmutating set { page.still = newValue }
+    }
+    private var pages: [Page] {
+        get { page.pages }
+        nonmutating set { page.pages = newValue }
+    }
+    private var mode: Mode {
+        get { page.mode }
+        nonmutating set { page.mode = newValue }
+    }
+    private var lines: [RecognizedLine] {
+        get { page.lines }
+        nonmutating set { page.lines = newValue }
+    }
+    private var analysis: ImageAnalysis? {
+        get { page.analysis }
+        nonmutating set { page.analysis = newValue }
+    }
+    private var selected: Int? {
+        get { page.selected }
+        nonmutating set { page.selected = newValue }
+    }
+    private var closeUp: CloseUp? {
+        get { page.closeUp }
+        nonmutating set { page.closeUp = newValue }
+    }
+    private var zoom: Zoom {
+        get { page.zoom }
+        nonmutating set { page.zoom = newValue }
+    }
 
     public var body: some View {
         GeometryReader { geometry in
@@ -40,6 +66,7 @@ public struct CaptureView: View {
             .onDisappear { camera.stop() }
             .task(id: picked) { await loadPicked() }
             .task(id: still?.id) {
+                guard still?.id != page.recognizedStillID else { return }
                 zoom =
                     still.map { Zoom.fillingWidth(of: $0.size, in: pageArea(in: geometry.size)) }
                     ?? Zoom()
@@ -73,7 +100,8 @@ public struct CaptureView: View {
             switch mode {
             case .vision:
                 StillView(
-                    zoom: $zoom, still: still, lines: lines, selected: selected, highlight: nil,
+                    zoom: $page.zoom, still: still, lines: lines, selected: selected,
+                    highlight: nil,
                     onTap: selectLine)
             case .liveText:
                 LiveTextImage(
@@ -81,7 +109,7 @@ public struct CaptureView: View {
                     zoomControl: zoomControl)
             case .closeUp:
                 StillView(
-                    zoom: $zoom, still: still, lines: lines, selected: nil,
+                    zoom: $page.zoom, still: still, lines: lines, selected: nil,
                     highlight: closeUp?.box, onTap: readCloseUp)
             }
         }
@@ -106,7 +134,7 @@ public struct CaptureView: View {
         CaptureDrawer(
             hasStill: still != nil, screenHeight: screenHeight, fraction: $readoutFraction
         ) {
-            Picker(selection: $mode) {
+            Picker(selection: $page.mode) {
                 Text("Live Text", bundle: .module).tag(Mode.liveText)
                 Text("Vision", bundle: .module).tag(Mode.vision)
                 Text("Close-up", bundle: .module).tag(Mode.closeUp)
@@ -223,6 +251,7 @@ public struct CaptureView: View {
         analysis = nil
         selected = nil
         closeUp = nil
+        page.recognizedStillID = nil
         guard let still else { return }
         recognizing = true
         let recognized = (try? await TextRecognizer.recognize(still)) ?? []
@@ -230,6 +259,7 @@ public struct CaptureView: View {
         guard !Task.isCancelled else { return }
         lines = recognized
         analysis = analyzed
+        page.recognizedStillID = still.id
         recognizing = false
     }
 }

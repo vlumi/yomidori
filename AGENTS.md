@@ -67,7 +67,7 @@ describing intent as fact otherwise.
   promises it).
 - **Dictionary data is built, not committed.** `make dictionary` runs
   `Scripts/data/build-jmdict.py`, which downloads JMdict_e, KANJIDIC2, KRADFILE,
-  KanjiVG (its latest release, through GitHub's API) and Kanjium's accent list
+  KanjiVG (a pinned release; bump the URL in the script to update) and Kanjium's accent list
   once into `.build-data/` and writes
   `Sources/Shared/Dictionaries/jmdict.sqlite` (~78 MB with its full-text index and the strokes, gitignored); the project generation depends on it, so `make build-ios`
   and the run targets build it on first use, and CI does the same. `swift test`
