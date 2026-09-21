@@ -10,7 +10,8 @@ import UIKit
 
 /// `access` is passed as a value so SwiftUI updates the view when it changes; a class
 /// reference alone reads as unchanged. The volume buttons and the Camera Control press the
-/// shutter from iOS 17.2, where the system hands capture apps those presses.
+/// shutter from iOS 17.2, where the system hands capture apps those presses. A tap focuses
+/// on the spot tapped.
 struct CameraPreview: UIViewRepresentable {
     let camera: Camera
     let access: Camera.Access
@@ -20,7 +21,10 @@ struct CameraPreview: UIViewRepresentable {
         let view = PreviewView()
         view.previewLayer?.videoGravity = .resizeAspect
         view.addGestureRecognizer(
-            UIPinchGestureRecognizer(target: context.coordinator, action: #selector(Pinch.changed)))
+            UIPinchGestureRecognizer(
+                target: context.coordinator, action: #selector(Gestures.pinched)))
+        view.addGestureRecognizer(
+            UITapGestureRecognizer(target: context.coordinator, action: #selector(Gestures.tapped)))
         if #available(iOS 17.2, *) {
             let shutter = self.shutter
             view.addInteraction(
@@ -31,19 +35,27 @@ struct CameraPreview: UIViewRepresentable {
         return view
     }
 
-    func makeCoordinator() -> Pinch {
-        Pinch(camera: camera)
+    func makeCoordinator() -> Gestures {
+        Gestures(camera: camera)
     }
 
-    final class Pinch: NSObject {
+    final class Gestures: NSObject {
         private let camera: Camera
 
         init(camera: Camera) {
             self.camera = camera
         }
 
-        @objc func changed(_ gesture: UIPinchGestureRecognizer) {
+        @objc func pinched(_ gesture: UIPinchGestureRecognizer) {
             camera.pinch(scale: gesture.scale, began: gesture.state == .began)
+        }
+
+        @objc func tapped(_ gesture: UITapGestureRecognizer) {
+            guard let view = gesture.view as? PreviewView, let layer = view.previewLayer else {
+                return
+            }
+            camera.focus(
+                at: layer.captureDevicePointConverted(fromLayerPoint: gesture.location(in: view)))
         }
     }
 
