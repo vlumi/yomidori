@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Tap to focus.** A tap on the live image focuses and meters on that spot; when the page moves, the camera goes back to following it.
 - **The drawer lies over the page.** Dragging it no longer relays the page out under it, so the drag is smooth and the still keeps its zoom; the page is sized for the drawer at its smallest. A still opens filling the width, its top in view, and two buttons beside it zoom in and out one-handed. Live Text's selection highlight re-measures on every layout and zoom, so it no longer drifts off its word.
 - **Every word in a selection.** Select a run of text on the page and each word in it is listed, a compound the dictionary knows (蛍光灯) as one word and an inflected verb under its dictionary form (照らされていた finds 照らす). The meaning opens on a tap anywhere along the word's row; the dictionary and Keep buttons are icons, so a long reading no longer wraps them. Live Text is the recognizer a page opens in.
 

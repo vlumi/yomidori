@@ -79,6 +79,25 @@ final class Camera: ObservableObject {
         #endif
     }
 
+    /// `point` in the device's own coordinates, as the preview layer converts a tap.
+    func focus(at point: CGPoint) {
+        #if os(iOS)
+        queue.async { [self] in
+            guard let device, device.isFocusPointOfInterestSupported,
+                (try? device.lockForConfiguration()) != nil
+            else { return }
+            defer { device.unlockForConfiguration() }
+            device.focusPointOfInterest = point
+            device.focusMode = .autoFocus
+            if device.isExposurePointOfInterestSupported {
+                device.exposurePointOfInterest = point
+                device.exposureMode = .autoExpose
+            }
+            device.isSubjectAreaChangeMonitoringEnabled = true
+        }
+        #endif
+    }
+
     private func set(_ access: Access) {
         DispatchQueue.main.async { self.access = access }
     }
@@ -113,7 +132,26 @@ final class Camera: ObservableObject {
         output.connection(with: .video)?.videoOrientation = .portrait
         self.device = device
         focusNear(device)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(subjectAreaChanged),
+            name: .AVCaptureDeviceSubjectAreaDidChange,
+            object: device)
         return true
+    }
+
+    /// The page moved after a tap to focus: back to following it.
+    @objc private func subjectAreaChanged() {
+        queue.async { [self] in
+            guard let device, (try? device.lockForConfiguration()) != nil else { return }
+            defer { device.unlockForConfiguration() }
+            device.isSubjectAreaChangeMonitoringEnabled = false
+            if device.isFocusModeSupported(.continuousAutoFocus) {
+                device.focusMode = .continuousAutoFocus
+            }
+            if device.isExposureModeSupported(.continuousAutoExposure) {
+                device.exposureMode = .continuousAutoExposure
+            }
+        }
     }
 
     /// On a virtual device zoom 1 is the ultra-wide, so start at the wide camera's own framing;
