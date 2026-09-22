@@ -2,12 +2,15 @@ import SwiftUI
 import YomidoriCore
 
 struct AboutView: View {
+    @ScaledMetric(relativeTo: .largeTitle) private var wordmark: CGFloat = 34
+    @ScaledMetric(relativeTo: .title3) private var legendWidth: CGFloat = 130
+
     var body: some View {
         List {
             Section {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(verbatim: "ヨミドリ")
-                        .font(.system(size: 34, weight: .semibold, design: .rounded))
+                        .font(.system(size: wordmark, weight: .semibold, design: .rounded))
                         .foregroundStyle(Palette.nightGreen)
                     Text(verbatim: AppInfo.versionLine)
                         .font(.caption)
@@ -59,7 +62,7 @@ struct AboutView: View {
     {
         HStack(alignment: .firstTextBaseline, spacing: 16) {
             PitchReading(reading: reading, accent: PitchAccent(downstep: downstep))
-                .frame(width: 130, alignment: .leading)
+                .frame(width: legendWidth, alignment: .leading)
             Text(key, bundle: .module)
                 .font(.callout)
                 .foregroundStyle(.secondary)

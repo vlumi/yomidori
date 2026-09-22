@@ -27,12 +27,14 @@ struct RankName: View {
 struct RankMark: View {
     let rank: Rank
     var size: CGFloat = 26
+    @ScaledMetric(relativeTo: .body) private var scale: CGFloat = 1
 
     var body: some View {
+        let side = size * scale
         Text(verbatim: "\(rank.rawValue)")
-            .font(.system(size: size * 0.7, weight: .bold, design: .rounded))
+            .font(.system(size: side * 0.7, weight: .bold, design: .rounded))
             .foregroundStyle(.white)
-            .frame(width: size, height: size)
+            .frame(width: side, height: side)
             .background(rank.color, in: Circle())
     }
 }

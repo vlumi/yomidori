@@ -3,6 +3,8 @@ import YomidoriCore
 import YomidoriDictionary
 
 struct KanjiView: View {
+    @ScaledMetric(relativeTo: .largeTitle) private var glyph: CGFloat = 80
+    @ScaledMetric(relativeTo: .caption) private var labelWidth: CGFloat = 64
     let kanji: KanjiEntry
     @State private var containing: [DictionaryEntry] = []
 
@@ -11,7 +13,7 @@ struct KanjiView: View {
             Section {
                 HStack(alignment: .top, spacing: 20) {
                     Text(japanese: kanji.literal)
-                        .font(.system(size: 80))
+                        .font(.system(size: glyph))
                     VStack(alignment: .leading, spacing: 6) {
                         Text(verbatim: kanji.meanings.joined(separator: "; "))
                         facts
@@ -90,7 +92,7 @@ struct KanjiView: View {
                 label
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                    .frame(width: 64, alignment: .leading)
+                    .frame(width: labelWidth, alignment: .leading)
                 Text(japanese: readings.joined(separator: "、"))
                     .foregroundStyle(Palette.nightGreen)
             }

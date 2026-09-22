@@ -6,25 +6,26 @@ import YomidoriCore
 struct StrokeOrderView: View {
     let strokes: [KanjiStroke]
     var side: CGFloat = 180
+    @ScaledMetric(relativeTo: .body) private var typeScale: CGFloat = 1
     @State private var drawn = 0
     @State private var drawing: Task<Void, Never>?
 
     var body: some View {
         ZStack(alignment: .topLeading) {
             ForEach(strokes.indices, id: \.self) { index in
-                let path = Path(stroke: strokes[index], side: side)
+                let path = Path(stroke: strokes[index], side: scaledSide)
                 path.stroke(Palette.silver.opacity(0.35), style: style)
                 path.trim(from: 0, to: index < drawn ? 1 : 0)
                     .stroke(Palette.nightGreen, style: style)
                 if let label = strokes[index].label {
                     Text(verbatim: "\(index + 1)")
-                        .font(.system(size: 9))
+                        .font(.system(size: 9 * typeScale))
                         .foregroundStyle(index < drawn ? Color.secondary : Color.clear)
                         .position(x: label.x * scale, y: label.y * scale - 4)
                 }
             }
         }
-        .frame(width: side, height: side)
+        .frame(width: scaledSide, height: scaledSide)
         .background(Palette.silver.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
         .contentShape(Rectangle())
         .onTapGesture { replay() }
@@ -32,10 +33,12 @@ struct StrokeOrderView: View {
         .onDisappear { drawing?.cancel() }
     }
 
-    private var scale: CGFloat { side / KanjiStroke.boxSide }
+    private var scaledSide: CGFloat { side * typeScale }
+
+    private var scale: CGFloat { scaledSide / KanjiStroke.boxSide }
 
     private var style: StrokeStyle {
-        StrokeStyle(lineWidth: side / 30, lineCap: .round, lineJoin: .round)
+        StrokeStyle(lineWidth: scaledSide / 30, lineCap: .round, lineJoin: .round)
     }
 
     private func replay() {

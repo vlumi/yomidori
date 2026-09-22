@@ -31,7 +31,7 @@ struct PitchQuestion: View {
     let card: Card
 
     var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 12) {
+        FitsOrStacks {
             Text(japanese: card.headword)
                 .font(.title)
             Text(japanese: card.reading)
@@ -48,7 +48,7 @@ struct MeaningQuestion: View {
     let card: Card
 
     var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 12) {
+        FitsOrStacks {
             Text(japanese: card.headword)
                 .font(.title)
             Text(japanese: card.reading)

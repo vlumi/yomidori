@@ -29,8 +29,8 @@ struct PitchBack: View {
     let accents: [PitchAccent]
 
     var body: some View {
-        HStack(spacing: 16) {
-            Text(verbatim: card.headword)
+        FlowLayout(spacing: 16) {
+            Text(japanese: card.headword)
                 .font(.title)
             ForEach(accents, id: \.downstep) { accent in
                 PitchReading(reading: card.reading, accent: accent)

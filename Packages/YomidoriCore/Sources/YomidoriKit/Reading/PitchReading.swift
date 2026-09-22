@@ -40,25 +40,27 @@ private struct PitchMark: View {
     let high: Bool
     let dropsAfter: Bool
     let risesBefore: Bool
+    @ScaledMetric(relativeTo: .title3) private var unit: CGFloat = 1
 
     var body: some View {
         GeometryReader { geometry in
             Path { path in
-                let y: CGFloat = -3
+                let y = -3 * unit
+                let drop = 7 * unit
                 if high {
                     path.move(to: CGPoint(x: 0, y: y))
                     path.addLine(to: CGPoint(x: geometry.size.width, y: y))
                 }
                 if dropsAfter {
                     path.move(to: CGPoint(x: geometry.size.width, y: y))
-                    path.addLine(to: CGPoint(x: geometry.size.width, y: y + 7))
+                    path.addLine(to: CGPoint(x: geometry.size.width, y: y + drop))
                 }
                 if risesBefore {
-                    path.move(to: CGPoint(x: geometry.size.width, y: y + 7))
+                    path.move(to: CGPoint(x: geometry.size.width, y: y + drop))
                     path.addLine(to: CGPoint(x: geometry.size.width, y: y))
                 }
             }
-            .stroke(Palette.nightGreen, lineWidth: 1.5)
+            .stroke(Palette.nightGreen, lineWidth: 1.5 * unit)
         }
     }
 }

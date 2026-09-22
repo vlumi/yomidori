@@ -3,6 +3,7 @@ import YomidoriCore
 
 /// Where the app opens: the name, the way to the camera, and what study is waiting.
 struct HomeView: View {
+    @ScaledMetric(relativeTo: .largeTitle) private var wordmark: CGFloat = 44
     let read: () -> Void
     @State private var dueCount = 0
     @State private var waitingCount = 0
@@ -18,7 +19,7 @@ struct HomeView: View {
             Section {
                 VStack(spacing: 6) {
                     Text(japanese: "ヨミドリ")
-                        .font(.system(size: 44, weight: .semibold, design: .rounded))
+                        .font(.system(size: wordmark, weight: .semibold, design: .rounded))
                         .foregroundStyle(Palette.nightGreen)
                     Text(japanese: Kana.hiragana("ヨミドリ"))
                         .font(.callout)

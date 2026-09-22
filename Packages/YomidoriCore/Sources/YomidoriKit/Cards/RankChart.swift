@@ -34,7 +34,7 @@ struct RankChart: View {
                 }
             }
             .font(.callout)
-            .frame(height: 30)
+            .frame(minHeight: 30)
             Chart(bars) { bar in
                 BarMark(x: .value("Rank", bar.key), y: .value("Cards", bar.count))
                     .foregroundStyle(

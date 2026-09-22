@@ -34,7 +34,7 @@ struct LessonCard: View {
             WordSections(headword: card.headword, details: details)
         }
         .safeAreaInset(edge: .bottom) {
-            HStack(spacing: 12) {
+            FitsOrStacks {
                 Button(role: .destructive) {
                     decide(.drop)
                 } label: {
