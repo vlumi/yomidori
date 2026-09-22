@@ -22,11 +22,11 @@ the word from the meaning, or you don't, but either way you want the reading,
 now, without leaving the page. Every dictionary makes you draw the character or
 type a guess, and a translation app translates the whole page.
 
-Yomidori does one thing at that moment. Frame the line, press the shutter, and
-the page freezes on the screen; reading on the phone itself, share a screenshot
-to it instead. Tap the word, in a vertical column or a horizontal line, and the
-whole word lights up with its reading in kana and its pitch accent, in a sheet
-your thumb can reach. The meaning is one more tap away, and never shown before
+Yomidori does one thing at that moment. Frame the line, tap *Read the page*,
+and the page freezes on the screen; reading on the phone itself, share a
+screenshot to it instead. Tap the word, in a vertical column or a horizontal
+line, and the whole word lights up with its reading in kana and its pitch
+accent, in a sheet your thumb can reach. The meaning is one more tap away, and never shown before
 you ask.
 
 Then the word keeps working for you. The sentence you met it in, as it stood on

@@ -196,7 +196,7 @@ make clean             # remove the generated project + build output
 a real device: the simulator has no camera, so the capture flow is tried on a
 phone over a real book with `make run-device` (the phone plugged in or on the
 same Wi-Fi, unlocked, in Developer Mode; in the simulator the photo picker
-stands in for the shutter), and only the logic below it is unit-tested.
+stands in for *Read the page*), and only the logic below it is unit-tested.
 `make release` is the release lane, documented in [RELEASING.md](RELEASING.md).
 
 ### Lint & format

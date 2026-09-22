@@ -4,7 +4,8 @@ import SwiftUI
 struct CameraButtons: View {
     @Binding var picked: PhotosPickerItem?
     let ready: Bool
-    let shutter: () -> Void
+    let label: Text
+    let freeze: () -> Void
 
     var body: some View {
         HStack {
@@ -18,15 +19,20 @@ struct CameraButtons: View {
             .labelStyle(.iconOnly)
             .font(.title2)
             .frame(maxWidth: .infinity)
-            Button(action: shutter) {
-                Circle()
-                    .strokeBorder(Palette.nightGreen, lineWidth: 4)
-                    .background(Circle().fill(.white))
-                    .frame(width: 72, height: 72)
+            Button(action: freeze) {
+                Label {
+                    label
+                } icon: {
+                    Image(systemName: "text.viewfinder")
+                }
+                .font(.title3.weight(.semibold))
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
             }
-            .accessibilityLabel(Text("Shutter", bundle: .module))
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.capsule)
+            .tint(Palette.nightGreen)
             .disabled(!ready)
-            .opacity(ready ? 1 : 0.4)
             Color.clear.frame(maxWidth: .infinity, maxHeight: 1)
         }
     }
