@@ -11,6 +11,8 @@ final class CaptureState: ObservableObject {
     @Published var mode: CaptureView.Mode = .liveText
     @Published var lines: [RecognizedLine] = []
     @Published var analysis: ImageAnalysis?
+    /// The page's text when it did not come from Live Text: the demo's rendered page.
+    @Published var transcript: String?
     @Published var selected: Int?
     @Published var closeUp: CaptureView.CloseUp?
     @Published var zoom = Zoom()

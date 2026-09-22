@@ -188,7 +188,7 @@ public struct CaptureView: View {
                 CameraButtons(picked: $picked, ready: camera.access == .ready, shutter: takeStill)
             } else {
                 StillButtons(
-                    canAddPage: analysis != nil, hasPages: !pages.isEmpty, retake: retake,
+                    canAddPage: currentTranscript != nil, hasPages: !pages.isEmpty, retake: retake,
                     addPage: addPage, startOver: startOver)
             }
         }
@@ -211,13 +211,19 @@ public struct CaptureView: View {
         }
     }
 
+    /// The page's text: Live Text's, or the one the page came with.
+    private var currentTranscript: String? {
+        if let analysis, analysis.hasResults(for: .text) { return analysis.transcript }
+        return page.transcript
+    }
+
     @ViewBuilder private var transcript: some View {
-        if let analysis, analysis.hasResults(for: .text) {
-            let transcripts = pages.map(\.transcript) + [analysis.transcript]
+        if let current = currentTranscript {
+            let transcripts = pages.map(\.transcript) + [current]
             TranscriptReadout(
                 transcript: Spread.join(transcripts),
                 stills: pages.map(\.still) + [still].compactMap { $0 },
-                currentTranscript: analysis.transcript, currentLines: lines,
+                currentTranscript: current, currentLines: lines,
                 pageOffset: Spread.offset(ofPage: pages.count, in: transcripts),
                 selection: selection)
         } else if LiveText.isSupported {
@@ -255,8 +261,8 @@ public struct CaptureView: View {
     }
 
     private func addPage() {
-        guard let still, let analysis else { return }
-        pages.append(Page(still: still, transcript: analysis.transcript))
+        guard let still, let transcript = currentTranscript else { return }
+        pages.append(Page(still: still, transcript: transcript))
         retake()
     }
 
@@ -284,6 +290,7 @@ public struct CaptureView: View {
     private func recognize() async {
         lines = []
         analysis = nil
+        page.transcript = nil
         selected = nil
         closeUp = nil
         page.recognizedStillID = nil
