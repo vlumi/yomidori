@@ -1491,6 +1491,16 @@
         }
       }
     },
+    "Used by other collections, a tap adds one:" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "他のコレクションで使われているタグ。タップで追加："
+          }
+        }
+      }
+    },
     "Vision" : {
       "localizations" : {
         "ja" : {

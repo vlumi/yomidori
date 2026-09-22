@@ -35,10 +35,15 @@ struct TagsEditor: View {
                 !tags.contains { $0.lowercased() == tag.lowercased() }
             }
             if !suggestions.isEmpty {
-                FlowLayout(spacing: 8) {
-                    ForEach(suggestions, id: \.self) { tag in
-                        chip(tag, systemImage: "plus") { tags.append(tag) }
-                            .tint(.secondary)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Used by other collections, a tap adds one:", bundle: .module)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    FlowLayout(spacing: 8) {
+                        ForEach(suggestions, id: \.self) { tag in
+                            chip(tag, systemImage: "plus") { tags.append(tag) }
+                                .tint(.secondary)
+                        }
                     }
                 }
             }
