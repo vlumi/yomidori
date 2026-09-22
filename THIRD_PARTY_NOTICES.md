@@ -22,7 +22,7 @@ Both are © the Electronic Dictionary Research and Development Group and distrib
 
 The stroke order data is [KanjiVG](https://kanjivg.tagaini.net) by Ulrich Apel, built into the same `jmdict.sqlite` at build time as each kanji's strokes in order, under the [Creative Commons Attribution-ShareAlike 3.0 licence](https://creativecommons.org/licenses/by-sa/3.0/). The statement is carried in the database's `meta` table too.
 
-> The stroke order data is KanjiVG, copyright Ulrich Apel, used under the Creative Commons Attribution-ShareAlike 3.0 licence.
+> The stroke order data is KanjiVG, copyright Ulrich Apel, used under the Creative Commons Attribution-ShareAlike 3.0 license.
 
 ## Kanjium (pitch accent)
 

@@ -201,7 +201,7 @@ def build(xml_bytes, accents_text, kanjidic_bytes, kradfile_bytes, kanjivg, outp
             ("kanji_attribution", "This application uses the KANJIDIC and KRADFILE dictionary files. These files are the property of the Electronic Dictionary Research and Development Group, and are used in conformance with the Group's licence."),
             ("strokes_source", "KanjiVG (Ulrich Apel)"),
             ("strokes_license", "CC BY-SA 3.0 — https://kanjivg.tagaini.net"),
-            ("strokes_attribution", "The stroke order data is KanjiVG, copyright Ulrich Apel, used under the Creative Commons Attribution-ShareAlike 3.0 licence."),
+            ("strokes_attribution", "The stroke order data is KanjiVG, copyright Ulrich Apel, used under the Creative Commons Attribution-ShareAlike 3.0 license."),
         ],
     )
     if accents_text is not None:

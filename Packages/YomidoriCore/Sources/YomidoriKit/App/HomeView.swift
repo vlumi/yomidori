@@ -30,7 +30,7 @@ struct HomeView: View {
             }
             .id(TabTop.id)
             Section {
-                // Not a Label: a list row drops a label's icon and leaves its title off centre.
+                // Not a Label: a list row drops a label's icon and leaves its title off center.
                 Button(action: read) {
                     HStack(spacing: 10) {
                         Image(systemName: "camera.viewfinder")

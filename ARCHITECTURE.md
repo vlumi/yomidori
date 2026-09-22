@@ -360,7 +360,7 @@ Dark mode is 夜緑 proper: deep green accent on near-black. Light mode is the s
 green on paper-white. The green is the frame and the accent — the tapped word,
 the buttons, the bird — never the surface behind text. The highlight of a tapped
 word sits on a photograph, so it is a translucent fill with a solid underline,
-legible over cream paper and grey print in both modes.
+legible over cream paper and gray print in both modes.
 
 ### Localization
 
