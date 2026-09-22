@@ -61,7 +61,7 @@ targets:
         PRODUCT_NAME: Yomidori
         MARKETING_VERSION: "0.1.0"
         # The release lane bumps this at each cut (RELEASING.md); 0 means never released.
-        CURRENT_PROJECT_VERSION: "7"
+        CURRENT_PROJECT_VERSION: "8"
         GENERATE_INFOPLIST_FILE: NO
         # The Core ML models are loaded by URL; no generated classes, and no warning
         # about which language to generate them in.
