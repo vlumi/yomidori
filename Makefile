@@ -80,6 +80,16 @@ run-ipad: Yomidori.xcodeproj  ## Build + launch on an iPad simulator (DEVICE="Ai
 run-device: Yomidori.xcodeproj  ## Build + install + launch on a paired iPhone/iPad (DEVICE="<name>" to pick)
 	@Scripts/run-device.sh "$(DEVICE)"
 
+# The demo launchers install the last simulator build and start it with -yomidori-demo:
+# stores in a wiped, reseeded folder, settings in their own suite (YomidoriKit/Demo).
+.PHONY: demo-iphone
+demo-iphone: build-ios  ## Launch the seeded demo on an iPhone simulator (DEVICE=<pattern> to pick)
+	@PLATFORM=iphone Scripts/demo.sh
+
+.PHONY: demo-ipad
+demo-ipad: build-ios  ## Launch the seeded demo on an iPad simulator
+	@PLATFORM=ipad Scripts/demo.sh
+
 .PHONY: build-ios
 build-ios: Yomidori.xcodeproj  ## Build the iOS app (simulator, unsigned)
 	@Scripts/build.sh ios

@@ -10,10 +10,7 @@ enum StillArchive {
     static let longestSide: CGFloat = 2000
 
     static func directory() throws -> URL {
-        let base = try FileManager.default.url(
-            for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil,
-            create: true)
-        let directory = base.appendingPathComponent("Stills", isDirectory: true)
+        let directory = try Cards.directory().appendingPathComponent("Stills", isDirectory: true)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         return directory
     }
@@ -72,22 +69,38 @@ enum StillArchive {
     }
 }
 
+/// The app's stores, in Application Support, or in the demo's folder when launched so; the
+/// demo folder is seeded the first time it is asked for.
 enum Cards {
-    static let store: FileCardStore? = try? FileCardStore.inApplicationSupport()
-    static let collections: FileCollectionStore? = {
-        let directory = try? FileManager.default.url(
+    static func directory() throws -> URL {
+        if DemoMode.isRequested { return DemoMode.directory }
+        return try FileManager.default.url(
             for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil,
             create: true)
-        return directory.map {
-            FileCollectionStore(url: $0.appendingPathComponent("collections.json"))
-        }
-    }()
+    }
 
-    static let lookups: FileLookupHistory? = {
-        let directory = try? FileManager.default.url(
-            for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil,
-            create: true)
-        return directory.map { FileLookupHistory(url: $0.appendingPathComponent("lookups.json")) }
+    static let store: FileCardStore? = stores?.cards
+    static let collections: FileCollectionStore? = stores?.collections
+    static let lookups: FileLookupHistory? = stores?.lookups
+
+    private struct Stores {
+        let cards: FileCardStore
+        let collections: FileCollectionStore
+        let lookups: FileLookupHistory
+    }
+
+    private static let stores: Stores? = {
+        guard let directory = try? directory() else { return nil }
+        let stores = Stores(
+            cards: FileCardStore(url: directory.appendingPathComponent("cards.json")),
+            collections: FileCollectionStore(
+                url: directory.appendingPathComponent("collections.json")),
+            lookups: FileLookupHistory(url: directory.appendingPathComponent("lookups.json")))
+        if DemoMode.isRequested {
+            DemoData.seed(
+                cards: stores.cards, collections: stores.collections, lookups: stores.lookups)
+        }
+        return stores
     }()
 
     static func noteLookup(of entry: DictionaryEntry, from source: Lookup.Source) {
