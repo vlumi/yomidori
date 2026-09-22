@@ -59,13 +59,10 @@ final class Camera: ObservableObject {
     func takeStill() async -> Still? {
         #if os(iOS)
         let frames = frames
-        let connection = output.connection(with: .video)
-        let angle = rotation?.videoRotationAngleForHorizonLevelCapture ?? 90
+        output.connection(with: .video)?.videoRotationAngle =
+            rotation?.videoRotationAngleForHorizonLevelCapture ?? 90
         let image: CGImage? = await withCheckedContinuation { continuation in
-            queue.async {
-                connection?.videoRotationAngle = angle
-                frames.request(continuation)
-            }
+            queue.async { frames.request(continuation) }
         }
         return image.map(Still.init(image:))
         #else
