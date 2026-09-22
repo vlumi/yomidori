@@ -26,6 +26,8 @@ final class Camera: ObservableObject {
     private let queue = DispatchQueue(label: "fi.misaki.yomidori.camera")
     private var configured = false
     private var device: AVCaptureDevice?
+    private var rotation: AVCaptureDevice.RotationCoordinator?
+    private var rotationObservation: NSKeyValueObservation?
     private var zoomRange: ClosedRange<CGFloat> = 1...1
     private var zoomAtPinchStart: CGFloat = 1
     #endif
@@ -57,8 +59,13 @@ final class Camera: ObservableObject {
     func takeStill() async -> Still? {
         #if os(iOS)
         let frames = frames
+        let connection = output.connection(with: .video)
+        let angle = rotation?.videoRotationAngleForHorizonLevelCapture ?? 90
         let image: CGImage? = await withCheckedContinuation { continuation in
-            queue.async { frames.request(continuation) }
+            queue.async {
+                connection?.videoRotationAngle = angle
+                frames.request(continuation)
+            }
         }
         return image.map(Still.init(image:))
         #else
@@ -78,6 +85,22 @@ final class Camera: ObservableObject {
         }
         #endif
     }
+
+    #if os(iOS)
+    /// The preview follows the phone's orientation, and a still is taken the way the phone
+    /// is held; the coordinator says by how much to turn each. Called once the layer shows.
+    func attach(_ layer: AVCaptureVideoPreviewLayer) {
+        guard rotation == nil, let device else { return }
+        let coordinator = AVCaptureDevice.RotationCoordinator(device: device, previewLayer: layer)
+        rotation = coordinator
+        rotationObservation = coordinator.observe(
+            \.videoRotationAngleForHorizonLevelPreview, options: [.initial, .new]
+        ) { [weak layer] coordinator, _ in
+            layer?.connection?.videoRotationAngle =
+                coordinator.videoRotationAngleForHorizonLevelPreview
+        }
+    }
+    #endif
 
     /// `point` in the device's own coordinates, as the preview layer converts a tap.
     func focus(at point: CGPoint) {

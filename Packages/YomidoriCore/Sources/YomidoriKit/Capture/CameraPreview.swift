@@ -57,9 +57,12 @@ struct CameraPreview: UIViewRepresentable {
         }
     }
 
-    /// The layer gets the session only once a camera is behind it.
+    /// The layer gets the session only once a camera is behind it, and the camera the layer,
+    /// for the rotation.
     func updateUIView(_ uiView: PreviewView, context: Context) {
-        uiView.previewLayer?.session = access == .ready ? camera.session : nil
+        guard let layer = uiView.previewLayer else { return }
+        layer.session = access == .ready ? camera.session : nil
+        if access == .ready { camera.attach(layer) }
     }
 
     final class PreviewView: UIView {
