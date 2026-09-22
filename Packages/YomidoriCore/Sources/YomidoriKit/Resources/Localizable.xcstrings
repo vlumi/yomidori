@@ -71,6 +71,16 @@
         }
       }
     },
+    "Add a tag" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タグを追加"
+          }
+        }
+      }
+    },
     "Add as an answer" : {
       "localizations" : {
         "ja" : {
@@ -121,6 +131,16 @@
         }
       }
     },
+    "An author, say" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "著者など"
+          }
+        }
+      }
+    },
     "Another meaning to accept" : {
       "localizations" : {
         "ja" : {
@@ -137,6 +157,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "始める"
+          }
+        }
+      }
+    },
+    "Book, magazine, an author: whatever groups collections for you." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本、雑誌、著者など、コレクションをまとめる言葉。"
           }
         }
       }
@@ -1091,6 +1121,16 @@
         }
       }
     },
+    "Required" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "必須"
+          }
+        }
+      }
+    },
     "Retake" : {
       "localizations" : {
         "ja" : {
@@ -1321,12 +1361,12 @@
         }
       }
     },
-    "Tags, comma-separated" : {
+    "Tags" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "タグ（コンマ区切り）"
+            "value" : "タグ"
           }
         }
       }

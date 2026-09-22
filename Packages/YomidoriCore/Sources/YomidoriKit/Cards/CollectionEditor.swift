@@ -5,7 +5,6 @@ import YomidoriCore
 struct CollectionEditor: View {
     @State var collection: Collection
     @Environment(\.dismiss) private var dismiss
-    @State private var tags = ""
     @State private var scanning = false
     @State private var others: [Collection] = []
 
@@ -49,34 +48,24 @@ struct CollectionEditor: View {
                     bundle: .module)
             }
             Section {
-                TextField(text: $collection.name) {
+                LabeledContent {
+                    TextField(text: $collection.name) {
+                        Text("Required", bundle: .module)
+                    }
+                    .multilineTextAlignment(.trailing)
+                } label: {
                     Text("Name", bundle: .module)
                 }
-                TextField(text: $collection.note) {
-                    Text("Note, an author say", bundle: .module)
-                }
-                TextField(text: $tags) {
-                    Text("Tags, comma-separated", bundle: .module)
-                }
-                let known = others.allTags.filter { tag in
-                    !Collection.tags(from: tags).contains { $0.lowercased() == tag.lowercased() }
-                }
-                if !known.isEmpty {
-                    FlowLayout(spacing: 6) {
-                        ForEach(known, id: \.self) { tag in
-                            Button {
-                                tags = (Collection.tags(from: tags) + [tag]).joined(separator: ", ")
-                            } label: {
-                                Text(verbatim: tag)
-                            }
-                            .buttonStyle(.bordered)
-                            .controlSize(.mini)
-                        }
+                LabeledContent {
+                    TextField(text: $collection.note) {
+                        Text("An author, say", bundle: .module)
                     }
+                    .multilineTextAlignment(.trailing)
+                } label: {
+                    Text("Note", bundle: .module)
                 }
-            } header: {
-                Text("Collection", bundle: .module)
             }
+            TagsEditor(tags: $collection.tags, known: others.allTags)
         }
         .navigationTitle(Text(verbatim: collection.name.isEmpty ? "" : collection.name))
         .toolbar {
@@ -93,7 +82,6 @@ struct CollectionEditor: View {
             CoverScanView(collection: $collection)
         }
         .onAppear {
-            tags = collection.tags.joined(separator: ", ")
             others = (Cards.collections?.collections() ?? []).filter { $0.id != collection.id }
         }
         .tint(Palette.nightGreen)
@@ -103,7 +91,6 @@ struct CollectionEditor: View {
         var saved = collection
         saved.name = saved.name.trimmingCharacters(in: .whitespaces)
         saved.note = saved.note.trimmingCharacters(in: .whitespaces)
-        saved.tags = Collection.tags(from: tags)
         try? Cards.collections?.save(saved)
         dismiss()
     }
