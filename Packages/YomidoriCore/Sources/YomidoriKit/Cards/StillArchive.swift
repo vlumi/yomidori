@@ -80,6 +80,10 @@ enum Cards {
     }
 
     static let store: FileCardStore? = stores?.cards
+    /// Posted after every write to the cards, for the counts shown outside the store's screens.
+    static let cardsDidChange = Notification.Name("fi.misaki.yomidori.cardsDidChange")
+    /// The settings the screens write to: the demo's own suite in the demo.
+    static var defaults: UserDefaults { DemoMode.defaults ?? .standard }
     static let collections: FileCollectionStore? = stores?.collections
     static let lookups: FileLookupHistory? = stores?.lookups
 
@@ -96,6 +100,9 @@ enum Cards {
             collections: FileCollectionStore(
                 url: directory.appendingPathComponent("collections.json")),
             lookups: FileLookupHistory(url: directory.appendingPathComponent("lookups.json")))
+        stores.cards.didChange = {
+            NotificationCenter.default.post(name: cardsDidChange, object: nil)
+        }
         if DemoMode.isRequested {
             DemoData.seed(
                 cards: stores.cards, collections: stores.collections, lookups: stores.lookups)
@@ -115,7 +122,7 @@ enum Cards {
     static let currentCollectionKey = "currentCollection"
 
     static func currentCollectionID() -> UUID? {
-        UserDefaults.standard.string(forKey: currentCollectionKey).flatMap(UUID.init)
+        defaults.string(forKey: currentCollectionKey).flatMap(UUID.init)
     }
 
     /// The words that have a card, as "headword reading", for a mark in a list.
@@ -130,7 +137,7 @@ enum Cards {
             StillArchive.remove([cover], keptBy: store?.cards() ?? [])
         }
         if currentCollectionID() == collection.id {
-            UserDefaults.standard.removeObject(forKey: currentCollectionKey)
+            defaults.removeObject(forKey: currentCollectionKey)
         }
     }
 

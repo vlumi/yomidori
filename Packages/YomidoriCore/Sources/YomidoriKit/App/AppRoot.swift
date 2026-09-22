@@ -1,3 +1,4 @@
+import Combine
 import SwiftUI
 import YomidoriCore
 
@@ -69,6 +70,9 @@ public struct AppRoot: View {
         .environmentObject(taps)
         .onAppear { if DemoMode.isRequested { DemoData.seed(capture) } }
         .task(id: tab) { dueCount = Cards.dueItems(at: Date()).count }
+        .onReceive(NotificationCenter.default.publisher(for: Cards.cardsDidChange)) { _ in
+            dueCount = Cards.dueItems(at: Date()).count
+        }
     }
 
     /// The tab, and a tap on the one already showing, which the binding sees as a set to

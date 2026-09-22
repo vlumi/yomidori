@@ -10,7 +10,8 @@ public struct CaptureView: View {
     @State private var recognizing = false
     @State private var readingCloseUp = false
     @State private var picked: PhotosPickerItem?
-    private let zoomControl = ZoomControl()
+    @State private var zoomControl = ZoomControl()
+    @State private var closeUpTask: Task<Void, Never>?
     @AppStorage("readoutFraction") private var readoutFraction = 0.32
     /// The drawer's height the page is laid out to: the fraction as the last drag left it,
     /// so the page reaches the drawer's edge and moves only when the finger lifts.
@@ -271,8 +272,11 @@ public struct CaptureView: View {
                 tap: point, in: frame, lines: lines, imageSize: still.size)
         else { return }
         readingCloseUp = true
-        Task { @MainActor in
-            closeUp = await CloseUpReader.read(still, at: geometry)
+        closeUpTask?.cancel()
+        closeUpTask = Task { @MainActor in
+            let read = await CloseUpReader.read(still, at: geometry)
+            guard !Task.isCancelled else { return }
+            closeUp = read
             readingCloseUp = false
         }
     }
@@ -319,6 +323,9 @@ public struct CaptureView: View {
         page.transcript = nil
         selected = nil
         closeUp = nil
+        closeUpTask?.cancel()
+        closeUpTask = nil
+        readingCloseUp = false
         page.recognizedStillID = nil
         guard let still else { return }
         recognizing = true

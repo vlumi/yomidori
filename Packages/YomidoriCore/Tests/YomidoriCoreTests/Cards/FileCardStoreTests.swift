@@ -205,6 +205,45 @@ final class FileCardStoreTests: XCTestCase {
         XCTAssertEqual(reopened.acceptedMeanings, ["tree bark"])
     }
 
+    func testTheStoreTellsItsListenerAfterEveryWrite() throws {
+        let store = FileCardStore(url: url)
+        var changes = 0
+        store.didChange = { changes += 1 }
+        var card = try store.keep(
+            sighting("樹皮の匂いがした。", "樹皮"), headword: "樹皮", reading: "じゅひ", entryID: nil)
+        card.start(at: Date())
+        try store.update(card)
+        try store.remove(card)
+        XCTAssertEqual(changes, 3)
+    }
+
+    func testThePitchIsLookedUpOnlyWhenItsQuestionIsDue() throws {
+        let store = FileCardStore(url: url)
+        var card = try store.keep(
+            sighting("樹皮の匂いがした。", "樹皮"), headword: "樹皮", reading: "じゅひ", entryID: nil)
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        card.start(at: now)
+        card.setState(FSRS.review(nil, grade: .good, at: now), for: .pitch)
+        try store.update(card)
+        var lookups = 0
+        _ = store.dueItems(
+            at: now,
+            asksPitch: { _ in
+                lookups += 1; return true
+            })
+        XCTAssertEqual(lookups, 0)
+        let later = now.addingTimeInterval(30 * 86_400)
+        XCTAssertEqual(
+            store.dueItems(
+                at: later,
+                asksPitch: { _ in
+                    lookups += 1; return true
+                }
+            ).map(\.question),
+            [.reading, .meaning, .pitch])
+        XCTAssertEqual(lookups, 1)
+    }
+
     func testACardWrittenWithTheMeaningToggleStillDecodesAndWaits() throws {
         let old = """
             [{"id":"\(UUID().uuidString)","headword":"樹皮","reading":"じゅひ","entryID":1,

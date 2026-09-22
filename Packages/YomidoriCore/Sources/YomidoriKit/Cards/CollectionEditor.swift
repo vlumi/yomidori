@@ -7,6 +7,10 @@ struct CollectionEditor: View {
     @Environment(\.dismiss) private var dismiss
     @State private var scanning = false
     @State private var others: [Collection] = []
+    /// The cover on record, and the ones scanned here: files nothing refers to until Save.
+    @State private var persistedCoverID: UUID?
+    @State private var scannedCoverIDs: Set<UUID> = []
+    @State private var saved = false
 
     var body: some View {
         Form {
@@ -82,16 +86,33 @@ struct CollectionEditor: View {
             CoverScanView(collection: $collection)
         }
         .onAppear {
-            others = (Cards.collections?.collections() ?? []).filter { $0.id != collection.id }
+            let all = Cards.collections?.collections() ?? []
+            others = all.filter { $0.id != collection.id }
+            persistedCoverID = all.first { $0.id == collection.id }?.coverID
+        }
+        .onChange(of: collection.coverID) { _, scanned in
+            if let scanned, scanned != persistedCoverID { scannedCoverIDs.insert(scanned) }
+        }
+        .onDisappear {
+            if !saved { removeCovers(scannedCoverIDs) }
         }
         .tint(Palette.nightGreen)
     }
 
     private func save() {
-        var saved = collection
-        saved.name = saved.name.trimmingCharacters(in: .whitespaces)
-        saved.note = saved.note.trimmingCharacters(in: .whitespaces)
-        try? Cards.collections?.save(saved)
+        var record = collection
+        record.name = record.name.trimmingCharacters(in: .whitespaces)
+        record.note = record.note.trimmingCharacters(in: .whitespaces)
+        try? Cards.collections?.save(record)
+        saved = true
+        var stale = scannedCoverIDs
+        if let old = persistedCoverID, old != record.coverID { stale.insert(old) }
+        if let kept = record.coverID { stale.remove(kept) }
+        removeCovers(stale)
         dismiss()
+    }
+
+    private func removeCovers(_ ids: Set<UUID>) {
+        StillArchive.remove(Array(ids), keptBy: Cards.store?.cards() ?? [])
     }
 }
