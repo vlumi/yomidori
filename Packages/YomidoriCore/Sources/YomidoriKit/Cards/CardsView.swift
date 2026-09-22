@@ -83,12 +83,8 @@ struct CardRow: View {
             Text(verbatim: card.reading)
                 .foregroundStyle(Palette.nightGreen)
             Spacer()
-            HStack(spacing: 6) {
-                RankMark(rank: card.rank, size: 22)
-                RankName(rank: card.rank)
-            }
-            .font(.caption)
-            .foregroundStyle(.secondary)
+            RankMark(rank: card.rank, size: 22)
+                .accessibilityLabel(RankName.text(for: card.rank))
         }
     }
 }
