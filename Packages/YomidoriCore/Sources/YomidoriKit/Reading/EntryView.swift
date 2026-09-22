@@ -27,6 +27,7 @@ struct EntryView: View {
         }
         .navigationTitle(Text(verbatim: entry.headword))
         .task(id: entry.id) {
+            Cards.noteLookup(of: entry, from: .search)
             details = await WordDetails.load(
                 headword: entry.headword, reading: reading, entry: entry)
         }

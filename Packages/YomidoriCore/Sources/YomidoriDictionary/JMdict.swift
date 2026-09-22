@@ -118,6 +118,13 @@ public final class JMdict: WordDictionary {
         }
     }
 
+    public func entry(withID id: Int) -> DictionaryEntry? {
+        queue.sync {
+            rows("SELECT id FROM entry WHERE id = ?1", bind: String(id)).isEmpty
+                ? nil : entry(id: id)
+        }
+    }
+
     func entry(id: Int) -> DictionaryEntry {
         let idText = String(id)
         let kanji = rows("SELECT text FROM kanji WHERE entry = ?1 ORDER BY ord", bind: idText).map {

@@ -132,6 +132,9 @@ struct TranscriptReadout: View {
         } else {
             words = found
         }
+        for entry in words.compactMap(\.entries.first) {
+            Cards.noteLookup(of: entry, from: .page)
+        }
     }
 
     private func lineIndex(ofSelection range: Range<String.Index>?) -> Int? {

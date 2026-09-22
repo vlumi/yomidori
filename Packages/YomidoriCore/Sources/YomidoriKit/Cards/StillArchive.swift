@@ -83,6 +83,21 @@ enum Cards {
         }
     }()
 
+    static let lookups: FileLookupHistory? = {
+        let directory = try? FileManager.default.url(
+            for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil,
+            create: true)
+        return directory.map { FileLookupHistory(url: $0.appendingPathComponent("lookups.json")) }
+    }()
+
+    static func noteLookup(of entry: DictionaryEntry, from source: Lookup.Source) {
+        guard Lookup.isWorthKeeping(entry) else { return }
+        try? lookups?.record(
+            Lookup(
+                headword: entry.headword, reading: Kana.hiragana(entry.readings.first ?? ""),
+                entryID: entry.id, date: Date(), source: source))
+    }
+
     /// The collection Keep files a word under, remembered across screens; nil for none.
     static let currentCollectionKey = "currentCollection"
 

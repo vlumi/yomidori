@@ -212,6 +212,12 @@ use for its own input.
   range into the transcript finds the line. Live Text tells no one when the
   selection changes, so the image's coordinator polls it four times a second
   while that mode is showing and stops when it goes.
+- **Lookup history** (`Lookup`, `FileLookupHistory` in Core; `LookupHistoryView`
+  in Kit): every word opened from a search and every word shown under a page,
+  one line per word with the latest date, newest first, capped at five
+  hundred, in its own JSON; particles, auxiliaries and the copula are skipped
+  by JMdict's part-of-speech marks. It is what the search tab shows while the
+  field is empty; a swipe forgets a line, a button all.
 - **Typed search** (`SearchView`, `EntryView` in Kit; `SearchQuery` and
   `WordDictionary.search` in Core): for words met off the page. Kana or kanji
   finds headwords and readings that start with it, a hiragana query tried as

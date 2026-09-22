@@ -9,7 +9,9 @@ struct SearchView: View {
 
     var body: some View {
         List {
-            if results.isEmpty, SearchQuery.kind(of: query) != .empty {
+            if SearchQuery.kind(of: query) == .empty {
+                LookupHistoryView()
+            } else if results.isEmpty {
                 Text("No matches.", bundle: .module)
                     .foregroundStyle(.secondary)
             }

@@ -201,6 +201,16 @@
         }
       }
     },
+    "Clear" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "消去"
+          }
+        }
+      }
+    },
     "Close-up" : {
       "localizations" : {
         "ja" : {
@@ -1347,6 +1357,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@を含む言葉"
+          }
+        }
+      }
+    },
+    "Words you look up gather here." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "調べた言葉がここに集まります。"
           }
         }
       }
