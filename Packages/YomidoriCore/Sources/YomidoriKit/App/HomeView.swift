@@ -2,8 +2,6 @@ import SwiftUI
 import YomidoriCore
 
 struct HomeView: View {
-    @State private var dueCount = 0
-
     var body: some View {
         VStack(spacing: 0) {
             Spacer()
@@ -20,65 +18,41 @@ struct HomeView: View {
                     .padding(.top, 4)
             }
             Spacer()
-            VStack(spacing: 14) {
-                NavigationLink(value: Screen.capture) {
-                    Label {
-                        Text("Read", bundle: .module)
-                    } icon: {
-                        Image(systemName: "camera.viewfinder")
-                    }
-                    .font(.title2.weight(.semibold))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 8)
+            NavigationLink(value: Screen.capture) {
+                Label {
+                    Text("Read", bundle: .module)
+                } icon: {
+                    Image(systemName: "camera.viewfinder")
                 }
-                .buttonStyle(.borderedProminent)
-                NavigationLink(value: Screen.cards) {
-                    HStack {
-                        Label {
-                            Text("Cards", bundle: .module)
-                        } icon: {
-                            Image(systemName: "rectangle.stack")
-                        }
-                        Spacer()
-                        if dueCount > 0 {
-                            Text("Review \(dueCount)", bundle: .module)
-                                .foregroundStyle(Palette.nightGreen)
-                        }
-                    }
-                    .font(.title3)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 6)
-                }
-                .buttonStyle(.bordered)
-                NavigationLink(value: Screen.search) {
-                    Label {
-                        Text("Search", bundle: .module)
-                    } icon: {
-                        Image(systemName: "magnifyingglass")
-                    }
-                    .font(.title3)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 6)
-                }
-                .buttonStyle(.bordered)
-                HStack(spacing: 24) {
-                    NavigationLink(value: Screen.settings) {
-                        Text("Settings", bundle: .module)
-                    }
-                    NavigationLink(value: Screen.about) {
-                        Text("About", bundle: .module)
-                    }
-                }
-                .font(.callout)
-                .padding(.top, 8)
+                .font(.title2.weight(.semibold))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
             }
+            .buttonStyle(.borderedProminent)
             .controlSize(.large)
             .tint(Palette.nightGreen)
             .padding(.horizontal, 32)
             .padding(.bottom, 32)
         }
         .background(Palette.page.ignoresSafeArea())
-        .onAppear { dueCount = Cards.dueItems(at: Date()).count }
+        .toolbar {
+            ToolbarItemGroup(placement: .primaryAction) {
+                NavigationLink(value: Screen.settings) {
+                    Label {
+                        Text("Settings", bundle: .module)
+                    } icon: {
+                        Image(systemName: "gearshape")
+                    }
+                }
+                NavigationLink(value: Screen.about) {
+                    Label {
+                        Text("About", bundle: .module)
+                    } icon: {
+                        Image(systemName: "info.circle")
+                    }
+                }
+            }
+        }
     }
 }
 
