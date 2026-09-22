@@ -24,7 +24,10 @@ public final class JMdict: WordDictionary {
         let flags = SQLITE_OPEN_READONLY | SQLITE_OPEN_NOMUTEX
         guard sqlite3_open_v2(url.path, &db, flags, nil) == SQLITE_OK else {
             let message = db.map { String(cString: sqlite3_errmsg($0)) } ?? "could not open"
+            // The object is whole by now, so deinit runs after the throw; the handle must be
+            // gone before then or it is closed twice, which is a crash when the heap is reused.
             sqlite3_close(db)
+            db = nil
             throw OpenError(message: message)
         }
     }
