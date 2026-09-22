@@ -24,14 +24,12 @@ struct CollectionFilter: View {
             }
             Section {
                 ForEach(collections) { collection in
-                    Button {
-                        toggle(collection.id)
-                    } label: {
-                        if chosen.contains(collection.id) {
-                            Label(collection.name, systemImage: "checkmark")
-                        } else {
-                            Text(verbatim: collection.name)
-                        }
+                    Toggle(
+                        isOn: Binding(
+                            get: { chosen.contains(collection.id) },
+                            set: { _ in toggle(collection.id) })
+                    ) {
+                        Text(verbatim: collection.name)
                     }
                 }
             }

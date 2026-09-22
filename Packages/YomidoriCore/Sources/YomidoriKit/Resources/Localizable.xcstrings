@@ -41,6 +41,16 @@
         }
       }
     },
+    "%lld remaining" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "残り%lld"
+          }
+        }
+      }
+    },
     "%lld started" : {
       "localizations" : {
         "ja" : {
@@ -117,6 +127,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "次のページを足す"
+          }
+        }
+      }
+    },
+    "Add tag %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タグ「%@」を付ける"
           }
         }
       }
@@ -487,6 +507,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "忘れた。待機に戻す"
+          }
+        }
+      }
+    },
+    "From a page" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ページから"
+          }
+        }
+      }
+    },
+    "From a search" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "検索から"
           }
         }
       }
@@ -901,6 +941,16 @@
         }
       }
     },
+    "None" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "なし"
+          }
+        }
+      }
+    },
     "None chosen means all of them." : {
       "localizations" : {
         "ja" : {
@@ -1017,6 +1067,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "順番"
+          }
+        }
+      }
+    },
+    "Page %lld; start over" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lldページ目。最初からやり直す"
+          }
+        }
+      }
+    },
+    "Page read" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ページを読み取りました"
           }
         }
       }
@@ -1167,6 +1237,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "認識エンジン"
+          }
+        }
+      }
+    },
+    "Remove tag %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タグ「%@」を外す"
           }
         }
       }

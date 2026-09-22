@@ -25,7 +25,11 @@ struct LookupHistoryView: View {
                             EntryRow(entry: entry, kept: kept.contains(lookup.id))
                             Image(systemName: lookup.source == .page ? "camera" : "magnifyingglass")
                                 .font(.caption2)
-                                .foregroundStyle(.tertiary)
+                                .foregroundStyle(.secondary)
+                                .accessibilityLabel(
+                                    Text(
+                                        lookup.source == .page ? "From a page" : "From a search",
+                                        bundle: .module))
                         }
                     }
                 }

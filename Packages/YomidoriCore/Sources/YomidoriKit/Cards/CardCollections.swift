@@ -26,10 +26,12 @@ struct CardCollections: View {
                             if member {
                                 Image(systemName: "checkmark")
                                     .foregroundStyle(Palette.nightGreen)
+                                    .accessibilityHidden(true)
                             }
                         }
                     }
                     .tint(.primary)
+                    .accessibilityAddTraits(member ? .isSelected : [])
                 }
             } header: {
                 Text("Collections", bundle: .module)

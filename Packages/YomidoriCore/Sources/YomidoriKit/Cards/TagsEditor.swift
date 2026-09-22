@@ -15,6 +15,7 @@ struct TagsEditor: View {
                     ForEach(tags, id: \.self) { tag in
                         chip(tag, systemImage: "xmark") { tags.removeAll { $0 == tag } }
                             .tint(Palette.nightGreen)
+                            .accessibilityLabel(Text("Remove tag \(tag)", bundle: .module))
                     }
                 }
             }
@@ -29,6 +30,7 @@ struct TagsEditor: View {
                         Image(systemName: "plus.circle.fill")
                     }
                     .buttonStyle(.borderless)
+                    .accessibilityLabel(Text("Add a tag", bundle: .module))
                 }
             }
             let suggestions = known.filter { !tags.containsTag($0) }
@@ -37,6 +39,7 @@ struct TagsEditor: View {
                     ForEach(suggestions, id: \.self) { tag in
                         chip(tag, systemImage: "plus") { tags.append(tag) }
                             .tint(.secondary)
+                            .accessibilityLabel(Text("Add tag \(tag)", bundle: .module))
                     }
                 }
             }

@@ -81,6 +81,7 @@ struct CollectionRow: View {
             Spacer()
             Text(verbatim: "\(count)")
                 .foregroundStyle(.secondary)
+                .accessibilityLabel(Text("\(count) cards", bundle: .module))
         }
     }
 }

@@ -11,6 +11,7 @@ struct ReviewView: View {
     @State private var answer = ""
     @State private var verdict: Bool?
     @FocusState private var typing: Bool
+    @AccessibilityFocusState private var verdictFocused: Bool
 
     var body: some View {
         Group {
@@ -43,9 +44,13 @@ struct ReviewView: View {
                 .font(.caption)
                 .foregroundStyle(.tertiary)
                 .frame(maxWidth: .infinity, alignment: .trailing)
+                .accessibilityLabel(Text("\(queue.count) remaining", bundle: .module))
         }
         .padding(24)
         .tint(Palette.nightGreen)
+        .onChange(of: revealed) { _, shown in
+            if shown { verdictFocused = true }
+        }
     }
 
     @ViewBuilder private func prompt(_ item: ReviewItem) -> some View {
@@ -110,6 +115,7 @@ struct ReviewView: View {
     private func verdictLine(_ correct: Bool) -> some View {
         HStack(spacing: 8) {
             Image(systemName: correct ? "checkmark.circle.fill" : "xmark.circle")
+                .accessibilityHidden(true)
             if correct {
                 Text("Correct", bundle: .module)
             } else if answer.isEmpty {
@@ -120,6 +126,8 @@ struct ReviewView: View {
         }
         .font(.callout)
         .foregroundStyle(correct ? Palette.nightGreen : .secondary)
+        .accessibilityElement(children: .combine)
+        .accessibilityFocused($verdictFocused)
     }
 
     /// Overrule a wrong verdict: a typo too broken to forgive counts as right; a meaning of
@@ -150,18 +158,23 @@ struct ReviewView: View {
     {
         let label = Text(grade == .again ? "Again" : "Good", bundle: .module).frame(
             maxWidth: .infinity)
+        let shortcut: KeyboardShortcut = grade == .good ? .defaultAction : KeyboardShortcut("1")
         if prominent {
             Button {
                 record(item, grade)
             } label: {
                 label
-            }.buttonStyle(.borderedProminent)
+            }
+            .buttonStyle(.borderedProminent)
+            .keyboardShortcut(shortcut)
         } else {
             Button {
                 record(item, grade)
             } label: {
                 label
-            }.buttonStyle(.bordered)
+            }
+            .buttonStyle(.bordered)
+            .keyboardShortcut(shortcut)
         }
     }
 
