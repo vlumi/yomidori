@@ -178,6 +178,7 @@ make build-ios         # generate the project if stale, build the app for the si
 make run-iphone        # build + install + launch on an iPhone simulator (DEVICE="SE" to pick)
 make run-ipad          # same, iPad (DEVICE="Air")
 make run-device        # build + install + launch on a paired iPhone/iPad (DEVICE="<name>" to pick)
+make demo-iphone       # build + launch the seeded demo on a simulator (DEVICE=<pattern>); demo-ipad likewise
 make icon              # regenerate the app icon PNG
 make dictionary        # build the bundled JMdict database (downloads JMdict_e once)
 make models            # convert manga-ocr to Core ML into the app (optional; python3.13 + venv; ~210 MB)
@@ -245,6 +246,21 @@ Agent-specific mechanics on top of that:
 - **BEHIND blocks merge** (branch protection). Merge `origin/main` into the
   branch to catch it up; auto-merge needs required checks, so a base without
   protection falls back to a direct merge after the CI wait.
+
+## Demo mode
+
+`make demo-iphone` launches the simulator build with `-yomidori-demo`
+(`Scripts/demo.sh`, like the siblings' launchers). `YomidoriKit/Demo`: `DemoMode`
+routes every store (cards, collections, lookups, stills) to a temp folder wiped
+and reseeded at each launch and the settings to their own defaults suite;
+`DemoData` seeds two public-domain openings (漱石's 吾輩は猫である, 太宰's 走れメロス)
+as cards at every rank with sightings, a shelved name, a search-kept word,
+collections with rendered covers and a lookup history, dates relative to now so
+the queue is always in the same state; `DemoRenderer` draws the page and the
+covers from text with CoreText, vertical Mincho on cream, so Read opens on a
+page with its transcript already known (`CaptureState.transcript`). The camera
+is untouched; the data can be changed in the session and is gone at the next
+launch. Nothing of this runs without the argument.
 
 ## Conventions
 

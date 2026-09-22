@@ -67,6 +67,7 @@ public struct AppRoot: View {
         .tint(Palette.nightGreen)
         .environmentObject(capture)
         .environmentObject(taps)
+        .onAppear { if DemoMode.isRequested { DemoData.seed(capture) } }
         .task(id: tab) { dueCount = Cards.dueItems(at: Date()).count }
     }
 
