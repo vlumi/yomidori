@@ -13,9 +13,18 @@ struct ZoomButtons: View {
     }
 
     private func button(_ symbol: String, _ label: Text, factor: CGFloat) -> some View {
-        Button {
-            zoom(factor)
-        } label: {
+        PageButton(symbol: symbol, label: label) { zoom(factor) }
+    }
+}
+
+/// A round button over the page, for the few things done to the page itself.
+struct PageButton: View {
+    let symbol: String
+    let label: Text
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
             Image(systemName: symbol)
                 .font(.title3)
                 .frame(width: 40, height: 40)

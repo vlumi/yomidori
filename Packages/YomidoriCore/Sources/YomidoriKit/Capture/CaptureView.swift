@@ -125,10 +125,36 @@ public struct CaptureView: View {
         .frame(width: area.width, height: area.height)
         .frame(maxHeight: .infinity, alignment: .top)
         .overlay(alignment: .bottomTrailing) {
-            ZoomButtons { factor in zoomPage(by: factor, in: area) }
-                .padding(.trailing, 12)
-                .padding(.bottom, 64)
+            VStack(spacing: 10) {
+                PageButton(
+                    symbol: "plus", label: Text("Add next page", bundle: .module), action: addPage
+                )
+                .disabled(currentTranscript == nil)
+                ZoomButtons { factor in zoomPage(by: factor, in: area) }
+            }
+            .padding(.trailing, 12)
+            .padding(.bottom, 64)
         }
+        .overlay(alignment: .topTrailing) {
+            if !pages.isEmpty {
+                Button(action: startOver) {
+                    Label {
+                        Text("Start over", bundle: .module)
+                    } icon: {
+                        Image(systemName: "xmark")
+                    }
+                    Text(verbatim: "\(pages.count + 1)")
+                }
+                .font(.callout.weight(.semibold))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(.black.opacity(0.55), in: Capsule())
+                .foregroundStyle(.white)
+                .padding(12)
+            }
+        }
+        // Tapping Read while a page is up is the retake; the drawer had no room for a button.
+        .onTabReselect(.read) { if still != nil { retake() } }
     }
 
     /// The drawer comes to rest at a detent; the page follows.
@@ -177,18 +203,14 @@ public struct CaptureView: View {
             }
             .pickerStyle(.segmented)
             readout
-            if let still {
-                Text(verbatim: "\(still.image.width) × \(still.image.height)")
+            if still != nil {
+                Text("Tap Read again for a new page.", bundle: .module)
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
             }
         } buttons: {
             if still == nil {
                 CameraButtons(picked: $picked, ready: camera.access == .ready, shutter: takeStill)
-            } else {
-                StillButtons(
-                    canAddPage: currentTranscript != nil, hasPages: !pages.isEmpty, retake: retake,
-                    addPage: addPage, startOver: startOver)
             }
         }
     }
