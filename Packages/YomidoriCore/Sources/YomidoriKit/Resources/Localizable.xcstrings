@@ -1381,6 +1381,16 @@
         }
       }
     },
+    "Tap Read again for a new page." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "もう一度「読む」を押すと次の撮影へ。"
+          }
+        }
+      }
+    },
     "The line runs over the high morae and falls where the accent does; the number is the mora after which it falls, 0 when it never does. Tokyo accent, from Kanjium." : {
       "localizations" : {
         "ja" : {
