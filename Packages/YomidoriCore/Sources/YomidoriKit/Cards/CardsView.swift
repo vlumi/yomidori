@@ -2,42 +2,22 @@ import SwiftUI
 import YomidoriCore
 import YomidoriDictionary
 
-/// The landing screen: what is due and what waits, then the cards by stack.
+/// The cards by stack, filtered by collection, with the way to the collections themselves.
 struct CardsView: View {
     @State private var cards: [Card] = []
-    @State private var dueCount = 0
     @State private var collections: [Collection] = []
     /// The collections shown; none chosen means all cards.
     @State private var chosen: Set<UUID> = []
 
     var body: some View {
+        ScrollViewReader { proxy in
+            list.scrollsToTopOnReselect(of: .cards, with: proxy)
+        }
+    }
+
+    private var list: some View {
         List {
             Section {
-                if dueCount > 0 {
-                    NavigationLink(value: Screen.review) {
-                        Label {
-                            Text("Review \(dueCount)", bundle: .module)
-                        } icon: {
-                            Image(systemName: "checkmark.rectangle.stack")
-                        }
-                        .font(.title3.weight(.semibold))
-                        .foregroundStyle(Palette.nightGreen)
-                    }
-                } else {
-                    Text("Nothing due. Read on.", bundle: .module)
-                        .foregroundStyle(.secondary)
-                }
-                let waiting = cards.filter(\.isWaiting).count
-                if waiting > 0 {
-                    NavigationLink(value: Screen.lesson) {
-                        Label {
-                            Text("Lesson · \(waiting) waiting", bundle: .module)
-                        } icon: {
-                            Image(systemName: "book")
-                        }
-                        .font(.title3)
-                    }
-                }
                 NavigationLink(value: Screen.collections) {
                     Label {
                         Text("Collections", bundle: .module)
@@ -46,13 +26,9 @@ struct CardsView: View {
                     }
                 }
             }
+            .id(TabTop.id)
             let shown = cards.filter {
                 chosen.isEmpty || !chosen.isDisjoint(with: $0.collectionIDs)
-            }
-            if !shown.isEmpty {
-                Section {
-                    RankCounts(cards: shown)
-                }
             }
             stack(shown.filter(\.isInReview), header: Text("In review", bundle: .module))
             stack(shown.filter(\.isWaiting), header: Text("Waiting", bundle: .module))
@@ -62,25 +38,11 @@ struct CardsView: View {
                     .foregroundStyle(.secondary)
             }
         }
-        .navigationTitle(Text(verbatim: "ヨミドリ"))
+        .navigationTitle(Text("Cards", bundle: .module))
         .toolbar {
-            ToolbarItemGroup(placement: .primaryAction) {
-                if !collections.isEmpty {
+            if !collections.isEmpty {
+                ToolbarItem(placement: .primaryAction) {
                     CollectionFilter(collections: collections, chosen: $chosen)
-                }
-                NavigationLink(value: Screen.settings) {
-                    Label {
-                        Text("Settings", bundle: .module)
-                    } icon: {
-                        Image(systemName: "gearshape")
-                    }
-                }
-                NavigationLink(value: Screen.about) {
-                    Label {
-                        Text("About", bundle: .module)
-                    } icon: {
-                        Image(systemName: "info.circle")
-                    }
                 }
             }
         }
@@ -107,7 +69,6 @@ struct CardsView: View {
 
     private func reload() {
         cards = (Cards.store?.cards() ?? []).sorted { $0.created > $1.created }
-        dueCount = Cards.dueItems(at: Date()).count
         collections = Cards.collections?.collections() ?? []
     }
 }

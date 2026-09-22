@@ -246,7 +246,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "よく使う言葉から"
+            "value" : "頻出語から順に"
           }
         }
       }
@@ -447,6 +447,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "頭高型：最初の拍だけ高く、あとは低くなります。"
+          }
+        }
+      }
+    },
+    "Home" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ホーム"
           }
         }
       }
@@ -961,6 +971,16 @@
         }
       }
     },
+    "Ranks" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ランク"
+          }
+        }
+      }
+    },
     "Read" : {
       "localizations" : {
         "ja" : {
@@ -1257,6 +1277,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "書き順"
+          }
+        }
+      }
+    },
+    "Study" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習"
           }
         }
       }

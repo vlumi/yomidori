@@ -8,9 +8,16 @@ struct SearchView: View {
     @State private var kept: Set<String> = []
 
     var body: some View {
+        ScrollViewReader { proxy in
+            list.scrollsToTopOnReselect(of: .search, with: proxy)
+        }
+    }
+
+    private var list: some View {
         List {
             if SearchQuery.kind(of: query) == .empty {
                 LookupHistoryView()
+                    .id(TabTop.id)
             } else if results.isEmpty {
                 Text("No matches.", bundle: .module)
                     .foregroundStyle(.secondary)
