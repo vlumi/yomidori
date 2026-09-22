@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 7 — 2026-09-22
+
 - **The camera in landscape.** Turned sideways, the live image fills the screen instead of shrinking to a portrait strip, and the still comes out the way the phone was held.
 - **Vision tries the new document request.** In Vision mode the still is read first with iOS 26's document request, which returns lines with their places on the page; the older request, which never read vertical print, is the fallback. If boxes appear over a vertical page, that request works where the old one did not.
 - **The readout, tidied.** The tokenizer is a small menu now and the book field is gone, so the row under a page is the collection, the tokenizer, the photo toggle and Copy. A word's row is its word, reading and Keep; the meaning, the system dictionary and *Full entry*, with the kanji and the words around it, open under the row. A long reading takes a line of its own instead of breaking mid-kana. 負えません finds 負う: a potential stem now reaches its verb. Endings and particles (ません, った) are no longer listed as words.
