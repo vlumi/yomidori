@@ -1,28 +1,17 @@
 import SwiftUI
 import YomidoriCore
 
-/// The collections: made, renamed and removed here; removing one only takes it off its cards.
+/// The collections with their covers, tags and counts; a tap edits, the plus adds, a swipe
+/// removes (which only takes the collection off its cards).
 struct CollectionsView: View {
     @State private var collections: [Collection] = []
-    @State private var editing: Collection?
-    @State private var name = ""
-    @State private var adding = false
 
     var body: some View {
         List {
             ForEach(collections) { collection in
-                Button {
-                    name = collection.name
-                    editing = collection
-                } label: {
-                    HStack {
-                        Text(verbatim: collection.name)
-                        Spacer()
-                        Text(verbatim: "\(count(in: collection))")
-                            .foregroundStyle(.secondary)
-                    }
+                NavigationLink(value: collection) {
+                    CollectionRow(collection: collection, count: count(in: collection))
                 }
-                .tint(.primary)
             }
             .onDelete { offsets in
                 for index in offsets {
@@ -38,50 +27,13 @@ struct CollectionsView: View {
         .navigationTitle(Text("Collections", bundle: .module))
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button {
-                    name = ""
-                    adding = true
-                } label: {
+                NavigationLink(value: Collection(name: "")) {
                     Label {
                         Text("New collection…", bundle: .module)
                     } icon: {
                         Image(systemName: "plus")
                     }
                 }
-            }
-        }
-        .alert(Text("New collection", bundle: .module), isPresented: $adding) {
-            TextField(text: $name) {
-                Text("Name", bundle: .module)
-            }
-            Button {
-                save(Collection(name: name))
-            } label: {
-                Text("Add", bundle: .module)
-            }
-            Button(role: .cancel) {
-            } label: {
-                Text("Cancel", bundle: .module)
-            }
-        }
-        .alert(
-            Text("Rename", bundle: .module),
-            isPresented: Binding(get: { editing != nil }, set: { if !$0 { editing = nil } })
-        ) {
-            TextField(text: $name) {
-                Text("Name", bundle: .module)
-            }
-            Button {
-                if var collection = editing {
-                    collection.name = name
-                    save(collection)
-                }
-            } label: {
-                Text("Save", bundle: .module)
-            }
-            Button(role: .cancel) {
-            } label: {
-                Text("Cancel", bundle: .module)
             }
         }
         .onAppear(perform: reload)
@@ -91,15 +43,44 @@ struct CollectionsView: View {
         (Cards.store?.cards() ?? []).filter { $0.collectionIDs.contains(collection.id) }.count
     }
 
-    private func save(_ collection: Collection) {
-        var named = collection
-        named.name = named.name.trimmingCharacters(in: .whitespaces)
-        guard !named.name.isEmpty else { return }
-        try? Cards.collections?.save(named)
-        reload()
-    }
-
     private func reload() {
         collections = Cards.collections?.collections() ?? []
+    }
+}
+
+struct CollectionRow: View {
+    let collection: Collection
+    let count: Int
+
+    var body: some View {
+        HStack(spacing: 12) {
+            if let coverID = collection.coverID, let image = StillArchive.load(coverID) {
+                Image(decorative: image, scale: 1)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 40, height: 56)
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+            } else {
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(Palette.silver.opacity(0.3))
+                    .frame(width: 40, height: 56)
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text(verbatim: collection.name)
+                if !collection.note.isEmpty {
+                    Text(verbatim: collection.note)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                if !collection.tags.isEmpty {
+                    Text(verbatim: collection.tags.joined(separator: " · "))
+                        .font(.caption2)
+                        .foregroundStyle(Palette.nightGreen)
+                }
+            }
+            Spacer()
+            Text(verbatim: "\(count)")
+                .foregroundStyle(.secondary)
+        }
     }
 }

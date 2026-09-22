@@ -37,6 +37,9 @@ struct Destinations: ViewModifier {
             .navigationDestination(for: KanjiEntry.self) { kanji in
                 KanjiView(kanji: kanji).swipeBackSetting()
             }
+            .navigationDestination(for: Collection.self) { collection in
+                CollectionEditor(collection: collection).swipeBackSetting()
+            }
     }
 }
 

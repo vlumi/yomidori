@@ -7,7 +7,8 @@ struct CardsView: View {
     @State private var cards: [Card] = []
     @State private var dueCount = 0
     @State private var collections: [Collection] = []
-    @State private var filter: UUID?
+    /// The collections shown; none chosen means all cards.
+    @State private var chosen: Set<UUID> = []
 
     var body: some View {
         List {
@@ -45,7 +46,9 @@ struct CardsView: View {
                     }
                 }
             }
-            let shown = cards.filter { filter.map($0.collectionIDs.contains) ?? true }
+            let shown = cards.filter {
+                chosen.isEmpty || !chosen.isDisjoint(with: $0.collectionIDs)
+            }
             if !shown.isEmpty {
                 Section {
                     RankCounts(cards: shown)
@@ -63,25 +66,7 @@ struct CardsView: View {
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 if !collections.isEmpty {
-                    Menu {
-                        Picker(selection: $filter) {
-                            Text("All cards", bundle: .module).tag(UUID?.none)
-                            ForEach(collections) { collection in
-                                Text(verbatim: collection.name).tag(UUID?.some(collection.id))
-                            }
-                        } label: {
-                            Text("Collection", bundle: .module)
-                        }
-                    } label: {
-                        Label {
-                            Text("Collection", bundle: .module)
-                        } icon: {
-                            Image(
-                                systemName: filter == nil
-                                    ? "line.3.horizontal.decrease.circle"
-                                    : "line.3.horizontal.decrease.circle.fill")
-                        }
-                    }
+                    CollectionFilter(collections: collections, chosen: $chosen)
                 }
                 NavigationLink(value: Screen.settings) {
                     Label {

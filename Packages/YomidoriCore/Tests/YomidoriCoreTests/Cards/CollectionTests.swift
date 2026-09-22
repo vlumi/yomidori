@@ -31,6 +31,34 @@ final class CollectionTests: XCTestCase {
         XCTAssertEqual(store.collections().map(\.name), ["ノルウェイの森"])
     }
 
+    func testTagsNoteAndCoverAreKeptAndOldFilesReadWithoutThem() throws {
+        let store = FileCollectionStore(url: url)
+        let cover = UUID()
+        try store.save(
+            Collection(name: "羊", note: "村上春樹", tags: ["book", "novel", "Book"], coverID: cover))
+        let reopened = FileCollectionStore(url: url).collections()[0]
+        XCTAssertEqual(reopened.note, "村上春樹")
+        XCTAssertEqual(reopened.tags, ["book", "novel", "Book"])
+        XCTAssertEqual(reopened.coverID, cover)
+        let old = """
+            [{"id":"\(UUID().uuidString)","name":"古い","created":"2026-09-22T00:00:00Z"}]
+            """
+        try old.write(to: url, atomically: true, encoding: .utf8)
+        let plain = FileCollectionStore(url: url).collections()[0]
+        XCTAssertEqual(plain.tags, [])
+        XCTAssertNil(plain.coverID)
+    }
+
+    func testTagsFromTextAndAcrossCollections() {
+        XCTAssertEqual(
+            Collection.tags(from: " book, Novel ,,novel、game "), ["book", "Novel", "game"])
+        let collections = [
+            Collection(name: "a", tags: ["book", "novel"]),
+            Collection(name: "b", tags: ["Book", "game"]),
+        ]
+        XCTAssertEqual(collections.allTags, ["book", "novel", "game"])
+    }
+
     func testACardJoinsCollectionsWhenKeptAndLeavesAForgottenOne() throws {
         let cards = FileCardStore(url: cardsURL)
         let sheep = UUID()

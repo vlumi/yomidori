@@ -113,6 +113,9 @@ enum Cards {
     static func removeCollection(_ collection: Collection) {
         try? store?.forget(collection: collection.id)
         try? collections?.remove(collection)
+        if let cover = collection.coverID {
+            StillArchive.remove([cover], keptBy: store?.cards() ?? [])
+        }
         if currentCollectionID() == collection.id {
             UserDefaults.standard.removeObject(forKey: currentCollectionKey)
         }
