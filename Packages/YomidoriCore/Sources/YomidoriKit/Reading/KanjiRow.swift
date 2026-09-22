@@ -12,11 +12,11 @@ struct KanjiRow: View {
                 Text(japanese: (kanji.onReadings + kanji.kunReadings).joined(separator: "、"))
                     .font(.callout)
                     .foregroundStyle(Palette.nightGreen)
-                    .lineLimit(1)
+                    .lineLimit(2)
                 Text(verbatim: kanji.meanings.prefix(3).joined(separator: "; "))
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                    .lineLimit(1)
+                    .lineLimit(2)
             }
         }
     }

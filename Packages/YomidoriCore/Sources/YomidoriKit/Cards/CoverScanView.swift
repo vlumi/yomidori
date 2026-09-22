@@ -109,9 +109,9 @@ struct CoverScanView: View {
                     .foregroundStyle(.secondary)
             }
             ForEach(lines, id: \.self) { line in
-                HStack {
-                    Text(verbatim: line)
-                    Spacer()
+                FitsOrStacks {
+                    Text(japanese: line)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     Button {
                         collection.name = line
                     } label: {

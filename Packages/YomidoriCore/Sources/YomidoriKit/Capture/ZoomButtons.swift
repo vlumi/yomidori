@@ -27,7 +27,7 @@ struct PageButton: View {
         Button(action: action) {
             Image(systemName: symbol)
                 .font(.title3)
-                .frame(width: 40, height: 40)
+                .frame(width: 44, height: 44)
                 .background(.black.opacity(0.55), in: Circle())
                 .foregroundStyle(.white)
         }

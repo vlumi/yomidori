@@ -10,27 +10,29 @@ struct EntryRow: View {
     var kept = false
 
     var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 12) {
-            Text(japanese: entry.headword)
-                .font(.title3)
-            let reading = Kana.hiragana(entry.readings.first ?? "")
-            if let accent {
-                PitchReading(reading: reading, accent: accent)
-            } else {
-                Text(japanese: reading)
-                    .foregroundStyle(Palette.nightGreen)
-            }
-            Spacer()
-            if kept {
-                Image(systemName: "rectangle.stack.fill")
-                    .font(.caption)
-                    .foregroundStyle(Palette.nightGreen)
-                    .accessibilityLabel(Text("Kept", bundle: .module))
+        FitsOrStacks {
+            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                Text(japanese: entry.headword)
+                    .font(.title3)
+                let reading = Kana.hiragana(entry.readings.first ?? "")
+                if let accent {
+                    PitchReading(reading: reading, accent: accent)
+                } else {
+                    Text(japanese: reading)
+                        .foregroundStyle(Palette.nightGreen)
+                }
+                if kept {
+                    Image(systemName: "rectangle.stack.fill")
+                        .font(.caption)
+                        .foregroundStyle(Palette.nightGreen)
+                        .accessibilityLabel(Text("Kept", bundle: .module))
+                }
             }
             Text(verbatim: entry.senses.first?.glosses.first ?? "")
                 .font(.caption)
                 .foregroundStyle(.secondary)
-                .lineLimit(1)
+                .lineLimit(2)
+                .frame(maxWidth: .infinity, alignment: .trailing)
         }
     }
 }

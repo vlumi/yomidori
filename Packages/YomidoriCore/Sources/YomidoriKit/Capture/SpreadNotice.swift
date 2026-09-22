@@ -6,7 +6,7 @@ struct SpreadNotice: View {
     var body: some View {
         VStack {
             Spacer()
-            HStack(spacing: 12) {
+            FitsOrStacks {
                 Text("Take the next page, or start over.", bundle: .module)
                     .font(.callout)
                     .foregroundStyle(Palette.silver)
