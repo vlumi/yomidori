@@ -14,7 +14,7 @@ public struct Lookup: Identifiable, Hashable, Codable, Sendable {
     public let date: Date
     public let source: Source
 
-    public var id: String { "\(headword) \(reading)" }
+    public var id: String { WordKey.of(headword: headword, reading: reading) }
 
     public init(headword: String, reading: String, entryID: Int, date: Date, source: Source) {
         self.headword = headword

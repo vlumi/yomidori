@@ -11,6 +11,22 @@ final class SightingMarkTests: XCTestCase {
         XCTAssertEqual(String(sighting.sentence[range]), "頷い")
     }
 
+    func testTheImagesAreTheCropThenThePagesAndTheCardsKnowThemAll() {
+        let crop = UUID(), page = UUID(), other = UUID()
+        let sighting = Sighting(
+            sentence: "彼女は黙って頷いた。", surface: "頷い", offset: 6, stillIDs: [page], cropID: crop,
+            source: nil, date: Date())
+        XCTAssertEqual(sighting.imageIDs, [crop, page])
+        let card = Card(
+            headword: "頷く", reading: "うなずく", entryID: nil, sightings: [sighting], created: Date())
+        XCTAssertEqual([card].referencedImageIDs, [crop, page])
+        XCTAssertFalse([card].referencedImageIDs.contains(other))
+        XCTAssertEqual(card.wordKey, "頷く うなずく")
+        XCTAssertEqual(
+            card.wordKey,
+            Lookup(headword: "頷く", reading: "うなずく", entryID: 1, date: Date(), source: .page).id)
+    }
+
     func testARewrittenSentenceFindsTheWordAgain() {
         let sighting = Sighting(
             sentence: "彼女は黙って頷いた。", surface: "頷い", offset: 6, stillIDs: [UUID()],

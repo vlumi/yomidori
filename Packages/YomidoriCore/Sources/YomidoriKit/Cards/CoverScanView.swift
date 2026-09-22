@@ -148,22 +148,15 @@ struct CoverScanView: View {
         still = loaded
     }
 
-    /// Vision's lines, tallest first, so the title leads; Live Text's transcript fills in
-    /// what Vision missed, vertical print among it.
     private func recognize() async {
         lines = []
         guard let still else { return }
         reading = true
         let recognized = (try? await TextRecognizer.recognize(still)) ?? []
-        var found = recognized.sorted { $0.box.height > $1.box.height }.map(\.text)
-        if LiveText.isSupported, let analysis = try? await LiveText.analyze(still) {
-            for line in analysis.transcript.split(whereSeparator: \.isNewline) {
-                let text = line.trimmingCharacters(in: .whitespaces)
-                if !text.isEmpty, !found.contains(text) { found.append(text) }
-            }
-        }
+        let transcript =
+            LiveText.isSupported ? (try? await LiveText.analyze(still))?.transcript : nil
         guard !Task.isCancelled else { return }
-        lines = found
+        lines = CoverLines.merge(vision: recognized, liveText: transcript)
         reading = false
     }
 

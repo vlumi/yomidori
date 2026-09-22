@@ -90,7 +90,7 @@ public struct CaptureView: View {
         CGSize(
             width: screen.width,
             height: screen.height
-                - CaptureDrawer<EmptyView, EmptyView>.height(
+                - DrawerDetents.height(
                     fraction: settledFraction ?? readoutFraction, screenHeight: screen.height))
     }
 
@@ -171,9 +171,9 @@ public struct CaptureView: View {
     }
 
     private func toggleDrawer() {
-        let largest = CaptureDrawer<EmptyView, EmptyView>.detents.last ?? 0.8
+        let largest = DrawerDetents.all.last ?? 0.8
         if readoutFraction >= largest {
-            settle(at: fractionBeforeToggle ?? CaptureDrawer<EmptyView, EmptyView>.detents[0])
+            settle(at: fractionBeforeToggle ?? DrawerDetents.all[0])
             fractionBeforeToggle = nil
         } else {
             fractionBeforeToggle = readoutFraction
@@ -193,9 +193,7 @@ public struct CaptureView: View {
         CaptureDrawer(
             hasStill: still != nil, screenHeight: screenHeight,
             fraction: Binding(get: { liveFraction ?? readoutFraction }, set: { liveFraction = $0 }),
-            settled: { fraction in
-                settle(at: CaptureDrawer<EmptyView, EmptyView>.detent(nearest: fraction))
-            },
+            settled: { fraction in settle(at: DrawerDetents.nearest(fraction)) },
             toggled: toggleDrawer
         ) {
             Picker(selection: $page.mode) {

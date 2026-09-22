@@ -17,8 +17,7 @@ struct SightingSection: View {
             } else {
                 MarkedSentence(sighting: sighting)
             }
-            let images = [sighting.cropID].compactMap { $0 } + sighting.stillIDs
-            ForEach(images, id: \.self) { id in
+            ForEach(sighting.imageIDs, id: \.self) { id in
                 if let image = StillArchive.load(id) {
                     Image(decorative: image, scale: 1)
                         .resizable()

@@ -40,10 +40,7 @@ struct CollectionFilter: View {
                 Section {
                     ForEach(tags, id: \.self) { tag in
                         Button {
-                            for collection in collections
-                            where collection.tags.contains(where: {
-                                $0.lowercased() == tag.lowercased()
-                            }) {
+                            for collection in collections where collection.hasTag(tag) {
                                 chosen.insert(collection.id)
                             }
                         } label: {

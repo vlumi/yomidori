@@ -74,9 +74,7 @@ struct LessonView: View {
     }
 
     private var candidates: [Card] {
-        (Cards.store?.waiting() ?? []).filter { card in
-            chosen.isEmpty || !chosen.isDisjoint(with: card.collectionIDs)
-        }
+        (Cards.store?.waiting() ?? []).filter { $0.isIn(anyOf: chosen) }
     }
 
     private func membership(of collection: Collection) -> Binding<Bool> {

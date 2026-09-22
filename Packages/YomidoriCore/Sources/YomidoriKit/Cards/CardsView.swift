@@ -27,9 +27,7 @@ struct CardsView: View {
                 }
             }
             .id(TabTop.id)
-            let shown = cards.filter {
-                chosen.isEmpty || !chosen.isDisjoint(with: $0.collectionIDs)
-            }
+            let shown = cards.filter { $0.isIn(anyOf: chosen) }
             stack(shown.filter(\.isInReview), header: Text("In review", bundle: .module))
             stack(shown.filter(\.isWaiting), header: Text("Waiting", bundle: .module))
             stack(shown.filter(\.shelved), header: Text("Shelved", bundle: .module))
