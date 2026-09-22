@@ -9,13 +9,13 @@ import UIKit
 #if os(iOS)
 
 /// `access` is passed as a value so SwiftUI updates the view when it changes; a class
-/// reference alone reads as unchanged. The volume buttons and the Camera Control press the
-/// shutter, as the system hands capture apps those presses. A tap focuses on the spot
+/// reference alone reads as unchanged. The volume buttons and the Camera Control freeze the
+/// page too, as the system hands capture apps those presses. A tap focuses on the spot
 /// tapped.
 struct CameraPreview: UIViewRepresentable {
     let camera: Camera
     let access: Camera.Access
-    let shutter: () -> Void
+    let freeze: () -> Void
 
     func makeUIView(context: Context) -> PreviewView {
         let view = PreviewView()
@@ -25,10 +25,10 @@ struct CameraPreview: UIViewRepresentable {
                 target: context.coordinator, action: #selector(Gestures.pinched)))
         view.addGestureRecognizer(
             UITapGestureRecognizer(target: context.coordinator, action: #selector(Gestures.tapped)))
-        let shutter = self.shutter
+        let freeze = self.freeze
         view.addInteraction(
             AVCaptureEventInteraction { event in
-                if event.phase == .began { shutter() }
+                if event.phase == .began { freeze() }
             })
         return view
     }
@@ -75,7 +75,7 @@ struct CameraPreview: UIViewRepresentable {
 struct CameraPreview: View {
     let camera: Camera
     let access: Camera.Access
-    let shutter: () -> Void
+    let freeze: () -> Void
 
     var body: some View {
         Color.black

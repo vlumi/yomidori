@@ -23,13 +23,14 @@ struct CoverScanView: View {
                 } else {
                     ZStack {
                         Color.black.ignoresSafeArea()
-                        CameraPreview(camera: camera, access: camera.access, shutter: takeStill)
+                        CameraPreview(camera: camera, access: camera.access, freeze: takeStill)
                             .ignoresSafeArea()
                         CameraNotice(access: camera.access)
                     }
                     .safeAreaInset(edge: .bottom) {
                         CameraButtons(
-                            picked: $picked, ready: camera.access == .ready, shutter: takeStill
+                            picked: $picked, ready: camera.access == .ready,
+                            label: Text("Scan the cover", bundle: .module), freeze: takeStill
                         )
                         .padding(16)
                         .background(Palette.page)

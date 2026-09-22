@@ -95,7 +95,7 @@ public struct CaptureView: View {
 
     private var cameraView: some View {
         ZStack {
-            CameraPreview(camera: camera, access: camera.access, shutter: takeStill)
+            CameraPreview(camera: camera, access: camera.access, freeze: takeStill)
                 .ignoresSafeArea()
             CameraNotice(access: camera.access)
             if !pages.isEmpty {
@@ -213,7 +213,9 @@ public struct CaptureView: View {
             }
         } buttons: {
             if still == nil {
-                CameraButtons(picked: $picked, ready: camera.access == .ready, shutter: takeStill)
+                CameraButtons(
+                    picked: $picked, ready: camera.access == .ready,
+                    label: Text("Read the page", bundle: .module), freeze: takeStill)
             }
         }
     }

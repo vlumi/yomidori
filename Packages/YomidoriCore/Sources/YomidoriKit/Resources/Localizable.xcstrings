@@ -1021,6 +1021,16 @@
         }
       }
     },
+    "Read the page" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み取る"
+          }
+        }
+      }
+    },
     "Reading" : {
       "localizations" : {
         "ja" : {
@@ -1257,16 +1267,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "答えを見る"
-          }
-        }
-      }
-    },
-    "Shutter" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "シャッター"
           }
         }
       }
