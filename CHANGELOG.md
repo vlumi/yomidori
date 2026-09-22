@@ -16,7 +16,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 - **A tap on the tab you are on** goes back to its first screen and to the top of its list, as elsewhere on iOS; on Read it scrolls the drawer to the top of the words and leaves the page alone.
 - **The drawer comes to rest.** Let go and it settles at the nearest of three heights, a strip, half, or most of the screen; a double tap on its handle takes it to the largest and back.
-- **Five along the bottom.** Home first, with the name, the Read button and what study is waiting, Settings and About in its corner; then Read, Study (review, lessons, the ranks), Cards (the list and the collections), and the search pill. Over a frozen page the bar gives way once the drawer is pulled past half the screen, where the words need the room, and comes back when the drawer is pulled down; scrolling the drawer collapses it into its pill.
+- **Five along the bottom.** Home first, with the name, the Read button and what study is waiting, Settings and About in its corner; then Read, Study (review, lessons, the ranks), Cards (the list and the collections), and the search pill. Scrolling the drawer collapses the bar into its pill.
 - **One Clear button on the history**, not one per line.
 
 ### build 7 — 2026-09-22

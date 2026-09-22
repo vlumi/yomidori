@@ -70,7 +70,6 @@ public struct CaptureView: View {
                     }
                 }
             }
-            .hidingTabBar(still != nil && (settledFraction ?? readoutFraction) >= 0.5)
             .onAppear { if still == nil { camera.start() } }
             .onDisappear { camera.stop() }
             .task(id: picked) { await loadPicked() }
