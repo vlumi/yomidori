@@ -84,7 +84,7 @@ struct CardRow: View {
                 .foregroundStyle(Palette.nightGreen)
             Spacer()
             RankMark(rank: card.rank, size: 22)
-                .accessibilityLabel(RankName(rank: card.rank))
+                .accessibilityLabel(RankName.text(for: card.rank))
         }
     }
 }
