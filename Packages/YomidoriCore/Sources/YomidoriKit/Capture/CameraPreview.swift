@@ -10,8 +10,8 @@ import UIKit
 
 /// `access` is passed as a value so SwiftUI updates the view when it changes; a class
 /// reference alone reads as unchanged. The volume buttons and the Camera Control press the
-/// shutter from iOS 17.2, where the system hands capture apps those presses. A tap focuses
-/// on the spot tapped.
+/// shutter, as the system hands capture apps those presses. A tap focuses on the spot
+/// tapped.
 struct CameraPreview: UIViewRepresentable {
     let camera: Camera
     let access: Camera.Access
@@ -25,13 +25,11 @@ struct CameraPreview: UIViewRepresentable {
                 target: context.coordinator, action: #selector(Gestures.pinched)))
         view.addGestureRecognizer(
             UITapGestureRecognizer(target: context.coordinator, action: #selector(Gestures.tapped)))
-        if #available(iOS 17.2, *) {
-            let shutter = self.shutter
-            view.addInteraction(
-                AVCaptureEventInteraction { event in
-                    if event.phase == .began { shutter() }
-                })
-        }
+        let shutter = self.shutter
+        view.addInteraction(
+            AVCaptureEventInteraction { event in
+                if event.phase == .began { shutter() }
+            })
         return view
     }
 

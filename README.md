@@ -42,7 +42,7 @@ on the train or not at all; there is no streak to keep.
   no server, no model in the cloud. A word you look up never leaves the phone.
 - **The book is the corpus.** Example sentences are the ones you actually read,
   cropped from your own capture, not a corpus written for someone else.
-- **iPhone and iPad, iOS 16 up** — an iPhone 8 still reads. A Mac app is planned,
+- **iPhone and iPad, iOS 26 up.** A Mac app is planned,
   for reading on the screen and reviewing on a keyboard.
 - **English and Japanese** interfaces from day one, on a String Catalog.
 - Free, open source, no ads, no tracking.

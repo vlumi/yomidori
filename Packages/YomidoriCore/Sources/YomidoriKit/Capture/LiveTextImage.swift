@@ -47,9 +47,7 @@ struct LiveTextImage: UIViewRepresentable {
             }
         }
 
-        /// The selection is readable from iOS 17; on iOS 16 the strip below stays the way.
         private func poll() {
-            guard #available(iOS 17, *) else { return }
             let text = interaction.selectedText
             guard text != selection.text else { return }
             selection.text = text

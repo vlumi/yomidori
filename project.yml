@@ -2,12 +2,11 @@ name: Yomidori
 
 options:
   bundleIdPrefix: fi.misaki
-  # iOS 16 is the floor so an iPhone 8 (last supported: iOS 16) still runs it;
-  # Vision's Japanese text recognition arrived in iOS 16 too, so the floor costs
-  # nothing the app needs. Newer APIs go behind the wrappers in
-  # YomidoriKit/App/Compat.swift.
+  # iOS 26 is the floor (decided 2026-09-22): the tab bar's search pill, Liquid
+  # Glass, and no version fallbacks. Platform-only APIs still go behind the
+  # wrappers in YomidoriKit/App/Compat.swift so the Kit compiles for the tests.
   deploymentTarget:
-    iOS: "16.0"
+    iOS: "26.0"
   createIntermediateGroups: true
   developmentLanguage: en
 

@@ -4,11 +4,11 @@ import PackageDescription
 let package = Package(
     name: "YomidoriCore",
     defaultLocalization: "en",
-    // iOS 16 is the app's floor (an iPhone 8 still reads). macOS is listed only so
-    // `swift test` runs headless on the Mac, and a Mac app is planned (see ROADMAP).
+    // iOS 26 is the app's floor. macOS is listed only so `swift test` runs headless
+    // on the Mac, and a Mac app is planned (see ROADMAP).
     platforms: [
-        .iOS(.v16),
-        .macOS(.v14),
+        .iOS("26.0"),
+        .macOS("26.0"),
     ],
     products: [
         // Pure logic — kana, readings, cards, scheduling. No UI, no camera. Headlessly testable.
