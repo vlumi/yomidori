@@ -1,8 +1,8 @@
 import SwiftUI
 import YomidoriCore
 
-/// One found word as a row: the title, the buttons, and the meaning folded under the row,
-/// which opens on a tap anywhere along it.
+/// One found word as a row: the title and Keep, and under the row, opened by a tap anywhere
+/// along it, the meaning, the system dictionary and the way to the full entry.
 struct WordReadout: View {
     let word: FoundWord
     let accent: PitchAccent?
@@ -18,8 +18,6 @@ struct WordReadout: View {
                     headword: word.surface, reading: reading, accent: accent,
                     dictionaryForm: word.dictionaryForm
                 ) {
-                    DictionaryButton(term: word.entries.first?.headword ?? headword)
-                        .labelStyle(.iconOnly)
                     keepButton
                 }
                 Image(systemName: "chevron.right")
@@ -82,6 +80,21 @@ struct WordReadout: View {
                     SensesList(entry: entry)
                 }
             }
+            HStack(spacing: 12) {
+                DictionaryButton(term: word.entries.first?.headword ?? headword)
+                if let entry = word.entries.first {
+                    NavigationLink(value: entry) {
+                        Label {
+                            Text("Full entry", bundle: .module)
+                        } icon: {
+                            Image(systemName: "text.book.closed")
+                        }
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                }
+            }
+            .padding(.top, 4)
         }
         .padding(.leading, 4)
         .textSelection(.enabled)

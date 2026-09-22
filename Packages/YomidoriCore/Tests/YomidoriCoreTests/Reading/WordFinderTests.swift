@@ -6,12 +6,16 @@ final class WordFinderTests: XCTestCase {
     private struct Stub: WordDictionary {
         let headwords: [String]
 
+        var functionWords: [String] = []
+
         func entries(matching text: String) -> [DictionaryEntry] {
-            headwords.contains(text)
-                ? [
-                    DictionaryEntry(
-                        id: text.hashValue, kanji: [text], readings: [], senses: [], common: true)
-                ] : []
+            guard headwords.contains(text) || functionWords.contains(text) else { return [] }
+            let sense = DictionaryEntry.Sense(
+                partsOfSpeech: functionWords.contains(text) ? ["aux-v"] : ["n"], glosses: ["g"])
+            return [
+                DictionaryEntry(
+                    id: text.hashValue, kanji: [text], readings: [], senses: [sense], common: true)
+            ]
         }
         func pitchAccents(for headword: String, reading: String) -> [PitchAccent] { [] }
         func search(_ query: String, limit: Int) -> [DictionaryEntry] { [] }
@@ -70,8 +74,20 @@ final class WordFinderTests: XCTestCase {
                 Cut(surface: "なんて", reading: "なんて"),
             ])
         let words = WordFinder.words(in: cut, dictionary: dictionary)
-        XCTAssertEqual(words.map(\.surface), ["多重", "人格", "なんて"])
-        XCTAssertEqual(words.map(\.entries.count), [1, 1, 0])
+        XCTAssertEqual(words.map(\.surface), ["多重", "人格"])
+        XCTAssertEqual(words.map(\.entries.count), [1, 1])
+    }
+
+    func testKanaFragmentsAndAuxiliariesAreSkipped() {
+        var dictionary = dictionary
+        dictionary.functionWords = ["ません"]
+        let cut = tokens(
+            "負えませんった",
+            [
+                Cut(surface: "負え", reading: "おえ"), Cut(surface: "ません", reading: "ません"),
+                Cut(surface: "った", reading: "った"),
+            ])
+        XCTAssertEqual(WordFinder.words(in: cut, dictionary: dictionary).map(\.surface), ["負え"])
     }
 
     func testPunctuationAndLoneKanaAreSkipped() {

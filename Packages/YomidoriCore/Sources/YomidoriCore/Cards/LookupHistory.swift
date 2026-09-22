@@ -24,15 +24,9 @@ public struct Lookup: Identifiable, Hashable, Codable, Sendable {
         self.source = source
     }
 
-    /// Particles, auxiliaries and the copula are not lookups worth a line, by JMdict's own
-    /// marks: skipped when every sense is one of those.
+    /// Particles, auxiliaries and the copula are not lookups worth a line.
     public static func isWorthKeeping(_ entry: DictionaryEntry) -> Bool {
-        let function: Set<String> = ["prt", "aux", "aux-v", "aux-adj", "cop"]
-        let marked = entry.senses.filter { !$0.partsOfSpeech.isEmpty }
-        return marked.isEmpty
-            || marked.contains { sense in
-                !sense.partsOfSpeech.allSatisfy(function.contains)
-            }
+        !entry.isFunctionWord
     }
 }
 

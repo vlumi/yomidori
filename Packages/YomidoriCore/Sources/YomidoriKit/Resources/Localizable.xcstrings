@@ -141,16 +141,6 @@
         }
       }
     },
-    "Book, page" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "本、ページ"
-          }
-        }
-      }
-    },
     "By tag" : {
       "localizations" : {
         "ja" : {
@@ -407,6 +397,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "忘れた。待機に戻す"
+          }
+        }
+      }
+    },
+    "Full entry" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "項目をすべて見る"
           }
         }
       }
@@ -1437,6 +1437,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "どういう意味？"
+          }
+        }
+      }
+    },
+    "Which analyzer cuts a page into words. The system's is the default; MeCab is here to compare on real pages." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ページを言葉に区切る解析器。標準はシステムのもので、MeCabは実際のページで比べるためにあります。"
           }
         }
       }

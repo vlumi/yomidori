@@ -27,19 +27,20 @@ public enum Deinflector {
         "び": Row(replacing: ["ぶ"], takesRu: true),
         "み": Row(replacing: ["む"], takesRu: true),
         "り": Row(replacing: ["る"], takesRu: true),
-        // The e-row: an ichidan stem (点け → 点ける, 食べ → 食べる).
-        "け": Row(replacing: [], takesRu: true),
-        "げ": Row(replacing: [], takesRu: true),
-        "せ": Row(replacing: [], takesRu: true),
+        // The e-row: an ichidan stem (点け → 点ける, 食べ → 食べる), or a godan verb's
+        // potential or imperative cut before る/ない (負え → 負う, 読め → 読む).
+        "け": Row(replacing: ["く"], takesRu: true),
+        "げ": Row(replacing: ["ぐ"], takesRu: true),
+        "せ": Row(replacing: ["す"], takesRu: true),
         "ぜ": Row(replacing: [], takesRu: true),
-        "て": Row(replacing: [], takesRu: true),
+        "て": Row(replacing: ["つ"], takesRu: true),
         "で": Row(replacing: [], takesRu: true),
-        "ね": Row(replacing: [], takesRu: true),
+        "ね": Row(replacing: ["ぬ"], takesRu: true),
         "へ": Row(replacing: [], takesRu: true),
-        "べ": Row(replacing: [], takesRu: true),
-        "め": Row(replacing: [], takesRu: true),
-        "れ": Row(replacing: [], takesRu: true),
-        "え": Row(replacing: [], takesRu: true),
+        "べ": Row(replacing: ["ぶ"], takesRu: true),
+        "め": Row(replacing: ["む"], takesRu: true),
+        "れ": Row(replacing: ["る"], takesRu: true),
+        "え": Row(replacing: ["う"], takesRu: true),
         // An i-adjective's adverbial (古く) or its past stem cut before っ (寒か).
         "く": Row(replacing: ["い"], takesRu: false),
         // The a-row: a godan stem before ない/れる/せる (照らさ → 照らす, 書か → 書く).

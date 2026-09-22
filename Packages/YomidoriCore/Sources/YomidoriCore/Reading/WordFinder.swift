@@ -69,9 +69,14 @@ public enum WordFinder {
         return single
     }
 
-    /// A lone kana is a particle or an auxiliary, not a word to look up.
+    /// Kana alone with nothing in the dictionary is a particle, an ending or a fragment of
+    /// a misread word; a word the dictionary marks as a particle or an auxiliary (ません,
+    /// から) is not one to look up either.
     private static func isShown(_ word: FoundWord) -> Bool {
-        let surface = word.surface
-        return surface.count > 1 || !Kana.isKana(surface)
+        if Kana.isKana(word.surface) {
+            return word.surface.count > 1 && !word.entries.isEmpty
+                && !word.entries.allSatisfy(\.isFunctionWord)
+        }
+        return word.entries.isEmpty || !word.entries.allSatisfy(\.isFunctionWord)
     }
 }

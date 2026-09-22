@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The readout, tidied.** The tokenizer switch lives in Settings and the book field is gone, so the row under a page is the collection, the photo toggle and Copy. A word's row is its word, reading and Keep; the meaning, the system dictionary and *Full entry*, with the kanji and the words around it, open under the row. A long reading takes a line of its own instead of breaking mid-kana. 負えません finds 負う: a potential stem now reaches its verb. Endings and particles (ません, った) are no longer listed as words.
 ### build 6 — 2026-09-22
 
 - **Collections with covers, tags and a note.** A collection is edited on its own screen: scan the cover with the camera or pick it from the photos, and the words read off it are offered for the name and the note, the largest print first, so a title is picked rather than typed. Tags are your own words, book, magazine, an author; the ones already in use are a tap away. The list shows the covers, notes, tags and counts. On Cards, the filter takes any number of collections, or every collection with a tag, or all cards.

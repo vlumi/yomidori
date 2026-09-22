@@ -4,11 +4,6 @@ import YomidoriDictionary
 import YomidoriMeCab
 
 struct TranscriptReadout: View {
-    enum TokenizerChoice: Hashable {
-        case system
-        case mecab
-    }
-
     /// `pageOffset` is where the page on screen starts in the joined transcript, in characters.
     let transcript: String
     let stills: [Still]
@@ -16,14 +11,13 @@ struct TranscriptReadout: View {
     let currentLines: [RecognizedLine]
     let pageOffset: Int
     @ObservedObject var selection: LiveTextSelection
-    @State private var choice: TokenizerChoice = .system
+    @AppStorage(TokenizerChoice.key) private var choice: TokenizerChoice = .system
     @State private var lines: [[Token]] = []
     @State private var transcriptLines = TranscriptLines("")
     @State private var words: [FoundWord] = []
     @State private var keptSurfaces: Set<String> = []
     @AppStorage("transcriptExpanded") private var expanded = false
     @State private var archived: [UUID: UUID] = [:]
-    @AppStorage("source") private var source = ""
     @AppStorage("keepsPhotos") private var keepsPhotos = false
 
     var body: some View {
@@ -62,21 +56,9 @@ struct TranscriptReadout: View {
 
     private var header: some View {
         HStack {
-            Picker(selection: $choice) {
-                Text("System", bundle: .module).tag(TokenizerChoice.system)
-                Text(verbatim: "MeCab").tag(TokenizerChoice.mecab)
-            } label: {
-                Text("Tokenizer", bundle: .module)
-            }
-            .pickerStyle(.segmented)
-            .frame(maxWidth: 170)
-            TextField(text: $source) {
-                Text("Book, page", bundle: .module)
-            }
-            .textFieldStyle(.roundedBorder)
-            .font(.callout)
             CollectionPicker()
                 .controlSize(.small)
+            Spacer()
             Toggle(isOn: $keepsPhotos) {
                 Label {
                     Text("Keep the photo too", bundle: .module)
@@ -112,7 +94,7 @@ struct TranscriptReadout: View {
     }
 
     private var tokenizer: (any Tokenizer)? {
-        choice == .system ? SystemTokenizer() : MeCabTokenizer.shared
+        choice.tokenizer
     }
 
     private func tokenize() {
@@ -149,8 +131,7 @@ struct TranscriptReadout: View {
         let keeper = SentenceKeeper(
             transcript: transcript, transcriptLines: transcriptLines, tokenLines: lines,
             stills: stills,
-            currentLines: currentLines, source: source.isEmpty ? nil : source,
-            keepsImages: keepsPhotos)
+            currentLines: currentLines, source: nil, keepsImages: keepsPhotos)
         guard let store = Cards.store,
             let sighting = keeper.sighting(for: word, archived: &archived)
         else {
