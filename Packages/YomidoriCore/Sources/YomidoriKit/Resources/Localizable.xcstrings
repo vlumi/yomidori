@@ -246,7 +246,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "よく使う言葉から"
+            "value" : "頻出語から順に"
           }
         }
       }

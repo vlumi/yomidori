@@ -6,6 +6,8 @@ struct DrawerHandle: View {
     /// Called with the fraction when the finger lifts: the moment to remember it and to lay
     /// the page out to the drawer's edge.
     let settled: (Double) -> Void
+    /// A double tap: the drawer to its largest, or back to where it was.
+    let toggled: () -> Void
     @GestureState private var fractionAtStart: Double?
 
     var body: some View {
@@ -15,6 +17,7 @@ struct DrawerHandle: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 4)
             .contentShape(Rectangle())
+            .onTapGesture(count: 2, perform: toggled)
             .gesture(
                 DragGesture(minimumDistance: 1)
                     .updating($fractionAtStart) { _, start, _ in
