@@ -129,12 +129,12 @@ final class Camera: ObservableObject {
         guard session.canAddInput(input), session.canAddOutput(output) else { return false }
         session.addInput(input)
         session.addOutput(output)
-        output.connection(with: .video)?.videoOrientation = .portrait
+        output.connection(with: .video)?.videoRotationAngle = 90
         self.device = device
         focusNear(device)
         NotificationCenter.default.addObserver(
             self, selector: #selector(subjectAreaChanged),
-            name: .AVCaptureDeviceSubjectAreaDidChange,
+            name: AVCaptureDevice.subjectAreaDidChangeNotification,
             object: device)
         return true
     }
