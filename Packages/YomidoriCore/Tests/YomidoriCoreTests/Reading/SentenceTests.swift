@@ -55,4 +55,13 @@ final class SentenceTests: XCTestCase {
         XCTAssertEqual(sentence.offset(of: index(of: "漂っ"), in: page), 9)
         XCTAssertEqual(String(sentence.text.dropFirst(9).prefix(2)), "漂っ")
     }
+
+    func testTheParagraphIndentIsNeitherInTheSentenceNorInTheOffset() {
+        let text = "前の文。\n　吾輩は猫である。名前はまだ無い。"
+        let cat = text.range(of: "猫")!.lowerBound
+        let sentence = Sentence.around(cat, in: text)
+        XCTAssertEqual(sentence.text, "吾輩は猫である。")
+        XCTAssertEqual(sentence.offset(of: cat, in: text), 3)
+        XCTAssertEqual(String(sentence.text.dropFirst(3).prefix(1)), "猫")
+    }
 }
