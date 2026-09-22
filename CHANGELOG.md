@@ -15,6 +15,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 ### Unreleased (next build)
 
 - **The readout, tidied.** The tokenizer is a small menu now and the book field is gone, so the row under a page is the collection, the tokenizer, the photo toggle and Copy. A word's row is its word, reading and Keep; the meaning, the system dictionary and *Full entry*, with the kanji and the words around it, open under the row. A long reading takes a line of its own instead of breaking mid-kana. 負えません finds 負う: a potential stem now reaches its verb. Endings and particles (ません, った) are no longer listed as words.
+- **The page reaches the drawer.** The still is laid out down to the drawer's edge, so the bottom of the page can be reached, and it follows the drawer when a drag ends; while the finger is down the drawer lies over the page or leaves a gap. The zoom and the place on the page keep across that, and the drawer follows the finger as it should. The tab bar stays while a page is up, so Cards and Search are a tap away and the page is there when you come back.
 
 ### build 6 — 2026-09-22
 
