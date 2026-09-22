@@ -33,7 +33,7 @@ struct RankMark: View {
         let side = size * scale
         Text(verbatim: "\(rank.rawValue)")
             .font(.system(size: side * 0.7, weight: .bold, design: .rounded))
-            .foregroundStyle(.white)
+            .foregroundStyle(rank.markForeground)
             .frame(width: side, height: side)
             .background(rank.color, in: Circle())
     }
@@ -44,13 +44,23 @@ extension Rank {
     /// grows, and the blue of the sky it leaves by.
     var color: Color {
         switch self {
-        case .nest: return Color(red: 0.55, green: 0.52, blue: 0.48)
+        case .nest: return Color(red: 0.50, green: 0.47, blue: 0.43)
         case .egg: return Palette.silver
         case .hatchling: return Color(red: 0.62, green: 0.78, blue: 0.55)
         case .chick: return Color(red: 0.36, green: 0.66, blue: 0.45)
         case .fledgling: return Palette.nightGreen
         case .flying: return Color(red: 0.12, green: 0.42, blue: 0.50)
         case .migrating: return Color(red: 0.16, green: 0.28, blue: 0.58)
+        }
+    }
+
+    /// The numeral's color: black on the light greens and on the silver and the green of the
+    /// dark palette, where white would fall under 3:1; white on the rest.
+    var markForeground: Color {
+        switch self {
+        case .hatchling, .chick: return .black
+        case .egg, .fledgling: return Color(light: .white, dark: .black)
+        case .nest, .flying, .migrating: return .white
         }
     }
 }

@@ -7,8 +7,9 @@ public enum Palette {
     public static let page = Color(
         light: Color(red: 0.98, green: 0.97, blue: 0.94),
         dark: Color(red: 0.06, green: 0.08, blue: 0.07))
+    /// Dark enough by day to read as text on the page color (4.6:1), light enough by night.
     public static let silver = Color(
-        light: Color(red: 0.55, green: 0.58, blue: 0.60),
+        light: Color(red: 0.42, green: 0.45, blue: 0.47),
         dark: Color(red: 0.78, green: 0.80, blue: 0.82))
 }
 
