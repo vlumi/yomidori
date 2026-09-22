@@ -10,6 +10,12 @@ struct CardsView: View {
     @State private var chosen: Set<UUID> = []
 
     var body: some View {
+        ScrollViewReader { proxy in
+            list.scrollsToTopOnReselect(of: .cards, with: proxy)
+        }
+    }
+
+    private var list: some View {
         List {
             Section {
                 NavigationLink(value: Screen.collections) {
@@ -20,6 +26,7 @@ struct CardsView: View {
                     }
                 }
             }
+            .id(TabTop.id)
             let shown = cards.filter {
                 chosen.isEmpty || !chosen.isDisjoint(with: $0.collectionIDs)
             }

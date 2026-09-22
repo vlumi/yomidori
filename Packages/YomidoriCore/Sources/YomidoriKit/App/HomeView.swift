@@ -8,6 +8,12 @@ struct HomeView: View {
     @State private var waitingCount = 0
 
     var body: some View {
+        ScrollViewReader { proxy in
+            list.scrollsToTopOnReselect(of: .home, with: proxy)
+        }
+    }
+
+    private var list: some View {
         List {
             Section {
                 VStack(spacing: 6) {
@@ -22,6 +28,7 @@ struct HomeView: View {
                 .padding(.vertical, 12)
                 .listRowBackground(Color.clear)
             }
+            .id(TabTop.id)
             Section {
                 Button(action: read) {
                     Label {

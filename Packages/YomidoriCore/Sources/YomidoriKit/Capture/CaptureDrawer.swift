@@ -33,10 +33,14 @@ struct CaptureDrawer<Content: View, Buttons: View>: View {
                 DrawerHandle(
                     fraction: $fraction, screenHeight: screenHeight, settled: settled,
                     toggled: toggled)
-                ScrollView {
-                    VStack(spacing: 12) {
-                        content()
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        VStack(spacing: 12) {
+                            content()
+                        }
+                        .id(TabTop.id)
                     }
+                    .scrollsToTopOnReselect(of: .read, with: proxy)
                 }
                 .frame(maxWidth: .infinity)
             }

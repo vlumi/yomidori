@@ -7,6 +7,12 @@ struct StudyView: View {
     @State private var dueCount = 0
 
     var body: some View {
+        ScrollViewReader { proxy in
+            list.scrollsToTopOnReselect(of: .study, with: proxy)
+        }
+    }
+
+    private var list: some View {
         List {
             Section {
                 if dueCount > 0 {
@@ -34,6 +40,7 @@ struct StudyView: View {
                 }
                 .disabled(waiting == 0)
             }
+            .id(TabTop.id)
             if !cards.isEmpty {
                 Section {
                     RankCounts(cards: cards)
