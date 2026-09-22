@@ -381,6 +381,16 @@
         }
       }
     },
+    "Export cards" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードを書き出す"
+          }
+        }
+      }
+    },
     "Flat: low, then high to the end and beyond." : {
       "localizations" : {
         "ja" : {
@@ -1557,6 +1567,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "調べた言葉がここに集まります。"
+          }
+        }
+      }
+    },
+    "Your cards as one JSON file, to keep a copy or to move them; the photos stay on the device." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードを1つのJSONファイルとして書き出します。控えにも、移すのにも。写真は端末に残ります。"
           }
         }
       }

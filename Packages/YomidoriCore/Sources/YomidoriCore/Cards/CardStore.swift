@@ -93,7 +93,7 @@ extension CardStore {
 
 /// One JSON document, written whole and atomically on every change.
 public final class FileCardStore: CardStore {
-    private let url: URL
+    public let url: URL
     private var loaded: [Card]?
     private let queue = DispatchQueue(label: "fi.misaki.yomidori.cards")
 

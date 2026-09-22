@@ -165,7 +165,7 @@ use for its own input.
   The store is one JSON document in Application Support, written whole and
   atomically on every change: a reader's cards number in the hundreds or low
   thousands, which one file reads in a blink, and one file is what a sync or a
-  backup copies. Every shape the file has had still decodes, and the tests keep
+  backup copies; Settings shares that file as it is, which is the export. Every shape the file has had still decodes, and the tests keep
   one of each. The reading, pitch and meaning are not stored; they are looked up
   live.
 - **`Sentence`** (Core): the sentence around a word, from the previous full stop
