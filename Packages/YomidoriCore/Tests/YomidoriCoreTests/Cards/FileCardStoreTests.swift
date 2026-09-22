@@ -186,6 +186,25 @@ final class FileCardStoreTests: XCTestCase {
         XCTAssertNil(reopened.review)
     }
 
+    func testAnsweringOneQuestionKeepsTheAnswerToTheOther() throws {
+        let store = FileCardStore(url: url)
+        var card = try store.keep(
+            sighting("樹皮の匂いがした。", "樹皮"), headword: "樹皮", reading: "じゅひ", entryID: nil)
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        card.start(at: now)
+        try store.update(card)
+        // Both items hold the card as it was before either answer.
+        let items = store.dueItems(at: now)
+        XCTAssertEqual(items.map(\.question), [.reading, .meaning])
+        try store.answer(items[0], grade: .good, at: now)
+        try store.answer(items[1], grade: .again, at: now, reconciled: true, accepting: "tree bark")
+        let reopened = try XCTUnwrap(FileCardStore(url: url).cards().first)
+        XCTAssertEqual(reopened.review?.reviews, 1)
+        XCTAssertEqual(reopened.meaningReview?.reviews, 1)
+        XCTAssertEqual(reopened.log.map(\.question), [.reading, .meaning])
+        XCTAssertEqual(reopened.acceptedMeanings, ["tree bark"])
+    }
+
     func testACardWrittenWithTheMeaningToggleStillDecodesAndWaits() throws {
         let old = """
             [{"id":"\(UUID().uuidString)","headword":"樹皮","reading":"じゅひ","entryID":1,
