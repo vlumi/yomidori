@@ -103,6 +103,8 @@ struct TranscriptReadout: View {
             .font(.caption)
         }
         .controlSize(.small)
+        .accessibilityLabel(Text("Tokenizer", bundle: .module))
+        .accessibilityValue(Text(choice == .system ? "System" : "MeCab", bundle: .module))
     }
 
     private func wordReadout(_ word: FoundWord) -> some View {

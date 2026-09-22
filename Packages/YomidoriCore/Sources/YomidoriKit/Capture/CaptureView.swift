@@ -138,20 +138,8 @@ public struct CaptureView: View {
         }
         .overlay(alignment: .topTrailing) {
             if !pages.isEmpty {
-                Button(action: startOver) {
-                    Label {
-                        Text("Start over", bundle: .module)
-                    } icon: {
-                        Image(systemName: "xmark")
-                    }
-                    Text(verbatim: "\(pages.count + 1)")
-                }
-                .font(.callout.weight(.semibold))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(.black.opacity(0.55), in: Capsule())
-                .foregroundStyle(.white)
-                .padding(12)
+                StartOverButton(pageCount: pages.count + 1, action: startOver)
+                    .padding(12)
             }
         }
         // Tapping Read while a page is up is the retake; the drawer had no room for a button.
@@ -334,5 +322,7 @@ public struct CaptureView: View {
         analysis = analyzed
         page.recognizedStillID = still.id
         recognizing = false
+        AccessibilityNotification.Announcement(String(localized: "Page read", bundle: .module))
+            .post()
     }
 }

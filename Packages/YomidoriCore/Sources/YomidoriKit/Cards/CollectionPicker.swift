@@ -61,6 +61,8 @@ struct CollectionPicker: View {
             .frame(maxWidth: 170, alignment: .leading)
             .transaction { $0.animation = nil }
             .accessibilityLabel(Text("Collection", bundle: .module))
+            .accessibilityValue(
+                current.map { Text(verbatim: $0.name) } ?? Text("None", bundle: .module))
         }
         .onAppear { collections = Cards.collections?.collections() ?? [] }
         .alert(Text("New collection", bundle: .module), isPresented: $naming) {
