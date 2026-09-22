@@ -1,15 +1,55 @@
 import Foundation
 
-/// A named group of cards, a book usually; a card can be in several.
+/// A named group of cards, a book usually; a card can be in several. The tags are the
+/// reader's own words (book, magazine, an author); the cover is a still kept by id.
 public struct Collection: Identifiable, Hashable, Codable, Sendable {
     public let id: UUID
     public var name: String
     public let created: Date
+    public var note: String
+    public var tags: [String]
+    public var coverID: UUID?
 
-    public init(id: UUID = UUID(), name: String, created: Date = Date()) {
+    public init(
+        id: UUID = UUID(), name: String, created: Date = Date(), note: String = "",
+        tags: [String] = [], coverID: UUID? = nil
+    ) {
         self.id = id
         self.name = name
         self.created = created
+        self.note = note
+        self.tags = tags
+        self.coverID = coverID
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, name, created, note, tags, coverID
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(UUID.self, forKey: .id)
+        name = try c.decode(String.self, forKey: .name)
+        created = try c.decode(Date.self, forKey: .created)
+        note = try c.decodeIfPresent(String.self, forKey: .note) ?? ""
+        tags = try c.decodeIfPresent([String].self, forKey: .tags) ?? []
+        coverID = try c.decodeIfPresent(UUID.self, forKey: .coverID)
+    }
+
+    /// Tags as typed, comma-separated, each once, empties dropped.
+    public static func tags(from text: String) -> [String] {
+        var seen: Set<String> = []
+        return text.split(whereSeparator: { $0 == "," || $0 == "、" })
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty && seen.insert($0.lowercased()).inserted }
+    }
+}
+
+extension Sequence where Element == Collection {
+    /// Every tag in use, each once, in order of first use.
+    public var allTags: [String] {
+        var seen: Set<String> = []
+        return flatMap(\.tags).filter { seen.insert($0.lowercased()).inserted }
     }
 }
 

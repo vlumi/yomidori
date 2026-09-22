@@ -151,6 +151,16 @@
         }
       }
     },
+    "By tag" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タグで"
+          }
+        }
+      }
+    },
     "Camera access is off. Turn it on in Settings to frame a page." : {
       "localizations" : {
         "ja" : {
@@ -297,6 +307,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正解にする"
+          }
+        }
+      }
+    },
+    "Cover" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表紙"
           }
         }
       }
@@ -801,12 +821,42 @@
         }
       }
     },
+    "Note" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メモ"
+          }
+        }
+      }
+    },
+    "Note, an author say" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メモ（著者など）"
+          }
+        }
+      }
+    },
     "Nothing due. Read on." : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "今日の分はありません。読書を続けてください。"
+          }
+        }
+      }
+    },
+    "Nothing was read off the cover." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表紙から何も読み取れませんでした。"
           }
         }
       }
@@ -911,6 +961,16 @@
         }
       }
     },
+    "Read off the cover" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表紙から読み取った文字"
+          }
+        }
+      }
+    },
     "Reading" : {
       "localizations" : {
         "ja" : {
@@ -967,6 +1027,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "認識エンジン"
+          }
+        }
+      }
+    },
+    "Remove the cover" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表紙を消す"
           }
         }
       }
@@ -1047,6 +1117,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "保存"
+          }
+        }
+      }
+    },
+    "Scan the cover" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表紙を撮る"
           }
         }
       }
@@ -1201,6 +1281,16 @@
         }
       }
     },
+    "Tags, comma-separated" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タグ（コンマ区切り）"
+          }
+        }
+      }
+    },
     "Tail-high: high to the end, the drop on what follows." : {
       "localizations" : {
         "ja" : {
@@ -1261,6 +1351,16 @@
         }
       }
     },
+    "The words on the cover are read, so the name can be picked, not typed." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表紙の文字を読み取るので、名前は入力せず選べます。"
+          }
+        }
+      }
+    },
     "Tokenizer" : {
       "localizations" : {
         "ja" : {
@@ -1287,6 +1387,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "読みを入力"
+          }
+        }
+      }
+    },
+    "Use" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使う"
           }
         }
       }
