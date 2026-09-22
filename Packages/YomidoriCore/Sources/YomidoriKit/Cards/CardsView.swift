@@ -36,6 +36,11 @@ struct CardsView: View {
                     }
                 }
             }
+            if !cards.isEmpty {
+                Section {
+                    RankCounts(cards: cards)
+                }
+            }
             stack(cards.filter(\.isInReview), header: Text("In review", bundle: .module))
             stack(cards.filter(\.isWaiting), header: Text("Waiting", bundle: .module))
             stack(cards.filter(\.shelved), header: Text("Shelved", bundle: .module))
@@ -100,7 +105,7 @@ struct CardRow: View {
             Text(verbatim: card.reading)
                 .foregroundStyle(Palette.nightGreen)
             Spacer()
-            Text(card.modified, format: .relative(presentation: .named))
+            RankName(rank: card.rank)
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

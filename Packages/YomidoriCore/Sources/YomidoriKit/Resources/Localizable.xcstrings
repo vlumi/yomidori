@@ -161,6 +161,16 @@
         }
       }
     },
+    "Chick" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幼鳥"
+          }
+        }
+      }
+    },
     "Choose a photo" : {
       "localizations" : {
         "ja" : {
@@ -271,6 +281,16 @@
         }
       }
     },
+    "Egg" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "卵"
+          }
+        }
+      }
+    },
     "Everything runs on this device: the camera, the text recognition, the dictionaries, your cards. Nothing is sent anywhere." : {
       "localizations" : {
         "ja" : {
@@ -291,6 +311,36 @@
         }
       }
     },
+    "Fledgling" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "若鳥"
+          }
+        }
+      }
+    },
+    "Flying" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成鳥"
+          }
+        }
+      }
+    },
+    "Forgot it. Back to waiting" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "忘れた。待機に戻す"
+          }
+        }
+      }
+    },
     "Good" : {
       "localizations" : {
         "ja" : {
@@ -307,6 +357,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "小学%lld年"
+          }
+        }
+      }
+    },
+    "Hatchling" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "雛"
           }
         }
       }
@@ -521,6 +581,16 @@
         }
       }
     },
+    "Migrating" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "渡り鳥"
+          }
+        }
+      }
+    },
     "Modified" : {
       "localizations" : {
         "ja" : {
@@ -537,6 +607,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "人名用"
+          }
+        }
+      }
+    },
+    "Nest" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "巣"
           }
         }
       }
@@ -687,6 +767,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ランダム"
+          }
+        }
+      }
+    },
+    "Rank" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ランク"
           }
         }
       }

@@ -210,6 +210,23 @@ final class FileCardStoreTests: XCTestCase {
         XCTAssertEqual(card.started, card.review?.lastReview)
     }
 
+    func testTheMostRecentlyAnsweredComeFirst() throws {
+        let store = FileCardStore(url: url)
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        var old = try store.keep(
+            sighting("樹皮の匂いがした。", "樹皮"), headword: "樹皮", reading: "じゅひ", entryID: nil)
+        old.start(at: now.addingTimeInterval(-30 * 86_400))
+        old.answer(.reading, grade: .good, at: now.addingTimeInterval(-20 * 86_400))
+        try store.update(old)
+        var fresh = try store.keep(
+            sighting("彼女は頷いた。", "頷い"), headword: "頷く", reading: "うなずく", entryID: nil)
+        fresh.start(at: now.addingTimeInterval(-60))
+        try store.update(fresh)
+        let items = store.dueItems(at: now)
+        XCTAssertEqual(items.map(\.card.headword), ["頷く", "頷く", "樹皮", "樹皮"])
+        XCTAssertEqual(items.map(\.question), [.reading, .meaning, .reading, .meaning])
+    }
+
     func testTheFileIsReadableJSON() throws {
         try FileCardStore(url: url).keep(
             sighting("樹皮の匂いがした。", "樹皮"), headword: "樹皮", reading: "じゅひ", entryID: 1330370)

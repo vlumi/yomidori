@@ -97,6 +97,14 @@ struct ReviewView: View {
             gradeButton(item, .good, prominent: verdict != false)
         }
         .controlSize(.large)
+        Button {
+            sendToWaiting(item.card)
+        } label: {
+            Text("Forgot it. Back to waiting", bundle: .module)
+                .font(.callout)
+                .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.borderless)
     }
 
     private func verdictLine(_ correct: Bool) -> some View {
@@ -183,6 +191,18 @@ struct ReviewView: View {
         answer = ""
         verdict = nil
         queue.removeFirst()
+    }
+
+    /// The card leaves the queue with every question it had in it, to come back through a
+    /// lesson.
+    private func sendToWaiting(_ card: Card) {
+        var waiting = card
+        waiting.sendToWaiting()
+        try? Cards.store?.update(waiting)
+        revealed = false
+        answer = ""
+        verdict = nil
+        queue.removeAll { $0.card.id == card.id }
     }
 
     private func reload() {

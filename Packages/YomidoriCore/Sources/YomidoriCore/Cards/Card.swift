@@ -169,7 +169,7 @@ public struct ReviewEntry: Hashable, Codable, Sendable {
     }
 }
 
-public enum Question: String, Codable, Sendable, Hashable, CaseIterable {
+public enum Question: Int, Codable, Sendable, Hashable, CaseIterable {
     case reading
     case meaning
     case pitch

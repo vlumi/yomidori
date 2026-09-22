@@ -17,6 +17,10 @@ public struct ReviewItem: Hashable, Sendable {
         self.card = card
         self.question = question
     }
+
+    var recency: Date {
+        card.state(for: question)?.lastReview ?? card.started ?? card.created
+    }
 }
 
 extension CardStore {
@@ -31,7 +35,9 @@ extension CardStore {
     }
 
     /// A card contributes an item per due question, the reading before the meaning before
-    /// the pitch; `asksPitch` says which cards have a pitch to ask.
+    /// the pitch; `asksPitch` says which cards have a pitch to ask. The most recently
+    /// answered come first, a just-started card counting from its start, so a short session
+    /// churns the fresh cards and the backlog trails.
     public func dueItems(at date: Date, asksPitch: (Card) -> Bool = { _ in false }) -> [ReviewItem]
     {
         cards().flatMap { card in
@@ -39,9 +45,9 @@ extension CardStore {
                 ReviewItem(card: card, question: $0)
             }
         }
-        .sorted {
-            ($0.card.state(for: $0.question)?.due ?? $0.card.created)
-                < ($1.card.state(for: $1.question)?.due ?? $1.card.created)
+        .sorted { first, second in
+            let (a, b) = (first.recency, second.recency)
+            return a == b ? first.question.rawValue < second.question.rawValue : a > b
         }
     }
 }

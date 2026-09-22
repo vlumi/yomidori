@@ -8,6 +8,11 @@ struct CardFacts: View {
     var body: some View {
         Section {
             LabeledContent {
+                RankName(rank: card.rank)
+            } label: {
+                Text("Rank", bundle: .module)
+            }
+            LabeledContent {
                 Text(card.created, format: .dateTime.year().month().day())
             } label: {
                 Text("Added", bundle: .module)

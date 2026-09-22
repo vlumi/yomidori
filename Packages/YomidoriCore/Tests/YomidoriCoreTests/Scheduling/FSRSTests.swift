@@ -30,6 +30,23 @@ final class FSRSTests: XCTestCase {
         XCTAssertEqual(state.reviews, 5)
     }
 
+    func testALapseCostsAtMostOneRank() {
+        let settled = ReviewState(
+            stability: 100, difficulty: 5, due: start,
+            lastReview: start.addingTimeInterval(-100 * day),
+            reviews: 6, lapses: 0)
+        let lapsed = FSRS.review(settled, grade: .again, at: start)
+        XCTAssertEqual(lapsed.stability, 25, accuracy: 0.001)
+        XCTAssertEqual(Rank(stability: settled.stability), .fledgling)
+        XCTAssertEqual(Rank(stability: lapsed.stability), .chick)
+        let young = ReviewState(
+            stability: 3, difficulty: 5, due: start, lastReview: start.addingTimeInterval(-3 * day),
+            reviews: 1, lapses: 0)
+        let dropped = FSRS.review(young, grade: .again, at: start)
+        XCTAssertGreaterThan(dropped.stability, 0.75)
+        XCTAssertLessThan(dropped.stability, 3)
+    }
+
     func testALapseShrinksStabilityAndCountsItself() {
         var state = FSRS.review(nil, grade: .good, at: start)
         for _ in 0..<3 {

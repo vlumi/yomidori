@@ -33,9 +33,12 @@ public struct ReviewState: Hashable, Codable, Sendable {
     }
 }
 
-/// FSRS-5 with its published default parameters and a desired retention of 90 %.
+/// FSRS-5 with its published default parameters and a desired retention of 90 %. One
+/// departure: a lapse costs at most one rank, since the reader found the model's own drop
+/// (four months to three days) harsh; a card they truly forgot goes back to waiting instead.
 public enum FSRS {
     public static let desiredRetention = 0.9
+    public static let lapseDivisor = 4.0
     static let decay = -0.5
     static let factor = 19.0 / 81.0
     static let day: TimeInterval = 86_400
@@ -59,11 +62,11 @@ public enum FSRS {
             if elapsedDays < 1 {
                 stability = state.stability * exp(weights[17] * (rating - 3 + weights[18]))
             } else if grade == .again {
-                stability = min(
+                let lapsed =
                     weights[11] * pow(state.difficulty, -weights[12])
-                        * (pow(state.stability + 1, weights[13]) - 1)
-                        * exp(weights[14] * (1 - retrievability)),
-                    state.stability)
+                    * (pow(state.stability + 1, weights[13]) - 1)
+                    * exp(weights[14] * (1 - retrievability))
+                stability = min(max(lapsed, state.stability / lapseDivisor), state.stability)
             } else {
                 stability =
                     state.stability
