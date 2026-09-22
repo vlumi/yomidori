@@ -4,11 +4,18 @@ import SwiftUI
 /// the camera it is only the button row.
 struct CaptureDrawer<Content: View, Buttons: View>: View {
     static var fractions: ClosedRange<Double> { 0.2...0.8 }
+    /// Where the drawer comes to rest: a strip for the page, half, most of the screen.
+    static var detents: [Double] { [0.2, 0.5, 0.8] }
+
+    static func detent(nearest fraction: Double) -> Double {
+        detents.min { abs($0 - fraction) < abs($1 - fraction) } ?? fraction
+    }
 
     let hasStill: Bool
     let screenHeight: CGFloat
     @Binding var fraction: Double
     let settled: (Double) -> Void
+    let toggled: () -> Void
     @ViewBuilder var content: () -> Content
     @ViewBuilder var buttons: () -> Buttons
 
@@ -23,11 +30,17 @@ struct CaptureDrawer<Content: View, Buttons: View>: View {
     var body: some View {
         VStack(spacing: 12) {
             if hasStill {
-                DrawerHandle(fraction: $fraction, screenHeight: screenHeight, settled: settled)
-                ScrollView {
-                    VStack(spacing: 12) {
-                        content()
+                DrawerHandle(
+                    fraction: $fraction, screenHeight: screenHeight, settled: settled,
+                    toggled: toggled)
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        VStack(spacing: 12) {
+                            content()
+                        }
+                        .id(TabTop.id)
                     }
+                    .scrollsToTopOnReselect(of: .read, with: proxy)
                 }
                 .frame(maxWidth: .infinity)
             }

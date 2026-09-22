@@ -18,6 +18,8 @@ public struct CaptureView: View {
     /// The fraction under the finger; written to the stored one only on release, since a
     /// defaults write per frame is what made the drawer lag.
     @State private var liveFraction: Double?
+    /// Where the drawer stood before a double tap took it to its largest.
+    @State private var fractionBeforeToggle: Double?
 
     public init() {}
 
@@ -68,6 +70,7 @@ public struct CaptureView: View {
                     }
                 }
             }
+            .hidingTabBar(still != nil && (settledFraction ?? readoutFraction) >= 0.5)
             .onAppear { if still == nil { camera.start() } }
             .onDisappear { camera.stop() }
             .task(id: picked) { await loadPicked() }
@@ -129,6 +132,26 @@ public struct CaptureView: View {
         }
     }
 
+    /// The drawer comes to rest at a detent; the page follows.
+    private func settle(at fraction: Double) {
+        withAnimation(.easeOut(duration: 0.2)) {
+            readoutFraction = fraction
+            liveFraction = nil
+            settledFraction = fraction
+        }
+    }
+
+    private func toggleDrawer() {
+        let largest = CaptureDrawer<EmptyView, EmptyView>.detents.last ?? 0.8
+        if readoutFraction >= largest {
+            settle(at: fractionBeforeToggle ?? CaptureDrawer<EmptyView, EmptyView>.detents[0])
+            fractionBeforeToggle = nil
+        } else {
+            fractionBeforeToggle = readoutFraction
+            settle(at: largest)
+        }
+    }
+
     private func zoomPage(by factor: CGFloat, in area: CGSize) {
         if mode == .liveText {
             zoomControl.zoom(by: factor)
@@ -142,10 +165,9 @@ public struct CaptureView: View {
             hasStill: still != nil, screenHeight: screenHeight,
             fraction: Binding(get: { liveFraction ?? readoutFraction }, set: { liveFraction = $0 }),
             settled: { fraction in
-                readoutFraction = fraction
-                liveFraction = nil
-                settledFraction = fraction
-            }
+                settle(at: CaptureDrawer<EmptyView, EmptyView>.detent(nearest: fraction))
+            },
+            toggled: toggleDrawer
         ) {
             Picker(selection: $page.mode) {
                 Text("Live Text", bundle: .module).tag(Mode.liveText)

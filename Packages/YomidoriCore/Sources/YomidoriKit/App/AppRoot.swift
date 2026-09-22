@@ -2,26 +2,37 @@ import SwiftUI
 import YomidoriCore
 
 enum AppTab: String {
+    case home
     case read
+    case study
     case cards
     case search
 }
 
-/// Three tabs: the camera first, the cards as the landing tab, and search as its own pill.
-/// The cards stack's path is kept across a restart so the app reopens where it was.
+/// Home, the camera, study, the cards, and search as its own pill. Each tab has its own
+/// stack; the home stack's path is kept across a restart so the app reopens where it was.
+/// Tapping the tab already showing pops its stack and scrolls its list to the top.
 public struct AppRoot: View {
-    @SceneStorage("tab") private var tab: AppTab = .cards
+    @SceneStorage("tab") private var tab: AppTab = .home
     @StateObject private var capture = CaptureState()
+    @StateObject private var taps = TabTaps()
     @State private var dueCount = 0
 
     public init() {}
 
     public var body: some View {
-        TabView(selection: $tab) {
-            Tab(value: .read) {
-                NavigationStack {
-                    CaptureView().clearNavigationBar().swipeBackSetting().appDestinations()
+        TabView(selection: selection) {
+            Tab(value: .home) {
+                TabStack(tab: .home, stored: true) { HomeView(read: { tab = .read }) }
+            } label: {
+                Label {
+                    Text("Home", bundle: .module)
+                } icon: {
+                    Image(systemName: "house")
                 }
+            }
+            Tab(value: .read) {
+                TabStack(tab: .read) { CaptureView().clearNavigationBar() }
             } label: {
                 Label {
                     Text("Read", bundle: .module)
@@ -29,8 +40,18 @@ public struct AppRoot: View {
                     Image(systemName: "camera.viewfinder")
                 }
             }
+            Tab(value: .study) {
+                TabStack(tab: .study) { StudyView() }
+            } label: {
+                Label {
+                    Text("Study", bundle: .module)
+                } icon: {
+                    Image(systemName: "checkmark.rectangle.stack")
+                }
+            }
+            .badge(dueCount)
             Tab(value: .cards) {
-                CardsStack()
+                TabStack(tab: .cards) { CardsView() }
             } label: {
                 Label {
                     Text("Cards", bundle: .module)
@@ -38,30 +59,44 @@ public struct AppRoot: View {
                     Image(systemName: "rectangle.stack")
                 }
             }
-            .badge(dueCount)
             Tab(value: .search, role: .search) {
-                NavigationStack {
-                    SearchView().swipeBackSetting().appDestinations()
-                }
+                TabStack(tab: .search) { SearchView() }
             }
         }
+        .minimizingTabBarOnScroll()
         .tint(Palette.nightGreen)
         .environmentObject(capture)
+        .environmentObject(taps)
         .task(id: tab) { dueCount = Cards.dueItems(at: Date()).count }
+    }
+
+    /// The tab, and a tap on the one already showing, which the binding sees as a set to
+    /// the same value.
+    private var selection: Binding<AppTab> {
+        Binding {
+            tab
+        } set: { chosen in
+            if chosen == tab { taps.tapped(chosen) } else { tab = chosen }
+        }
     }
 }
 
-/// The cards tab's own stack, its path stored so a restart returns to the same screen.
-private struct CardsStack: View {
+/// One tab's navigation stack: pops to its root when the tab is tapped again, and for the
+/// home tab stores its path so a restart returns to the same screen.
+private struct TabStack<Root: View>: View {
+    let tab: AppTab
+    var stored = false
+    @ViewBuilder let root: () -> Root
     @State private var path = NavigationPath()
     @SceneStorage("navigationPath") private var storedPath: Data?
 
     var body: some View {
         NavigationStack(path: $path) {
-            CardsView().swipeBackSetting().appDestinations()
+            root().swipeBackSetting().appDestinations()
         }
-        .onAppear(perform: restore)
-        .task(id: path) { store() }
+        .onTabReselect(tab) { path = NavigationPath() }
+        .onAppear { if stored { restore() } }
+        .task(id: path) { if stored { store() } }
     }
 
     private func restore() {
