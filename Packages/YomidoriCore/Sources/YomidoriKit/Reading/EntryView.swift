@@ -27,6 +27,7 @@ struct EntryView: View {
         }
         .navigationTitle(Text(verbatim: entry.headword))
         .task(id: entry.id) {
+            Cards.noteLookup(of: entry, from: .search)
             details = await WordDetails.load(
                 headword: entry.headword, reading: reading, entry: entry)
         }
@@ -56,7 +57,8 @@ struct EntryView: View {
             sentence: "", surface: entry.headword, offset: 0, stillIDs: [], source: nil,
             date: Date())
         if (try? Cards.store?.keep(
-            sighting, headword: entry.headword, reading: reading, entryID: entry.id)) != nil
+            sighting, headword: entry.headword, reading: reading, entryID: entry.id,
+            collection: Cards.currentCollectionID())) != nil
         {
             kept = true
         }

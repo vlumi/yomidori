@@ -110,6 +110,11 @@ final class JMdictTests: XCTestCase {
         XCTAssertEqual(dictionary.homophones(of: raw).map(\.headword), [])
     }
 
+    func testAnEntryByItsID() {
+        XCTAssertEqual(dictionary.entry(withID: 1330370)?.headword, "樹皮")
+        XCTAssertNil(dictionary.entry(withID: 1))
+    }
+
     func testAMissingDatabaseFailsToOpen() {
         let missing = FileManager.default.temporaryDirectory.appendingPathComponent(
             "\(UUID().uuidString).sqlite")

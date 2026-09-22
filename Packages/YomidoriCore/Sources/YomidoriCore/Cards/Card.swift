@@ -18,12 +18,19 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     public private(set) var log: [ReviewEntry]
     /// Meanings the reader accepts beside the dictionary's glosses.
     public var acceptedMeanings: [String]
+    /// When a lesson put the card into review; nil while it waits.
+    public private(set) var started: Date?
+    /// Kept for the record and never reviewed: a name, a place.
+    public private(set) var shelved: Bool
+    /// The collections the card is in, a book each usually; none is fine.
+    public var collectionIDs: [UUID]
 
     public init(
         id: UUID = UUID(), headword: String, reading: String, entryID: Int?,
         sightings: [Sighting], created: Date, modified: Date? = nil, review: ReviewState? = nil,
         meaningReview: ReviewState? = nil, pitchReview: ReviewState? = nil,
-        log: [ReviewEntry] = [], acceptedMeanings: [String] = []
+        log: [ReviewEntry] = [], acceptedMeanings: [String] = [], started: Date? = nil,
+        shelved: Bool = false, collectionIDs: [UUID] = []
     ) {
         self.id = id
         self.headword = headword
@@ -37,18 +44,52 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         self.pitchReview = pitchReview
         self.log = log
         self.acceptedMeanings = acceptedMeanings
+        self.started = started
+        self.shelved = shelved
+        self.collectionIDs = collectionIDs
     }
 
+    public mutating func add(to collection: UUID) {
+        if !collectionIDs.contains(collection) { collectionIDs.append(collection) }
+    }
+
+    public mutating func remove(from collection: UUID) {
+        collectionIDs.removeAll { $0 == collection }
+    }
+
+    public var isWaiting: Bool { started == nil && !shelved }
+    public var isInReview: Bool { started != nil && !shelved }
+
     public func isDue(at date: Date) -> Bool {
-        review.map { $0.due <= date } ?? true
+        isInReview && (review.map { $0.due <= date } ?? true)
     }
 
     /// The reading and the meaning are always asked; the pitch only when it is known.
     public func dueQuestions(at date: Date, asksPitch: Bool) -> [Question] {
-        Question.allCases.filter { question in
+        guard isInReview else { return [] }
+        return Question.allCases.filter { question in
             (question != .pitch || asksPitch)
                 && (state(for: question).map { $0.due <= date } ?? true)
         }
+    }
+
+    public mutating func start(at date: Date) {
+        started = date
+        shelved = false
+    }
+
+    /// Back to the waiting stack with no schedule; the log stays.
+    public mutating func sendToWaiting() {
+        started = nil
+        shelved = false
+        review = nil
+        meaningReview = nil
+        pitchReview = nil
+    }
+
+    public mutating func shelve() {
+        sendToWaiting()
+        shelved = true
     }
 
     public func state(for question: Question) -> ReviewState? {
@@ -93,10 +134,11 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     }
 
     // The first cards were written with the reading's state only; the modified date and
-    // the log came later, and read as the latest sighting and empty.
+    // the log came later, and read as the latest sighting and empty. A card from before
+    // the lessons is in review if it was ever reviewed, else it waits.
     private enum CodingKeys: String, CodingKey {
         case id, headword, reading, entryID, sightings, created, modified, review, meaningReview
-        case pitchReview, log, acceptedMeanings
+        case pitchReview, log, acceptedMeanings, started, shelved, collectionIDs
     }
 
     public init(from decoder: Decoder) throws {
@@ -115,6 +157,13 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         pitchReview = try c.decodeIfPresent(ReviewState.self, forKey: .pitchReview)
         log = try c.decodeIfPresent([ReviewEntry].self, forKey: .log) ?? []
         acceptedMeanings = try c.decodeIfPresent([String].self, forKey: .acceptedMeanings) ?? []
+        shelved = try c.decodeIfPresent(Bool.self, forKey: .shelved) ?? false
+        collectionIDs = try c.decodeIfPresent([UUID].self, forKey: .collectionIDs) ?? []
+        if c.contains(.started) {
+            started = try c.decodeIfPresent(Date.self, forKey: .started)
+        } else {
+            started = [review, meaningReview, pitchReview].compactMap { $0?.lastReview }.min()
+        }
     }
 }
 
@@ -132,7 +181,7 @@ public struct ReviewEntry: Hashable, Codable, Sendable {
     }
 }
 
-public enum Question: String, Codable, Sendable, Hashable, CaseIterable {
+public enum Question: Int, Codable, Sendable, Hashable, CaseIterable {
     case reading
     case meaning
     case pitch

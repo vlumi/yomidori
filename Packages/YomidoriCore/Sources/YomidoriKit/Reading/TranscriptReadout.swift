@@ -75,6 +75,8 @@ struct TranscriptReadout: View {
             }
             .textFieldStyle(.roundedBorder)
             .font(.callout)
+            CollectionPicker()
+                .controlSize(.small)
             Toggle(isOn: $keepsPhotos) {
                 Label {
                     Text("Keep the photo too", bundle: .module)
@@ -130,6 +132,9 @@ struct TranscriptReadout: View {
         } else {
             words = found
         }
+        for entry in words.compactMap(\.entries.first) {
+            Cards.noteLookup(of: entry, from: .page)
+        }
     }
 
     private func lineIndex(ofSelection range: Range<String.Index>?) -> Int? {
@@ -155,8 +160,9 @@ struct TranscriptReadout: View {
         let headword = entry?.headword ?? word.dictionaryForm ?? word.surface
         let reading = Kana.hiragana(entry?.readings.first ?? word.reading)
         guard
-            (try? store.keep(sighting, headword: headword, reading: reading, entryID: entry?.id))
-                != nil
+            (try? store.keep(
+                sighting, headword: headword, reading: reading, entryID: entry?.id,
+                collection: Cards.currentCollectionID())) != nil
         else { return }
         keptSurfaces.insert(word.surface)
     }

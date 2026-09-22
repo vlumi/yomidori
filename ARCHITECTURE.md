@@ -176,7 +176,11 @@ use for its own input.
   marked, the crop, and the still.
 - **`FSRS`**, **`Grade`** and **`ReviewState`** (Core): the free spaced
   repetition scheduler, version 5, with its published default parameters and a
-  desired retention of 90 %. Two grades, Again and Good, mapped to FSRS's 1 and
+  desired retention of 90 %, with one departure: a lapse costs at most one rank,
+  stability divided by four with FSRS's own value as the floor, since the
+  model's own drop (four months to three days) felt harsh; a card truly
+  forgotten goes back to waiting from the review and returns through a lesson.
+  Two grades, Again and Good, mapped to FSRS's 1 and
   3; the state a card carries is stability, difficulty, due and last review with
   the counts, nil until the first review, which makes a new card due at once.
   Intervals are whole days, one at least; a same-day answer uses the short-term
@@ -208,6 +212,12 @@ use for its own input.
   range into the transcript finds the line. Live Text tells no one when the
   selection changes, so the image's coordinator polls it four times a second
   while that mode is showing and stops when it goes.
+- **Lookup history** (`Lookup`, `FileLookupHistory` in Core; `LookupHistoryView`
+  in Kit): every word opened from a search and every word shown under a page,
+  one line per word with the latest date, newest first, capped at five
+  hundred, in its own JSON; particles, auxiliaries and the copula are skipped
+  by JMdict's part-of-speech marks. It is what the search tab shows while the
+  field is empty; a swipe forgets a line, a button all.
 - **Typed search** (`SearchView`, `EntryView` in Kit; `SearchQuery` and
   `WordDictionary.search` in Core): for words met off the page. Kana or kanji
   finds headwords and readings that start with it, a hiragana query tried as

@@ -6,6 +6,8 @@ import YomidoriCore
 struct EntryRow: View {
     let entry: DictionaryEntry
     var accent: PitchAccent?
+    /// The word has a card already.
+    var kept = false
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
@@ -19,6 +21,12 @@ struct EntryRow: View {
                     .foregroundStyle(Palette.nightGreen)
             }
             Spacer()
+            if kept {
+                Image(systemName: "rectangle.stack.fill")
+                    .font(.caption)
+                    .foregroundStyle(Palette.nightGreen)
+                    .accessibilityLabel(Text("Kept", bundle: .module))
+            }
             Text(verbatim: entry.senses.first?.glosses.first ?? "")
                 .font(.caption)
                 .foregroundStyle(.secondary)

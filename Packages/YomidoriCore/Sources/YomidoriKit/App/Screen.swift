@@ -7,4 +7,6 @@ enum Screen: Hashable, Codable {
     case search
     case about
     case settings
+    case lesson
+    case collections
 }

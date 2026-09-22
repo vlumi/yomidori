@@ -3,8 +3,12 @@ import Foundation
 public protocol CardStore {
     func cards() -> [Card]
     func card(headword: String, reading: String) -> Card?
+    /// Adds the sighting to the word's card, making the card if there is none, and puts the
+    /// card into `collection` when one is given.
     @discardableResult
-    func keep(_ sighting: Sighting, headword: String, reading: String, entryID: Int?) throws -> Card
+    func keep(
+        _ sighting: Sighting, headword: String, reading: String, entryID: Int?, collection: UUID?
+    ) throws -> Card
     func remove(_ card: Card) throws
     func update(_ card: Card) throws
 }
@@ -17,9 +21,32 @@ public struct ReviewItem: Hashable, Sendable {
         self.card = card
         self.question = question
     }
+
+    var recency: Date {
+        card.state(for: question)?.lastReview ?? card.started ?? card.created
+    }
 }
 
 extension CardStore {
+    @discardableResult
+    public func keep(_ sighting: Sighting, headword: String, reading: String, entryID: Int?)
+        throws -> Card
+    {
+        try keep(sighting, headword: headword, reading: reading, entryID: entryID, collection: nil)
+    }
+
+    /// Takes the collection off every card in it, as when the collection is deleted.
+    public func forget(collection: UUID) throws {
+        for var card in cards() where card.collectionIDs.contains(collection) {
+            card.remove(from: collection)
+            try update(card)
+        }
+    }
+
+    public func waiting() -> [Card] {
+        cards().filter(\.isWaiting)
+    }
+
     /// The longest overdue first, then the oldest.
     public func due(at date: Date) -> [Card] {
         cards().filter { $0.isDue(at: date) }
@@ -27,7 +54,9 @@ extension CardStore {
     }
 
     /// A card contributes an item per due question, the reading before the meaning before
-    /// the pitch; `asksPitch` says which cards have a pitch to ask.
+    /// the pitch; `asksPitch` says which cards have a pitch to ask. The most recently
+    /// answered come first, a just-started card counting from its start, so a short session
+    /// churns the fresh cards and the backlog trails.
     public func dueItems(at date: Date, asksPitch: (Card) -> Bool = { _ in false }) -> [ReviewItem]
     {
         cards().flatMap { card in
@@ -35,9 +64,9 @@ extension CardStore {
                 ReviewItem(card: card, question: $0)
             }
         }
-        .sorted {
-            ($0.card.state(for: $0.question)?.due ?? $0.card.created)
-                < ($1.card.state(for: $1.question)?.due ?? $1.card.created)
+        .sorted { first, second in
+            let (a, b) = (first.recency, second.recency)
+            return a == b ? first.question.rawValue < second.question.rawValue : a > b
         }
     }
 }
@@ -69,25 +98,27 @@ public final class FileCardStore: CardStore {
         queue.sync { all().first { $0.headword == headword && $0.reading == reading } }
     }
 
-    public func keep(_ sighting: Sighting, headword: String, reading: String, entryID: Int?) throws
-        -> Card
-    {
+    public func keep(
+        _ sighting: Sighting, headword: String, reading: String, entryID: Int?, collection: UUID?
+    ) throws -> Card {
         try queue.sync {
             var cards = all()
-            let card: Card
-            if let index = cards.firstIndex(where: {
+            let index: Int
+            if let found = cards.firstIndex(where: {
                 $0.headword == headword && $0.reading == reading
             }) {
-                cards[index].add(sighting)
-                card = cards[index]
+                cards[found].add(sighting)
+                index = found
             } else {
-                card = Card(
-                    headword: headword, reading: reading, entryID: entryID, sightings: [sighting],
-                    created: sighting.date)
-                cards.append(card)
+                cards.append(
+                    Card(
+                        headword: headword, reading: reading, entryID: entryID,
+                        sightings: [sighting], created: sighting.date))
+                index = cards.count - 1
             }
+            if let collection { cards[index].add(to: collection) }
             try save(cards)
-            return card
+            return cards[index]
         }
     }
 

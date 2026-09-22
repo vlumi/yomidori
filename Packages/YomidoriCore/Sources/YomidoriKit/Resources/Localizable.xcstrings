@@ -1,12 +1,32 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%lld cards" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld枚"
+          }
+        }
+      }
+    },
     "%lld good · %lld again" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "正解 %lld · もう一度 %lld"
+          }
+        }
+      }
+    },
+    "%lld started" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld枚を始めました"
           }
         }
       }
@@ -21,12 +41,32 @@
         }
       }
     },
+    "%lld waiting" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "待機中 %lld"
+          }
+        }
+      }
+    },
     "About" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "このアプリについて"
+          }
+        }
+      }
+    },
+    "Add" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加"
           }
         }
       }
@@ -71,12 +111,32 @@
         }
       }
     },
+    "All cards" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべてのカード"
+          }
+        }
+      }
+    },
     "Another meaning to accept" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "認める意味をもう一つ"
+          }
+        }
+      }
+    },
+    "Begin" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "始める"
           }
         }
       }
@@ -121,6 +181,16 @@
         }
       }
     },
+    "Chick" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幼鳥"
+          }
+        }
+      }
+    },
     "Choose a photo" : {
       "localizations" : {
         "ja" : {
@@ -131,12 +201,52 @@
         }
       }
     },
+    "Clear" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "消去"
+          }
+        }
+      }
+    },
     "Close-up" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "拡大"
+          }
+        }
+      }
+    },
+    "Collection" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コレクション"
+          }
+        }
+      }
+    },
+    "Collections" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コレクション"
+          }
+        }
+      }
+    },
+    "Common words first" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "よく使う言葉から"
           }
         }
       }
@@ -201,12 +311,32 @@
         }
       }
     },
+    "Drop" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "捨てる"
+          }
+        }
+      }
+    },
     "Edit the sentence" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "文を直す"
+          }
+        }
+      }
+    },
+    "Egg" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "卵"
           }
         }
       }
@@ -231,6 +361,36 @@
         }
       }
     },
+    "Fledgling" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "若鳥"
+          }
+        }
+      }
+    },
+    "Flying" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成鳥"
+          }
+        }
+      }
+    },
+    "Forgot it. Back to waiting" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "忘れた。待機に戻す"
+          }
+        }
+      }
+    },
     "Good" : {
       "localizations" : {
         "ja" : {
@@ -247,6 +407,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "小学%lld年"
+          }
+        }
+      }
+    },
+    "Hatchling" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "雛"
           }
         }
       }
@@ -277,6 +447,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "名乗り"
+          }
+        }
+      }
+    },
+    "In review" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "復習中"
           }
         }
       }
@@ -361,6 +541,36 @@
         }
       }
     },
+    "Later" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "あとで"
+          }
+        }
+      }
+    },
+    "Lesson" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レッスン"
+          }
+        }
+      }
+    },
+    "Lesson · %lld waiting" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レッスン · 待機中 %lld"
+          }
+        }
+      }
+    },
     "Licenses and notices" : {
       "localizations" : {
         "ja" : {
@@ -421,6 +631,16 @@
         }
       }
     },
+    "Migrating" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "渡り鳥"
+          }
+        }
+      }
+    },
     "Modified" : {
       "localizations" : {
         "ja" : {
@@ -431,12 +651,62 @@
         }
       }
     },
+    "Name" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前"
+          }
+        }
+      }
+    },
     "Name kanji" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "人名用"
+          }
+        }
+      }
+    },
+    "Nest" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "巣"
+          }
+        }
+      }
+    },
+    "New collection" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しいコレクション"
+          }
+        }
+      }
+    },
+    "New collection…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しいコレクション…"
+          }
+        }
+      }
+    },
+    "Newest first" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい順"
           }
         }
       }
@@ -461,12 +731,42 @@
         }
       }
     },
+    "No collection" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コレクションなし"
+          }
+        }
+      }
+    },
+    "No collections yet. A book, say." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コレクションはまだありません。本ごとに、など。"
+          }
+        }
+      }
+    },
     "No matches." : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "見つかりません。"
+          }
+        }
+      }
+    },
+    "None chosen means all of them." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "何も選ばなければすべてから。"
           }
         }
       }
@@ -521,12 +821,32 @@
         }
       }
     },
+    "Oldest first" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "古い順"
+          }
+        }
+      }
+    },
     "On" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "音読み"
+          }
+        }
+      }
+    },
+    "Order" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "順番"
           }
         }
       }
@@ -547,6 +867,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "言葉に向けると、読みがわかる。"
+          }
+        }
+      }
+    },
+    "Random" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ランダム"
+          }
+        }
+      }
+    },
+    "Rank" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ランク"
           }
         }
       }
@@ -641,6 +981,16 @@
         }
       }
     },
+    "Rename" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前を変える"
+          }
+        }
+      }
+    },
     "Retake" : {
       "localizations" : {
         "ja" : {
@@ -667,6 +1017,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "復習 %lld"
+          }
+        }
+      }
+    },
+    "Review them now" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今すぐ復習する"
           }
         }
       }
@@ -711,12 +1071,42 @@
         }
       }
     },
+    "Send back to waiting" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "待機に戻す"
+          }
+        }
+      }
+    },
     "Settings" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "設定"
+          }
+        }
+      }
+    },
+    "Shelve, never review" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "棚に置く（復習しない）"
+          }
+        }
+      }
+    },
+    "Shelved" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "棚"
           }
         }
       }
@@ -737,6 +1127,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "シャッター"
+          }
+        }
+      }
+    },
+    "Start" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "始める"
+          }
+        }
+      }
+    },
+    "Start now" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今すぐ始める"
           }
         }
       }
@@ -797,6 +1207,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "尾高型：最後まで高く、続く助詞で下がります。"
+          }
+        }
+      }
+    },
+    "Take off the shelf" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "棚から出す"
           }
         }
       }
@@ -881,6 +1301,26 @@
         }
       }
     },
+    "Waiting" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "待機中"
+          }
+        }
+      }
+    },
+    "Waiting for a lesson" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レッスン待ち"
+          }
+        }
+      }
+    },
     "What does it mean?" : {
       "localizations" : {
         "ja" : {
@@ -917,6 +1357,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@を含む言葉"
+          }
+        }
+      }
+    },
+    "Words you look up gather here." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "調べた言葉がここに集まります。"
           }
         }
       }

@@ -74,6 +74,49 @@ enum StillArchive {
 
 enum Cards {
     static let store: FileCardStore? = try? FileCardStore.inApplicationSupport()
+    static let collections: FileCollectionStore? = {
+        let directory = try? FileManager.default.url(
+            for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil,
+            create: true)
+        return directory.map {
+            FileCollectionStore(url: $0.appendingPathComponent("collections.json"))
+        }
+    }()
+
+    static let lookups: FileLookupHistory? = {
+        let directory = try? FileManager.default.url(
+            for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil,
+            create: true)
+        return directory.map { FileLookupHistory(url: $0.appendingPathComponent("lookups.json")) }
+    }()
+
+    static func noteLookup(of entry: DictionaryEntry, from source: Lookup.Source) {
+        guard Lookup.isWorthKeeping(entry) else { return }
+        try? lookups?.record(
+            Lookup(
+                headword: entry.headword, reading: Kana.hiragana(entry.readings.first ?? ""),
+                entryID: entry.id, date: Date(), source: source))
+    }
+
+    /// The collection Keep files a word under, remembered across screens; nil for none.
+    static let currentCollectionKey = "currentCollection"
+
+    static func currentCollectionID() -> UUID? {
+        UserDefaults.standard.string(forKey: currentCollectionKey).flatMap(UUID.init)
+    }
+
+    /// The words that have a card, as "headword reading", for a mark in a list.
+    static func keptWords() -> Set<String> {
+        Set((store?.cards() ?? []).map { "\($0.headword) \($0.reading)" })
+    }
+
+    static func removeCollection(_ collection: Collection) {
+        try? store?.forget(collection: collection.id)
+        try? collections?.remove(collection)
+        if currentCollectionID() == collection.id {
+            UserDefaults.standard.removeObject(forKey: currentCollectionKey)
+        }
+    }
 
     /// The pitch is asked of the cards whose accent the dictionary knows.
     static func dueItems(at date: Date) -> [ReviewItem] {
