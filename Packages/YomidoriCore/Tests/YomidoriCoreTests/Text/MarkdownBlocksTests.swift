@@ -13,7 +13,7 @@ final class MarkdownBlocksTests: XCTestCase {
             ## JMdict
 
             > This application uses the JMdict dictionary files.
-            > Used in conformance with the licence.
+            > Used in conformance with the license.
 
             ## MeCab
 
@@ -30,7 +30,7 @@ final class MarkdownBlocksTests: XCTestCase {
                     "Yomidori is MIT licensed (see [LICENSE](LICENSE)). It bundles the following."),
                 .heading(level: 2, text: "JMdict"),
                 .quote(
-                    "This application uses the JMdict dictionary files. Used in conformance with the licence."
+                    "This application uses the JMdict dictionary files. Used in conformance with the license."
                 ),
                 .heading(level: 2, text: "MeCab"),
                 .code("Copyright (c) 2001-2008, Taku Kudo\nAll rights reserved."),

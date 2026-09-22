@@ -41,7 +41,7 @@ final class TextGeometryTests: XCTestCase {
     func testTapMapsToAnImagePixel() {
         let frame = CGRect(x: 0, y: 162, width: 390, height: 520)
         let image = CGSize(width: 3000, height: 4000)
-        // The frame's top-left is the image's first pixel; its centre is the image's centre.
+        // The frame's top-left is the image's first pixel; its center is the image's center.
         XCTAssertEqual(
             TextGeometry.imagePoint(at: CGPoint(x: 0, y: 162), in: frame, imageSize: image), .zero)
         XCTAssertEqual(
@@ -95,7 +95,7 @@ final class TextGeometryTests: XCTestCase {
 
     func testAWindowAlongALineAroundAPoint() {
         let line = CGRect(x: 100, y: 1000, width: 2800, height: 100)
-        // Eight characters of a 100-px line, centred on the tap.
+        // Eight characters of a 100-px line, centered on the tap.
         XCTAssertEqual(
             TextGeometry.window(in: line, around: CGPoint(x: 1500, y: 1050), characters: 8),
             CGRect(x: 1100, y: 1000, width: 800, height: 100))

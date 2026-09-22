@@ -54,7 +54,7 @@ let beakHeight = size * 0.22
 let beakTop = faceY + size * 0.04
 let beakBottom = beakTop - beakHeight
 let mouth: CGFloat = 0.54                 // the mouth line, as a fraction down the beak
-let mouthV: CGFloat = 0.08                // how far the line's point dips at the centre
+let mouthV: CGFloat = 0.08                // how far the line's point dips at the center
 let eyeRadius = size * 0.027
 let eyeX = size * 0.125
 let eyeY = faceY - size * 0.025
@@ -141,7 +141,7 @@ ctx.setFillColor(silver)
 ctx.addPath(rounded(rule, rule.height / 2))
 ctx.fillPath()
 
-// Body: the egg and the head dome as one silhouette, flat grey with one broad soft
+// Body: the egg and the head dome as one silhouette, flat gray with one broad soft
 // highlight where the round breast catches the light, and a little weight at the belly.
 let dome = CGPath(ellipseIn: ellipse(centerX: cx, centerY: domeTop - domeRadius, width: 2 * domeRadius, height: 2 * domeRadius), transform: nil)
 let silhouette = egg().union(dome)
@@ -186,7 +186,7 @@ for footX in [cx - size * 0.12, cx + size * 0.12] {
     }
 }
 
-// Chin in chest grey under the beak so the hood ends at the beak; then the cheeks,
+// Chin in chest gray under the beak so the hood ends at the beak; then the cheeks,
 // white ovals from the beak's sides to the edge of the head.
 ctx.saveGState()
 ctx.addPath(silhouette)

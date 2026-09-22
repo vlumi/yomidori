@@ -3,7 +3,7 @@ import SwiftUI
 import YomidoriCore
 
 /// How many cards stand at each rank, as bars from the nest to the migrating bird, each in
-/// its colour; a finger on a bar shows its number and name.
+/// its color; a finger on a bar shows its number and name.
 struct RankChart: View {
     let cards: [Card]
     @State private var selected: String?

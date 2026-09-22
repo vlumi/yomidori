@@ -18,7 +18,7 @@ struct RankName: View {
     }
 }
 
-/// A rank as its number, 0 for the nest to 6 for the migrating bird, on a dot of its colour;
+/// A rank as its number, 0 for the nest to 6 for the migrating bird, on a dot of its color;
 /// the one mark that reads at any size until a bird is drawn for each.
 struct RankMark: View {
     let rank: Rank
@@ -34,7 +34,7 @@ struct RankMark: View {
 }
 
 extension Rank {
-    /// From the grey of the shelf through the silver egg to greens that deepen as the bird
+    /// From the gray of the shelf through the silver egg to greens that deepen as the bird
     /// grows, and the blue of the sky it leaves by.
     var color: Color {
         switch self {

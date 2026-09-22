@@ -68,7 +68,7 @@ struct LiveTextImage: UIViewRepresentable {
         }
     }
 
-    /// The image view is exactly the fitted image, centred by insets, so Live Text's
+    /// The image view is exactly the fitted image, centered by insets, so Live Text's
     /// highlights have no letterbox to drift into; the highlights are told to re-measure
     /// whenever the layout or the zoom changes.
     final class ZoomingImageView: UIScrollView, UIScrollViewDelegate {

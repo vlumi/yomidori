@@ -69,13 +69,13 @@ public final class MangaOCR {
             .joined()
     }
 
-    /// Grey, 224 × 224, scaled to −1…1, the one channel repeated three times.
+    /// Gray, 224 × 224, scaled to −1…1, the one channel repeated three times.
     static func pixels(of image: CGImage) throws -> MLMultiArray {
         guard
             let context = CGContext(
                 data: nil, width: side, height: side, bitsPerComponent: 8, bytesPerRow: side,
                 space: CGColorSpaceCreateDeviceGray(), bitmapInfo: CGImageAlphaInfo.none.rawValue),
-            let grey = { () -> UnsafeMutablePointer<UInt8>? in
+            let gray = { () -> UnsafeMutablePointer<UInt8>? in
                 context.interpolationQuality = .high
                 context.draw(image, in: CGRect(x: 0, y: 0, width: side, height: side))
                 return context.data?.assumingMemoryBound(to: UInt8.self)
@@ -88,7 +88,7 @@ public final class MangaOCR {
         /// Bitmap memory runs top-down, as the model reads it; no flip.
         for y in 0..<side {
             for x in 0..<side {
-                let value = (Float32(grey[y * side + x]) / 255 - 0.5) / 0.5
+                let value = (Float32(gray[y * side + x]) / 255 - 0.5) / 0.5
                 let index = y * side + x
                 out[index] = value
                 out[plane + index] = value
