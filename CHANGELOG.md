@@ -19,6 +19,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 - **Read first, cards as the front page.** The first tab is the camera itself, live; the bar hides while a page is frozen and the page keeps when you switch tabs. The app opens on Cards: what is due with a Review button on top, the cards under it, Settings and About in the top corner.
 - **iOS 26 is the floor.** The app asks for iOS 26; the fallbacks for older systems are gone. Nothing changes on a phone that has it.
 - **A tab bar.** Home, Cards and Search are tabs along the bottom; on iOS 26 the search is its own pill that opens into the search field. Cards shows how many are due. Settings and About are the gear and the ⓘ at the top right of home, out of the thumb's way. The camera still opens from the big Read button and hides the bar.
+
 ### build 5 — 2026-09-21
 
 - **Settings, with a swipe-back switch.** A Settings screen beside About. Swipe back is on, as everywhere on iOS; off, only the back button leaves a screen, so a swipe meant for a word on the page's left edge never pops you home. The typed-answer switch lives there too, as well as in the review's toolbar.
