@@ -81,7 +81,7 @@ public final class FileCollectionStore: CollectionStore {
         return collections
     }
 
-    /// Adds the collection, or renames the one with its id.
+    /// Adds the collection, or replaces the one with its id.
     public func save(_ collection: Collection) throws {
         var all = collections()
         if let index = all.firstIndex(where: { $0.id == collection.id }) {

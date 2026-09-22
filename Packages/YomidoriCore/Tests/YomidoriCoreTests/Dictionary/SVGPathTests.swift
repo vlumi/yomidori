@@ -50,4 +50,13 @@ final class SVGPathTests: XCTestCase {
         XCTAssertEqual(SVGPath.commands("M0 0 A1"), [.move(.zero)])
         XCTAssertEqual(SVGPath.commands(""), [])
     }
+
+    func testNumbersAfterACloseAreGarbageToo() {
+        XCTAssertEqual(
+            SVGPath.commands("M0 0 L10 10 Z 5 5"),
+            [.move(.zero), .line(CGPoint(x: 10, y: 10)), .close])
+        XCTAssertEqual(
+            SVGPath.commands("M0 0 Z M1 1"),
+            [.move(.zero), .close, .move(CGPoint(x: 1, y: 1))])
+    }
 }

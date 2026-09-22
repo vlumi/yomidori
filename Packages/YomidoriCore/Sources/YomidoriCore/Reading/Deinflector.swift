@@ -41,9 +41,10 @@ public enum Deinflector {
         "め": Row(replacing: ["む"], takesRu: true),
         "れ": Row(replacing: ["る"], takesRu: true),
         "え": Row(replacing: ["う"], takesRu: true),
-        // An i-adjective's adverbial (古く) or its past stem cut before っ (寒か).
+        // An i-adjective's adverbial (古く → 古い).
         "く": Row(replacing: ["い"], takesRu: false),
-        // The a-row: a godan stem before ない/れる/せる (照らさ → 照らす, 書か → 書く).
+        // The a-row: a godan stem before ない/れる/せる (照らさ → 照らす, 書か → 書く); か is
+        // also an i-adjective's past stem cut before った (寒か → 寒い).
         "か": Row(replacing: ["い", "く"], takesRu: false),
         "さ": Row(replacing: ["す"], takesRu: false),
         "が": Row(replacing: ["ぐ"], takesRu: false),

@@ -32,14 +32,6 @@ final class SentenceTests: XCTestCase {
         XCTAssertTrue(sentence.isOpen)
     }
 
-    func testTheContinuationIsTheNextPageUpToItsFirstFullStop() {
-        let next = "ていた。彼は躊躇なくその扉を開けた。"
-        let continuation = Sentence.continuation(of: next)
-        XCTAssertEqual(continuation.text, "ていた。")
-        XCTAssertFalse(continuation.isOpen)
-        XCTAssertEqual(Sentence.continuation(of: "\n\n").text, "")
-    }
-
     func testAClosingQuoteAfterTheFullStopStaysWithTheSentence() {
         let text = "「はい。」と彼女は言った。"
         let first = Sentence.around(text.startIndex, in: text)

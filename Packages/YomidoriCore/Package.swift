@@ -18,8 +18,8 @@ let package = Package(
     ],
     dependencies: [
         // MeCab compiled from source, with IPADic bundled: the one third-party runtime
-        // dependency, quarantined in YomidoriMeCab while the tokenizer choice is compared
-        // in the field. Pinned to a commit; the package has no tags.
+        // dependency, quarantined in YomidoriMeCab so nothing else imports it and cutting
+        // it is one line. Pinned to a commit; the package has no tags.
         .package(
             url: "https://github.com/shinjukunian/Mecab-Swift",
             revision: "1f096492e37fc05fc2e7304091f54889974c5368"),
@@ -55,6 +55,7 @@ let package = Package(
             dependencies: ["YomidoriCore", "YomidoriMeCab", "YomidoriDictionary", "YomidoriMangaOCR"],
             resources: [.process("Resources/Localizable.xcstrings")]
         ),
+        // YomidoriKit is a dependency so `swift test` compiles it for macOS; no test imports it.
         .testTarget(
             name: "YomidoriCoreTests",
             dependencies: ["YomidoriCore", "YomidoriMeCab", "YomidoriDictionary", "YomidoriKit"],

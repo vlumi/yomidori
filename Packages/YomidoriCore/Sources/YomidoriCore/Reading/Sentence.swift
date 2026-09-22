@@ -37,15 +37,6 @@ public struct Sentence: Equatable, Sendable {
         return Sentence(text: joined(text[start..<end]), range: start..<end, isOpen: open)
     }
 
-    /// The rest of a sentence left open on the page before: up to the first full stop, or the
-    /// whole page.
-    public static func continuation(of text: String) -> Sentence {
-        guard let first = text.firstIndex(where: { !$0.isNewline }) else {
-            return Sentence(text: "", range: text.startIndex..<text.startIndex, isOpen: true)
-        }
-        return around(first, in: text)
-    }
-
     /// Into `text` as `joined` made it: the paragraph indent before the sentence is not counted.
     public func offset(of index: String.Index, in text: String) -> Int {
         text[range.lowerBound..<index].filter { !$0.isNewline }.drop(while: \.isWhitespace).count

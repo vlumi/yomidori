@@ -85,7 +85,7 @@ public final class MangaOCR {
             shape: [1, 3, NSNumber(value: side), NSNumber(value: side)], dataType: .float32)
         let out = array.dataPointer.assumingMemoryBound(to: Float32.self)
         let plane = side * side
-        /// Bitmap memory runs top-down, as the model reads it; no flip.
+        // Bitmap memory runs top-down, as the model reads it; no flip.
         for y in 0..<side {
             for x in 0..<side {
                 let value = (Float32(gray[y * side + x]) / 255 - 0.5) / 0.5
