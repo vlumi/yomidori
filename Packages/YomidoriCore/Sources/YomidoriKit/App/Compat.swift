@@ -17,15 +17,6 @@ extension View {
 }
 
 extension View {
-    /// The bar hides while `hidden`; off iOS there is no tab bar to hide.
-    func hidingTabBar(_ hidden: Bool) -> some View {
-        #if os(iOS)
-        toolbar(hidden ? .hidden : .visible, for: .tabBar)
-        #else
-        self
-        #endif
-    }
-
     /// The bar collapses into its compact pill when the content scrolls down.
     func minimizingTabBarOnScroll() -> some View {
         #if os(iOS)
