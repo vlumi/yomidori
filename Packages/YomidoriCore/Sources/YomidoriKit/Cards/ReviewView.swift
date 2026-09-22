@@ -2,10 +2,12 @@ import SwiftUI
 import YomidoriCore
 import YomidoriDictionary
 
+/// The questions due, one at a time, each answered by typing or, for the pitch, by a pick.
+/// The verdict only suggests the grade; the reader can overrule it, and add a meaning of
+/// their own to the card.
 struct ReviewView: View {
     @State private var queue: [ReviewItem] = []
     @State private var revealed = false
-    @AppStorage("typedAnswers") private var typedAnswers = false
     @State private var answer = ""
     @State private var verdict: Bool?
     @FocusState private var typing: Bool
@@ -20,18 +22,6 @@ struct ReviewView: View {
             }
         }
         .navigationTitle(Text("Review", bundle: .module))
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Toggle(isOn: $typedAnswers) {
-                    Label {
-                        Text("Type the reading", bundle: .module)
-                    } icon: {
-                        Image(systemName: "keyboard")
-                    }
-                }
-                .toggleStyle(.button)
-            }
-        }
         .onAppear(perform: reload)
     }
 
@@ -65,28 +55,28 @@ struct ReviewView: View {
                 verdict = Cards.accents(of: item.card).contains(picked)
                 revealed = true
             }
-        } else if typedAnswers, item.question == .reading {
+        } else {
             TextField(text: $answer) {
-                Text("Type the reading", bundle: .module)
+                if item.question == .reading {
+                    Text("Type the reading", bundle: .module)
+                } else {
+                    Text("Type the meaning", bundle: .module)
+                }
             }
             .textFieldStyle(.roundedBorder)
             .font(.title2)
             .focused($typing)
             .submitLabel(.done)
-            .onSubmit { check(item.card) }
+            .onSubmit { check(item) }
             .onAppear { typing = true }
-        } else {
             Button {
+                verdict = false
                 revealed = true
             } label: {
-                if item.question == .reading {
-                    Text("Show the reading", bundle: .module).frame(maxWidth: .infinity)
-                } else {
-                    Text("Show the meaning", bundle: .module).frame(maxWidth: .infinity)
-                }
+                Text("Show the answer", bundle: .module)
+                    .font(.callout)
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
+            .buttonStyle(.borderless)
         }
     }
 
@@ -98,6 +88,9 @@ struct ReviewView: View {
         case .reading: ReadingBack(card: item.card)
         case .meaning: MeaningBack(card: item.card)
         case .pitch: PitchBack(card: item.card, accents: Cards.accents(of: item.card))
+        }
+        if verdict == false {
+            reconcile(item)
         }
         HStack(spacing: 16) {
             gradeButton(item, .again, prominent: verdict == false)
@@ -111,12 +104,37 @@ struct ReviewView: View {
             Image(systemName: correct ? "checkmark.circle.fill" : "xmark.circle")
             if correct {
                 Text("Correct", bundle: .module)
+            } else if answer.isEmpty {
+                Text("Not answered", bundle: .module)
             } else {
                 Text("Not quite. You typed \(answer).", bundle: .module)
             }
         }
         .font(.callout)
         .foregroundStyle(correct ? Palette.nightGreen : .secondary)
+    }
+
+    /// Overrule a wrong verdict: a typo too broken to forgive counts as right; a meaning of
+    /// the reader's own is kept on the card and counts from now on.
+    private func reconcile(_ item: ReviewItem) -> some View {
+        HStack(spacing: 12) {
+            Button {
+                record(item, .good, reconciled: true)
+            } label: {
+                Text("Count it right", bundle: .module)
+            }
+            if item.question == .meaning, !answer.trimmingCharacters(in: .whitespaces).isEmpty {
+                Button {
+                    var card = item.card
+                    card.acceptedMeanings.append(answer.trimmingCharacters(in: .whitespaces))
+                    record(item, .good, reconciled: true, card: card)
+                } label: {
+                    Text("Add as an answer", bundle: .module)
+                }
+            }
+        }
+        .buttonStyle(.bordered)
+        .font(.callout)
     }
 
     @ViewBuilder private func gradeButton(_ item: ReviewItem, _ grade: Grade, prominent: Bool)
@@ -139,14 +157,27 @@ struct ReviewView: View {
         }
     }
 
-    private func check(_ card: Card) {
-        verdict = ReadingCheck.matches(typed: answer, reading: card.reading)
+    private func check(_ item: ReviewItem) {
+        switch item.question {
+        case .reading:
+            verdict = ReadingCheck.matches(typed: answer, reading: item.card.reading)
+        case .meaning:
+            let entry = JMdict.bundled?.entry(
+                headword: item.card.headword, reading: item.card.reading)
+            verdict = MeaningCheck.matches(
+                typed: answer, glosses: entry?.senses.flatMap(\.glosses) ?? [],
+                accepted: item.card.acceptedMeanings)
+        case .pitch:
+            verdict = nil
+        }
         revealed = true
     }
 
-    private func record(_ item: ReviewItem, _ grade: Grade) {
-        var reviewed = item.card
-        reviewed.answer(item.question, grade: grade, at: Date())
+    private func record(
+        _ item: ReviewItem, _ grade: Grade, reconciled: Bool = false, card: Card? = nil
+    ) {
+        var reviewed = card ?? item.card
+        reviewed.answer(item.question, grade: grade, at: Date(), reconciled: reconciled)
         try? Cards.store?.update(reviewed)
         revealed = false
         answer = ""

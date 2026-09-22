@@ -31,6 +31,16 @@
         }
       }
     },
+    "Add as an answer" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "答えに加える"
+          }
+        }
+      }
+    },
     "Add next page" : {
       "localizations" : {
         "ja" : {
@@ -57,6 +67,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "もう一度"
+          }
+        }
+      }
+    },
+    "Another meaning to accept" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "認める意味をもう一つ"
           }
         }
       }
@@ -161,6 +181,16 @@
         }
       }
     },
+    "Count it right" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正解にする"
+          }
+        }
+      }
+    },
     "Dictionary" : {
       "localizations" : {
         "ja" : {
@@ -237,16 +267,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "アクセントの表し方"
-          }
-        }
-      }
-    },
-    "In a review, the reading is typed in kana and checked, instead of shown on a tap." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "復習で読みをかなで入力して答え合わせします。タップで表示する代わりに。"
           }
         }
       }
@@ -447,6 +467,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "見つかりません。"
+          }
+        }
+      }
+    },
+    "Not answered" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未回答"
           }
         }
       }
@@ -691,22 +721,12 @@
         }
       }
     },
-    "Show the meaning" : {
+    "Show the answer" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "意味を見る"
-          }
-        }
-      }
-    },
-    "Show the reading" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "読みを見る"
+            "value" : "答えを見る"
           }
         }
       }
@@ -831,6 +851,16 @@
         }
       }
     },
+    "Type the meaning" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "意味を入力"
+          }
+        }
+      }
+    },
     "Type the reading" : {
       "localizations" : {
         "ja" : {
@@ -887,6 +917,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@を含む言葉"
+          }
+        }
+      }
+    },
+    "Your meanings" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自分の意味"
           }
         }
       }
