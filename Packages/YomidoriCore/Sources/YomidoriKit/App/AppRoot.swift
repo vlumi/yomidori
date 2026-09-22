@@ -1,48 +1,112 @@
 import SwiftUI
 import YomidoriCore
 
+enum AppTab: String {
+    case home
+    case cards
+    case search
+}
+
+/// Three tabs: home with the camera a push away, the cards, and search as its own pill on
+/// iOS 26. The home stack's path is kept across a restart so the app reopens where it was.
 public struct AppRoot: View {
-    @State private var path = NavigationPath()
+    @SceneStorage("tab") private var tab: AppTab = .home
     @StateObject private var capture = CaptureState()
-    @SceneStorage("navigationPath") private var storedPath: Data?
+    @State private var dueCount = 0
 
     public init() {}
 
     public var body: some View {
-        NavigationStack(path: $path) {
-            HomeView()
-                .swipeBackSetting()
-                .navigationDestination(for: Screen.self) { screen in
-                    Group {
-                        switch screen {
-                        case .capture:
-                            CaptureView().clearNavigationBar()
-                        case .cards:
-                            CardsView()
-                        case .review:
-                            ReviewView()
-                        case .search:
-                            SearchView()
-                        case .about:
-                            AboutView()
-                        case .settings:
-                            SettingsView()
+        Group {
+            if #available(iOS 18, macOS 15, *) {
+                TabView(selection: $tab) {
+                    Tab(value: .home) {
+                        HomeStack()
+                    } label: {
+                        Label {
+                            Text("Home", bundle: .module)
+                        } icon: {
+                            Image(systemName: "book")
                         }
                     }
-                    .swipeBackSetting()
+                    Tab(value: .cards) {
+                        cardsStack
+                    } label: {
+                        Label {
+                            Text("Cards", bundle: .module)
+                        } icon: {
+                            Image(systemName: "rectangle.stack")
+                        }
+                    }
+                    .badge(dueCount)
+                    Tab(value: .search, role: .search) {
+                        searchStack
+                    }
                 }
-                .navigationDestination(for: Card.self) { card in
-                    CardView(card: card).swipeBackSetting()
+            } else {
+                TabView(selection: $tab) {
+                    HomeStack()
+                        .tabItem {
+                            Label {
+                                Text("Home", bundle: .module)
+                            } icon: {
+                                Image(systemName: "book")
+                            }
+                        }
+                        .tag(AppTab.home)
+                    cardsStack
+                        .tabItem {
+                            Label {
+                                Text("Cards", bundle: .module)
+                            } icon: {
+                                Image(systemName: "rectangle.stack")
+                            }
+                        }
+                        .badge(dueCount)
+                        .tag(AppTab.cards)
+                    searchStack
+                        .tabItem {
+                            Label {
+                                Text("Search", bundle: .module)
+                            } icon: {
+                                Image(systemName: "magnifyingglass")
+                            }
+                        }
+                        .tag(AppTab.search)
                 }
-                .navigationDestination(for: DictionaryEntry.self) { entry in
-                    EntryView(entry: entry).swipeBackSetting()
-                }
-                .navigationDestination(for: KanjiEntry.self) { kanji in
-                    KanjiView(kanji: kanji).swipeBackSetting()
-                }
+            }
         }
         .tint(Palette.nightGreen)
         .environmentObject(capture)
+        .task(id: tab) { countDue() }
+    }
+
+    private var cardsStack: some View {
+        NavigationStack {
+            CardsView().swipeBackSetting().appDestinations()
+        }
+    }
+
+    private var searchStack: some View {
+        NavigationStack {
+            SearchView().swipeBackSetting().appDestinations()
+        }
+    }
+
+    private func countDue() {
+        dueCount = Cards.dueItems(at: Date()).count
+    }
+}
+
+/// The home tab's own stack, its path stored so a restart returns to the same screen.
+private struct HomeStack: View {
+    @State private var path = NavigationPath()
+    @SceneStorage("navigationPath") private var storedPath: Data?
+
+    var body: some View {
+        NavigationStack(path: $path) {
+            HomeView().swipeBackSetting().appDestinations()
+        }
         .onAppear(perform: restore)
         .task(id: path) { store() }
     }
