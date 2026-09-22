@@ -8,7 +8,10 @@ struct CardFacts: View {
     var body: some View {
         Section {
             LabeledContent {
-                RankName(rank: card.rank)
+                HStack(spacing: 6) {
+                    RankMark(rank: card.rank)
+                    RankName(rank: card.rank)
+                }
             } label: {
                 Text("Rank", bundle: .module)
             }
