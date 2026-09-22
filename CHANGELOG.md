@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **One Clear button on the history**, not one per line.
+
 ### build 7 — 2026-09-22
 
 - **The camera in landscape.** Turned sideways, the live image fills the screen instead of shrinking to a portrait strip, and the still comes out the way the phone was held.

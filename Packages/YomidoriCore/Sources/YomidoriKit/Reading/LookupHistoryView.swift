@@ -9,7 +9,9 @@ struct LookupHistoryView: View {
     @State private var kept: Set<String> = []
 
     var body: some View {
-        Group {
+        // One section, not a group: a modifier on a group lands on every row, and the
+        // toolbar's Clear button appeared once per line.
+        Section {
             if lookups.isEmpty {
                 Text("Words you look up gather here.", bundle: .module)
                     .foregroundStyle(.secondary)
