@@ -125,15 +125,16 @@ public struct CaptureView: View {
         .frame(width: area.width, height: area.height)
         .frame(maxHeight: .infinity, alignment: .top)
         .overlay(alignment: .bottomTrailing) {
-            VStack(spacing: 10) {
-                PageButton(
-                    symbol: "plus", label: Text("Add next page", bundle: .module), action: addPage
-                )
-                .disabled(currentTranscript == nil)
-                ZoomButtons { factor in zoomPage(by: factor, in: area) }
-            }
-            .padding(.trailing, 12)
-            .padding(.bottom, 64)
+            ZoomButtons { factor in zoomPage(by: factor, in: area) }
+                .padding(.trailing, 12)
+                .padding(.bottom, 64)
+        }
+        .overlay(alignment: .bottomLeading) {
+            PageButton(
+                symbol: "plus", label: Text("Add next page", bundle: .module), action: addPage
+            )
+            .disabled(currentTranscript == nil)
+            .padding(12)
         }
         .overlay(alignment: .topTrailing) {
             if !pages.isEmpty {
@@ -154,7 +155,7 @@ public struct CaptureView: View {
             }
         }
         // Tapping Read while a page is up is the retake; the drawer had no room for a button.
-        .onTabReselect(.read) { if still != nil { retake() } }
+        .onTabReselect(.read) { retake() }
     }
 
     /// The drawer comes to rest at a detent; the page follows.

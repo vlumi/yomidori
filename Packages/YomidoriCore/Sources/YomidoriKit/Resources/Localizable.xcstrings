@@ -1091,6 +1091,16 @@
         }
       }
     },
+    "Retake" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撮り直す"
+          }
+        }
+      }
+    },
     "Review" : {
       "localizations" : {
         "ja" : {
