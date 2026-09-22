@@ -47,12 +47,6 @@ extension CardStore {
         cards().filter(\.isWaiting)
     }
 
-    /// The longest overdue first, then the oldest.
-    public func due(at date: Date) -> [Card] {
-        cards().filter { $0.isDue(at: date) }
-            .sorted { ($0.review?.due ?? $0.created) < ($1.review?.due ?? $1.created) }
-    }
-
     /// A card contributes an item per due question, the reading before the meaning before
     /// the pitch; `asksPitch` says which cards have a pitch to ask. The most recently
     /// answered come first, a just-started card counting from its start, so a short session
@@ -81,15 +75,6 @@ public final class FileCardStore: CardStore {
 
     public init(url: URL) {
         self.url = url
-    }
-
-    public static func inApplicationSupport(fileManager: FileManager = .default) throws
-        -> FileCardStore
-    {
-        let directory = try fileManager.url(
-            for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil,
-            create: true)
-        return FileCardStore(url: directory.appendingPathComponent("cards.json"))
     }
 
     public func cards() -> [Card] {

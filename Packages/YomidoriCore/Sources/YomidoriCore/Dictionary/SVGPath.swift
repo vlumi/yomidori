@@ -42,7 +42,12 @@ public enum SVGPath {
                     letter = first
                     index += 1
                 }
+                let before = index
                 guard apply(letter) else { break }
+                // Z takes no numbers, so a number after it is garbage that would spin the loop.
+                if index == before, index < tokens.count, tokens[index].first?.isLetter != true {
+                    break
+                }
                 // A run of numbers after M continues as L, as the standard says.
                 if letter == "M" { letter = "L" }
                 if letter == "m" { letter = "l" }

@@ -60,10 +60,6 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     public var isWaiting: Bool { started == nil && !shelved }
     public var isInReview: Bool { started != nil && !shelved }
 
-    public func isDue(at date: Date) -> Bool {
-        isInReview && (review.map { $0.due <= date } ?? true)
-    }
-
     /// The reading and the meaning are always asked; the pitch only when it is known.
     /// `asksPitch` is asked only when the pitch question is due, since it costs a lookup.
     public func dueQuestions(at date: Date, asksPitch: @autoclosure () -> Bool) -> [Question] {
@@ -134,9 +130,8 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         log.filter { $0.question == question && $0.grade == grade }.count
     }
 
-    // The first cards were written with the reading's state only; the modified date and
-    // the log came later, and read as the latest sighting and empty. A card from before
-    // the lessons is in review if it was ever reviewed, else it waits.
+    // A missing `modified` reads as the latest sighting, a missing log as empty, and a card
+    // with no `started` is in review if it was ever reviewed, else it waits.
     private enum CodingKeys: String, CodingKey {
         case id, headword, reading, entryID, sightings, created, modified, review, meaningReview
         case pitchReview, log, acceptedMeanings, started, shelved, collectionIDs
@@ -248,7 +243,7 @@ public struct Sighting: Identifiable, Hashable, Codable, Sendable {
 
     private enum CodingKeys: String, CodingKey {
         case id, sentence, surface, offset, stillIDs, cropID, source, date
-        // The one-still shape of the first cards, and the two-still one after it.
+        // Earlier shapes of `stillIDs`, still read: one still, or a still and its continuation.
         case stillID, continuationStillID
     }
 

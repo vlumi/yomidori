@@ -114,11 +114,10 @@ final class FileCardStoreTests: XCTestCase {
         let now = Date(timeIntervalSince1970: 1_700_000_000)
         XCTAssertTrue(card.isWaiting)
         XCTAssertEqual(store.waiting().map(\.id), [card.id])
-        XCTAssertTrue(store.due(at: now).isEmpty)
         XCTAssertTrue(store.dueItems(at: now).isEmpty)
         card.start(at: now)
         try store.update(card)
-        XCTAssertEqual(store.due(at: now).map(\.id), [card.id])
+        XCTAssertEqual(store.dueItems(at: now).map(\.card.id), [card.id, card.id])
         XCTAssertTrue(store.waiting().isEmpty)
         card.answer(.reading, grade: .good, at: now)
         card.sendToWaiting()
@@ -132,20 +131,21 @@ final class FileCardStoreTests: XCTestCase {
         XCTAssertTrue(FileCardStore(url: url).cards()[0].shelved)
     }
 
-    func testANewCardIsDueAndAReviewedOneWaitsUntilItsDate() throws {
+    func testANewQuestionIsDueAndAnAnsweredOneWaitsUntilItsDate() throws {
         let store = FileCardStore(url: url)
         var card = try store.keep(
             sighting("樹皮の匂いがした。", "樹皮"), headword: "樹皮", reading: "じゅひ", entryID: nil)
         let now = Date(timeIntervalSince1970: 1_700_000_000)
         card.start(at: now)
         try store.update(card)
-        XCTAssertEqual(store.due(at: now).map(\.id), [card.id])
+        XCTAssertEqual(store.dueItems(at: now).map(\.question), [.reading, .meaning])
         card.review = FSRS.review(nil, grade: .good, at: now)
         try store.update(card)
-        XCTAssertTrue(store.due(at: now).isEmpty)
+        XCTAssertEqual(store.dueItems(at: now).map(\.question), [.meaning])
         XCTAssertEqual(
-            FileCardStore(url: url).due(at: now.addingTimeInterval(4 * 86_400)).map(\.id), [card.id]
-        )
+            FileCardStore(url: url).dueItems(at: now.addingTimeInterval(4 * 86_400)).map(
+                \.question),
+            [.reading, .meaning])
     }
 
     func testTheOldOneStillShapeStillDecodes() throws {
