@@ -70,14 +70,16 @@ use for its own input.
   picker it is decoded upright. A still also comes from the photo picker, which
   is how a screenshot enters and how the simulator, having no camera, is used.
   Two recognizers run over every still, both shipped with the OS and both on
-  device: `TextRecognizer` wraps Vision's `VNRecognizeTextRequest` for Japanese
-  and yields `RecognizedLine`s, drawn back over the page, tap one to read it;
-  `LiveText` wraps VisionKit's `ImageAnalyzer`, the Live Text engine, which
-  yields a transcript and, on iOS, its own text selection over the image. A
-  third mode reads *up close*: a tap cuts the line under it, as the page pass
+  device: `TextRecognizer` wraps Vision's `RecognizeDocumentsRequest` (iOS 26)
+  for Japanese and yields `RecognizedLine`s with their boxes, vertical columns
+  included (confirmed on a paperback, 2026-09-22; the older text request, which
+  never read vertical print, is gone), drawn back over the page, tap one to
+  read it; `LiveText` wraps VisionKit's `ImageAnalyzer`, the Live Text engine,
+  which yields a transcript and, on iOS, its own text selection over the image.
+  A third mode reads *up close*: a tap cuts the line under it, as the page pass
   found it, out of the still at full resolution with the paper around it, and
-  both engines read only that; where no line was found (a vertical column, which
-  only Live Text reads and without positions) a square around the tap stands in.
+  both engines read only that; where no line was found a square around the tap
+  stands in.
   Recognizers downscale a whole page before reading, so a dense kanji reaches
   them at a fraction of the pixels the sensor caught; the crop hands them the
   pixels back without the reader zooming, and a whole line with clean margins
@@ -172,7 +174,7 @@ use for its own input.
   recognized lines whose text is part of it, padded by a line's thickness; a line
   counts when a run of it is in the sentence, six characters or six tenths of the
   shorter, since the recognizer and the sentence rarely agree on every character.
-  Nil where no line matches, the vertical case, and the whole still stands in.
+  Nil where no line matches, and the whole still stands in.
 - **Keeping a word** (Kit): *Keep* on a word's row saves the sentence it stands
   in, as `Sentence` cuts it, with the word's form and offset, into the current
   collection. The page still and the crop of the sentence's lines (`LineCrop`,
@@ -334,22 +336,21 @@ reasoning behind it. The [ROADMAP.md](ROADMAP.md) says in which order it is trie
 
 ### Capture: positions on a vertical page
 
-Live Text is the recognizer: on a real paperback (2026-09-21) it read the
-vertical Mincho columns where Vision's text request read nothing, and its own
-selection over the still is the tap. What it withholds is positions: the app
-gets the selected text and its range into the transcript, not where anything
-sits in the photo, so on a vertical page the sentence crop, an own tap-to-token
-highlight and a furigana filter by height all have nothing to work with; the
-readout, Keep and the sentences work from the text alone. Two routes to
-positions, neither built: Apple's `RecognizeDocumentsRequest` (iOS 26), which
-returns lines with boxes as document structure and which Vision mode now tries
-first as an experiment, the phone deciding whether it reads vertical Japanese;
-and manga-ocr over a whole page, which needs the page cut into columns from the
-pixels first (a projection profile), after which the columns are the positions
-and manga-ocr a true second reading of the page rather than of a window. If the
-document request works, Vision's old request goes; if not, Vision goes anyway
-once the column finder exists, and the Close-up mode, which the reader never
-used, with it.
+Live Text is the recognizer a page opens in: its own selection over the still
+is the tap, and the readout, Keep and the sentences work from its text. What it
+withholds is positions, and Vision's `RecognizeDocumentsRequest` (iOS 26)
+supplies them: on a real paperback (2026-09-22) it read the vertical Mincho
+columns as lines with boxes, where the older text request, now gone, read
+nothing vertical. Each line comes with its direction and a box for any range of
+its text, so the sentence crop works on a vertical page as on a horizontal one.
+Still to build on the boxes: the app's own tap-to-token highlight in Vision
+mode, the tap landing on a character, the line cut into words, the word lit on
+the page and read out below; and a furigana filter by height, dropping the thin
+ruby lines beside the columns, if the request returns them as lines of their
+own. Once the tap on the page is the app's own, whether Live Text's selection
+stays the default is a field question. manga-ocr over a whole page remains
+possible as a second reading, the boxes cutting the page into the lines it
+reads, but no longer stands between the app and positions.
 
 The recognized characters are shown as editable text on the card, so an OCR
 error is a one-character fix there; the same on the page itself is still to do.

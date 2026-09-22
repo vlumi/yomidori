@@ -7,8 +7,9 @@ how to *work on* the repo, for humans and AI agents alike.
 **Alpha on TestFlight** (builds 1–7, 2026-09-17 to 22), nothing on the App
 Store yet. The first form of the whole app exists and has been read with on a
 real paperback; ARCHITECTURE.md's *What exists* is the inventory, ROADMAP.md
-what remains, and the spike's one open question, positions on a vertical page,
-heads the roadmap. Work goes in PR-sized chunks, one concern each, with a
+what remains; the spike is answered (Vision's document request reads a
+vertical page with boxes, 2026-09-22) and the tap built on those boxes heads
+the roadmap. Work goes in PR-sized chunks, one concern each, with a
 CHANGELOG bullet under *Unreleased* for anything a reader would notice.
 
 Separate project from its siblings [Donpa Squad](https://github.com/vlumi/donpa)

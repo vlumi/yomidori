@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Vision reads a vertical page.** In Vision mode a paperback's columns come back as lines with their places on the page, so a column is tapped as a line is and a kept sentence's crop is cut from a vertical page as from a horizontal one; the older text request, which never read vertical print, is gone, and the percentage under a tapped line is the request's own confidence.
 - **A collection's tags are chips.** On the collection screen the name and note rows say what they are, and the tags show as chips you remove with a tap, add from a field, or pick from the ones other collections use.
 - **Room in the drawer.** The Retake and Add-next-page buttons are gone from under a page: the next page is the + at the picture's bottom left, just above the drawer; a retake is a tap on Read while you are on it; and while a spread is open, an × with the page count sits at the top of the picture to start over.
 - **The collection's name under a page** truncates instead of squeezing its icon, and changing it no longer reflows the row.
