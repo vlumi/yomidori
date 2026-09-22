@@ -123,7 +123,6 @@ public struct CaptureView: View {
             }
         }
         .frame(width: area.width, height: area.height)
-        .frame(maxHeight: .infinity, alignment: .top)
         .overlay(alignment: .bottomTrailing) {
             ZoomButtons { factor in zoomPage(by: factor, in: area) }
                 .padding(.trailing, 12)
@@ -156,6 +155,9 @@ public struct CaptureView: View {
         }
         // Tapping Read while a page is up is the retake; the drawer had no room for a button.
         .onTabReselect(.read) { retake() }
+        // The tall frame comes after the overlays, or they align to the screen's bottom and
+        // sit under the drawer, unseen.
+        .frame(maxHeight: .infinity, alignment: .top)
     }
 
     /// The drawer comes to rest at a detent; the page follows.
