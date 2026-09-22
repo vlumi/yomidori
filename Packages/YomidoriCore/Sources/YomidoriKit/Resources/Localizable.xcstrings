@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%lld good · %lld again" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正解 %lld · もう一度 %lld"
+          }
+        }
+      }
+    },
     "%lld strokes" : {
       "localizations" : {
         "ja" : {
@@ -27,6 +37,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "次のページを足す"
+          }
+        }
+      }
+    },
+    "Added" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加"
           }
         }
       }
@@ -127,6 +147,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正解"
+          }
+        }
+      }
+    },
+    "Correct the sentence" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文を直す"
           }
         }
       }
@@ -371,6 +401,16 @@
         }
       }
     },
+    "Modified" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新"
+          }
+        }
+      }
+    },
     "Name kanji" : {
       "localizations" : {
         "ja" : {
@@ -461,6 +501,16 @@
         }
       }
     },
+    "Pitch" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクセント"
+          }
+        }
+      }
+    },
     "Point at a word, get its reading." : {
       "localizations" : {
         "ja" : {
@@ -487,6 +537,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "読む"
+          }
+        }
+      }
+    },
+    "Reading" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み"
           }
         }
       }

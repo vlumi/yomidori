@@ -78,7 +78,7 @@ public final class FileCardStore: CardStore {
             if let index = cards.firstIndex(where: {
                 $0.headword == headword && $0.reading == reading
             }) {
-                cards[index].sightings.append(sighting)
+                cards[index].add(sighting)
                 card = cards[index]
             } else {
                 card = Card(

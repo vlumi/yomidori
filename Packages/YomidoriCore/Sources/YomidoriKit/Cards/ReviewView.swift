@@ -146,9 +146,7 @@ struct ReviewView: View {
 
     private func record(_ item: ReviewItem, _ grade: Grade) {
         var reviewed = item.card
-        reviewed.setState(
-            FSRS.review(item.card.state(for: item.question), grade: grade, at: Date()),
-            for: item.question)
+        reviewed.answer(item.question, grade: grade, at: Date())
         try? Cards.store?.update(reviewed)
         revealed = false
         answer = ""

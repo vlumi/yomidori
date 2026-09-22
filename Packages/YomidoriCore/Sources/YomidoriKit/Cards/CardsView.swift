@@ -38,7 +38,7 @@ struct CardsView: View {
                             Text(verbatim: card.reading)
                                 .foregroundStyle(Palette.nightGreen)
                             Spacer()
-                            Text(verbatim: "\(card.sightings.count)")
+                            Text(card.modified, format: .relative(presentation: .named))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }

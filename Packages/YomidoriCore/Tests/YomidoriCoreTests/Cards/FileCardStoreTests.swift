@@ -45,6 +45,42 @@ final class FileCardStoreTests: XCTestCase {
         XCTAssertEqual(store.cards()[0].created, first.sightings[0].date)
     }
 
+    func testTheModifiedDateFollowsTheContentNotTheReviews() throws {
+        let store = FileCardStore(url: url)
+        let first = try store.keep(
+            sighting("彼女は黙って頷いた。", "頷い"), headword: "頷く", reading: "うなずく", entryID: nil)
+        XCTAssertEqual(first.modified, Date(timeIntervalSince1970: 1_000_000))
+        let later = Date(timeIntervalSince1970: 2_000_000)
+        var card = try store.keep(
+            sighting("僕は頷いた。", "頷い", date: later), headword: "頷く", reading: "うなずく",
+            entryID: nil)
+        XCTAssertEqual(card.modified, later)
+        card.answer(.reading, grade: .good, at: Date(timeIntervalSince1970: 3_000_000))
+        XCTAssertEqual(card.modified, later)
+        card.replace(
+            card.sightings[0].withSentence("彼女は頷いた。"), at: Date(timeIntervalSince1970: 4_000_000))
+        XCTAssertEqual(card.modified, Date(timeIntervalSince1970: 4_000_000))
+        try store.update(card)
+        XCTAssertEqual(FileCardStore(url: url).cards()[0].modified, card.modified)
+    }
+
+    func testEveryAnswerIsLogged() throws {
+        var card = try FileCardStore(url: url).keep(
+            sighting("樹皮の匂いがした。", "樹皮"), headword: "樹皮", reading: "じゅひ", entryID: nil)
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        card.answer(.reading, grade: .again, at: now)
+        card.answer(.reading, grade: .good, at: now.addingTimeInterval(600), reconciled: true)
+        card.answer(.meaning, grade: .good, at: now)
+        XCTAssertEqual(card.log.map(\.grade), [.again, .good, .good])
+        XCTAssertEqual(card.log[1].reconciled, true)
+        XCTAssertEqual(card.answers(to: .reading, graded: .good), 1)
+        XCTAssertEqual(card.answers(to: .reading, graded: .again), 1)
+        XCTAssertEqual(card.review?.reviews, 2)
+        XCTAssertEqual(card.meaningReview?.reviews, 1)
+        try FileCardStore(url: url).update(card)
+        XCTAssertEqual(FileCardStore(url: url).cards()[0].log.count, 3)
+    }
+
     func testTheSameKanjiWithAnotherReadingIsAnotherCard() throws {
         let store = FileCardStore(url: url)
         try store.keep(sighting("生地を買った。", "生地"), headword: "生地", reading: "きじ", entryID: 1)
@@ -97,6 +133,8 @@ final class FileCardStoreTests: XCTestCase {
         let card = try XCTUnwrap(FileCardStore(url: url).cards().first)
         XCTAssertEqual(card.sightings[0].stillIDs, [still])
         XCTAssertNil(card.sightings[0].cropID)
+        XCTAssertEqual(card.modified, card.sightings[0].date)
+        XCTAssertEqual(card.log, [])
     }
 
     func testEachQuestionIsItsOwnItemWithItsOwnSchedule() throws {
