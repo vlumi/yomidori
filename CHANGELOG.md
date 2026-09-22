@@ -16,6 +16,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 - **Both answers on a card count.** Answering a card's second question in a review no longer wipes the first one's schedule and log line, which it did whenever a card's reading and meaning came up in the same session.
 - **The button under the live image says what it does.** It reads *Read the page* under the text-scanning glyph, in place of a camera's shutter disc, and the cover scan's says *Scan the cover*; the volume buttons and the Camera Control freeze the page as before.
+- **About credits everything bundled.** KANJIDIC2, KRADFILE, KanjiVG and manga-ocr join the list on the About screen; the notices name manga-ocr's license right, Apache 2.0, and a stray mark is gone from IPADic's.
 - **The word is marked where it is.** A word kept from a sentence that opens a paragraph is no longer marked one character too far on its card: the indent before the sentence is not counted.
 - **Vision reads a vertical page.** In Vision mode a paperback's columns come back as lines with their places on the page, so a column is tapped as a line is and a kept sentence's crop is cut from a vertical page as from a horizontal one; the older text request, which never read vertical print, is gone, and the percentage under a tapped line is the request's own confidence.
 - **A collection's tags are chips.** On the collection screen the name and note rows say what they are, and the tags show as chips you remove with a tap, add from a field, or pick from the ones other collections use.

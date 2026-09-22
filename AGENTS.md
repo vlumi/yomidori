@@ -84,8 +84,8 @@ describing intent as fact otherwise.
   the model to Core ML into `Sources/Shared/Models/` (~210 MB, gitignored) with
   Homebrew's `python@3.13` and a local venv; the app hides the engine when the
   models are absent, so CI and a fresh clone build without them, and a release
-  cut without them ships without the engine (the preflight says so). MIT; the
-  notice is in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+  cut without them ships without the engine (the preflight says so). Apache
+  2.0; the notice is in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 - **Third-party code at runtime: none by default.** Everything ships with the OS
   (Foundation, SwiftUI, UIKit, Vision, AVFoundation). The one exception is
   MeCab with IPADic (the Mecab-Swift package, pinned to a commit), which is in

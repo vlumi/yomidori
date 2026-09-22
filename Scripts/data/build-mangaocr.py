@@ -3,7 +3,7 @@
 
     Scripts/data/build-mangaocr.py [--output DIR]
 
-manga-ocr (https://github.com/kha-white/manga-ocr, MIT) is a vision transformer
+manga-ocr (https://github.com/kha-white/manga-ocr, Apache 2.0) is a vision transformer
 encoder with a small BERT decoder, trained to read one line or bubble of Japanese
 at a time, vertical included. The encoder converts as it is; the decoder is
 re-expressed here as one cache-free step, the BERT layers called directly with an
