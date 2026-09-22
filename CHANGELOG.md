@@ -15,7 +15,6 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 ### Unreleased (next build)
 
 - **Room in the drawer.** The Retake and Add-next-page buttons are gone from under a page: the next page is the + at the picture's bottom left, just above the drawer; a retake is a tap on Read while you are on it; and while a spread is open, an × with the page count sits at the top of the picture to start over.
-- **Ranks as a chart.** Study draws the ranks as bars from the nest up to the migrating bird, each with its own colour and mark; touch a bar for its number. The nest is the floor now, the egg next. Cards carry their rank's mark in the list and on the card.
 - **Ranks as a chart.** Study draws the ranks as bars from the nest up to the migrating bird, each in its own colour; touch a bar for its number. The nest is the floor now, the egg next. A rank is numbered 0 to 6, the nest to the migrating bird, on a dot of its colour, on the chart, in the list and on the card.
 - **A tap on the tab you are on** goes back to its first screen and to the top of its list, as elsewhere on iOS; on Read it scrolls the drawer to the top of the words and leaves the page alone.
 - **The drawer comes to rest.** Let go and it settles at the nearest of three heights, a strip, half, or most of the screen; a double tap on its handle takes it to the largest and back.
