@@ -2,7 +2,7 @@ import SwiftUI
 import YomidoriCore
 import YomidoriDictionary
 
-/// The landing screen: what is due, then the cards kept so far, newest first.
+/// The landing screen: what is due and what waits, then the cards by stack.
 struct CardsView: View {
     @State private var cards: [Card] = []
     @State private var dueCount = 0
@@ -24,34 +24,24 @@ struct CardsView: View {
                     Text("Nothing due. Read on.", bundle: .module)
                         .foregroundStyle(.secondary)
                 }
-            }
-            Section {
-                if cards.isEmpty {
-                    Text("No cards yet. Tap a word under a page and keep it.", bundle: .module)
-                        .foregroundStyle(.secondary)
-                }
-                ForEach(cards) { card in
-                    NavigationLink(value: card) {
-                        HStack(alignment: .firstTextBaseline, spacing: 12) {
-                            Text(verbatim: card.headword)
-                                .font(.title3)
-                            Text(verbatim: card.reading)
-                                .foregroundStyle(Palette.nightGreen)
-                            Spacer()
-                            Text(card.modified, format: .relative(presentation: .named))
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                let waiting = cards.filter(\.isWaiting).count
+                if waiting > 0 {
+                    NavigationLink(value: Screen.lesson) {
+                        Label {
+                            Text("Lesson · \(waiting) waiting", bundle: .module)
+                        } icon: {
+                            Image(systemName: "book")
                         }
+                        .font(.title3)
                     }
                 }
-                .onDelete { offsets in
-                    for index in offsets {
-                        try? Cards.store?.remove(cards[index])
-                    }
-                    reload()
-                }
-            } header: {
-                Text("Cards", bundle: .module)
+            }
+            stack(cards.filter(\.isInReview), header: Text("In review", bundle: .module))
+            stack(cards.filter(\.isWaiting), header: Text("Waiting", bundle: .module))
+            stack(cards.filter(\.shelved), header: Text("Shelved", bundle: .module))
+            if cards.isEmpty {
+                Text("No cards yet. Tap a word under a page and keep it.", bundle: .module)
+                    .foregroundStyle(.secondary)
             }
         }
         .navigationTitle(Text(verbatim: "ヨミドリ"))
@@ -76,8 +66,43 @@ struct CardsView: View {
         .onAppear(perform: reload)
     }
 
+    @ViewBuilder private func stack(_ cards: [Card], header: Text) -> some View {
+        if !cards.isEmpty {
+            Section {
+                ForEach(cards) { card in
+                    NavigationLink(value: card) { CardRow(card: card) }
+                }
+                .onDelete { offsets in
+                    for index in offsets {
+                        try? Cards.store?.remove(cards[index])
+                    }
+                    reload()
+                }
+            } header: {
+                header
+            }
+        }
+    }
+
     private func reload() {
         cards = (Cards.store?.cards() ?? []).sorted { $0.created > $1.created }
         dueCount = Cards.dueItems(at: Date()).count
+    }
+}
+
+struct CardRow: View {
+    let card: Card
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
+            Text(verbatim: card.headword)
+                .font(.title3)
+            Text(verbatim: card.reading)
+                .foregroundStyle(Palette.nightGreen)
+            Spacer()
+            Text(card.modified, format: .relative(presentation: .named))
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
     }
 }

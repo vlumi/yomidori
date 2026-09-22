@@ -107,11 +107,38 @@ final class FileCardStoreTests: XCTestCase {
         XCTAssertEqual(FileCardStore(url: url).cards(), [])
     }
 
+    func testAKeptCardWaitsUntilALessonStartsIt() throws {
+        let store = FileCardStore(url: url)
+        var card = try store.keep(
+            sighting("樹皮の匂いがした。", "樹皮"), headword: "樹皮", reading: "じゅひ", entryID: nil)
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        XCTAssertTrue(card.isWaiting)
+        XCTAssertEqual(store.waiting().map(\.id), [card.id])
+        XCTAssertTrue(store.due(at: now).isEmpty)
+        XCTAssertTrue(store.dueItems(at: now).isEmpty)
+        card.start(at: now)
+        try store.update(card)
+        XCTAssertEqual(store.due(at: now).map(\.id), [card.id])
+        XCTAssertTrue(store.waiting().isEmpty)
+        card.answer(.reading, grade: .good, at: now)
+        card.sendToWaiting()
+        XCTAssertTrue(card.isWaiting)
+        XCTAssertNil(card.review)
+        XCTAssertEqual(card.log.count, 1)
+        card.shelve()
+        XCTAssertFalse(card.isWaiting)
+        XCTAssertFalse(card.isInReview)
+        try store.update(card)
+        XCTAssertTrue(FileCardStore(url: url).cards()[0].shelved)
+    }
+
     func testANewCardIsDueAndAReviewedOneWaitsUntilItsDate() throws {
         let store = FileCardStore(url: url)
         var card = try store.keep(
             sighting("樹皮の匂いがした。", "樹皮"), headword: "樹皮", reading: "じゅひ", entryID: nil)
         let now = Date(timeIntervalSince1970: 1_700_000_000)
+        card.start(at: now)
+        try store.update(card)
         XCTAssertEqual(store.due(at: now).map(\.id), [card.id])
         card.review = FSRS.review(nil, grade: .good, at: now)
         try store.update(card)
@@ -142,6 +169,8 @@ final class FileCardStoreTests: XCTestCase {
         var card = try store.keep(
             sighting("樹皮の匂いがした。", "樹皮"), headword: "樹皮", reading: "じゅひ", entryID: nil)
         let now = Date(timeIntervalSince1970: 1_700_000_000)
+        card.start(at: now)
+        try store.update(card)
         XCTAssertEqual(store.dueItems(at: now).map(\.question), [.reading, .meaning])
         XCTAssertEqual(
             store.dueItems(at: now, asksPitch: { _ in true }).map(\.question),
@@ -157,14 +186,28 @@ final class FileCardStoreTests: XCTestCase {
         XCTAssertNil(reopened.review)
     }
 
-    func testACardWrittenWithTheMeaningToggleStillDecodes() throws {
+    func testACardWrittenWithTheMeaningToggleStillDecodesAndWaits() throws {
         let old = """
             [{"id":"\(UUID().uuidString)","headword":"樹皮","reading":"じゅひ","entryID":1,
               "created":"2026-09-18T00:00:00Z","asksMeaning":false,"sightings":[]}]
             """
         try old.write(to: url, atomically: true, encoding: .utf8)
         let card = try XCTUnwrap(FileCardStore(url: url).cards().first)
-        XCTAssertEqual(card.dueQuestions(at: Date(), asksPitch: false), [.reading, .meaning])
+        XCTAssertTrue(card.isWaiting)
+        XCTAssertEqual(card.dueQuestions(at: Date(), asksPitch: false), [])
+    }
+
+    func testACardReviewedBeforeTheLessonsCountsAsStarted() throws {
+        let old = """
+            [{"id":"\(UUID().uuidString)","headword":"樹皮","reading":"じゅひ","entryID":1,
+              "created":"2026-09-18T00:00:00Z","sightings":[],
+              "review":{"stability":3.1,"difficulty":5,"due":"2026-09-21T00:00:00Z",
+                        "lastReview":"2026-09-18T00:00:00Z","reviews":1,"lapses":0}}]
+            """
+        try old.write(to: url, atomically: true, encoding: .utf8)
+        let card = try XCTUnwrap(FileCardStore(url: url).cards().first)
+        XCTAssertTrue(card.isInReview)
+        XCTAssertEqual(card.started, card.review?.lastReview)
     }
 
     func testTheFileIsReadableJSON() throws {

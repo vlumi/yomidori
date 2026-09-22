@@ -20,6 +20,10 @@ public struct ReviewItem: Hashable, Sendable {
 }
 
 extension CardStore {
+    public func waiting() -> [Card] {
+        cards().filter(\.isWaiting)
+    }
+
     /// The longest overdue first, then the oldest.
     public func due(at date: Date) -> [Card] {
         cards().filter { $0.isDue(at: date) }
