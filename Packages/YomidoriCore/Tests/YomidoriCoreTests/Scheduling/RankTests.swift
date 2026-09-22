@@ -24,5 +24,7 @@ final class RankTests: XCTestCase {
         card.shelve()
         XCTAssertEqual(card.rank, .nest)
         XCTAssertTrue(Rank.egg < Rank.migrating)
+        XCTAssertTrue(Rank.nest < Rank.egg)
+        XCTAssertEqual(Rank.allCases.first, .nest)
     }
 }

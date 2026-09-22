@@ -1,15 +1,15 @@
 import Foundation
 
-/// How far a card has come, in birds: bands on the reading's stability. Nothing retires; a
-/// migrating bird still comes back.
+/// How far a card has come, in birds: bands on the reading's stability. The nest, the shelf,
+/// is the floor; the egg waits; nothing retires, a migrating bird still comes back.
 public enum Rank: Int, CaseIterable, Comparable, Sendable {
+    case nest
     case egg
     case hatchling
     case chick
     case fledgling
     case flying
     case migrating
-    case nest
 
     /// The days of stability a rank begins at.
     public static let bands: [(rank: Rank, days: Double)] = [
