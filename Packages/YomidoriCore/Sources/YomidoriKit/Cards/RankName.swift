@@ -18,13 +18,18 @@ struct RankName: View {
     }
 }
 
-/// A rank's symbol in its colour.
+/// A rank as its number, 0 for the nest to 6 for the migrating bird, on a dot of its colour;
+/// the one mark that reads at any size until a bird is drawn for each.
 struct RankMark: View {
     let rank: Rank
+    var size: CGFloat = 26
 
     var body: some View {
-        Image(systemName: rank.symbol)
-            .foregroundStyle(rank.color)
+        Text(verbatim: "\(rank.rawValue)")
+            .font(.system(size: size * 0.7, weight: .bold, design: .rounded))
+            .foregroundStyle(.white)
+            .frame(width: size, height: size)
+            .background(rank.color, in: Circle())
     }
 }
 
@@ -40,18 +45,6 @@ extension Rank {
         case .fledgling: return Palette.nightGreen
         case .flying: return Color(red: 0.12, green: 0.42, blue: 0.50)
         case .migrating: return Color(red: 0.16, green: 0.28, blue: 0.58)
-        }
-    }
-
-    var symbol: String {
-        switch self {
-        case .nest: return "basket"
-        case .egg: return "oval.portrait.fill"
-        case .hatchling: return "bird"
-        case .chick: return "bird.fill"
-        case .fledgling: return "leaf"
-        case .flying: return "wind"
-        case .migrating: return "location.north.line"
         }
     }
 }

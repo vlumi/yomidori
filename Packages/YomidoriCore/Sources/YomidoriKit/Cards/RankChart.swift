@@ -24,16 +24,17 @@ struct RankChart: View {
         let bars = bars
         let shown = bars.first { $0.key == selected } ?? bars.max { $0.count < $1.count }
         VStack(alignment: .leading, spacing: 8) {
-            if let shown {
-                HStack(spacing: 8) {
+            HStack(spacing: 8) {
+                if let shown {
                     RankMark(rank: shown.rank)
                     RankName(rank: shown.rank)
                     Text(verbatim: "\(shown.count)")
                         .foregroundStyle(shown.rank.color)
                         .fontWeight(.semibold)
                 }
-                .font(.callout)
             }
+            .font(.callout)
+            .frame(height: 30)
             Chart(bars) { bar in
                 BarMark(x: .value("Rank", bar.key), y: .value("Cards", bar.count))
                     .foregroundStyle(
@@ -48,7 +49,7 @@ struct RankChart: View {
                         if let key = value.as(String.self), let raw = Int(key),
                             let rank = Rank(rawValue: raw)
                         {
-                            RankMark(rank: rank).font(.caption)
+                            RankMark(rank: rank, size: 24)
                         }
                     }
                 }
