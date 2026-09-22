@@ -46,8 +46,9 @@ public struct Sentence: Equatable, Sendable {
         return around(first, in: text)
     }
 
+    /// Into `text` as `joined` made it: the paragraph indent before the sentence is not counted.
     public func offset(of index: String.Index, in text: String) -> Int {
-        text[range.lowerBound..<index].filter { !$0.isNewline }.count
+        text[range.lowerBound..<index].filter { !$0.isNewline }.drop(while: \.isWhitespace).count
     }
 
     private static func joined(_ slice: Substring) -> String {
