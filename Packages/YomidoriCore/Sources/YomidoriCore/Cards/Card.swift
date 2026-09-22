@@ -65,11 +65,12 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     }
 
     /// The reading and the meaning are always asked; the pitch only when it is known.
-    public func dueQuestions(at date: Date, asksPitch: Bool) -> [Question] {
+    /// `asksPitch` is asked only when the pitch question is due, since it costs a lookup.
+    public func dueQuestions(at date: Date, asksPitch: @autoclosure () -> Bool) -> [Question] {
         guard isInReview else { return [] }
         return Question.allCases.filter { question in
-            (question != .pitch || asksPitch)
-                && (state(for: question).map { $0.due <= date } ?? true)
+            (state(for: question).map { $0.due <= date } ?? true)
+                && (question != .pitch || asksPitch())
         }
     }
 

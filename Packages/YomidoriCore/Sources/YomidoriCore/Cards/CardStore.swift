@@ -76,6 +76,8 @@ public final class FileCardStore: CardStore {
     public let url: URL
     private var loaded: [Card]?
     private let queue = DispatchQueue(label: "fi.misaki.yomidori.cards")
+    /// Called after every write, outside the store's lock, so a listener may read back.
+    public var didChange: (() -> Void)?
 
     public init(url: URL) {
         self.url = url
@@ -101,7 +103,7 @@ public final class FileCardStore: CardStore {
     public func keep(
         _ sighting: Sighting, headword: String, reading: String, entryID: Int?, collection: UUID?
     ) throws -> Card {
-        try queue.sync {
+        let kept = try queue.sync { () -> Card in
             var cards = all()
             let index: Int
             if let found = cards.firstIndex(where: {
@@ -120,12 +122,15 @@ public final class FileCardStore: CardStore {
             try save(cards)
             return cards[index]
         }
+        didChange?()
+        return kept
     }
 
     public func remove(_ card: Card) throws {
         try queue.sync {
             try save(all().filter { $0.id != card.id })
         }
+        didChange?()
     }
 
     public func update(_ card: Card) throws {
@@ -135,6 +140,7 @@ public final class FileCardStore: CardStore {
             cards[index] = card
             try save(cards)
         }
+        didChange?()
     }
 
     private func all() -> [Card] {
