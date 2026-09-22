@@ -61,6 +61,16 @@
         }
       }
     },
+    "Add" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加"
+          }
+        }
+      }
+    },
     "Add as an answer" : {
       "localizations" : {
         "ja" : {
@@ -97,6 +107,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "もう一度"
+          }
+        }
+      }
+    },
+    "All cards" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべてのカード"
           }
         }
       }
@@ -187,6 +207,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "拡大"
+          }
+        }
+      }
+    },
+    "Collection" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コレクション"
+          }
+        }
+      }
+    },
+    "Collections" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コレクション"
           }
         }
       }
@@ -601,6 +641,16 @@
         }
       }
     },
+    "Name" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前"
+          }
+        }
+      }
+    },
     "Name kanji" : {
       "localizations" : {
         "ja" : {
@@ -617,6 +667,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "巣"
+          }
+        }
+      }
+    },
+    "New collection" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しいコレクション"
+          }
+        }
+      }
+    },
+    "New collection…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しいコレクション…"
           }
         }
       }
@@ -651,12 +721,42 @@
         }
       }
     },
+    "No collection" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コレクションなし"
+          }
+        }
+      }
+    },
+    "No collections yet. A book, say." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コレクションはまだありません。本ごとに、など。"
+          }
+        }
+      }
+    },
     "No matches." : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "見つかりません。"
+          }
+        }
+      }
+    },
+    "None chosen means all of them." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "何も選ばなければすべてから。"
           }
         }
       }
@@ -867,6 +967,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "写真を消す"
+          }
+        }
+      }
+    },
+    "Rename" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前を変える"
           }
         }
       }

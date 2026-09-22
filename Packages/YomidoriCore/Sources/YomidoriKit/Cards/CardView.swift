@@ -19,6 +19,7 @@ struct CardView: View {
                 }
             }
             WordSections(headword: card.headword, details: details)
+            CardCollections(card: $card) { try? Cards.store?.update(card) }
             CardActions(card: $card) { try? Cards.store?.update(card) }
             AcceptedMeanings(card: $card) { try? Cards.store?.update(card) }
             CardFacts(card: card)

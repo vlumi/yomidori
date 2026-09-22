@@ -6,6 +6,8 @@ import YomidoriDictionary
 struct CardsView: View {
     @State private var cards: [Card] = []
     @State private var dueCount = 0
+    @State private var collections: [Collection] = []
+    @State private var filter: UUID?
 
     var body: some View {
         List {
@@ -35,15 +37,23 @@ struct CardsView: View {
                         .font(.title3)
                     }
                 }
-            }
-            if !cards.isEmpty {
-                Section {
-                    RankCounts(cards: cards)
+                NavigationLink(value: Screen.collections) {
+                    Label {
+                        Text("Collections", bundle: .module)
+                    } icon: {
+                        Image(systemName: "books.vertical")
+                    }
                 }
             }
-            stack(cards.filter(\.isInReview), header: Text("In review", bundle: .module))
-            stack(cards.filter(\.isWaiting), header: Text("Waiting", bundle: .module))
-            stack(cards.filter(\.shelved), header: Text("Shelved", bundle: .module))
+            let shown = cards.filter { filter.map($0.collectionIDs.contains) ?? true }
+            if !shown.isEmpty {
+                Section {
+                    RankCounts(cards: shown)
+                }
+            }
+            stack(shown.filter(\.isInReview), header: Text("In review", bundle: .module))
+            stack(shown.filter(\.isWaiting), header: Text("Waiting", bundle: .module))
+            stack(shown.filter(\.shelved), header: Text("Shelved", bundle: .module))
             if cards.isEmpty {
                 Text("No cards yet. Tap a word under a page and keep it.", bundle: .module)
                     .foregroundStyle(.secondary)
@@ -52,6 +62,27 @@ struct CardsView: View {
         .navigationTitle(Text(verbatim: "ヨミドリ"))
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
+                if !collections.isEmpty {
+                    Menu {
+                        Picker(selection: $filter) {
+                            Text("All cards", bundle: .module).tag(UUID?.none)
+                            ForEach(collections) { collection in
+                                Text(verbatim: collection.name).tag(UUID?.some(collection.id))
+                            }
+                        } label: {
+                            Text("Collection", bundle: .module)
+                        }
+                    } label: {
+                        Label {
+                            Text("Collection", bundle: .module)
+                        } icon: {
+                            Image(
+                                systemName: filter == nil
+                                    ? "line.3.horizontal.decrease.circle"
+                                    : "line.3.horizontal.decrease.circle.fill")
+                        }
+                    }
+                }
                 NavigationLink(value: Screen.settings) {
                     Label {
                         Text("Settings", bundle: .module)
@@ -92,6 +123,7 @@ struct CardsView: View {
     private func reload() {
         cards = (Cards.store?.cards() ?? []).sorted { $0.created > $1.created }
         dueCount = Cards.dueItems(at: Date()).count
+        collections = Cards.collections?.collections() ?? []
     }
 }
 

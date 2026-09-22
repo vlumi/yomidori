@@ -8,4 +8,5 @@ enum Screen: Hashable, Codable {
     case about
     case settings
     case lesson
+    case collections
 }

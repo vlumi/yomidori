@@ -22,13 +22,15 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     public private(set) var started: Date?
     /// Kept for the record and never reviewed: a name, a place.
     public private(set) var shelved: Bool
+    /// The collections the card is in, a book each usually; none is fine.
+    public var collectionIDs: [UUID]
 
     public init(
         id: UUID = UUID(), headword: String, reading: String, entryID: Int?,
         sightings: [Sighting], created: Date, modified: Date? = nil, review: ReviewState? = nil,
         meaningReview: ReviewState? = nil, pitchReview: ReviewState? = nil,
         log: [ReviewEntry] = [], acceptedMeanings: [String] = [], started: Date? = nil,
-        shelved: Bool = false
+        shelved: Bool = false, collectionIDs: [UUID] = []
     ) {
         self.id = id
         self.headword = headword
@@ -44,6 +46,15 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         self.acceptedMeanings = acceptedMeanings
         self.started = started
         self.shelved = shelved
+        self.collectionIDs = collectionIDs
+    }
+
+    public mutating func add(to collection: UUID) {
+        if !collectionIDs.contains(collection) { collectionIDs.append(collection) }
+    }
+
+    public mutating func remove(from collection: UUID) {
+        collectionIDs.removeAll { $0 == collection }
     }
 
     public var isWaiting: Bool { started == nil && !shelved }
@@ -127,7 +138,7 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     // the lessons is in review if it was ever reviewed, else it waits.
     private enum CodingKeys: String, CodingKey {
         case id, headword, reading, entryID, sightings, created, modified, review, meaningReview
-        case pitchReview, log, acceptedMeanings, started, shelved
+        case pitchReview, log, acceptedMeanings, started, shelved, collectionIDs
     }
 
     public init(from decoder: Decoder) throws {
@@ -147,6 +158,7 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         log = try c.decodeIfPresent([ReviewEntry].self, forKey: .log) ?? []
         acceptedMeanings = try c.decodeIfPresent([String].self, forKey: .acceptedMeanings) ?? []
         shelved = try c.decodeIfPresent(Bool.self, forKey: .shelved) ?? false
+        collectionIDs = try c.decodeIfPresent([UUID].self, forKey: .collectionIDs) ?? []
         if c.contains(.started) {
             started = try c.decodeIfPresent(Date.self, forKey: .started)
         } else {

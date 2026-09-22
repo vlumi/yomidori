@@ -9,6 +9,8 @@ struct LessonView: View {
     @AppStorage("lessonSize") private var size = 5
     @State private var cards: [Card]?
     @State private var started: [Card] = []
+    @State private var collections: [Collection] = []
+    @State private var chosen: Set<UUID> = []
 
     var body: some View {
         Group {
@@ -41,7 +43,20 @@ struct LessonView: View {
                     Text("\(size) cards", bundle: .module)
                 }
             } footer: {
-                Text("\(Cards.store?.waiting().count ?? 0) waiting", bundle: .module)
+                Text("\(candidates.count) waiting", bundle: .module)
+            }
+            if !collections.isEmpty {
+                Section {
+                    ForEach(collections) { collection in
+                        Toggle(isOn: membership(of: collection)) {
+                            Text(verbatim: collection.name)
+                        }
+                    }
+                } header: {
+                    Text("Collections", bundle: .module)
+                } footer: {
+                    Text("None chosen means all of them.", bundle: .module)
+                }
             }
             Section {
                 Button {
@@ -51,9 +66,24 @@ struct LessonView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
-                .disabled((Cards.store?.waiting().isEmpty) ?? true)
+                .disabled(candidates.isEmpty)
             }
             .listRowBackground(Color.clear)
+        }
+        .onAppear { collections = Cards.collections?.collections() ?? [] }
+    }
+
+    private var candidates: [Card] {
+        (Cards.store?.waiting() ?? []).filter { card in
+            chosen.isEmpty || !chosen.isDisjoint(with: card.collectionIDs)
+        }
+    }
+
+    private func membership(of collection: Collection) -> Binding<Bool> {
+        Binding {
+            chosen.contains(collection.id)
+        } set: { on in
+            if on { chosen.insert(collection.id) } else { chosen.remove(collection.id) }
         }
     }
 
@@ -74,7 +104,7 @@ struct LessonView: View {
 
     private func begin() {
         let dictionary = JMdict.bundled
-        cards = Lesson.pick(from: Cards.store?.waiting() ?? [], order: order, size: size) { card in
+        cards = Lesson.pick(from: candidates, order: order, size: size) { card in
             dictionary?.entry(headword: card.headword, reading: card.reading)?.common ?? false
         }
     }

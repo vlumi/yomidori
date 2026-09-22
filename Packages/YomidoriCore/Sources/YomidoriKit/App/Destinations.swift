@@ -22,6 +22,8 @@ struct Destinations: ViewModifier {
                         SettingsView()
                     case .lesson:
                         LessonView()
+                    case .collections:
+                        CollectionsView()
                     }
                 }
                 .swipeBackSetting()
