@@ -4,10 +4,12 @@ A reading companion for Japanese paperbacks on iPhone and iPad: freeze the page,
 tap a word, get its reading and pitch, keep the sentence as a card. This file is
 how to *work on* the repo, for humans and AI agents alike.
 
-**Pre-alpha.** The toolchain, the package split and the release lane are in
-place and exercised; the app itself is the spike's capture screen. The first
-work is a spike, not a feature: whether on-device text recognition reads real
-paperbacks well enough for the whole idea to stand (see [ROADMAP.md](ROADMAP.md)).
+**Alpha on TestFlight** (builds 1–7, 2026-09-17 to 22), nothing on the App
+Store yet. The first form of the whole app exists and has been read with on a
+real paperback; ARCHITECTURE.md's *What exists* is the inventory, ROADMAP.md
+what remains, and the spike's one open question, positions on a vertical page,
+heads the roadmap. Work goes in PR-sized chunks, one concern each, with a
+CHANGELOG bullet under *Unreleased* for anything a reader would notice.
 
 Separate project from its siblings [Donpa Squad](https://github.com/vlumi/donpa)
 (Minesweeper), [Puck Around](https://github.com/vlumi/puckaround) (air hockey)
