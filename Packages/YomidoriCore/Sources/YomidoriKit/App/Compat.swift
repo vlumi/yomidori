@@ -14,13 +14,6 @@ extension View {
         #endif
     }
 
-    func hidingTabBar(_ hidden: Bool = true) -> some View {
-        #if os(iOS)
-        toolbar(hidden ? .hidden : .visible, for: .tabBar)
-        #else
-        self
-        #endif
-    }
 }
 
 /// No-ops where there is no UIKit, so views stay free of `#if`.

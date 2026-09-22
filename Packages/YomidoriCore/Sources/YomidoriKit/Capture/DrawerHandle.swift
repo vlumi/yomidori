@@ -3,6 +3,8 @@ import SwiftUI
 struct DrawerHandle: View {
     @Binding var fraction: Double
     let screenHeight: CGFloat
+    /// Called when the finger lifts, for whatever lays itself out to the drawer's edge.
+    let settled: () -> Void
     @GestureState private var fractionAtStart: Double?
 
     var body: some View {
@@ -23,6 +25,7 @@ struct DrawerHandle: View {
                         fraction = min(
                             max(start - value.translation.height / screenHeight, range.lowerBound),
                             range.upperBound)
-                    })
+                    }
+                    .onEnded { _ in settled() })
     }
 }

@@ -8,6 +8,7 @@ struct CaptureDrawer<Content: View, Buttons: View>: View {
     let hasStill: Bool
     let screenHeight: CGFloat
     @Binding var fraction: Double
+    let settled: () -> Void
     @ViewBuilder var content: () -> Content
     @ViewBuilder var buttons: () -> Buttons
 
@@ -22,7 +23,7 @@ struct CaptureDrawer<Content: View, Buttons: View>: View {
     var body: some View {
         VStack(spacing: 12) {
             if hasStill {
-                DrawerHandle(fraction: $fraction, screenHeight: screenHeight)
+                DrawerHandle(fraction: $fraction, screenHeight: screenHeight, settled: settled)
                 ScrollView {
                     VStack(spacing: 12) {
                         content()

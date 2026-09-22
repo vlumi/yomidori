@@ -12,6 +12,9 @@ public struct CaptureView: View {
     @State private var picked: PhotosPickerItem?
     private let zoomControl = ZoomControl()
     @AppStorage("readoutFraction") private var readoutFraction = 0.32
+    /// The drawer's height the page is laid out to: the fraction as the last drag left it,
+    /// so the page reaches the drawer's edge and moves only when the finger lifts.
+    @State private var settledFraction: Double?
 
     public init() {}
 
@@ -62,7 +65,6 @@ public struct CaptureView: View {
                     }
                 }
             }
-            .hidingTabBar(still != nil)
             .onAppear { if still == nil { camera.start() } }
             .onDisappear { camera.stop() }
             .task(id: picked) { await loadPicked() }
@@ -76,13 +78,14 @@ public struct CaptureView: View {
         }
     }
 
-    /// The page above the drawer at its smallest; a taller drawer lies over the page.
+    /// The page above the drawer where it settled; while a drag is on, the drawer lies over
+    /// the page or leaves a gap, and the page follows on release.
     private func pageArea(in screen: CGSize) -> CGSize {
         CGSize(
             width: screen.width,
             height: screen.height
-                - CaptureDrawer<EmptyView, EmptyView>.minimumHeight(
-                    screenHeight: screen.height))
+                - CaptureDrawer<EmptyView, EmptyView>.height(
+                    fraction: settledFraction ?? readoutFraction, screenHeight: screen.height))
     }
 
     private var cameraView: some View {
@@ -133,7 +136,8 @@ public struct CaptureView: View {
 
     private func drawer(screenHeight: CGFloat) -> some View {
         CaptureDrawer(
-            hasStill: still != nil, screenHeight: screenHeight, fraction: $readoutFraction
+            hasStill: still != nil, screenHeight: screenHeight, fraction: $readoutFraction,
+            settled: { settledFraction = readoutFraction }
         ) {
             Picker(selection: $page.mode) {
                 Text("Live Text", bundle: .module).tag(Mode.liveText)

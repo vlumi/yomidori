@@ -74,7 +74,7 @@ struct LiveTextImage: UIViewRepresentable {
     final class ZoomingImageView: UIScrollView, UIScrollViewDelegate {
         let imageView: FittedImageView
         var interaction: ImageAnalysisInteraction?
-        private var fittedFor: CGSize = .zero
+        private var fittedImage: CGSize = .zero
 
         init(image: UIImage) {
             imageView = FittedImageView(image: image)
@@ -94,10 +94,12 @@ struct LiveTextImage: UIViewRepresentable {
             fatalError("not used")
         }
 
+        /// Fitted once per image; a later change of bounds, the drawer moving, keeps the
+        /// zoom and the place on the page.
         override func layoutSubviews() {
             super.layoutSubviews()
-            if bounds.size != fittedFor, bounds.width > 0, let image = imageView.image {
-                fittedFor = bounds.size
+            if let image = imageView.image, image.size != fittedImage, bounds.width > 0 {
+                fittedImage = image.size
                 fit(image.size)
             }
             center()
