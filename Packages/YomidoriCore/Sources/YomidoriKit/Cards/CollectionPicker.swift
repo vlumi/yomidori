@@ -47,17 +47,20 @@ struct CollectionPicker: View {
                 }
             }
         } label: {
-            if let current {
-                Label {
+            // A fixed shape: the icon never squeezes and a long name truncates, so a change
+            // of collection does not reflow the row around it.
+            HStack(spacing: 6) {
+                Image(systemName: current == nil ? "books.vertical" : "books.vertical.fill")
+                    .fixedSize()
+                if let current {
                     Text(verbatim: current.name)
-                } icon: {
-                    Image(systemName: "books.vertical.fill")
+                        .lineLimit(1)
+                        .truncationMode(.tail)
                 }
-                .lineLimit(1)
-            } else {
-                Image(systemName: "books.vertical")
-                    .accessibilityLabel(Text("Collection", bundle: .module))
             }
+            .frame(maxWidth: 170, alignment: .leading)
+            .transaction { $0.animation = nil }
+            .accessibilityLabel(Text("Collection", bundle: .module))
         }
         .onAppear { collections = Cards.collections?.collections() ?? [] }
         .alert(Text("New collection", bundle: .module), isPresented: $naming) {
