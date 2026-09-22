@@ -43,6 +43,14 @@ final class DeinflectorTests: XCTestCase {
         XCTAssertTrue(forms.contains("降りる"))
     }
 
+    func testPotentialStemsReachTheGodanVerb() {
+        assertCandidates("負え", include: "負う")
+        assertCandidates("負え", include: "負える")
+        assertCandidates("読め", include: "読む")
+        assertCandidates("書け", include: "書く")
+        assertCandidates("待て", include: "待つ")
+    }
+
     func testPassiveAndNegativeStems() {
         assertCandidates("照らさ", include: "照らす")
         assertCandidates("書か", include: "書く")

@@ -25,6 +25,7 @@ struct PitchReading: View {
                 }
             }
             .foregroundStyle(Palette.nightGreen)
+            .fixedSize()
             Text(verbatim: "[\(accent.downstep)]")
                 .font(.caption)
                 .foregroundStyle(.secondary)

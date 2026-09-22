@@ -141,16 +141,6 @@
         }
       }
     },
-    "Book, page" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "本、ページ"
-          }
-        }
-      }
-    },
     "By tag" : {
       "localizations" : {
         "ja" : {
@@ -411,6 +401,16 @@
         }
       }
     },
+    "Full entry" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "項目をすべて見る"
+          }
+        }
+      }
+    },
     "Good" : {
       "localizations" : {
         "ja" : {
@@ -627,6 +627,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "意味"
+          }
+        }
+      }
+    },
+    "MeCab" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MeCab"
           }
         }
       }

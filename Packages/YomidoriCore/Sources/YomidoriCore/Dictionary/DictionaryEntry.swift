@@ -30,6 +30,15 @@ public struct DictionaryEntry: Hashable, Sendable, Identifiable {
     public var headword: String {
         kanji.first ?? readings.first ?? ""
     }
+
+    /// A particle, an auxiliary or the copula, by JMdict's own marks: every marked sense is
+    /// one of those.
+    public var isFunctionWord: Bool {
+        let function: Set<String> = ["prt", "aux", "aux-v", "aux-adj", "cop"]
+        let marked = senses.filter { !$0.partsOfSpeech.isEmpty }
+        return !marked.isEmpty
+            && marked.allSatisfy { $0.partsOfSpeech.allSatisfy(function.contains) }
+    }
 }
 
 public protocol WordDictionary {
