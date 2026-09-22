@@ -9,7 +9,7 @@ struct VisionReadout: View {
         if let selected, lines.indices.contains(selected) {
             let line = lines[selected]
             VStack(spacing: 4) {
-                Text(verbatim: line.text)
+                Text(japanese: line.text)
                     .font(.title2)
                     .multilineTextAlignment(.center)
                     .textSelection(.enabled)

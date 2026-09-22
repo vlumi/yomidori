@@ -18,6 +18,10 @@ struct PitchChoices: View {
                         .padding(.vertical, 8)
                 }
                 .buttonStyle(.bordered)
+                .accessibilityLabel(
+                    pattern.downstep == 0
+                        ? Text("Flat", bundle: .module)
+                        : Text("Drops after mora \(pattern.downstep)", bundle: .module))
             }
         }
     }

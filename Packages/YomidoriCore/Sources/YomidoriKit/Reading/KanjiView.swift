@@ -10,7 +10,7 @@ struct KanjiView: View {
         List {
             Section {
                 HStack(alignment: .top, spacing: 20) {
-                    Text(verbatim: kanji.literal)
+                    Text(japanese: kanji.literal)
                         .font(.system(size: 80))
                     VStack(alignment: .leading, spacing: 6) {
                         Text(verbatim: kanji.meanings.joined(separator: "; "))
@@ -91,7 +91,7 @@ struct KanjiView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .frame(width: 64, alignment: .leading)
-                Text(verbatim: readings.joined(separator: "、"))
+                Text(japanese: readings.joined(separator: "、"))
                     .foregroundStyle(Palette.nightGreen)
             }
             .textSelection(.enabled)

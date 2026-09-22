@@ -9,7 +9,7 @@ struct EngineLine: View {
             Text(name, bundle: .module)
                 .font(.caption2)
                 .foregroundStyle(.secondary)
-            Text(verbatim: text.isEmpty ? "—" : text)
+            Text(japanese: text.isEmpty ? "—" : text)
                 .font(.body)
                 .textSelection(.enabled)
                 .lineLimit(3)

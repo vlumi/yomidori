@@ -11,13 +11,13 @@ struct EntryRow: View {
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
-            Text(verbatim: entry.headword)
+            Text(japanese: entry.headword)
                 .font(.title3)
             let reading = Kana.hiragana(entry.readings.first ?? "")
             if let accent {
                 PitchReading(reading: reading, accent: accent)
             } else {
-                Text(verbatim: reading)
+                Text(japanese: reading)
                     .foregroundStyle(Palette.nightGreen)
             }
             Spacer()

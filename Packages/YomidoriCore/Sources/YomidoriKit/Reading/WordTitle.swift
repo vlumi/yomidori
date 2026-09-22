@@ -30,7 +30,7 @@ struct WordTitle<Trailing: View>: View {
     }
 
     private var word: some View {
-        Text(verbatim: headword)
+        Text(japanese: headword)
             .font(font)
             .fixedSize()
     }
@@ -40,12 +40,12 @@ struct WordTitle<Trailing: View>: View {
             if let accent {
                 PitchReading(reading: reading, accent: accent)
             } else {
-                Text(verbatim: reading)
+                Text(japanese: reading)
                     .font(.title3)
                     .foregroundStyle(Palette.nightGreen)
             }
             if let dictionaryForm {
-                Text(verbatim: dictionaryForm)
+                Text(japanese: dictionaryForm)
                     .font(.title3)
                     .foregroundStyle(.secondary)
             }

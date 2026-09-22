@@ -30,6 +30,8 @@ struct PitchReading: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text("\(reading), pitch \(accent.downstep)", bundle: .module))
     }
 }
 

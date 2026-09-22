@@ -76,9 +76,9 @@ struct CardRow: View {
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
-            Text(verbatim: card.headword)
+            Text(japanese: card.headword)
                 .font(.title3)
-            Text(verbatim: card.reading)
+            Text(japanese: card.reading)
                 .foregroundStyle(Palette.nightGreen)
             Spacer()
             RankMark(rank: card.rank, size: 22)

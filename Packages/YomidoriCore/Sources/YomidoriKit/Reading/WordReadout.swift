@@ -24,15 +24,25 @@ struct WordReadout: View {
                     .font(.caption.bold())
                     .foregroundStyle(.secondary)
                     .rotationEffect(.degrees(expanded ? 90 : 0))
+                    .accessibilityRemoveTraits(.isImage)
+                    .accessibilityAddTraits(.isButton)
+                    .accessibilityLabel(
+                        expanded
+                            ? Text("Hide the meaning", bundle: .module)
+                            : Text("Show the meaning", bundle: .module)
+                    )
+                    .accessibilityAction { toggle() }
             }
             .contentShape(Rectangle())
-            .onTapGesture {
-                withAnimation(.easeInOut(duration: 0.15)) { expanded.toggle() }
-            }
+            .onTapGesture(perform: toggle)
             if expanded {
                 meaning
             }
         }
+    }
+
+    private func toggle() {
+        withAnimation(.easeInOut(duration: 0.15)) { expanded.toggle() }
     }
 
     private var headword: String {
