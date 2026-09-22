@@ -511,12 +511,12 @@
         }
       }
     },
-    "JMdict by the Electronic Dictionary Research and Development Group; pitch accents from Kanjium by Uros O.; MeCab and IPADic; Mecab-Swift. Their terms are inside." : {
+    "JMdict by the Electronic Dictionary Research and Development Group; KANJIDIC2, KRADFILE and KanjiVG for the kanji and their strokes; pitch accents from Kanjium by Uros O.; MeCab and IPADic; Mecab-Swift; manga-ocr. Their terms are inside." : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Electronic Dictionary Research and Development GroupのJMdict、Uros O.によるKanjiumのアクセントデータ、MeCabとIPADic、Mecab-Swift。各ライセンスは中にあります。"
+            "value" : "Electronic Dictionary Research and Development GroupのJMdict、漢字と筆順のKANJIDIC2・KRADFILE・KanjiVG、Uros O.によるKanjiumのアクセントデータ、MeCabとIPADic、Mecab-Swift、manga-ocr。各ライセンスは中にあります。"
           }
         }
       }

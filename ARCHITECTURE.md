@@ -295,7 +295,7 @@ use for its own input.
   line or bubble of Japanese at a time, vertical included, converted to Core ML
   by `Scripts/data/build-mangaocr.py`: the encoder as it is, the decoder
   re-expressed as one cache-free step with an explicit mask, the vocabulary
-  beside them; ~210 MB at half precision, MIT, optional at build and absent from
+  beside them; ~210 MB at half precision, Apache 2.0, optional at build and absent from
   the engine list when not bundled. In Close-up it reads a window of about eight
   characters along the line around the tap (`TextGeometry.window`), which is the
   bubble's worth it was trained on; a whole long line squeezed into its 224
