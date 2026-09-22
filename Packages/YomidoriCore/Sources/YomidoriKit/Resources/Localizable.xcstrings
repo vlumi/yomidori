@@ -161,16 +161,6 @@
         }
       }
     },
-    "Book, magazine, an author: whatever groups collections for you." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "本、雑誌、著者など、コレクションをまとめる言葉。"
-          }
-        }
-      }
-    },
     "By tag" : {
       "localizations" : {
         "ja" : {
@@ -1487,16 +1477,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "使う"
-          }
-        }
-      }
-    },
-    "Used by other collections, a tap adds one:" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "他のコレクションで使われているタグ。タップで追加："
           }
         }
       }
