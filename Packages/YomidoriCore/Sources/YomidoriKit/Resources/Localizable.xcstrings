@@ -201,16 +201,6 @@
         }
       }
     },
-    "Home" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ホーム"
-          }
-        }
-      }
-    },
     "How pitch is drawn" : {
       "localizations" : {
         "ja" : {

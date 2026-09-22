@@ -2,15 +2,15 @@ import SwiftUI
 import YomidoriCore
 
 enum AppTab: String {
-    case home
+    case read
     case cards
     case search
 }
 
-/// Three tabs: home with the camera a push away, the cards, and search as its own pill on
-/// iOS 26. The home stack's path is kept across a restart so the app reopens where it was.
+/// Three tabs: the camera first, the cards as the landing tab, and search as its own pill.
+/// The cards stack's path is kept across a restart so the app reopens where it was.
 public struct AppRoot: View {
-    @SceneStorage("tab") private var tab: AppTab = .home
+    @SceneStorage("tab") private var tab: AppTab = .cards
     @StateObject private var capture = CaptureState()
     @State private var dueCount = 0
 
@@ -18,17 +18,19 @@ public struct AppRoot: View {
 
     public var body: some View {
         TabView(selection: $tab) {
-            Tab(value: .home) {
-                HomeStack()
+            Tab(value: .read) {
+                NavigationStack {
+                    CaptureView().clearNavigationBar().swipeBackSetting().appDestinations()
+                }
             } label: {
                 Label {
-                    Text("Home", bundle: .module)
+                    Text("Read", bundle: .module)
                 } icon: {
-                    Image(systemName: "book")
+                    Image(systemName: "camera.viewfinder")
                 }
             }
             Tab(value: .cards) {
-                cardsStack
+                CardsStack()
             } label: {
                 Label {
                     Text("Cards", bundle: .module)
@@ -38,39 +40,25 @@ public struct AppRoot: View {
             }
             .badge(dueCount)
             Tab(value: .search, role: .search) {
-                searchStack
+                NavigationStack {
+                    SearchView().swipeBackSetting().appDestinations()
+                }
             }
         }
         .tint(Palette.nightGreen)
         .environmentObject(capture)
-        .task(id: tab) { countDue() }
-    }
-
-    private var cardsStack: some View {
-        NavigationStack {
-            CardsView().swipeBackSetting().appDestinations()
-        }
-    }
-
-    private var searchStack: some View {
-        NavigationStack {
-            SearchView().swipeBackSetting().appDestinations()
-        }
-    }
-
-    private func countDue() {
-        dueCount = Cards.dueItems(at: Date()).count
+        .task(id: tab) { dueCount = Cards.dueItems(at: Date()).count }
     }
 }
 
-/// The home tab's own stack, its path stored so a restart returns to the same screen.
-private struct HomeStack: View {
+/// The cards tab's own stack, its path stored so a restart returns to the same screen.
+private struct CardsStack: View {
     @State private var path = NavigationPath()
     @SceneStorage("navigationPath") private var storedPath: Data?
 
     var body: some View {
         NavigationStack(path: $path) {
-            HomeView().swipeBackSetting().appDestinations()
+            CardsView().swipeBackSetting().appDestinations()
         }
         .onAppear(perform: restore)
         .task(id: path) { store() }

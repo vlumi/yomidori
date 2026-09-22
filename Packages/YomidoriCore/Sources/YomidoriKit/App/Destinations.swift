@@ -9,7 +9,7 @@ struct Destinations: ViewModifier {
                 Group {
                     switch screen {
                     case .capture:
-                        CaptureView().clearNavigationBar().hidingTabBar()
+                        CaptureView().clearNavigationBar()
                     case .cards:
                         CardsView()
                     case .review:

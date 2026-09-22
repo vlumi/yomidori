@@ -14,9 +14,9 @@ extension View {
         #endif
     }
 
-    func hidingTabBar() -> some View {
+    func hidingTabBar(_ hidden: Bool = true) -> some View {
         #if os(iOS)
-        toolbar(.hidden, for: .tabBar)
+        toolbar(hidden ? .hidden : .visible, for: .tabBar)
         #else
         self
         #endif
