@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@, pitch %lld" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@、アクセント%2$lld"
+          }
+        }
+      }
+    },
     "%lld cards" : {
       "localizations" : {
         "ja" : {
@@ -17,6 +27,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正解 %lld · もう一度 %lld"
+          }
+        }
+      }
+    },
+    "%lld percent" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%"
           }
         }
       }
@@ -341,12 +361,32 @@
         }
       }
     },
+    "Drawer" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "引き出し"
+          }
+        }
+      }
+    },
     "Drop" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "捨てる"
+          }
+        }
+      }
+    },
+    "Drops after mora %lld" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld拍目の後で下がる"
           }
         }
       }
@@ -381,12 +421,32 @@
         }
       }
     },
+    "Expand or collapse" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "広げる・畳む"
+          }
+        }
+      }
+    },
     "Export cards" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "カードを書き出す"
+          }
+        }
+      }
+    },
+    "Flat" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "平板"
           }
         }
       }
@@ -477,6 +537,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "頭高型：最初の拍だけ高く、あとは低くなります。"
+          }
+        }
+      }
+    },
+    "Hide the meaning" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "意味を閉じる"
           }
         }
       }
@@ -1141,6 +1211,16 @@
         }
       }
     },
+    "Reset zoom" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ズームを戻す"
+          }
+        }
+      }
+    },
     "Retake" : {
       "localizations" : {
         "ja" : {
@@ -1277,6 +1357,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "答えを見る"
+          }
+        }
+      }
+    },
+    "Show the meaning" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "意味を見る"
           }
         }
       }

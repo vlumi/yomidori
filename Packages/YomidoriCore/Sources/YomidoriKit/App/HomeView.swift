@@ -17,10 +17,10 @@ struct HomeView: View {
         List {
             Section {
                 VStack(spacing: 6) {
-                    Text(verbatim: "ヨミドリ")
+                    Text(japanese: "ヨミドリ")
                         .font(.system(size: 44, weight: .semibold, design: .rounded))
                         .foregroundStyle(Palette.nightGreen)
-                    Text(verbatim: Kana.hiragana("ヨミドリ"))
+                    Text(japanese: Kana.hiragana("ヨミドリ"))
                         .font(.callout)
                         .foregroundStyle(Palette.silver)
                 }

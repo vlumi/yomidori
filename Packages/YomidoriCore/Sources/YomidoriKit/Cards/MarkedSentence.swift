@@ -13,6 +13,7 @@ struct MarkedSentence: View {
 
     private var marked: AttributedString {
         var text = AttributedString(sighting.sentence)
+        text.languageIdentifier = "ja"
         guard let range = sighting.surfaceRange,
             let start = AttributedString.Index(range.lowerBound, within: text),
             let end = AttributedString.Index(range.upperBound, within: text)

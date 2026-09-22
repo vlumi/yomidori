@@ -16,7 +16,7 @@ struct DrawerHandle: View {
             .fill(Palette.silver)
             .frame(width: 40, height: 5)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 4)
+            .padding(.vertical, 12)
             .contentShape(Rectangle())
             .onTapGesture(count: 2, perform: toggled)
             .gesture(
@@ -29,6 +29,22 @@ struct DrawerHandle: View {
                             from: fractionAtStart ?? fraction, by: value.translation.height,
                             screenHeight: screenHeight)
                     }
-                    .onEnded { _ in settled(fraction) })
+                    .onEnded { _ in settled(fraction) }
+            )
+            .accessibilityElement()
+            .accessibilityLabel(Text("Drawer", bundle: .module))
+            .accessibilityValue(Text("\(Int((fraction * 100).rounded())) percent", bundle: .module))
+            .accessibilityAdjustableAction { direction in
+                let detents = DrawerDetents.all
+                guard let index = detents.firstIndex(of: DrawerDetents.nearest(fraction)) else {
+                    return
+                }
+                switch direction {
+                case .increment: if index + 1 < detents.count { settled(detents[index + 1]) }
+                case .decrement: if index > 0 { settled(detents[index - 1]) }
+                @unknown default: break
+                }
+            }
+            .accessibilityAction(named: Text("Expand or collapse", bundle: .module), toggled)
     }
 }

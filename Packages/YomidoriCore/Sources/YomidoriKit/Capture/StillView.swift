@@ -30,6 +30,10 @@ struct StillView: View {
                         )
                         .frame(width: rect.width, height: rect.height)
                         .offset(x: rect.minX, y: rect.minY)
+                        .accessibilityElement()
+                        .accessibilityLabel(Text(japanese: lines[index].text))
+                        .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
+                        .accessibilityAction { onTap(CGPoint(x: rect.midX, y: rect.midY), frame) }
                 }
                 if let highlight {
                     let rect = TextGeometry.viewRect(for: highlight, in: frame)
@@ -46,6 +50,7 @@ struct StillView: View {
                     .exclusively(before: SpatialTapGesture().onEnded { onTap($0.location, frame) })
             )
             .zoomable($zoom, in: geometry.size)
+            .accessibilityAction(named: Text("Reset zoom", bundle: .module)) { zoom = Zoom() }
             .clipped()
         }
     }

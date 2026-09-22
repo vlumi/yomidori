@@ -20,7 +20,7 @@ struct ReviewFront: View {
                     .foregroundStyle(.secondary)
             }
         } else {
-            Text(verbatim: card.headword)
+            Text(japanese: card.headword)
                 .font(.largeTitle)
                 .foregroundStyle(Palette.nightGreen)
         }
@@ -32,9 +32,9 @@ struct PitchQuestion: View {
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
-            Text(verbatim: card.headword)
+            Text(japanese: card.headword)
                 .font(.title)
-            Text(verbatim: card.reading)
+            Text(japanese: card.reading)
                 .font(.title3)
                 .foregroundStyle(Palette.nightGreen)
             Text("Which pitch?", bundle: .module)
@@ -49,9 +49,9 @@ struct MeaningQuestion: View {
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
-            Text(verbatim: card.headword)
+            Text(japanese: card.headword)
                 .font(.title)
-            Text(verbatim: card.reading)
+            Text(japanese: card.reading)
                 .font(.title3)
                 .foregroundStyle(Palette.nightGreen)
             Text("What does it mean?", bundle: .module)

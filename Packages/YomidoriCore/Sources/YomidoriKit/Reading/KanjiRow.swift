@@ -6,10 +6,10 @@ struct KanjiRow: View {
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
-            Text(verbatim: kanji.literal)
+            Text(japanese: kanji.literal)
                 .font(.title)
             VStack(alignment: .leading, spacing: 2) {
-                Text(verbatim: (kanji.onReadings + kanji.kunReadings).joined(separator: "、"))
+                Text(japanese: (kanji.onReadings + kanji.kunReadings).joined(separator: "、"))
                     .font(.callout)
                     .foregroundStyle(Palette.nightGreen)
                     .lineLimit(1)

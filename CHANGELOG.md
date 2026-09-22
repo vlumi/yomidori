@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **VoiceOver reads the page.** The lines found on a page are elements to pick, the drawer's height is adjustable, a reading is spoken as one word with its pitch number, Japanese text is spoken in a Japanese voice, and the words under a page and the pitch choices are buttons that say when they are selected; with Differentiate Without Color on, the selected word is outlined.
 - **The button under the live image says what it does.** It reads *Read the page* under the text-scanning glyph, in place of a camera's shutter disc, and the cover scan's says *Scan the cover*; the volume buttons and the Camera Control freeze the page as before.
 - **Export your cards.** Settings shares the cards file, one JSON document, to keep a copy or move them elsewhere; the photos stay on the device.
 - **Small fixes on the way.** The zoom buttons work again after a trip to another tab while a page is up; the Study badge updates as soon as the due cards are done; a cover scanned and then dropped no longer lingers on disk; a close-up still being read no longer lands on the next page; and in the demo, Keep files a word under the collection picked.
