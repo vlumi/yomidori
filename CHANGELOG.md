@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 8 — 2026-09-23
+
 - **Vision reads a vertical page.** In Vision mode a paperback's columns come back as lines with their places on the page, so a column is tapped as a line is and a kept sentence's crop is cut from a vertical page as from a horizontal one; the older text request, which never read vertical print, is gone, and the percentage under a tapped line is the request's own confidence.
 - **Both answers on a card count.** Answering a card's second question in a review no longer wipes the first one's schedule and log line, which it did whenever a card's reading and meaning came up in the same session.
 - **Export your cards.** Settings shares the cards file, one JSON document, to keep a copy or move them elsewhere; the photos stay on the device.
