@@ -7,11 +7,13 @@ A reading companion for Japanese paperbacks, for iPhone and iPad. Point the
 camera at a word you can't read, tap it, and get its reading. The sentence you
 were reading becomes a card, and the cards are what you study.
 
-> **Status: pre-alpha — nothing on the App Store yet.** The repo, the toolchain
-> and the release lane are in place; the app is the spike's capture screen: a
-> still of the page, and what the two on-device recognizers read from it. How it's
-> built: [ARCHITECTURE.md](ARCHITECTURE.md). How to work on it:
-> [AGENTS.md](AGENTS.md). What's next: [ROADMAP.md](ROADMAP.md).
+> **Status: alpha on TestFlight, nothing on the App Store yet.** The whole
+> first form is there and has been read with on a real paperback: freeze the
+> page, select a word, every word in the selection with its reading, pitch and
+> meaning, the kanji behind them with stroke order, cards with the sentences you
+> met the word in, lessons and typed reviews with bird ranks, collections by book,
+> and a history of what you looked up. How it's built: [ARCHITECTURE.md](ARCHITECTURE.md).
+> How to work on it: [AGENTS.md](AGENTS.md). What's next: [ROADMAP.md](ROADMAP.md).
 
 ## The idea
 
@@ -28,9 +30,11 @@ your thumb can reach. The meaning is one more tap away, and never shown before
 you ask.
 
 Then the word keeps working for you. The sentence you met it in, as it stood on
-the page, becomes a card that asks for the reading. Meet the same word in another
-book and the card gains a second sentence. Reviews happen when you open the app,
-on the train or not at all; there is no streak to keep.
+the page, becomes a card; a lesson starts it when you have time for it, and it
+asks three things by typing: the reading, the meaning, and which pitch. Meet the
+same word in another book and the card gains a second sentence. Reviews happen
+when you open the app, on the train or not at all; there is no streak to keep,
+and a card you truly forgot goes back to waiting instead of haunting you.
 
 ## Principles
 
@@ -55,8 +59,9 @@ sparrow, whose Japanese name 文鳥 happens to mean "text bird".
 
 ## Version history
 
-Nothing released yet. See [CHANGELOG.md](CHANGELOG.md) for what has landed on
-`main` and [ROADMAP.md](ROADMAP.md) for what's next.
+Builds 1 to 7 went to TestFlight between 2026-09-17 and 22; nothing on the App
+Store yet. See [CHANGELOG.md](CHANGELOG.md) for what each build carried and
+[ROADMAP.md](ROADMAP.md) for what's next.
 
 ## License
 

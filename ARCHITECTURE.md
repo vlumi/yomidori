@@ -133,24 +133,36 @@ use for its own input.
   Python, a few seconds, ~78 MB) into the app target at build time and never
   committed; its `meta` table carries the source dates and the EDRDG attribution.
   The tests read a sliver built by the same script from hand-made sources.
-- **`TokenFlow`** and **`TranscriptReadout`** (Kit): the transcript as its
-  words, a line per line of the page, wrapping, each word with its reading over
-  it where the reading adds something, behind a fold that is closed by default
-  since the word asked about is what the drawer is for; a tap fills the word and shows it large
-  with its reading and dictionary form, and under a fold, its meaning: the
-  entries for its dictionary form, else the word as it stands, else its reading,
-  and "not in the dictionary" where none matches, which is what a misread word
-  looks like. The first shape of the reading sheet.
+- **`TranscriptReadout`**, **`WordFinder`** and **`WordReadout`** (Kit, Core):
+  the drawer under a frozen page. Its header is the collection Keep files a word
+  under (a menu, remembered), the tokenizer as a small menu (the system's or
+  MeCab, so the same page can be cut both ways), the photo toggle and Copy. A
+  selection on the still, or a tap in the *Recognized text* strip (`TokenFlow`,
+  folded by default), is tokenized and read as words by `WordFinder`: consecutive
+  tokens the dictionary knows as one word join (蛍光灯), an inflected stem finds
+  its dictionary form through `Deinflector` (照らされていた → 照らす), lone kana,
+  kana-only fragments with no entry and words JMdict marks as particles or
+  auxiliaries drop out. Each word is a row: the word, its reading with the pitch
+  where known (`WordTitle` puts the reading on a second line when one is
+  short), and Keep; a tap anywhere along the row opens the meaning, the system
+  dictionary button and *Full entry*, which pushes the entry screen over the
+  page. "Not in the dictionary" is what a misread word looks like.
 - **`Card`**, **`Sighting`** and **`FileCardStore`** (Core): a card is one word
   in its dictionary form with its reading, the key together; a sighting is the
   word as it was met once, the sentence as it stood on the page, the word's form
-  and offset in it, the still it came from by id, a source in the reader's
-  words, and when. Keeping a word already kept adds a sighting, never a card;
-  the same kanji read another way is another card. The store is one JSON
-  document in Application Support, written whole and atomically on every
-  change: a reader's cards number in the hundreds or low thousands, which one
-  file reads in a blink, and one file is what a sync or a backup copies. The
-  reading, pitch and meaning are not stored; they are looked up live.
+  and offset in it, the stills it came from by id, and when. Keeping a word
+  already kept adds a sighting, never a card; the same kanji read another way is
+  another card. A card also carries when it was created and last modified (a
+  sighting added, a sentence corrected, photos dropped; never a review), its
+  three review states, a log of every answer (`ReviewEntry`: date, question,
+  grade, overruled or not), the meanings the reader accepts beside the glosses,
+  where it stands (waiting, started, or shelved) and the collections it is in.
+  The store is one JSON document in Application Support, written whole and
+  atomically on every change: a reader's cards number in the hundreds or low
+  thousands, which one file reads in a blink, and one file is what a sync or a
+  backup copies. Every shape the file has had still decodes, and the tests keep
+  one of each. The reading, pitch and meaning are not stored; they are looked up
+  live.
 - **`Sentence`** (Core): the sentence around a word, from the previous full stop
   to the next with its closing quote, across the page's wrapped lines, which in
   a book are wraps and nothing more; open when the page ends before a full stop.
@@ -161,19 +173,26 @@ use for its own input.
   counts when a run of it is in the sentence, six characters or six tenths of the
   shorter, since the recognizer and the sentence rarely agree on every character.
   Nil where no line matches, the vertical case, and the whole still stands in.
-- **Keeping a word** (Kit): *Keep* beside the tapped word saves the sentence it
-  stands in, as `Sentence` cuts it, with the word's form and offset, the crop of
-  its lines where `LineCrop` finds them, shown on the card's front, and the still
-  it was read from, scaled to two thousand pixels on its longer side as a JPEG
-  in Application Support (`StillArchive`). The card's key is the dictionary
-  entry's headword and reading when the word was found, else the tokenizer's
-  form. A spread of several pages is read as one text: *Add next page* keeps
-  this page's text and takes the next, and `Spread` joins the pages at the seam
-  with no break, so a word cut by the page turn tokenizes whole and a sentence
-  runs on; a kept sighting carries every page's still, saved once each.
-  **`CardsView`** lists the cards, newest first, and **`CardView`** shows
-  one: the word with its pitch, every sentence it was met in with the word
-  marked, the crop, and the still.
+- **Keeping a word** (Kit): *Keep* on a word's row saves the sentence it stands
+  in, as `Sentence` cuts it, with the word's form and offset, into the current
+  collection. The page still and the crop of the sentence's lines (`LineCrop`,
+  where a recognizer gave positions) are kept only while the photo toggle is on,
+  scaled to two thousand pixels on the longer side as JPEGs in Application
+  Support (`StillArchive`), and can be dropped from the card later; a still is
+  shared by every card kept from its page and its file goes only when no card
+  refers to it. The card's key is the dictionary entry's headword and reading
+  when the word was found, else the tokenizer's form. A spread of several pages
+  is read as one text: the + over the picture keeps this page's text and takes
+  the next, and `Spread` joins the pages at the seam with no break, so a word
+  cut by the page turn tokenizes whole and a sentence runs on. **`CardsView`**
+  lists the cards by stack (in review, waiting, shelved), filtered by any number
+  of collections or by a tag, each row with its rank mark; **`CardView`** shows
+  one: the word with its pitch, the dictionary's sections around it
+  (`WordSections`), its collections ticked, the moves between the stacks, the
+  reader's own accepted meanings, the dates and the good/again counts per
+  question (`CardFacts`), and every sighting with the word marked, the photos,
+  and rows to correct the sentence (the word is found again in the corrected
+  text) or remove the photos.
 - **`FSRS`**, **`Grade`** and **`ReviewState`** (Core): the free spaced
   repetition scheduler, version 5, with its published default parameters and a
   desired retention of 90 %, with one departure: a lapse costs at most one rank,
@@ -201,11 +220,51 @@ use for its own input.
   up. Every answer is logged on the card with its grade and whether it was
   overruled (`ReviewEntry`), for the graphs to come. No streak, no count kept
   against anyone. The queue is of questions, not cards.
+- **Lessons, stacks and ranks** (`Lesson`, `Rank` in Core; `LessonView`,
+  `StudyView`, `RankChart` in Kit): a kept card *waits*; only a lesson *starts*
+  it, and a *shelved* card (a name, a place) is kept for the record and never
+  asked. A lesson takes the next few waiting cards, oldest, newest, random or
+  common first (JMdict's mark), from chosen collections or all, and shows each
+  whole: Start, Later (back to the stack) or Drop; then *Review them now*. The
+  due queue is ordered most recently answered first, a just-started card counting
+  from its start, so a short session churns the fresh cards and the backlog
+  trails; *Forgot it. Back to waiting* on a review clears the schedule and the
+  card returns through a lesson. `Rank` bands the reading's stability in birds:
+  nest 0 (shelved), egg 1 (waiting), hatchling 2 (under a week), chick 3 (under
+  a month), fledgling 4 (under four months), flying 5 (under a year), migrating
+  6; nothing retires. Study draws the ranks as bars in each rank's color with a
+  selection, and the mark everywhere is the rank's number on a dot of its
+  color, the name beside it where there is room and as the accessibility label
+  where not.
+- **Collections** (`Collection`, `FileCollectionStore` in Core; `CollectionsView`,
+  `CollectionEditor`, `CoverScanView`, `TagsEditor`, `CollectionPicker`,
+  `CollectionFilter` in Kit): named groups of cards, a book usually, a card in
+  as many as the reader likes, with a note (an author), tags as chips (the
+  reader's own words; the ones other collections use are offered) and a cover.
+  The cover is scanned with the camera or picked from the photos, and the words
+  read off it, Vision's lines tallest first with Live Text filling in, are
+  offered for the name and the note so a title is picked rather than typed.
+  Removing a collection only takes it off its cards. Their own JSON beside the
+  cards.
+- **Kanji** (`KanjiEntry`, `KanjiStroke`, `SVGPath` in Core; `KanjiView`,
+  `StrokeOrderView`, `WordDetails`, `WordSections` in Kit): KANJIDIC2's readings,
+  meanings and school facts, KRADFILE's components and KanjiVG's strokes are in
+  the same database. A word's screen, from a card, a search or *Full entry*,
+  lists every reading with its pitch, the senses, the kanji as rows, the words
+  read the same way with their pitch side by side (はし: 橋 箸 端) and the words
+  it appears in (a scan of the kanji forms, milliseconds); a kanji opens with its
+  readings, meanings, stroke count, grade, JLPT level, frequency, components,
+  the words it is in, and its stroke order drawn stroke by stroke over the faint
+  finished form, a tap replaying it. `SVGPath` reads the path subset KanjiVG
+  writes.
 - **`AboutView`** (Kit): the name, the version with its build and commit, the
   promise that nothing leaves the device, the pitch notation explained on four
   words, and the notices every bundled license asks for, which are the
   repository's own THIRD_PARTY_NOTICES.md bundled as a resource so there is one
-  copy to keep current.
+  copy to keep current. **`SettingsView`**: the swipe-back switch, on as iOS has
+  it; off, the navigation controller's pop gesture is disabled on every screen
+  through a small UIKit helper (`SwipeBack`), for a reader whose swipe meant a
+  word.
 - **Selecting on the page** (Kit, `LiveTextSelection`): in Live Text mode the
   word selected on the still itself, through the engine's own selection, is the
   word the readout shows, with its line as the sentence for Keep; the selection's
@@ -242,54 +301,79 @@ use for its own input.
   Japanese phone: the ja-ja meaning at a quality no free data matches, as a view
   the app never quotes. Present only when an installed dictionary has the term;
   absent on the macOS test build, which has no such library.
-- **`HomeView`** and **`AppRoot`** (Kit): a fresh start opens on home, the name
-  and the bird's reading, one big *Read* button, *Cards* with what is due, and
-  *About*; the camera starts only when asked, so the permission prompt comes
-  with its reason and a review costs no battery. The navigation path is kept in
-  scene storage and restored on launch, so the app reopens where it was left,
-  the camera included; the frozen still is not restored, being a second's work
-  to take again.
+- **`AppRoot`, the tabs and the page** (Kit): five along the bottom, each with
+  its own stack (`TabStack`): Home (the name, the Read button, Review and Lesson
+  with their counts, Settings and About in the corner; its path stored so a
+  restart reopens where it was), Read (the live camera; the tab bar hides while
+  the camera is live and stays over a frozen page, collapsing into its pill as
+  the drawer scrolls), Study, Cards and the search pill. Tapping the tab already
+  showing pops its stack and scrolls its list to the top (`TabTaps`); on Read it
+  is the retake. The page's state (`CaptureState`: the still, its pages, the
+  mode, the lines, the analysis or a transcript of its own, the zoom) lives above
+  the screen, so switching tabs or pushing an entry over the page keeps it. The
+  drawer follows the finger, settles at one of three detents on release (a
+  strip, half, most of the screen; a double tap on the handle goes to the
+  largest and back), and the page is laid out down to the drawer's settled edge,
+  its zoom kept. The camera follows the phone's orientation through a rotation
+  coordinator, and a tap on the live image focuses there.
+- **Demo mode** (`YomidoriKit/Demo`): launched with `-yomidori-demo`
+  (`make demo-iphone`), every store lives in a folder wiped and reseeded at each
+  start and the settings in their own suite. `DemoText` and `DemoData` seed a
+  hundred cards from the openings of four public-domain works (漱石, 太宰, 芥川,
+  賢治) spread over the ranks as months of reading would leave them, collections
+  with rendered covers, a shelf of names, searched words and a history; dates
+  relative to now, so every launch is the same. `DemoRenderer` draws the page
+  and the covers from text with CoreText, and Read opens on that page with its
+  transcript known, since Live Text does not run on the simulator. The same cast
+  is meant for the App Store screenshots.
 
 ## Planned
 
-Nothing below is built. Each section is the current intent and the reasoning;
-the [ROADMAP.md](ROADMAP.md) says in which order they are tried.
+What is built is above; each section here is what remains of the intent and the
+reasoning behind it. The [ROADMAP.md](ROADMAP.md) says in which order it is tried.
 
-### Capture: freeze first, then one tap
+### Capture: positions on a vertical page
 
-The camera view only frames. The shutter (on-screen, the volume button, or the
-Camera Control) takes a still, and everything after happens on the photo: the
-other hand is holding a book, text recognition runs once on a sharp frame, and
-the page can be pinched to zoom into small print. Recognition is on device and
-from what the OS ships; which engine is the spike's open question. Vision's
-`VNRecognizeTextRequest` returns each line with character positions, exactly
-enough to map a tap to a character and a character to a token, but on a
-rendered page it read no vertical text at all; the Live Text engine
-(`ImageAnalyzer`) read the same columns cleanly but returns a transcript and a
-selection UI, no positions. A tap highlights the whole token, in a
-column or a line alike; tapping the neighbor extends the highlight over a
-compound the tokenizer split, and the lookup retries on the joined form. Two
-taps at most, never a drag. Everything touchable lives at the bottom of the
-screen, inside the thumb's arc; the page can be nudged so a word at the top of
-a column comes down into reach.
+Live Text is the recognizer: on a real paperback (2026-09-21) it read the
+vertical Mincho columns where Vision's text request read nothing, and its own
+selection over the still is the tap. What it withholds is positions: the app
+gets the selected text and its range into the transcript, not where anything
+sits in the photo, so on a vertical page the sentence crop, an own tap-to-token
+highlight and a furigana filter by height all have nothing to work with; the
+readout, Keep and the sentences work from the text alone. Two routes to
+positions, neither built: Apple's `RecognizeDocumentsRequest` (iOS 26), which
+returns lines with boxes as document structure and which Vision mode now tries
+first as an experiment, the phone deciding whether it reads vertical Japanese;
+and manga-ocr over a whole page, which needs the page cut into columns from the
+pixels first (a projection profile), after which the columns are the positions
+and manga-ocr a true second reading of the page rather than of a window. If the
+document request works, Vision's old request goes; if not, Vision goes anyway
+once the column finder exists, and the Close-up mode, which the reader never
+used, with it.
 
-The recognized characters are shown as editable text in the sheet, so an OCR
-error on one stroke is a one-character fix, and the same field is the fallback
-when the print is truly too small.
+The recognized characters are shown as editable text on the card, so an OCR
+error is a one-character fix there; the same on the page itself is still to do.
 
 The camera is one source of a still, not the only one. A screenshot of an
-e-book app or a web page enters the same screen, through the photo picker or a
-share extension that receives the image from the screenshot preview; from the
-still on, camera and screenshot are the same path, vertical columns included,
-since Japanese e-book novels flow the way the paperbacks do. Watching the screenshots
-album is deliberately not offered: it needs photo-library access for everything
-in exchange for one tap the share sheet already saves.
+e-book app or a web page enters the same screen through the photo picker, and
+later a share extension that receives the image from the screenshot preview;
+from the still on, camera and screenshot are the same path, vertical columns
+included. Watching the screenshots album is deliberately not offered: it needs
+photo-library access for everything in exchange for one tap the share sheet
+already saves.
 
-### The tokenizer and its dictionaries — the open decision
+### The tokenizer and its dictionaries
 
 A reading needs a tokenizer with a dictionary that carries readings and pitch,
-and there is no first-party one. The candidates, to be settled by the spike in
-the roadmap:
+and there is no first-party one. What the app runs: the OS's analyzer
+(`CFStringTokenizer`, its Latin transcription turned back to kana) cuts the page
+and gives readings in context, `Deinflector` takes a cut stem to the forms
+JMdict lists, JMdict gives the dictionary form and the meanings, Kanjium the
+pitch; no third-party code at runtime. MeCab with IPADic stays in its own target
+as the switchable alternative under the page, because on real pages it still
+earns comparison: it knows dictionary forms and parts of speech, and it gives
+name readings where the system does not (照 あきら). The candidates as they
+were weighed:
 
 | | readings | pitch | size | license |
 | --- | --- | --- | --- | --- |
@@ -299,59 +383,34 @@ the roadmap:
 | Apple `NLTokenizer` + JMdict furigana data | segmentation only from Apple; readings from data | no | small | JMdict CC BY-SA 4.0 |
 | Kanjium pitch database | — | yes, keyed to JMdict headwords | small | free |
 
-Both the OS's analyzer and MeCab with IPADic are in the app now, switchable
-under the transcript, so the choice is made on real pages rather than on a
-fixture. Whatever is chosen is the one deliberate exception to "no third-party
-code at runtime", and its attribution goes on an About screen; JMdict and
-Kanjium both require it. Until the About screen exists the notices live in
-THIRD_PARTY_NOTICES.md.
-
-### From token to card
-
-JMdict is in the app now, built into a SQLite database at build time, and the
-lookup from a tokenizer's stem to its headword goes through `Deinflector`;
-what remains here is the card, and the meaning views described below.
-
-A card is one **word** (the dictionary form), never one sighting. Its front is a
-sentence as it stood on the page — the OCR text with the word highlighted, and
-the crop of the line behind it for when the OCR misread something. Its back is
-the reading in large kana, the pitch mark, the meaning collapsed below (usually
-known already), and the book and page it came from. Meeting the word again in
-another book adds a sentence to the same card, and reviews rotate through them.
-Every card asks three questions, each on its own schedule: how the word is read,
-what it means, and, where the dictionary knows it, which pitch it takes, picked
-from every pattern its reading allows.
-
-The two-page glue is built (see *What exists*) as attaching pages: the next
-still's text joins the current one at the seam by plain concatenation, Japanese
-having no hyphenation, so a word or a sentence cut by the page turn is whole, and
-every page's still is kept. E-book screens end sentences mid-way exactly as
-pages do, so the glue is not a paperback feature.
+Whatever third-party code stays is the one deliberate exception to "no
+third-party code at runtime", and its attribution is on the About screen.
 
 ### Scheduling and storage
 
-The scheduler is built (see *What exists*): FSRS, not SM-2, two grades, no
-streaks, the queue whatever is due when the app is opened, the meaning as a
-second question per word when asked for. Storage is one JSON document, local,
-with iCloud sync as a later option for the iPad. What remains here is the
-parameters staying the published defaults until there are enough reviews to
-fit them, which is a question for much later.
+The scheduler, the lessons and the ranks are built (see *What exists*). What
+remains: the FSRS parameters stay the published defaults until there are enough
+answers in the cards' logs to fit them, a question for much later; graphs from
+those logs (intake against reviews over time, the rank counts as a history);
+and storage as one JSON document, local, with iCloud sync as the Mac section's
+first step.
 
 ### Dictionary and meaning
 
-The meaning is one tap away, never on the card by default. The system
-dictionary button and the typed search are built (see *What exists*); JMdict
-supplies the English gloss under the fold, and Japanese Wiktionary may one day
-supply a ja gloss where it has one, since 大辞林 is a view and cannot be quoted.
+The meaning is one tap away, never on the card by default. JMdict supplies the
+English gloss under the fold, the system dictionary the Japanese one as a view
+(大辞林 cannot be quoted), and Japanese Wiktionary may one day supply a ja gloss
+where it has one.
 
 ### Pitch accent and audio
 
 Word-level pitch is in the app, from Kanjium, drawn as the line over the morae
-with the downstep number beside it (see *What exists*). A sentence's contour,
-which shifts with conjugation and compounding, would come from UniDic's
-connection rules or Open JTalk's accent estimation, which VOICEVOX exposes
-together with speech. All of it is standard Tokyo accent, which every free
-source and most paid ones are limited to.
+with the downstep number beside it, and asked in review as a pick from every
+pattern the reading allows. A sentence's contour, which shifts with conjugation
+and compounding, would come from UniDic's connection rules or Open JTalk's
+accent estimation, which VOICEVOX exposes together with speech. All of it is
+standard Tokyo accent, which every free source and most paid ones are limited
+to.
 
 ### Theme
 
