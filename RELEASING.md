@@ -1,8 +1,8 @@
 # Releasing
 
 How Yomidori versions, builds, and ships. Mechanical steps only. The lane mirrors
-its sibling projects' — iOS-only, which is all there will be: the `macos`/`all`
-scope in the scripts is inherited machinery, kept so the lane stays a copy.
+its sibling projects' — iOS today; the `macos`/`all` scope in the scripts is
+inherited machinery, kept for the Mac target the roadmap plans.
 
 ## Branching
 

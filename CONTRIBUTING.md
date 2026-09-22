@@ -39,8 +39,9 @@ Licensing:
 - You confirm the contribution is your own work and that you have the right to
   submit it under that license — not copied from code you don't have the right
   to relicense (an employer's, or an incompatibly-licensed project's).
-- Dictionary and corpus data carry their own licenses (JMdict, UniDic, Kanjium
-  and the rest are listed in [ARCHITECTURE.md](ARCHITECTURE.md)); adding a data
-  source means adding its attribution too.
+- Dictionary and corpus data carry their own licenses (JMdict, KANJIDIC2,
+  KanjiVG, Kanjium, IPADic and the rest are in
+  [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)); adding a data source means
+  adding its attribution there too.
 - Ideas and suggestions in issues are welcome and, being ideas, aren't
   something anyone owns — feel free to open them; implementing them is fine.

@@ -108,8 +108,9 @@ The load-bearing decisions and their rationale live in
   reading practice; the app answers the one word you asked about.
 - **The reading is the unit.** A selection resolves to *words* (`WordFinder`
   over the tokenizer's cut), each with reading, pitch and dictionary form. A card
-  asks three things by typing, reading, meaning and pitch, each on its own
-  schedule; the meaning is a tap further on the page and never shown unasked.
+  asks three things, the reading and the meaning by typing and the pitch by a
+  pick, each on its own schedule; the meaning is a tap further on the page and
+  never shown unasked.
 - **The book is the corpus.** A card's front is the sentence as it stood on the
   page (OCR text plus the crop), so example sentences need no corpus, no license
   and no generation. One card per word; sentences accumulate across books.
@@ -246,7 +247,8 @@ Agent-specific mechanics on top of that:
   required check, so `--auto` merge can land a PR *before* coverage posts —
   merge only once it's green (target 80% on new, non-ignored code).
 - **The whole `YomidoriKit` target is coverage-ignored** (the SwiftUI/Vision
-  layer), so pure logic goes in `YomidoriCore` to be tracked. If a Kit file
+  layer), and `YomidoriMangaOCR` with it, so pure logic goes in `YomidoriCore`
+  to be tracked. If a Kit file
   grows testable logic, move the logic, don't widen the ignore list.
 - **BEHIND blocks merge** (branch protection). Merge `origin/main` into the
   branch to catch it up; auto-merge needs required checks, so a base without
@@ -258,9 +260,10 @@ Agent-specific mechanics on top of that:
 (`Scripts/demo.sh`, like the siblings' launchers). `YomidoriKit/Demo`: `DemoMode`
 routes every store (cards, collections, lookups, stills) to a temp folder wiped
 and reseeded at each launch and the settings to their own defaults suite;
-`DemoData` seeds two public-domain openings (漱石's 吾輩は猫である, 太宰's 走れメロス)
-as cards at every rank with sightings, a shelved name, a search-kept word,
-collections with rendered covers and a lookup history, dates relative to now so
+`DemoData` seeds some hundred cards from four public-domain openings (漱石's
+吾輩は猫である, 太宰's 走れメロス, 芥川's 羅生門, 賢治's 銀河鉄道の夜) and a shop sign, at
+every rank with sightings, shelved names, search-kept words, collections with
+rendered covers and a lookup history, dates relative to now so
 the queue is always in the same state; `DemoRenderer` draws the page and the
 covers from text with CoreText, vertical Mincho on cream, so Read opens on a
 page with its transcript already known (`CaptureState.transcript`). The camera

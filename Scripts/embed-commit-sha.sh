@@ -3,7 +3,7 @@
 # Stamp the current git commit into the built app's Info.plist as a custom
 # `GitCommitSHA` key, so every build (TestFlight, App Store, local) self-
 # identifies the exact source it came from. Wired as a run-script build phase
-# in project.yml for both app targets, so it fires on `xcodebuild` AND on an
+# in project.yml for the app target, so it fires on `xcodebuild` AND on an
 # Xcode Organizer "Archive" (Apple sets INFOPLIST_PATH / TARGET_BUILD_DIR for us).
 #
 # It only writes the built product's plist (the bundled copy), never the source

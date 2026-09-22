@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Launch the app in DEMO mode on a simulator: every store routed to a folder wiped and
-# reseeded at launch with fixed public-domain data (two novel openings as cards at every
-# rank, collections with covers, a history) and a rendered page open under Read, so the
+# reseeded at launch with fixed public-domain data (some hundred cards from four novel
+# openings at every rank, collections with covers, a history) and a rendered page open under Read, so the
 # screens can be looked at without a camera. The real simulator data is never touched.
 #   PLATFORM=iphone|ipad   (default iphone)
 #   DEVICE=<name pattern>  override the simulator pick
