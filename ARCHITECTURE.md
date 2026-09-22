@@ -63,10 +63,9 @@ use for its own input.
   the system hands a page held close to the ultra-wide (macro) and a pinch past
   the wide's reach to the telephoto, both optical; autofocus is kept to the near
   range, since a book is read at arm's length. The pinch on the preview is the
-  zoom-before-capture that small print needs. From iOS 17.2 the volume buttons
+  zoom-before-capture that small print needs. The volume buttons
   and the Camera Control press the shutter too, through the capture event
-  interaction the system offers camera apps, so the book stays in the other hand;
-  before that the shutter is on screen only.
+  interaction the system offers camera apps, so the book stays in the other hand.
   `Still` is the frozen frame, upright, so orientation is settled once; from the
   picker it is decoded upright. A still also comes from the photo picker, which
   is how a screenshot enters and how the simulator, having no camera, is used.
@@ -206,8 +205,7 @@ use for its own input.
   word the readout shows, with its line as the sentence for Keep; the selection's
   range into the transcript finds the line. Live Text tells no one when the
   selection changes, so the image's coordinator polls it four times a second
-  while that mode is showing and stops when it goes. Reading the selection is
-  iOS 17 and up; on iOS 16 the strip below stays the way to a word.
+  while that mode is showing and stops when it goes.
 - **Typed search** (`SearchView`, `EntryView` in Kit; `SearchQuery` and
   `WordDictionary.search` in Core): for words met off the page. Kana or kanji
   finds headwords and readings that start with it, a hiragana query tried as

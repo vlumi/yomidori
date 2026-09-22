@@ -38,13 +38,13 @@ describing intent as fact otherwise.
 
 ## Project facts
 
-- **Platforms:** iOS 16+ / iPadOS 16+ — iPhone and iPad. **The floor is iOS 16
-  so an iPhone 8 still runs it**; Vision's Japanese text recognition arrived in
-  iOS 16, so the floor costs nothing the app needs. Anything newer goes behind a
-  wrapper (see *iOS 16 compatibility*). **No watch, no TV.** A Mac app is
+- **Platforms:** iOS 26+ / iPadOS 26+ — iPhone and iPad. **The floor is iOS 26**
+  (decided 2026-09-22, up from 16): the tab bar's search pill and Liquid Glass,
+  and no `#available` anywhere. Platform-only APIs go behind a wrapper (see
+  *Platform wrappers*). **No watch, no TV.** A Mac app is
   planned (ROADMAP's *Mac* section): no camera, a pasted text or screenshot as
   the still, the same cards over iCloud, reviews on a keyboard. Until it has a
-  target, `YomidoriKit` compiles on macOS 14 because `swift test` runs on the
+  target, `YomidoriKit` compiles on macOS 26 because `swift test` runs on the
   Mac — UIKit- and camera-only code sits behind `#if os(iOS)` /
   `#if canImport(UIKit)`, and keeping it that way is what keeps the Mac cheap.
 - **Toolchain:** Xcode 26 / Swift 6 toolchain (Swift 5 language mode),
@@ -269,15 +269,12 @@ Agent-specific mechanics on top of that:
 - `.vscode/` is gitignored and must not be pushed.
 - When you change what a tap does or what a card asks, update `README.md` too.
 
-### iOS 16 compatibility
+### Platform wrappers
 
-The floor is iOS 16 and the Kit also compiles for macOS 14 (tests). Two
-patterns, both to live in `YomidoriKit/App/Compat.swift` when the first case
-arrives:
+The floor is iOS 26 and the Kit also compiles for macOS 26 (tests), so there
+are no version fallbacks; what remains is the platform split, in
+`YomidoriKit/App/Compat.swift`:
 
-- **Newer-API wrappers** — a `*Compat` modifier that picks the right overload per
-  OS (`onChange`'s two forms are the classic). Add a sibling wrapper for any API
-  newer than the floor rather than sprinkling `#available` through views.
 - **Platform-only wrappers** — no-ops off iOS, so views stay free of `#if`.
   UIKit-, camera- and Vision-only *code* sits in an `#if os(iOS)` block with a
   fallback that keeps the macOS test build compiling. `Palette` already does

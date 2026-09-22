@@ -17,63 +17,28 @@ public struct AppRoot: View {
     public init() {}
 
     public var body: some View {
-        Group {
-            if #available(iOS 18, macOS 15, *) {
-                TabView(selection: $tab) {
-                    Tab(value: .home) {
-                        HomeStack()
-                    } label: {
-                        Label {
-                            Text("Home", bundle: .module)
-                        } icon: {
-                            Image(systemName: "book")
-                        }
-                    }
-                    Tab(value: .cards) {
-                        cardsStack
-                    } label: {
-                        Label {
-                            Text("Cards", bundle: .module)
-                        } icon: {
-                            Image(systemName: "rectangle.stack")
-                        }
-                    }
-                    .badge(dueCount)
-                    Tab(value: .search, role: .search) {
-                        searchStack
-                    }
+        TabView(selection: $tab) {
+            Tab(value: .home) {
+                HomeStack()
+            } label: {
+                Label {
+                    Text("Home", bundle: .module)
+                } icon: {
+                    Image(systemName: "book")
                 }
-            } else {
-                TabView(selection: $tab) {
-                    HomeStack()
-                        .tabItem {
-                            Label {
-                                Text("Home", bundle: .module)
-                            } icon: {
-                                Image(systemName: "book")
-                            }
-                        }
-                        .tag(AppTab.home)
-                    cardsStack
-                        .tabItem {
-                            Label {
-                                Text("Cards", bundle: .module)
-                            } icon: {
-                                Image(systemName: "rectangle.stack")
-                            }
-                        }
-                        .badge(dueCount)
-                        .tag(AppTab.cards)
-                    searchStack
-                        .tabItem {
-                            Label {
-                                Text("Search", bundle: .module)
-                            } icon: {
-                                Image(systemName: "magnifyingglass")
-                            }
-                        }
-                        .tag(AppTab.search)
+            }
+            Tab(value: .cards) {
+                cardsStack
+            } label: {
+                Label {
+                    Text("Cards", bundle: .module)
+                } icon: {
+                    Image(systemName: "rectangle.stack")
                 }
+            }
+            .badge(dueCount)
+            Tab(value: .search, role: .search) {
+                searchStack
             }
         }
         .tint(Palette.nightGreen)
