@@ -451,6 +451,16 @@
         }
       }
     },
+    "Home" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ホーム"
+          }
+        }
+      }
+    },
     "How pitch is drawn" : {
       "localizations" : {
         "ja" : {
@@ -961,6 +971,16 @@
         }
       }
     },
+    "Ranks" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ランク"
+          }
+        }
+      }
+    },
     "Read" : {
       "localizations" : {
         "ja" : {
@@ -1257,6 +1277,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "書き順"
+          }
+        }
+      }
+    },
+    "Study" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習"
           }
         }
       }
