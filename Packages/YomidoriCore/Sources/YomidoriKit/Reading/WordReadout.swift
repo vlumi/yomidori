@@ -56,23 +56,8 @@ struct WordReadout: View {
         return word.reading
     }
 
-    @ViewBuilder private var keepButton: some View {
-        if kept {
-            Image(systemName: "checkmark")
-                .foregroundStyle(.secondary)
-                .accessibilityLabel(Text("Kept", bundle: .module))
-        } else if canKeep {
-            Button(action: keep) {
-                Label {
-                    Text("Keep", bundle: .module)
-                } icon: {
-                    Image(systemName: "plus.rectangle.on.rectangle")
-                }
-            }
-            .labelStyle(.iconOnly)
-            .buttonStyle(.bordered)
-            .controlSize(.small)
-        }
+    private var keepButton: some View {
+        KeepButton(kept: kept, canKeep: canKeep, keep: keep)
     }
 
     private var meaning: some View {

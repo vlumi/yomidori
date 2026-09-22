@@ -8,12 +8,12 @@ extension CaptureView {
         case closeUp
     }
 
-    /// One reading up close: the square around a tap, and what each engine made of it.
     struct Page {
         let still: Still
         let transcript: String
     }
 
+    /// One reading up close: the square around a tap, and what each engine made of it.
     struct CloseUp {
         let box: CGRect
         let crop: Still

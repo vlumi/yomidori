@@ -5,8 +5,8 @@ import YomidoriDictionary
 /// A lesson: the next few waiting cards, each shown whole, started, put back or dropped;
 /// then the review over the ones started.
 struct LessonView: View {
-    @AppStorage("lessonOrder") private var order: Lesson.Order = .oldest
-    @AppStorage("lessonSize") private var size = 5
+    @AppStorage(SettingsKey.lessonOrder) private var order: Lesson.Order = .oldest
+    @AppStorage(SettingsKey.lessonSize) private var size = 5
     @State private var cards: [Card]?
     @State private var started: [Card] = []
     @State private var collections: [Collection] = []

@@ -76,7 +76,7 @@ struct KanjiView: View {
                 KanjiGrade(grade: grade)
             }
             if let jlpt = kanji.jlpt {
-                Text(verbatim: "JLPT \(jlpt)")
+                Text(verbatim: "JLPT N\(jlpt)")
             }
             if let rank = kanji.frequency {
                 Text("Rank \(rank)", bundle: .module)

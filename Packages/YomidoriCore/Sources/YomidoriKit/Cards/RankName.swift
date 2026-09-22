@@ -22,8 +22,7 @@ struct RankName: View {
     }
 }
 
-/// A rank as its number, 0 for the nest to 6 for the migrating bird, on a dot of its color;
-/// the one mark that reads at any size until a bird is drawn for each.
+/// A rank as its number, 0 for the nest to 6 for the migrating bird, on a dot of its color.
 struct RankMark: View {
     let rank: Rank
     var size: CGFloat = 26

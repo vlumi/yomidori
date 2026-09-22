@@ -15,6 +15,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 ### Unreleased (next build)
 
 - **Both answers on a card count.** Answering a card's second question in a review no longer wipes the first one's schedule and log line, which it did whenever a card's reading and meaning came up in the same session.
+- **Small things.** A kanji's JLPT level reads N5, as printed; the drawer under a page opens at its strip; the zoom buttons reach the same limit in every mode.
 - **Readable marks.** The rank numbers are black on the light ranks and white on the dark ones, so every one reads against its dot; the silver text by day is darker; the count beside the rank chart is plain text. The stroke order says what it is to VoiceOver, replays on its action, and draws at once when Reduce Motion is on.
 - **Larger type fits.** The wordmarks, the kanji glyph, the rank marks, the stroke numbers and the pitch line grow with the text size; rows that ran out of width at the larger sizes, an entry's gloss, a review's question, a lesson's three buttons, the cover's lines, stack instead of truncating; the page buttons are a full finger wide.
 - **VoiceOver through a review and the lists.** The verdict takes focus as soon as an answer is checked, the count of cards left says what it is, the tag chips say whether they add or remove, a collection's membership and the filter's choices announce their state, the history's icons say where a word came from, and a page announces when it has been read. On a keyboard, Return grades Good and 1 grades Again.

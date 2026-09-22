@@ -4,11 +4,11 @@ import YomidoriDictionary
 import YomidoriMeCab
 
 struct TranscriptReadout: View {
-    /// `pageOffset` is where the page on screen starts in the joined transcript, in characters.
     let transcript: String
     let stills: [Still]
     let currentTranscript: String
     let currentLines: [RecognizedLine]
+    /// Where the page on screen starts in the joined transcript, in characters.
     let pageOffset: Int
     @ObservedObject var selection: LiveTextSelection
     @AppStorage(TokenizerChoice.key) private var choice: TokenizerChoice = .system
@@ -16,9 +16,9 @@ struct TranscriptReadout: View {
     @State private var transcriptLines = TranscriptLines("")
     @State private var words: [FoundWord] = []
     @State private var keptSurfaces: Set<String> = []
-    @AppStorage("transcriptExpanded") private var expanded = false
+    @AppStorage(SettingsKey.transcriptExpanded) private var expanded = false
     @State private var archived: [UUID: UUID] = [:]
-    @AppStorage("keepsPhotos") private var keepsPhotos = false
+    @AppStorage(SettingsKey.keepsPhotos) private var keepsPhotos = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
