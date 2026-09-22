@@ -43,7 +43,7 @@ struct StudyView: View {
             .id(TabTop.id)
             if !cards.isEmpty {
                 Section {
-                    RankCounts(cards: cards)
+                    RankChart(cards: cards)
                 } header: {
                     Text("Ranks", bundle: .module)
                 }
