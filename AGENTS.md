@@ -4,10 +4,12 @@ A reading companion for Japanese paperbacks on iPhone and iPad: freeze the page,
 tap a word, get its reading and pitch, keep the sentence as a card. This file is
 how to *work on* the repo, for humans and AI agents alike.
 
-**Pre-alpha.** The toolchain, the package split and the release lane are in
-place and exercised; the app itself is the spike's capture screen. The first
-work is a spike, not a feature: whether on-device text recognition reads real
-paperbacks well enough for the whole idea to stand (see [ROADMAP.md](ROADMAP.md)).
+**Alpha on TestFlight** (builds 1–7, 2026-09-17 to 22), nothing on the App
+Store yet. The first form of the whole app exists and has been read with on a
+real paperback; ARCHITECTURE.md's *What exists* is the inventory, ROADMAP.md
+what remains, and the spike's one open question, positions on a vertical page,
+heads the roadmap. Work goes in PR-sized chunks, one concern each, with a
+CHANGELOG bullet under *Unreleased* for anything a reader would notice.
 
 Separate project from its siblings [Donpa Squad](https://github.com/vlumi/donpa)
 (Minesweeper), [Puck Around](https://github.com/vlumi/puckaround) (air hockey)
@@ -103,9 +105,10 @@ The load-bearing decisions and their rationale live in
 - **Help only where asked.** The app never annotates what wasn't tapped: no
   furigana over the page, no translation. Recognizing what you know is the
   reading practice; the app answers the one word you asked about.
-- **The reading is the unit.** A tap resolves to a *token* (the tokenizer's
-  word), and the token carries reading, pitch and dictionary form. Cards ask for
-  the reading; meaning is a tap further and optional.
+- **The reading is the unit.** A selection resolves to *words* (`WordFinder`
+  over the tokenizer's cut), each with reading, pitch and dictionary form. A card
+  asks three things by typing, reading, meaning and pitch, each on its own
+  schedule; the meaning is a tap further on the page and never shown unasked.
 - **The book is the corpus.** A card's front is the sentence as it stood on the
   page (OCR text plus the crop), so example sentences need no corpus, no license
   and no generation. One card per word; sentences accumulate across books.
@@ -121,7 +124,7 @@ yomidori/
 ├── Makefile                        Short targets; run `make` to list them
 ├── Scripts/                        One job per script; the Makefile wires them
 │     generate.sh                   Regenerates the .xcodeproj (refuses if THIS project is open in Xcode)
-│     build.sh / test.sh / run-ios.sh / run-device.sh
+│     build.sh / test.sh / run-ios.sh / run-device.sh / demo.sh (the seeded demo, make demo-iphone)
 │     embed-commit-sha.sh           Stamps GitCommitSHA into the built Info.plist
 │     release-*.sh, distribute.sh   The release lane (RELEASING.md)
 │     assets/make-icon.swift        Renders the app icon PNG (make icon)
@@ -134,20 +137,21 @@ yomidori/
 └── Packages/YomidoriCore/          Swift package — all the code
     ├── Sources/YomidoriCore/       Pure logic — tested, coverage-gated; grouped by domain as it grows:
     │   ├── Kana.swift              katakana ↔ hiragana, the first of the reading helpers
-    │   ├── Cards/                  Card, Sighting, the CardStore protocol and its JSON file
-    │   ├── Dictionary/             DictionaryEntry, the WordDictionary protocol and its lookups
-    │   ├── Reading/                Token, Tokenizer, SystemTokenizer, Deinflector, PitchAccent, Sentence, Spread, TranscriptLines
+    │   ├── Cards/                  Card, Sighting, CardStore + its JSON file, Collection, Lesson, LookupHistory
+    │   ├── Dictionary/             DictionaryEntry, the WordDictionary protocol and its lookups, KanjiEntry, SVGPath
+    │   ├── Reading/                Token, Tokenizer, SystemTokenizer, Deinflector, WordFinder, PitchAccent, Sentence, Spread, TranscriptLines
     │   ├── Recognition/            RecognizedLine, TextGeometry, LineCrop, CloseUpGeometry (the Vision-box ↔ view seam)
-    │   ├── Scheduling/             FSRS, ReadingCheck
+    │   ├── Scheduling/             FSRS, Rank, ReadingCheck, MeaningCheck
     │   └── Text/                   MarkdownBlocks
     ├── Sources/YomidoriDictionary/ JMdict, the SQLite reader over the bundled database (system SQLite)
     ├── Sources/YomidoriMeCab/      MeCab + IPADic behind Tokenizer — the one third-party dependency, quarantined
     ├── Sources/YomidoriMangaOCR/   manga-ocr through Core ML: a CGImage in, a String out; coverage-ignored
     ├── Sources/YomidoriKit/        SwiftUI + UIKit + Vision, depends on Core, Dictionary, MeCab and MangaOCR; coverage-ignored
-    │   ├── App/                    AppRoot, HomeView, AboutView, NoticesView, AppInfo, Palette, Compat — one type per file
-    │   ├── Capture/                Camera, CameraPreview, FrameSink, Still, TextRecognizer, LiveText*, CaptureView and its drawer, buttons, readouts and reader
-    │   ├── Cards/                  CardsView, CardView, ReviewView with its front and back, MarkedSentence, StillArchive
-    │   ├── Reading/                TranscriptReadout, WordReadout, SentenceKeeper, TokenFlow, WordTitle, SensesList, PitchReading, SearchView, EntryView, DictionaryButton
+    │   ├── App/                    AppRoot (the tabs, TabStack), HomeView, Screen, Destinations, TabTaps, SettingsView, SwipeBack, AboutView, NoticesView, AppInfo, Palette, Compat — one type per file
+    │   ├── Capture/                Camera, CameraPreview, FrameSink, Still, TextRecognizer, LiveText*, CaptureState, CaptureView and its drawer (detents), zoom buttons, readouts and reader
+    │   ├── Cards/                  CardsView, CardView and its sections, StudyView, LessonView/LessonCard, ReviewView with front, back and PitchChoices, RankName/RankChart, Collection* screens, CoverScanView, TagsEditor, StillArchive (+ the Cards store roots)
+    │   ├── Reading/                TranscriptReadout, WordReadout, WordDetails/WordSections, EntryView/EntryRow, KanjiView/KanjiRow, StrokeOrderView, SearchView, LookupHistoryView, TokenFlow, WordTitle, PitchReading, DictionaryButton, SentenceKeeper, TokenizerChoice
+    │   ├── Demo/                   DemoMode, DemoData, DemoText, DemoRenderer — the seeded demo (see Demo mode)
     │   └── Resources/              Localizable.xcstrings (the Kit's strings, en + ja)
     └── Tests/YomidoriCoreTests/    Grouped by domain, mirroring Core
 ```
