@@ -6,14 +6,18 @@ struct RankName: View {
     let rank: Rank
 
     var body: some View {
+        Self.text(for: rank)
+    }
+
+    static func text(for rank: Rank) -> Text {
         switch rank {
-        case .nest: Text("Nest", bundle: .module)
-        case .egg: Text("Egg", bundle: .module)
-        case .hatchling: Text("Hatchling", bundle: .module)
-        case .chick: Text("Chick", bundle: .module)
-        case .fledgling: Text("Fledgling", bundle: .module)
-        case .flying: Text("Flying", bundle: .module)
-        case .migrating: Text("Migrating", bundle: .module)
+        case .nest: return Text("Nest", bundle: .module)
+        case .egg: return Text("Egg", bundle: .module)
+        case .hatchling: return Text("Hatchling", bundle: .module)
+        case .chick: return Text("Chick", bundle: .module)
+        case .fledgling: return Text("Fledgling", bundle: .module)
+        case .flying: return Text("Flying", bundle: .module)
+        case .migrating: return Text("Migrating", bundle: .module)
         }
     }
 }
