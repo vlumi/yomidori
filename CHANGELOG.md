@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Both answers on a card count.** Answering a card's second question in a review no longer wipes the first one's schedule and log line, which it did whenever a card's reading and meaning came up in the same session.
 - **VoiceOver reads the page.** The lines found on a page are elements to pick, the drawer's height is adjustable, a reading is spoken as one word with its pitch number, Japanese text is spoken in a Japanese voice, and the words under a page and the pitch choices are buttons that say when they are selected; with Differentiate Without Color on, the selected word is outlined.
 - **The button under the live image says what it does.** It reads *Read the page* under the text-scanning glyph, in place of a camera's shutter disc, and the cover scan's says *Scan the cover*; the volume buttons and the Camera Control freeze the page as before.
 - **Export your cards.** Settings shares the cards file, one JSON document, to keep a copy or move them elsewhere; the photos stay on the device.
