@@ -5,12 +5,14 @@ import YomidoriDictionary
 /// What the search tab shows while the field is empty: the words looked up, newest first,
 /// from a search or from a page; a swipe forgets one, the button all.
 struct LookupHistoryView: View {
+    /// Bumped by the owner when the history was cleared, so the list reloads.
+    var generation = 0
     @State private var lookups: [Lookup] = []
     @State private var kept: Set<String> = []
 
     var body: some View {
-        // One section, not a group: a modifier on a group lands on every row, and the
-        // toolbar's Clear button appeared once per line.
+        // The Clear button lives on the search screen: a toolbar on any container inside a
+        // list lands on every row.
         Section {
             if lookups.isEmpty {
                 Text("Words you look up gather here.", bundle: .module)
@@ -35,19 +37,7 @@ struct LookupHistoryView: View {
                 reload()
             }
         }
-        .toolbar {
-            if !lookups.isEmpty {
-                ToolbarItem(placement: .primaryAction) {
-                    Button(role: .destructive) {
-                        try? Cards.lookups?.clear()
-                        reload()
-                    } label: {
-                        Text("Clear", bundle: .module)
-                    }
-                }
-            }
-        }
-        .onAppear(perform: reload)
+        .task(id: generation) { reload() }
     }
 
     private func reload() {
