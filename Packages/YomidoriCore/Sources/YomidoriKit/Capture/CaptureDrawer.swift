@@ -8,7 +8,7 @@ struct CaptureDrawer<Content: View, Buttons: View>: View {
     let hasStill: Bool
     let screenHeight: CGFloat
     @Binding var fraction: Double
-    let settled: () -> Void
+    let settled: (Double) -> Void
     @ViewBuilder var content: () -> Content
     @ViewBuilder var buttons: () -> Buttons
 

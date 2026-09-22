@@ -15,6 +15,9 @@ public struct CaptureView: View {
     /// The drawer's height the page is laid out to: the fraction as the last drag left it,
     /// so the page reaches the drawer's edge and moves only when the finger lifts.
     @State private var settledFraction: Double?
+    /// The fraction under the finger; written to the stored one only on release, since a
+    /// defaults write per frame is what made the drawer lag.
+    @State private var liveFraction: Double?
 
     public init() {}
 
@@ -136,8 +139,13 @@ public struct CaptureView: View {
 
     private func drawer(screenHeight: CGFloat) -> some View {
         CaptureDrawer(
-            hasStill: still != nil, screenHeight: screenHeight, fraction: $readoutFraction,
-            settled: { settledFraction = readoutFraction }
+            hasStill: still != nil, screenHeight: screenHeight,
+            fraction: Binding(get: { liveFraction ?? readoutFraction }, set: { liveFraction = $0 }),
+            settled: { fraction in
+                readoutFraction = fraction
+                liveFraction = nil
+                settledFraction = fraction
+            }
         ) {
             Picker(selection: $page.mode) {
                 Text("Live Text", bundle: .module).tag(Mode.liveText)
