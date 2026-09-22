@@ -35,11 +35,14 @@ struct RankChart: View {
             .font(.callout)
             .frame(minHeight: 30)
             Chart(bars) { bar in
-                BarMark(x: .value("Rank", bar.key), y: .value("Cards", bar.count))
-                    .foregroundStyle(
-                        bar.rank.color.opacity(selected == nil || selected == bar.key ? 1 : 0.45)
-                    )
-                    .cornerRadius(4)
+                BarMark(
+                    x: .value(String(localized: "Rank", bundle: .module), bar.key),
+                    y: .value(String(localized: "Cards", bundle: .module), bar.count)
+                )
+                .foregroundStyle(
+                    bar.rank.color.opacity(selected == nil || selected == bar.key ? 1 : 0.45)
+                )
+                .cornerRadius(4)
             }
             .chartXSelection(value: $selected)
             .chartXAxis {

@@ -12,7 +12,7 @@ public struct CaptureView: View {
     @State private var picked: PhotosPickerItem?
     @State private var zoomControl = ZoomControl()
     @State private var closeUpTask: Task<Void, Never>?
-    @AppStorage("readoutFraction") private var readoutFraction = 0.32
+    @AppStorage(SettingsKey.readoutFraction) private var readoutFraction = DrawerDetents.all[0]
     /// The drawer's height the page is laid out to: the fraction as the last drag left it,
     /// so the page reaches the drawer's edge and moves only when the finger lifts.
     @State private var settledFraction: Double?
@@ -142,7 +142,7 @@ public struct CaptureView: View {
                     .padding(12)
             }
         }
-        // Tapping Read while a page is up is the retake; the drawer had no room for a button.
+        // Tapping Read while a page is up is the retake.
         .onTabReselect(.read) { retake() }
         // The tall frame comes after the overlays, or they align to the screen's bottom and
         // sit under the drawer, unseen.

@@ -33,23 +33,10 @@ struct EntryView: View {
         }
     }
 
-    @ViewBuilder private var keepButton: some View {
-        if kept || Cards.store?.card(headword: entry.headword, reading: reading) != nil {
-            Image(systemName: "checkmark")
-                .foregroundStyle(.secondary)
-                .accessibilityLabel(Text("Kept", bundle: .module))
-        } else if Cards.store != nil {
-            Button(action: keep) {
-                Label {
-                    Text("Keep", bundle: .module)
-                } icon: {
-                    Image(systemName: "plus.rectangle.on.rectangle")
-                }
-            }
-            .labelStyle(.iconOnly)
-            .buttonStyle(.bordered)
-            .controlSize(.small)
-        }
+    private var keepButton: some View {
+        KeepButton(
+            kept: kept || Cards.store?.card(headword: entry.headword, reading: reading) != nil,
+            canKeep: Cards.store != nil, keep: keep)
     }
 
     private func keep() {

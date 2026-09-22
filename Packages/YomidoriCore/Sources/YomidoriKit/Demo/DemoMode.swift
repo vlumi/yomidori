@@ -17,7 +17,7 @@ public enum DemoMode {
         guard isRequested, let defaults = UserDefaults(suiteName: suite) else { return nil }
         defaults.removePersistentDomain(forName: suite)
         // Live Text does not run on the simulator, so the strip is the way to a word: open.
-        defaults.set(true, forKey: "transcriptExpanded")
+        defaults.set(true, forKey: SettingsKey.transcriptExpanded)
         return defaults
     }()
 

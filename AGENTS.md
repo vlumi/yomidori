@@ -149,10 +149,10 @@ yomidori/
     ├── Sources/YomidoriMeCab/      MeCab + IPADic behind Tokenizer — the one third-party dependency, quarantined
     ├── Sources/YomidoriMangaOCR/   manga-ocr through Core ML: a CGImage in, a String out; coverage-ignored
     ├── Sources/YomidoriKit/        SwiftUI + UIKit + Vision, depends on Core, Dictionary, MeCab and MangaOCR; coverage-ignored
-    │   ├── App/                    AppRoot (the tabs, TabStack), HomeView, Screen, Destinations, TabTaps, SettingsView, SwipeBack, AboutView, NoticesView, AppInfo, Palette, Compat — one type per file
-    │   ├── Capture/                Camera, CameraPreview, FrameSink, Still, TextRecognizer, LiveText*, CaptureState, CaptureView and its drawer (detents), zoom buttons, readouts and reader
-    │   ├── Cards/                  CardsView, CardView and its sections, StudyView, LessonView/LessonCard, ReviewView with front, back and PitchChoices, RankName/RankChart, Collection* screens, CoverScanView, TagsEditor, StillArchive (+ the Cards store roots)
-    │   ├── Reading/                TranscriptReadout, WordReadout, WordDetails/WordSections, EntryView/EntryRow, KanjiView/KanjiRow, StrokeOrderView, SearchView, LookupHistoryView, TokenFlow, WordTitle, PitchReading, DictionaryButton, SentenceKeeper, TokenizerChoice
+    │   ├── App/                    AppRoot (the tabs, TabStack), HomeView, Screen, Destinations, TabTaps, SettingsView, SwipeBack, AboutView, NoticesView, AppInfo, Palette, Compat, FlowLayout, FitsOrStacks, JapaneseText (`Text(japanese:)`), SettingsKey — one type per file
+    │   ├── Capture/                Camera, CameraPreview, FrameSink, Still, TextRecognizer, LiveText*, CaptureState, CaptureView and its drawer, the camera buttons, page buttons, readouts and reader
+    │   ├── Cards/                  CardsView, CardView and its sections, StudyView, LessonView/LessonCard, ReviewView with front, back and PitchChoices, RankName/RankChart, Collection* screens, CoverScanView, TagsEditor, StillArchive, Cards (the store roots), MeaningFold
+    │   ├── Reading/                TranscriptReadout, WordReadout, WordDetails/WordSections, EntryView/EntryRow, KanjiView/KanjiRow, StrokeOrderView, SearchView, LookupHistoryView, TokenFlow, WordTitle, PitchReading, DictionaryButton, KeepButton, SentenceKeeper, TokenizerChoice
     │   ├── Demo/                   DemoMode, DemoData, DemoText, DemoRenderer — the seeded demo (see Demo mode)
     │   └── Resources/              Localizable.xcstrings (the Kit's strings, en + ja)
     └── Tests/YomidoriCoreTests/    Grouped by domain, mirroring Core

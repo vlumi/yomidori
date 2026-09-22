@@ -31,7 +31,7 @@ extension View {
         modifier(OnTabReselect(tab: tab, perform: perform))
     }
 
-    /// The whole for a tab's list: scrolls to `TabTop.id` when the tab is tapped again.
+    /// For a tab's list: scrolls to `TabTop.id` when the tab is tapped again.
     func scrollsToTopOnReselect(of tab: AppTab, with proxy: ScrollViewProxy) -> some View {
         onTabReselect(tab) {
             withAnimation(.easeOut(duration: 0.25)) { proxy.scrollTo(TabTop.id, anchor: .top) }

@@ -83,7 +83,7 @@ struct LiveTextImage: UIViewRepresentable {
             imageView.isUserInteractionEnabled = true
             addSubview(imageView)
             delegate = self
-            maximumZoomScale = 8
+            maximumZoomScale = Zoom.range.upperBound
             showsHorizontalScrollIndicator = false
             showsVerticalScrollIndicator = false
             bouncesZoom = true
