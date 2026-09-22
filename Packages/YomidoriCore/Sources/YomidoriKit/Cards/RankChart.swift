@@ -34,7 +34,7 @@ struct RankChart: View {
                 }
             }
             .font(.callout)
-            .frame(height: 24)
+            .frame(height: 30)
             Chart(bars) { bar in
                 BarMark(x: .value("Rank", bar.key), y: .value("Cards", bar.count))
                     .foregroundStyle(
@@ -49,7 +49,7 @@ struct RankChart: View {
                         if let key = value.as(String.self), let raw = Int(key),
                             let rank = Rank(rawValue: raw)
                         {
-                            RankMark(rank: rank, size: 16)
+                            RankMark(rank: rank, size: 24)
                         }
                     }
                 }

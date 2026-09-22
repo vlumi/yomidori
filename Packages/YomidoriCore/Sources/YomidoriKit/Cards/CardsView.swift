@@ -84,7 +84,7 @@ struct CardRow: View {
                 .foregroundStyle(Palette.nightGreen)
             Spacer()
             HStack(spacing: 6) {
-                RankMark(rank: card.rank, size: 16)
+                RankMark(rank: card.rank, size: 22)
                 RankName(rank: card.rank)
             }
             .font(.caption)
