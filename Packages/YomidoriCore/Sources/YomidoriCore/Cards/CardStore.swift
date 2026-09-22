@@ -47,6 +47,26 @@ extension CardStore {
         cards().filter(\.isWaiting)
     }
 
+    public func card(id: UUID) -> Card? {
+        cards().first { $0.id == id }
+    }
+
+    /// Answers on the card as the store holds it now, not as the item took it: the items of
+    /// one card share the card, and each answer changes it.
+    @discardableResult
+    public func answer(
+        _ item: ReviewItem, grade: Grade, at date: Date, reconciled: Bool = false,
+        accepting meaning: String? = nil
+    ) throws -> Card {
+        var card = self.card(id: item.card.id) ?? item.card
+        if let meaning {
+            card.acceptedMeanings.append(meaning)
+        }
+        card.answer(item.question, grade: grade, at: date, reconciled: reconciled)
+        try update(card)
+        return card
+    }
+
     /// The longest overdue first, then the oldest.
     public func due(at date: Date) -> [Card] {
         cards().filter { $0.isDue(at: date) }
