@@ -104,3 +104,14 @@ public final class FileCollectionStore: CollectionStore {
         loaded = collections
     }
 }
+
+extension Sequence where Element == String {
+    /// Tags match by the reader's own spelling, case aside.
+    public func containsTag(_ tag: String) -> Bool {
+        contains { $0.lowercased() == tag.lowercased() }
+    }
+}
+
+extension Collection {
+    public func hasTag(_ tag: String) -> Bool { tags.containsTag(tag) }
+}

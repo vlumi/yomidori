@@ -31,9 +31,7 @@ struct TagsEditor: View {
                     .buttonStyle(.borderless)
                 }
             }
-            let suggestions = known.filter { tag in
-                !tags.contains { $0.lowercased() == tag.lowercased() }
-            }
+            let suggestions = known.filter { !tags.containsTag($0) }
             if !suggestions.isEmpty {
                 FlowLayout(spacing: 8) {
                     ForEach(suggestions, id: \.self) { tag in
@@ -62,8 +60,7 @@ struct TagsEditor: View {
     }
 
     private func add() {
-        for tag in Collection.tags(from: draft)
-        where !tags.contains(where: { $0.lowercased() == tag.lowercased() }) {
+        for tag in Collection.tags(from: draft) where !tags.containsTag(tag) {
             tags.append(tag)
         }
         draft = ""

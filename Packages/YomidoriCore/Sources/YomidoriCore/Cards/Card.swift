@@ -278,3 +278,24 @@ public struct Sighting: Identifiable, Hashable, Codable, Sendable {
         try c.encode(date, forKey: .date)
     }
 }
+
+extension Card {
+    public var wordKey: String { WordKey.of(headword: headword, reading: reading) }
+
+    /// Whether the card is in one of `chosen`; none chosen means every card.
+    public func isIn(anyOf chosen: Set<UUID>) -> Bool {
+        chosen.isEmpty || !chosen.isDisjoint(with: collectionIDs)
+    }
+}
+
+extension Sighting {
+    /// The crop first, then the pages.
+    public var imageIDs: [UUID] { [cropID].compactMap { $0 } + stillIDs }
+}
+
+extension Sequence where Element == Card {
+    /// Every image some card still refers to; a still is shared by every card kept from its page.
+    public var referencedImageIDs: Set<UUID> {
+        Set(flatMap(\.sightings).flatMap(\.imageIDs))
+    }
+}

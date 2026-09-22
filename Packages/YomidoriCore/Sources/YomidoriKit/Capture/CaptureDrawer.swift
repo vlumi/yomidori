@@ -1,16 +1,9 @@
 import SwiftUI
+import YomidoriCore
 
 /// Under a still the drawer lies over the page, so its height is its own business; under
 /// the camera it is only the button row.
 struct CaptureDrawer<Content: View, Buttons: View>: View {
-    static var fractions: ClosedRange<Double> { 0.2...0.8 }
-    /// Where the drawer comes to rest: a strip for the page, half, most of the screen.
-    static var detents: [Double] { [0.2, 0.5, 0.8] }
-
-    static func detent(nearest fraction: Double) -> Double {
-        detents.min { abs($0 - fraction) < abs($1 - fraction) } ?? fraction
-    }
-
     let hasStill: Bool
     let screenHeight: CGFloat
     @Binding var fraction: Double
@@ -18,14 +11,6 @@ struct CaptureDrawer<Content: View, Buttons: View>: View {
     let toggled: () -> Void
     @ViewBuilder var content: () -> Content
     @ViewBuilder var buttons: () -> Buttons
-
-    static func height(fraction: Double, screenHeight: CGFloat) -> CGFloat {
-        max(180, screenHeight * fraction)
-    }
-
-    static func minimumHeight(screenHeight: CGFloat) -> CGFloat {
-        height(fraction: fractions.lowerBound, screenHeight: screenHeight)
-    }
 
     var body: some View {
         VStack(spacing: 12) {
@@ -49,7 +34,10 @@ struct CaptureDrawer<Content: View, Buttons: View>: View {
         .padding(.horizontal, 24)
         .padding(.vertical, 12)
         .frame(maxWidth: .infinity)
-        .frame(height: hasStill ? Self.height(fraction: fraction, screenHeight: screenHeight) : nil)
+        .frame(
+            height: hasStill
+                ? DrawerDetents.height(fraction: fraction, screenHeight: screenHeight) : nil
+        )
         .background(Palette.page.ignoresSafeArea(edges: .bottom))
         .tint(Palette.nightGreen)
     }

@@ -130,7 +130,10 @@ struct TranscriptReadout: View {
         let text = selection.text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty, let tokens = tokenizer?.tokens(in: text) else { return }
         let found = WordFinder.words(in: tokens, dictionary: JMdict.bundled)
-        if let line = lineIndex(ofSelection: selection.range) {
+        if let line = transcriptLines.lineIndex(
+            ofSelection: selection.range, in: currentTranscript, pageOffset: pageOffset,
+            transcript: transcript)
+        {
             words = found.map { $0.aligned(to: lines[line]) ?? $0 }
         } else {
             words = found
@@ -138,14 +141,6 @@ struct TranscriptReadout: View {
         for entry in words.compactMap(\.entries.first) {
             Cards.noteLookup(of: entry, from: .page)
         }
-    }
-
-    private func lineIndex(ofSelection range: Range<String.Index>?) -> Int? {
-        guard let range, range.lowerBound <= currentTranscript.endIndex else { return nil }
-        let offset =
-            pageOffset
-            + currentTranscript.distance(from: currentTranscript.startIndex, to: range.lowerBound)
-        return transcriptLines.lineIndex(atOffset: offset, in: transcript)
     }
 
     private func keep(_ word: FoundWord) {

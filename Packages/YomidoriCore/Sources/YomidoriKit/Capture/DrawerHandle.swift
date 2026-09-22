@@ -1,4 +1,5 @@
 import SwiftUI
+import YomidoriCore
 
 struct DrawerHandle: View {
     @Binding var fraction: Double
@@ -24,11 +25,9 @@ struct DrawerHandle: View {
                         if start == nil { start = fraction }
                     }
                     .onChanged { value in
-                        let start = fractionAtStart ?? fraction
-                        let range = CaptureDrawer<EmptyView, EmptyView>.fractions
-                        fraction = min(
-                            max(start - value.translation.height / screenHeight, range.lowerBound),
-                            range.upperBound)
+                        fraction = DrawerDetents.dragged(
+                            from: fractionAtStart ?? fraction, by: value.translation.height,
+                            screenHeight: screenHeight)
                     }
                     .onEnded { _ in settled(fraction) })
     }

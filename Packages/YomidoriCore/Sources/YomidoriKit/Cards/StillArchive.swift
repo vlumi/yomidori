@@ -42,11 +42,9 @@ enum StillArchive {
         return CGImageSourceCreateImageAtIndex(source, 0, nil)
     }
 
-    /// Deletes the files no card refers to any more; a still is shared by every card kept
-    /// from its page.
+    /// Deletes the files no card refers to any more.
     static func remove(_ ids: [UUID], keptBy cards: [Card]) {
-        let referenced = Set(
-            cards.flatMap(\.sightings).flatMap { $0.stillIDs + [$0.cropID].compactMap { $0 } })
+        let referenced = cards.referencedImageIDs
         for id in ids where !referenced.contains(id) {
             if let url = try? url(for: id) {
                 try? FileManager.default.removeItem(at: url)
@@ -127,7 +125,7 @@ enum Cards {
 
     /// The words that have a card, as "headword reading", for a mark in a list.
     static func keptWords() -> Set<String> {
-        Set((store?.cards() ?? []).map { "\($0.headword) \($0.reading)" })
+        Set((store?.cards() ?? []).map(\.wordKey))
     }
 
     static func removeCollection(_ collection: Collection) {

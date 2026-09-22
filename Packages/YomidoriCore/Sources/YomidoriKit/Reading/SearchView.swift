@@ -29,7 +29,9 @@ struct SearchView: View {
                     EntryRow(
                         entry: entry,
                         kept: kept.contains(
-                            "\(entry.headword) \(Kana.hiragana(entry.readings.first ?? ""))"))
+                            WordKey.of(
+                                headword: entry.headword,
+                                reading: Kana.hiragana(entry.readings.first ?? ""))))
                 }
             }
         }

@@ -139,10 +139,10 @@ yomidori/
 └── Packages/YomidoriCore/          Swift package — all the code
     ├── Sources/YomidoriCore/       Pure logic — tested, coverage-gated; grouped by domain as it grows:
     │   ├── Kana.swift              katakana ↔ hiragana, the first of the reading helpers
-    │   ├── Cards/                  Card, Sighting, CardStore + its JSON file, Collection, Lesson, LookupHistory
+    │   ├── Cards/                  Card, Sighting, CardStore + its JSON file, Collection, Lesson, LookupHistory, WordKey
     │   ├── Dictionary/             DictionaryEntry, the WordDictionary protocol and its lookups, KanjiEntry, SVGPath
     │   ├── Reading/                Token, Tokenizer, SystemTokenizer, Deinflector, WordFinder, PitchAccent, Sentence, Spread, TranscriptLines
-    │   ├── Recognition/            RecognizedLine, TextGeometry, LineCrop, CloseUpGeometry (the Vision-box ↔ view seam)
+    │   ├── Recognition/            RecognizedLine, TextGeometry, LineCrop, CloseUpGeometry (the Vision-box ↔ view seam), Zoom, DrawerDetents, CoverLines
     │   ├── Scheduling/             FSRS, Rank, ReadingCheck, MeaningCheck
     │   └── Text/                   MarkdownBlocks
     ├── Sources/YomidoriDictionary/ JMdict, the SQLite reader over the bundled database (system SQLite)

@@ -22,6 +22,25 @@ final class TranscriptLinesTests: XCTestCase {
         XCTAssertEqual(transcript[lines.index(inLine: 1, offset: 3, in: transcript)], "漂")
     }
 
+    func testASelectionOnTheSecondPageFindsItsLineInTheSpread() {
+        let pages = ["前のページ。", transcript]
+        let joined = Spread.join(pages)
+        let lines = TranscriptLines(joined)
+        let range = transcript.range(of: "漂っ")
+        XCTAssertEqual(
+            lines.lineIndex(
+                ofSelection: range, in: transcript,
+                pageOffset: Spread.offset(ofPage: 1, in: pages), transcript: joined),
+            1)
+        XCTAssertEqual(
+            lines.lineIndex(
+                ofSelection: transcript.range(of: "樹皮"), in: transcript,
+                pageOffset: Spread.offset(ofPage: 1, in: pages), transcript: joined),
+            0)
+        XCTAssertNil(
+            lines.lineIndex(ofSelection: nil, in: transcript, pageOffset: 0, transcript: joined))
+    }
+
     func testTheSentenceAroundATokenOnALine() {
         let lines = TranscriptLines(transcript)
         let tokens = SystemTokenizer().tokens(in: lines.lines[1])

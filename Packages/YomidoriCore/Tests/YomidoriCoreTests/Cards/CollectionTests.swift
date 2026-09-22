@@ -17,6 +17,21 @@ final class CollectionTests: XCTestCase {
         try? FileManager.default.removeItem(at: cardsURL)
     }
 
+    func testTagsMatchCaseAside() {
+        XCTAssertTrue(["Book", "Magazine"].containsTag("book"))
+        XCTAssertFalse(["Book"].containsTag("books"))
+        XCTAssertTrue(Collection(name: "羊", tags: ["SF"]).hasTag("sf"))
+    }
+
+    func testACardIsInTheChosenCollectionsOrInAllWhenNoneIsChosen() {
+        let book = UUID()
+        var card = Card(headword: "羊", reading: "ひつじ", entryID: nil, sightings: [], created: Date())
+        XCTAssertTrue(card.isIn(anyOf: []))
+        XCTAssertFalse(card.isIn(anyOf: [book]))
+        card.add(to: book)
+        XCTAssertTrue(card.isIn(anyOf: [book, UUID()]))
+    }
+
     func testCollectionsAreMadeRenamedRemovedAndReopened() throws {
         let store = FileCollectionStore(url: url)
         XCTAssertEqual(store.collections(), [])

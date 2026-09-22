@@ -47,7 +47,6 @@ struct CardView: View {
 
     private func removeImages(of sighting: Sighting) {
         replace(sighting.withoutImages())
-        let ids = [sighting.cropID].compactMap { $0 } + sighting.stillIDs
-        StillArchive.remove(ids, keptBy: Cards.store?.cards() ?? [])
+        StillArchive.remove(sighting.imageIDs, keptBy: Cards.store?.cards() ?? [])
     }
 }
