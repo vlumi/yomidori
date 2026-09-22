@@ -9,6 +9,7 @@ struct StrokeOrderView: View {
     @ScaledMetric(relativeTo: .body) private var typeScale: CGFloat = 1
     @State private var drawn = 0
     @State private var drawing: Task<Void, Never>?
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -31,6 +32,11 @@ struct StrokeOrderView: View {
         .onTapGesture { replay() }
         .onAppear { replay() }
         .onDisappear { drawing?.cancel() }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text("Stroke order, \(strokes.count) strokes", bundle: .module))
+        .accessibilityAddTraits(.isButton)
+        .accessibilityHint(Text("Draws the strokes again", bundle: .module))
+        .accessibilityAction { replay() }
     }
 
     private var scaledSide: CGFloat { side * typeScale }
@@ -43,6 +49,10 @@ struct StrokeOrderView: View {
 
     private func replay() {
         drawing?.cancel()
+        if reduceMotion {
+            drawn = strokes.count
+            return
+        }
         drawn = 0
         drawing = Task { @MainActor in
             for index in strokes.indices {

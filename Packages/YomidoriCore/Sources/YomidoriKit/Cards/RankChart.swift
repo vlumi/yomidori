@@ -29,7 +29,6 @@ struct RankChart: View {
                     RankMark(rank: shown.rank)
                     RankName(rank: shown.rank)
                     Text(verbatim: "\(shown.count)")
-                        .foregroundStyle(shown.rank.color)
                         .fontWeight(.semibold)
                 }
             }

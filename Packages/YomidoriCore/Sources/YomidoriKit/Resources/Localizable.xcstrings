@@ -391,6 +391,16 @@
         }
       }
     },
+    "Draws the strokes again" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "もう一度なぞります"
+          }
+        }
+      }
+    },
     "Drop" : {
       "localizations" : {
         "ja" : {
@@ -1487,6 +1497,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "書き順"
+          }
+        }
+      }
+    },
+    "Stroke order, %lld strokes" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "筆順、%lld画"
           }
         }
       }
