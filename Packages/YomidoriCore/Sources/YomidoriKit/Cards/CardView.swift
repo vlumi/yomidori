@@ -19,6 +19,7 @@ struct CardView: View {
                 }
             }
             WordSections(headword: card.headword, details: details)
+            CardFacts(card: card)
             ForEach(card.sightings.sorted { $0.date > $1.date }) { sighting in
                 SightingSection(sighting: sighting) {
                     editing = sighting

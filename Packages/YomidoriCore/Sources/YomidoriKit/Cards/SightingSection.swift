@@ -1,8 +1,8 @@
 import SwiftUI
 import YomidoriCore
 
-/// One sighting on a card: the sentence with the word marked, its photos, and the buttons
-/// to correct the sentence or drop the photos.
+/// One sighting on a card: the sentence with the word marked, its photos, and the rows
+/// that correct the sentence or drop the photos.
 struct SightingSection: View {
     let sighting: Sighting
     let edit: () -> Void
@@ -26,33 +26,27 @@ struct SightingSection: View {
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
             }
-        } header: {
-            HStack {
-                Text(
-                    verbatim: [
-                        sighting.source,
-                        sighting.date.formatted(date: .abbreviated, time: .omitted),
-                    ].compactMap { $0 }.joined(separator: " · "))
-                Spacer()
-                Button(action: edit) {
-                    Label {
-                        Text("Edit the sentence", bundle: .module)
-                    } icon: {
-                        Image(systemName: "pencil")
-                    }
+            Button(action: edit) {
+                Label {
+                    Text("Correct the sentence", bundle: .module)
+                } icon: {
+                    Image(systemName: "pencil")
                 }
-                if sighting.hasImages {
-                    Button(role: .destructive, action: removeImages) {
-                        Label {
-                            Text("Remove the photos", bundle: .module)
-                        } icon: {
-                            Image(systemName: "photo.badge.minus")
-                        }
+            }
+            if sighting.hasImages {
+                Button(role: .destructive, action: removeImages) {
+                    Label {
+                        Text("Remove the photos", bundle: .module)
+                    } icon: {
+                        Image(systemName: "photo.badge.minus")
                     }
                 }
             }
-            .labelStyle(.iconOnly)
-            .font(.callout)
+        } header: {
+            Text(
+                verbatim: [
+                    sighting.source, sighting.date.formatted(date: .abbreviated, time: .omitted),
+                ].compactMap { $0 }.joined(separator: " · "))
         }
     }
 }

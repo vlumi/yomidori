@@ -8,14 +8,20 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     public let entryID: Int?
     public var sightings: [Sighting]
     public let created: Date
+    /// When the card's content last changed: a sighting added, a sentence corrected, photos
+    /// dropped. Reviews do not move it; they have their own dates.
+    public private(set) var modified: Date
     public var review: ReviewState?
     public var meaningReview: ReviewState?
     public var pitchReview: ReviewState?
+    /// Every answer given, in order.
+    public private(set) var log: [ReviewEntry]
 
     public init(
         id: UUID = UUID(), headword: String, reading: String, entryID: Int?,
-        sightings: [Sighting], created: Date, review: ReviewState? = nil,
-        meaningReview: ReviewState? = nil, pitchReview: ReviewState? = nil
+        sightings: [Sighting], created: Date, modified: Date? = nil, review: ReviewState? = nil,
+        meaningReview: ReviewState? = nil, pitchReview: ReviewState? = nil,
+        log: [ReviewEntry] = []
     ) {
         self.id = id
         self.headword = headword
@@ -23,9 +29,11 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         self.entryID = entryID
         self.sightings = sightings
         self.created = created
+        self.modified = modified ?? created
         self.review = review
         self.meaningReview = meaningReview
         self.pitchReview = pitchReview
+        self.log = log
     }
 
     public func isDue(at date: Date) -> Bool {
@@ -56,14 +64,36 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         }
     }
 
-    public mutating func replace(_ sighting: Sighting) {
+    public mutating func replace(_ sighting: Sighting, at date: Date = Date()) {
         guard let index = sightings.firstIndex(where: { $0.id == sighting.id }) else { return }
         sightings[index] = sighting
+        modified = date
     }
 
-    // The first cards were written with the reading's state only.
+    public mutating func add(_ sighting: Sighting) {
+        sightings.append(sighting)
+        modified = max(modified, sighting.date)
+    }
+
+    /// The scheduler's verdict and a line in the log; `reconciled` when the reader overruled
+    /// a wrong verdict.
+    public mutating func answer(
+        _ question: Question, grade: Grade, at date: Date, reconciled: Bool = false
+    ) {
+        setState(FSRS.review(state(for: question), grade: grade, at: date), for: question)
+        log.append(
+            ReviewEntry(date: date, question: question, grade: grade, reconciled: reconciled))
+    }
+
+    public func answers(to question: Question, graded grade: Grade) -> Int {
+        log.filter { $0.question == question && $0.grade == grade }.count
+    }
+
+    // The first cards were written with the reading's state only; the modified date and
+    // the log came later, and read as the latest sighting and empty.
     private enum CodingKeys: String, CodingKey {
-        case id, headword, reading, entryID, sightings, created, review, meaningReview, pitchReview
+        case id, headword, reading, entryID, sightings, created, modified, review, meaningReview
+        case pitchReview, log
     }
 
     public init(from decoder: Decoder) throws {
@@ -74,9 +104,27 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         entryID = try c.decodeIfPresent(Int.self, forKey: .entryID)
         sightings = try c.decode([Sighting].self, forKey: .sightings)
         created = try c.decode(Date.self, forKey: .created)
+        modified =
+            try c.decodeIfPresent(Date.self, forKey: .modified)
+            ?? sightings.map(\.date).max() ?? created
         review = try c.decodeIfPresent(ReviewState.self, forKey: .review)
         meaningReview = try c.decodeIfPresent(ReviewState.self, forKey: .meaningReview)
         pitchReview = try c.decodeIfPresent(ReviewState.self, forKey: .pitchReview)
+        log = try c.decodeIfPresent([ReviewEntry].self, forKey: .log) ?? []
+    }
+}
+
+public struct ReviewEntry: Hashable, Codable, Sendable {
+    public let date: Date
+    public let question: Question
+    public let grade: Grade
+    public let reconciled: Bool
+
+    public init(date: Date, question: Question, grade: Grade, reconciled: Bool) {
+        self.date = date
+        self.question = question
+        self.grade = grade
+        self.reconciled = reconciled
     }
 }
 
