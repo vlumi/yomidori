@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Both answers on a card count.** Answering a card's second question in a review no longer wipes the first one's schedule and log line, which it did whenever a card's reading and meaning came up in the same session.
 - **The button under the live image says what it does.** It reads *Read the page* under the text-scanning glyph, in place of a camera's shutter disc, and the cover scan's says *Scan the cover*; the volume buttons and the Camera Control freeze the page as before.
 - **Export your cards.** Settings shares the cards file, one JSON document, to keep a copy or move them elsewhere; the photos stay on the device.
 - **About credits everything bundled.** KANJIDIC2, KRADFILE, KanjiVG and manga-ocr join the list on the About screen; the notices name manga-ocr's license right, Apache 2.0, and a stray mark is gone from IPADic's.
