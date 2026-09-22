@@ -141,9 +141,9 @@ struct ReviewView: View {
             }
             if item.question == .meaning, !answer.trimmingCharacters(in: .whitespaces).isEmpty {
                 Button {
-                    var card = item.card
-                    card.acceptedMeanings.append(answer.trimmingCharacters(in: .whitespaces))
-                    record(item, .good, reconciled: true, card: card)
+                    record(
+                        item, .good, reconciled: true,
+                        accepting: answer.trimmingCharacters(in: .whitespaces))
                 } label: {
                     Text("Add as an answer", bundle: .module)
                 }
@@ -195,21 +195,26 @@ struct ReviewView: View {
     }
 
     private func record(
-        _ item: ReviewItem, _ grade: Grade, reconciled: Bool = false, card: Card? = nil
+        _ item: ReviewItem, _ grade: Grade, reconciled: Bool = false,
+        accepting meaning: String? = nil
     ) {
-        var reviewed = card ?? item.card
-        reviewed.answer(item.question, grade: grade, at: Date(), reconciled: reconciled)
-        try? Cards.store?.update(reviewed)
+        let reviewed = try? Cards.store?.answer(
+            item, grade: grade, at: Date(), reconciled: reconciled, accepting: meaning)
         revealed = false
         answer = ""
         verdict = nil
         queue.removeFirst()
+        if let reviewed {
+            queue = queue.map {
+                $0.card.id == reviewed.id ? ReviewItem(card: reviewed, question: $0.question) : $0
+            }
+        }
     }
 
     /// The card leaves the queue with every question it had in it, to come back through a
     /// lesson.
     private func sendToWaiting(_ card: Card) {
-        var waiting = card
+        var waiting = Cards.store?.card(id: card.id) ?? card
         waiting.sendToWaiting()
         try? Cards.store?.update(waiting)
         revealed = false
