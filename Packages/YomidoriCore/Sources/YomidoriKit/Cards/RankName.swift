@@ -18,15 +18,18 @@ struct RankName: View {
     }
 }
 
-/// A rank's colour as a dot: the one mark that reads at any size and needs no bird drawn.
+/// A rank as its number, 0 for the nest to 6 for the migrating bird, on a dot of its colour;
+/// the one mark that reads at any size until a bird is drawn for each.
 struct RankMark: View {
     let rank: Rank
-    var size: CGFloat = 10
+    var size: CGFloat = 18
 
     var body: some View {
-        Circle()
-            .fill(rank.color)
+        Text(verbatim: "\(rank.rawValue)")
+            .font(.system(size: size * 0.6, weight: .semibold, design: .rounded))
+            .foregroundStyle(.white)
             .frame(width: size, height: size)
+            .background(rank.color, in: Circle())
     }
 }
 

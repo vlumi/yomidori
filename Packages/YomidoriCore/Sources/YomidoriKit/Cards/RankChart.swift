@@ -49,7 +49,7 @@ struct RankChart: View {
                         if let key = value.as(String.self), let raw = Int(key),
                             let rank = Rank(rawValue: raw)
                         {
-                            RankMark(rank: rank, size: 8)
+                            RankMark(rank: rank, size: 16)
                         }
                     }
                 }
