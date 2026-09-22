@@ -183,18 +183,20 @@ use for its own input.
   rule. Tested for the shapes that matter: a first Good comes back in three
   days, a first Again tomorrow, intervals grow, a lapse shrinks stability,
   retrievability is one at review and 90 % at the due date. **`ReviewView`**
-  (Kit) runs the due queue one card at a time: the latest sentence with the word
-  marked as the front, the question being its reading; a tap turns it to the
-  reading with its pitch and the meaning under a fold; two buttons. No streak,
-  no count kept against anyone. With *Type the reading* on, remembered, the
-  front takes the reading typed in kana instead, `ReadingCheck` (Core) judges it
-  strictly with katakana and half-width folded, the verdict shows with the
-  back, and the grade it suggests is the prominent button; every review is then
-  a few words of kana typing on vocabulary actually met. A card can also ask
-  what the word means, a switch on the card, off by default since the reading
-  is the gap the app is for: a second question with its own schedule, the
-  reading given away on its front, the senses and the system dictionary on its
-  back. The queue is of questions, not cards.
+  (Kit) runs the due queue one question at a time, the latest sentence with the
+  word marked as the front. Every question is answered, not just revealed: the
+  reading typed in kana and judged strictly by `ReadingCheck` (Core), katakana
+  and half-width folded, long vowels not forgiven; the meaning typed in English
+  and judged leniently by `MeaningCheck` (Core) against every gloss and the
+  card's own accepted meanings, case, articles, parentheticals and punctuation
+  set aside, a whole gloss or a phrase of one, one typo forgiven with a
+  transposition counting as one; the pitch picked from every pattern the reading
+  allows. The verdict shows with the back and only suggests the grade, the
+  prominent of two buttons; on a miss, *Count it right* overrules it and *Add as
+  an answer* also keeps the typed meaning on the card. *Show the answer* gives
+  up. Every answer is logged on the card with its grade and whether it was
+  overruled (`ReviewEntry`), for the graphs to come. No streak, no count kept
+  against anyone. The queue is of questions, not cards.
 - **`AboutView`** (Kit): the name, the version with its build and commit, the
   promise that nothing leaves the device, the pitch notation explained on four
   words, and the notices every bundled license asks for, which are the

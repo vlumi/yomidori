@@ -16,12 +16,14 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     public var pitchReview: ReviewState?
     /// Every answer given, in order.
     public private(set) var log: [ReviewEntry]
+    /// Meanings the reader accepts beside the dictionary's glosses.
+    public var acceptedMeanings: [String]
 
     public init(
         id: UUID = UUID(), headword: String, reading: String, entryID: Int?,
         sightings: [Sighting], created: Date, modified: Date? = nil, review: ReviewState? = nil,
         meaningReview: ReviewState? = nil, pitchReview: ReviewState? = nil,
-        log: [ReviewEntry] = []
+        log: [ReviewEntry] = [], acceptedMeanings: [String] = []
     ) {
         self.id = id
         self.headword = headword
@@ -34,6 +36,7 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         self.meaningReview = meaningReview
         self.pitchReview = pitchReview
         self.log = log
+        self.acceptedMeanings = acceptedMeanings
     }
 
     public func isDue(at date: Date) -> Bool {
@@ -93,7 +96,7 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     // the log came later, and read as the latest sighting and empty.
     private enum CodingKeys: String, CodingKey {
         case id, headword, reading, entryID, sightings, created, modified, review, meaningReview
-        case pitchReview, log
+        case pitchReview, log, acceptedMeanings
     }
 
     public init(from decoder: Decoder) throws {
@@ -111,6 +114,7 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         meaningReview = try c.decodeIfPresent(ReviewState.self, forKey: .meaningReview)
         pitchReview = try c.decodeIfPresent(ReviewState.self, forKey: .pitchReview)
         log = try c.decodeIfPresent([ReviewEntry].self, forKey: .log) ?? []
+        acceptedMeanings = try c.decodeIfPresent([String].self, forKey: .acceptedMeanings) ?? []
     }
 }
 

@@ -44,7 +44,7 @@ Decided 2026-09-18: a Mac app is wanted, after the phone's recognizer question i
 
 - [ ] **Cards that follow.** iCloud sync of the one JSON document and the stills, so a card kept on the phone is reviewed on the Mac and the other way round; conflicts merged by sightings and reviews, never by picking a side. The prerequisite for the rest of this section, and it serves an iPad too.
 - [ ] **A Mac target.** No camera: a pasted sentence goes straight to the tokenizer, a pasted or dropped screenshot goes through Live Text as on the phone, with the Mac's own selection overlay on the image. Same bundle id under the same App Store record. The release lane's macOS scope, inherited from the siblings, comes back into use.
-- [ ] **Review on a keyboard.** Space to reveal, two keys to grade. *The typed-answer mode is built and works on every platform already: the reading typed in kana and checked strictly, katakana and half-width folded, long vowels not forgiven; every review a few words of kana typing on vocabulary actually met. What remains is the Mac's own keys.* A typing tutor proper, with drills and speed, is a different product and stays out.
+- [ ] **Review on a keyboard.** Space to reveal, two keys to grade. *Typing is how every review is answered already, on every platform: the reading strictly, the meaning leniently with the reader's own accepted meanings, the pitch by a pick. What remains is the Mac's own keys.* A typing tutor proper, with drills and speed, is a different product and stays out.
 
 ## Store — *out the door*
 
