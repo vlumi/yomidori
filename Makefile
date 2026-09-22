@@ -24,7 +24,7 @@ PROJECT_INPUTS := project.yml \
 	$(wildcard Sources/*/*.entitlements) \
 	$(wildcard Sources/*/*.xcstrings)
 
-# The bundled dictionary is built from JMdict, not committed (50 MB); the project
+# The bundled dictionary is built from JMdict, not committed (~78 MB); the project
 # must exist on disk before XcodeGen runs, or the app is generated without it.
 DICTIONARY := Sources/Shared/Dictionaries/jmdict.sqlite
 
@@ -129,8 +129,8 @@ clean:  ## Remove the generated project + local build output
 # prompts + auto-merging PR + CI-wait) is the one stateful script; state crosses
 # to the later steps via the merged commit on main, not through Make.
 #
-# PLATFORM is ios — the only target there will be; the scripts' macos/all scope
-# is inherited machinery. UPLOAD=0 stops after export (no ASC upload). The
+# PLATFORM is ios, the one target today; the scripts' macos/all scope is
+# inherited machinery, kept for the planned Mac target. UPLOAD=0 stops after export (no ASC upload). The
 # steps are a linear dependency chain so they stay ordered even under
 # `make -j`. Run from a clean, up-to-date main.
 PLATFORM ?= ios

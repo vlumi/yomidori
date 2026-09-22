@@ -1,6 +1,6 @@
 # Privacy Policy
 
-_Last updated: 2026-09-17_
+_Last updated: 2026-09-22_
 
 **Yomidori does not collect, store, or transmit any personal data.**
 
@@ -11,14 +11,17 @@ Everything happens on your device:
 - **No network access.** The app makes no network connections of any kind. It
   requests no network-related permissions. Text recognition, dictionary lookups
   and readings all run on the device, from dictionaries bundled with the app.
-- **The camera.** The one permission the app uses is the camera, to photograph
-  the page you are reading. Frames are processed on the device to recognize the
-  text and are never uploaded anywhere. Only what you choose to keep is stored:
-  the crop of a line you turned into a card, and the text recognized from it.
-- **What's stored locally.** Your cards — the words, their sentences and crops,
-  your review history — and the app's own settings, kept in the app's standard
+- **The camera.** The one permission the app uses is the camera, to read the
+  page in front of you. Frames are processed on the device to recognize the
+  text and are never uploaded anywhere. A frame is kept only when you keep a
+  word from it with the photo toggle on: the page and the crop of the sentence
+  then stay on that card.
+- **What's stored locally.** Your cards — the words, their sentences, the
+  photos you chose to keep, your answers — your collections, a history of the
+  last words you looked up, and the app's own settings, kept in the app's own
   local storage so they persist between launches. Deleting the app removes
-  them; the app can export or delete them at any time.
+  them all; Settings exports the cards as one file, and any card, collection
+  or history entry can be deleted in the app.
 - **No tracking.** The app does not track you across apps or websites and does
   not use any device identifiers for advertising.
 - **Children.** Because the app collects no data at all, it collects none from

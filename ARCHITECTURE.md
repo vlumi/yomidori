@@ -8,8 +8,8 @@ this file and the plan is retired.
 
 Everything before "[Planned](#planned)" describes shipped code. That chapter is
 fenced off deliberately: mixing the two is what lets architecture notes drift
-into describing a model that was never built. Today almost everything is
-planned, and the fence is the point.
+into describing a model that was never built. The first form of the whole app
+is above the fence; below it is the reasoning that has not yet become code.
 
 ## The rule everything hangs on
 
@@ -51,8 +51,8 @@ use for its own input.
   and the one seam where that box meets a view — the aspect-fitted frame a still
   lands in, the flip to y-down view space, and the hit test that picks the
   smallest line under a tap. Nothing else in the app does coordinate arithmetic.
-- **The capture screen** (Kit, `Capture/`): the spike's instrument, and the
-  shape of the app to come. `Camera` is the back camera behind a preview that
+- **The capture screen** (Kit, `Capture/`): the page frozen and read.
+  `Camera` is the back camera behind a preview that
   only frames, with one button, *Read the page* under the text-scanning glyph,
   that keeps the next frame of the stream at the sensor's full resolution: a
   frame grab, not a photo capture, so nothing is written to the library and
@@ -81,7 +81,7 @@ use for its own input.
   which yields a transcript and, on iOS, its own text selection over the image.
   A third mode reads *up close*: a tap cuts the line under it, as the page pass
   found it, out of the still at full resolution with the paper around it, and
-  both engines read only that; where no line was found a square around the tap
+  every engine reads only that; where no line was found a square around the tap
   stands in.
   Recognizers downscale a whole page before reading, so a dense kanji reaches
   them at a fraction of the pixels the sensor caught; the crop hands them the
@@ -92,9 +92,9 @@ use for its own input.
   drawer once it is found, its content scrolling and its buttons fixed. In every
   mode the frozen still pinches to zoom and drags to pan, a double tap bringing
   it back; the tap on a line or a word is reported in the still's own
-  coordinates whatever the zoom, so the geometry seam knows nothing of it. The screen shows any of the
-  three, switched at the bottom; the roadmap's spike is the comparison against
-  a real book.
+  coordinates whatever the zoom, so the geometry seam knows nothing of it. The
+  screen shows any of the three, switched at the bottom, so they can be
+  compared on the same page.
 - **`Token`** and **`SystemTokenizer`** (Core): a sentence cut into words by the
   OS's own Japanese analyzer, each with its reading in context as hiragana. The
   analyzer is reached through `CFStringTokenizer`, which offers a Latin
@@ -309,9 +309,9 @@ use for its own input.
 - **`AppRoot`, the tabs and the page** (Kit): five along the bottom, each with
   its own stack (`TabStack`): Home (the name, the Read button, Review and Lesson
   with their counts, Settings and About in the corner; its path stored so a
-  restart reopens where it was), Read (the live camera; the tab bar hides while
-  the camera is live and stays over a frozen page, collapsing into its pill as
-  the drawer scrolls), Study, Cards and the search pill. Tapping the tab already
+  restart reopens where it was), Read (the live camera, or the frozen page; the
+  tab bar stays, collapsing into its pill as the drawer scrolls), Study, Cards
+  and the search pill. Tapping the tab already
   showing pops its stack and scrolls its list to the top (`TabTaps`); on Read it
   is the retake. The page's state (`CaptureState`: the still, its pages, the
   mode, the lines, the analysis or a transcript of its own, the zoom) lives above
@@ -392,42 +392,45 @@ third-party code at runtime", and its attribution is on the About screen.
 
 ### Scheduling and storage
 
-The scheduler, the lessons and the ranks are built (see *What exists*). What
-remains: the FSRS parameters stay the published defaults until there are enough
-answers in the cards' logs to fit them, a question for much later; graphs from
-those logs (intake against reviews over time, the rank counts as a history);
-and storage as one JSON document, local, with iCloud sync as the Mac section's
-first step.
+The scheduler, the lessons, the ranks and the one-document store are built (see
+*What exists*). What remains: the FSRS parameters stay the published defaults
+until there are enough answers in the cards' logs to fit them, a question for
+much later; graphs from those logs (intake against reviews over time, the rank
+counts as a history); a fuller export, one archive with the stills, and its
+import; and iCloud sync of the document, the Mac section's first step.
 
 ### Dictionary and meaning
 
-The meaning is one tap away, never on the card by default. JMdict supplies the
-English gloss under the fold, the system dictionary the Japanese one as a view
-(大辞林 cannot be quoted), and Japanese Wiktionary may one day supply a ja gloss
-where it has one.
+The meaning is one tap away, never shown unasked; the English gloss from JMdict
+and the system dictionary's Japanese one are built (see *What exists*). What
+remains is a ja gloss of the app's own, from Japanese Wiktionary where it has
+one, since 大辞林 is a view and cannot be quoted.
 
 ### Pitch accent and audio
 
-Word-level pitch is in the app, from Kanjium, drawn as the line over the morae
-with the downstep number beside it, and asked in review as a pick from every
-pattern the reading allows. A sentence's contour, which shifts with conjugation
-and compounding, would come from UniDic's connection rules or Open JTalk's
+Word-level pitch is built (`PitchAccent`, `PitchReading` and the pick in review,
+see *What exists*). What remains is the sentence: its contour, which shifts
+with conjugation and compounding, would come from UniDic's connection rules or
+Open JTalk's
 accent estimation, which VOICEVOX exposes together with speech. All of it is
 standard Tokyo accent, which every free source and most paid ones are limited
 to.
 
 ### Theme
 
-Two palettes on one token set, following the system with a manual override.
-Dark mode is 夜緑 proper: deep green accent on near-black. Light mode is the same
-green on paper-white. The green is the frame and the accent — the tapped word,
-the buttons, the bird — never the surface behind text. The highlight of a tapped
+The palette is built (`Palette`, see *What exists*) and follows the system; what
+remains is a manual override, and the highlight rule below once the app's own
+tap draws one. Dark mode is 夜緑 proper: deep green accent on near-black. Light
+mode is the same green on paper-white. The green is the frame and the accent —
+the tapped word, the buttons, the bird — never the surface behind text. The highlight of a tapped
 word sits on a photograph, so it is a translucent fill with a solid underline,
 legible over cream paper and gray print in both modes.
 
 ### Localization
 
-English and Japanese interfaces; the name is Yomidori on one storefront and
-ヨミドリ on the other, one bundle. The Japanese interface is for Japanese users,
+Both interfaces exist, every string with its Japanese; what remains is the
+native-ear review before the store (the roadmap's *Store* section). The name is
+Yomidori on one storefront and ヨミドリ on the other, one bundle. The Japanese
+interface is for Japanese users,
 which the school-age 国語 idea in the roadmap would need, and it is written by a
 native ear, not translated from the English.

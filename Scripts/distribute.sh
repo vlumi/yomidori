@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Archive, export, and upload an app to App Store Connect — the whole local
-# release lane (the ROADMAP's "manual for v0.1, one local lane run by hand").
+# release lane, run by hand (RELEASING.md).
 #
 # Usage:
 #   Scripts/distribute.sh ios            # archive → export → upload iOS

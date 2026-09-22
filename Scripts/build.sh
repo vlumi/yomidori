@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Build the iOS app for the simulator, unsigned. Usage: build.sh [ios]
 # Assumes the Xcode project is already generated (the Makefile handles that).
-# iOS is the only platform there will be; the argument exists so the call
-# shape matches the sibling projects' scripts.
+# iOS is the one platform today; the argument exists so the call shape matches
+# the sibling projects' scripts and a Mac target can join.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 

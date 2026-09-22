@@ -23,15 +23,16 @@ now, without leaving the page. Every dictionary makes you draw the character or
 type a guess, and a translation app translates the whole page.
 
 Yomidori does one thing at that moment. Frame the line, tap *Read the page*,
-and the page freezes on the screen; reading on the phone itself, share a
-screenshot to it instead. Tap the word, in a vertical column or a horizontal
+and the page freezes on the screen; reading on the phone itself, give it a
+screenshot from your photos instead. Tap the word, in a vertical column or a horizontal
 line, and the whole word lights up with its reading in kana and its pitch
 accent, in a sheet your thumb can reach. The meaning is one more tap away, and never shown before
 you ask.
 
 Then the word keeps working for you. The sentence you met it in, as it stood on
 the page, becomes a card; a lesson starts it when you have time for it, and it
-asks three things by typing: the reading, the meaning, and which pitch. Meet the
+asks three things: the reading and the meaning by typing, and which pitch by a
+pick. Meet the
 same word in another book and the card gains a second sentence. Reviews happen
 when you open the app, on the train or not at all; there is no streak to keep,
 and a card you truly forgot goes back to waiting instead of haunting you.

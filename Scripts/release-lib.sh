@@ -1,7 +1,7 @@
 # Shared helpers for the release scripts (sourced, not executed).
 #
 # The release flow is split by concern: release-preflight.sh, release-publish.sh,
-# release-tag.sh, distribute.sh — wired in order by the Makefile. The pure steps
+# release-tag.sh, release-distribute.sh — wired in order by the Makefile. The pure steps
 # (preflight, tag, distribute) re-derive their inputs from git + project.yml so
 # each runs standalone; only the dirty middle (publish: bump prompts + PR +
 # CI-wait) carries in-memory state, all within one script.

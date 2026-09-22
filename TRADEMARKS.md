@@ -18,7 +18,8 @@ branding.** Internal/personal builds and non-public experimentation are fine.
 
 Dictionary and corpus data bundled with the app (JMdict, the tokenizer's
 dictionary, pitch-accent data) belong to their publishers under their own
-licenses, listed in [ARCHITECTURE.md](ARCHITECTURE.md) and credited in the app.
+licenses, listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and
+credited in the app.
 
 Nothing here restricts fair use — referring to the project by name to discuss,
 review, or link to it is fine.

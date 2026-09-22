@@ -105,8 +105,9 @@ jobs:
             spm-${{ runner.os }}-${{ env.XCODE_VERSION }}-
       - name: Install XcodeGen
         run: brew install xcodegen
-      # The bundled JMdict is built, not committed. Cache the ~10 MB download by
-      # week; the build itself takes seconds.
+      # The bundled dictionary is built, not committed. Cache its downloads
+      # (JMdict, KANJIDIC2, KRADFILE, KanjiVG, Kanjium) by week; the build
+      # itself takes seconds.
       - name: Cache JMdict download
         uses: actions/cache@v6
         with:

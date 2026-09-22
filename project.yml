@@ -60,7 +60,7 @@ targets:
         # "Yomidori-iOS".
         PRODUCT_NAME: Yomidori
         MARKETING_VERSION: "0.1.0"
-        # 0 = never released; the first `make release` cuts build 1.
+        # The release lane bumps this at each cut (RELEASING.md); 0 means never released.
         CURRENT_PROJECT_VERSION: "7"
         GENERATE_INFOPLIST_FILE: NO
         # The Core ML models are loaded by URL; no generated classes, and no warning
