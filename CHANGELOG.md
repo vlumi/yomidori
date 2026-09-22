@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 6 — 2026-09-22
+
 - **Collections with covers, tags and a note.** A collection is edited on its own screen: scan the cover with the camera or pick it from the photos, and the words read off it are offered for the name and the note, the largest print first, so a title is picked rather than typed. Tags are your own words, book, magazine, an author; the ones already in use are a tap away. The list shows the covers, notes, tags and counts. On Cards, the filter takes any number of collections, or every collection with a tag, or all cards.
 - **A history of lookups.** The search tab, while its field is empty, lists the words you looked up, newest first: opened from a search or shown under a page, with a mark on the ones that have a card. Particles and the like are left out. Swipe to forget one, Clear for all; tap to open the word and keep it after all.
 - **Collections.** Group cards by book or anything else, a card in as many as you like. Under a page, the collection menu beside the photo toggle sets where Keep files a word, remembered until you change it, a new one named on the spot; a card's screen ticks its collections. Cards filters by collection and lists them, with rename and remove; a lesson can draw from chosen collections. Search results mark the words that already have a card.
