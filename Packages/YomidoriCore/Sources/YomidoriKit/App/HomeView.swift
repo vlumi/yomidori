@@ -30,11 +30,11 @@ struct HomeView: View {
             }
             .id(TabTop.id)
             Section {
+                // Not a Label: a list row drops a label's icon and leaves its title off centre.
                 Button(action: read) {
-                    Label {
-                        Text("Read", bundle: .module)
-                    } icon: {
+                    HStack(spacing: 10) {
                         Image(systemName: "camera.viewfinder")
+                        Text("Read", bundle: .module)
                     }
                     .font(.title2.weight(.semibold))
                     .frame(maxWidth: .infinity)
@@ -71,7 +71,7 @@ struct HomeView: View {
                 Text("Study", bundle: .module)
             }
         }
-        .navigationTitle(Text("Home", bundle: .module))
+        .navigationTitle(Text(verbatim: ""))
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 NavigationLink(value: Screen.settings) {
