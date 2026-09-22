@@ -59,6 +59,7 @@ struct TranscriptReadout: View {
             CollectionPicker()
                 .controlSize(.small)
             Spacer()
+            tokenizerMenu
             Toggle(isOn: $keepsPhotos) {
                 Label {
                     Text("Keep the photo too", bundle: .module)
@@ -82,6 +83,26 @@ struct TranscriptReadout: View {
             .buttonStyle(.bordered)
             .controlSize(.small)
         }
+    }
+
+    /// The analyzer, switched right here so the same page can be cut both ways.
+    private var tokenizerMenu: some View {
+        Menu {
+            Picker(selection: $choice) {
+                Text("System", bundle: .module).tag(TokenizerChoice.system)
+                Text(verbatim: "MeCab").tag(TokenizerChoice.mecab)
+            } label: {
+                Text("Tokenizer", bundle: .module)
+            }
+        } label: {
+            Label {
+                Text(choice == .system ? "System" : "MeCab", bundle: .module)
+            } icon: {
+                Image(systemName: "text.word.spacing")
+            }
+            .font(.caption)
+        }
+        .controlSize(.small)
     }
 
     private func wordReadout(_ word: FoundWord) -> some View {

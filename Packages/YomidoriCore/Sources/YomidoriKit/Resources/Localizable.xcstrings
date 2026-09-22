@@ -631,6 +631,16 @@
         }
       }
     },
+    "MeCab" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MeCab"
+          }
+        }
+      }
+    },
     "MeCab could not load its dictionary." : {
       "localizations" : {
         "ja" : {
@@ -1437,16 +1447,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "どういう意味？"
-          }
-        }
-      }
-    },
-    "Which analyzer cuts a page into words. The system's is the default; MeCab is here to compare on real pages." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ページを言葉に区切る解析器。標準はシステムのもので、MeCabは実際のページで比べるためにあります。"
           }
         }
       }

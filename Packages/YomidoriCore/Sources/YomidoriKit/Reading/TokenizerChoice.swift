@@ -1,8 +1,8 @@
 import YomidoriCore
 import YomidoriMeCab
 
-/// Which analyzer cuts the page: the system's or MeCab, chosen in Settings while the two
-/// are compared.
+/// Which analyzer cuts the page: the system's or MeCab, switched under the page while the
+/// two are compared, and remembered.
 enum TokenizerChoice: String, CaseIterable {
     case system
     case mecab
