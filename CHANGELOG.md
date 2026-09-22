@@ -14,7 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
-- **Ranks as a chart.** Study draws the ranks as bars from the nest up to the migrating bird, each with its own colour and mark; touch a bar for its number. The nest is the floor now, the egg next. Cards carry their rank's mark in the list and on the card.
+- **Ranks as a chart.** Study draws the ranks as bars from the nest up to the migrating bird, each in its own colour; touch a bar for its number. The nest is the floor now, the egg next. Cards carry their rank's colour as a dot in the list and on the card.
 - **A tap on the tab you are on** goes back to its first screen and to the top of its list, as elsewhere on iOS; on Read it scrolls the drawer to the top of the words and leaves the page alone.
 - **The drawer comes to rest.** Let go and it settles at the nearest of three heights, a strip, half, or most of the screen; a double tap on its handle takes it to the largest and back.
 - **Five along the bottom.** Home first, with the name, the Read button and what study is waiting, Settings and About in its corner; then Read, Study (review, lessons, the ranks), Cards (the list and the collections), and the search pill. Scrolling the drawer collapses the bar into its pill.

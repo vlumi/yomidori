@@ -18,13 +18,15 @@ struct RankName: View {
     }
 }
 
-/// A rank's symbol in its colour.
+/// A rank's colour as a dot: the one mark that reads at any size and needs no bird drawn.
 struct RankMark: View {
     let rank: Rank
+    var size: CGFloat = 10
 
     var body: some View {
-        Image(systemName: rank.symbol)
-            .foregroundStyle(rank.color)
+        Circle()
+            .fill(rank.color)
+            .frame(width: size, height: size)
     }
 }
 
@@ -40,18 +42,6 @@ extension Rank {
         case .fledgling: return Palette.nightGreen
         case .flying: return Color(red: 0.12, green: 0.42, blue: 0.50)
         case .migrating: return Color(red: 0.16, green: 0.28, blue: 0.58)
-        }
-    }
-
-    var symbol: String {
-        switch self {
-        case .nest: return "basket"
-        case .egg: return "oval.portrait.fill"
-        case .hatchling: return "bird"
-        case .chick: return "bird.fill"
-        case .fledgling: return "leaf"
-        case .flying: return "wind"
-        case .migrating: return "location.north.line"
         }
     }
 }
