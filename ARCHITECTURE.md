@@ -69,6 +69,10 @@ use for its own input.
   zoom-before-capture that small print needs. The volume buttons
   and the Camera Control freeze the page too, through the capture event
   interaction the system offers camera apps, so the book stays in the other hand.
+  Text can stand in for a page: the paste button beside the photo library
+  (the system's, so iOS asks nothing) puts cleaned text, up to twenty thousand
+  characters, where the still would be (`TextPage`, a selectable text view that
+  reports its selection as Live Text does), and the drawer reads it the same way.
   `Still` is the frozen frame, upright, so orientation is settled once; from the
   picker it is decoded upright. A still also comes from the photo picker, which
   is how a screenshot enters and how the simulator, having no camera, is used.

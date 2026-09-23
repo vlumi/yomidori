@@ -15,6 +15,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 ### Unreleased (next build)
 
 - **Search is ready to type.** Switching to the search tab puts the cursor in the field, and every result and history line shows its reading with the pitch drawn over it.
+- **Paste text to read.** Beside the photo library under the camera, the paste button puts copied text where the page would be: select in it and its words read out as from a photo, to keep, look up and fix the same way. Tap Read to go back to the camera.
 - **Safer with what comes from outside.** Shared collections, records from your other devices, photos and covers are checked and cleaned before the app keeps them: oversized files and images are refused, text that could hide or reverse what it says is cleaned, and a broken schedule is dropped instead of breaking reviews.
 ### build 9 — 2026-09-23
 

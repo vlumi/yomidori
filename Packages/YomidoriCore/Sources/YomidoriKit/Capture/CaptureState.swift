@@ -13,6 +13,8 @@ final class CaptureState: ObservableObject {
     @Published var analysis: ImageAnalysis?
     /// The page's text when it did not come from Live Text: the demo's rendered page.
     @Published var transcript: String?
+    /// Text pasted in place of a page, cleaned; nil while a photo or the camera is up.
+    @Published var pasted: String?
     @Published var selected: Int?
     @Published var closeUp: CaptureView.CloseUp?
     @Published var zoom = Zoom()
