@@ -71,6 +71,13 @@ and spreads each version's one-time Beta App Review across the project.
 
 ## Cutting a release
 
+**If sync's records changed shape** (a new record type or field in
+`YomidoriSync`), deploy the schema first: run a development build on a device so
+CloudKit creates the change in Development, then CloudKit Console → Development
+→ *Deploy Schema Changes…*. TestFlight and App Store builds use Production and
+fail to save a type Production lacks. A change inside a record's `json` payload
+needs nothing.
+
 One command from a clean, up-to-date release base — `main`, or a version-line
 `release/<minor>.x` branch when patching a shipped version:
 
@@ -169,5 +176,9 @@ is edited in App Store Connect.
   `Scripts/.asc-config.example` → `Scripts/.asc-config` (gitignored) and fill
   in the Key ID + Issuer ID. The same key serves every sibling.
 - **Signing** is automatic (`-allowProvisioningUpdates`); no manual certs.
+- **iCloud container** `iCloud.fi.misaki.yomidori` with CloudKit and push,
+  enabled for the app id (done 2026-09-23; the entitlements are in
+  `project.yml`). Its schema — the record types `Card`, `Collection`, `Lookup`,
+  `HistoryClear` — is deployed to Production (done 2026-09-23).
 - **Repo settings**: "Allow auto-merge" enabled (the release PR self-merges on
   green CI); branch protection on `main` with the CI checks required.
