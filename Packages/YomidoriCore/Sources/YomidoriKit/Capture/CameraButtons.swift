@@ -20,18 +20,14 @@ struct CameraButtons: View {
             .font(.title2)
             .frame(maxWidth: .infinity)
             Button(action: freeze) {
-                Label {
-                    label
-                } icon: {
-                    Image(systemName: "text.viewfinder")
-                }
-                .font(.title3.weight(.semibold))
-                .padding(.horizontal, 20)
-                .padding(.vertical, 12)
+                Image(systemName: "text.viewfinder")
+                    .font(.title.weight(.semibold))
+                    .frame(width: 64, height: 64)
             }
             .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.capsule)
+            .buttonBorderShape(.circle)
             .tint(Palette.nightGreen)
+            .accessibilityLabel(label)
             .disabled(!ready)
             Color.clear.frame(maxWidth: .infinity, maxHeight: 1)
         }
