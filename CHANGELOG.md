@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Search is ready to type.** Switching to the search tab puts the cursor in the field, and every result and history line shows its reading with the pitch drawn over it.
 - **Start again while a page is read.** Tap Read while the page is still being read, a blurred shot or one frozen too soon, and the camera is back at once: the reading is abandoned, not waited for. The two recognizers also read side by side now, so a page is ready sooner.
 - **The page's controls on your side.** The zoom is a slider now, one stroke of the thumb instead of taps, and it stands with the next-page button and the spread's way out in one column on one side of the picture, the zoom nearest the thumb. Settings puts that column left or right, for the hand that holds the phone.
 - **Paste text to read.** Beside the photo library under the camera, the paste button puts copied text where the page would be: select in it and its words read out as from a photo, to keep, look up and fix the same way. Tap Read to go back to the camera.
