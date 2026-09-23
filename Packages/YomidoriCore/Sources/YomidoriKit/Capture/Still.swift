@@ -1,9 +1,6 @@
 import CoreGraphics
 import Foundation
-
-#if canImport(UIKit)
-import UIKit
-#endif
+import YomidoriCore
 
 /// Upright, with any EXIF orientation baked into the pixels.
 public struct Still: Identifiable {
@@ -23,28 +20,14 @@ public struct Still: Identifiable {
         self.image = image
     }
 
-    /// Nil for data that is not an image, and off iOS, where there is no UIKit to decode with.
+    /// The longest side a still is kept at: a 48-megapixel frame's, so the camera loses nothing.
+    public static let longestSide = 8_064
+
+    /// Nil for data that is not an image, or one too large to be a photo; decoded upright.
     public init?(data: Data) {
-        #if canImport(UIKit)
-        guard let decoded = UIImage(data: data), let upright = Self.upright(decoded) else {
+        guard let image = ImageIntake.image(from: data, longestSide: Self.longestSide) else {
             return nil
         }
-        image = upright
-        #else
-        return nil
-        #endif
+        self.image = image
     }
-
-    #if canImport(UIKit)
-    private static func upright(_ image: UIImage) -> CGImage? {
-        if image.imageOrientation == .up {
-            return image.cgImage
-        }
-        let format = UIGraphicsImageRendererFormat()
-        format.scale = 1
-        return UIGraphicsImageRenderer(size: image.size, format: format)
-            .image { _ in image.draw(in: CGRect(origin: .zero, size: image.size)) }
-            .cgImage
-    }
-    #endif
 }

@@ -186,6 +186,19 @@ use for its own input.
   from this device. Pushes wake the engine, and the app fetches when it comes
   to the front. On unless turned off in Settings, never in the demo, and
   nothing happens without an iCloud account.
+- **Intake** (`Sanitize`, `Intake`, `ImageIntake` in Core): what comes from
+  outside, a shared collection, a record from another device, a photo, pasted
+  text, is made safe before it is stored or shown. Text loses control
+  characters, bidirectional overrides and isolates (which can make a word read
+  other than it is) and byte-order marks, and is cut to a length per field; lists
+  are bounded (words per file, sightings per card, answers, tags); a sighting
+  whose offset falls outside its sentence is unmarked; a schedule with a zero or
+  negative stability is dropped, and the scheduler never divides by one; a
+  shared file over five megabytes, a synced record over CloudKit's megabyte and
+  a history clear dated past tomorrow are refused. Images are decoded only when
+  the data is an image, under sixty megabytes and a hundred megapixels by its
+  header, straight to the size wanted and upright; a cover from another device is
+  decoded and drawn anew, never stored as it came.
 - **`RecordFile`** (Core): the one JSON store under the cards, the collections
   and the lookup history: loaded once, changed under a lock, written whole and
   atomically, and every write reported by the keys it saved and deleted and by

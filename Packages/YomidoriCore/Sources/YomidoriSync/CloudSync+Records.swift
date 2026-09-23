@@ -110,7 +110,7 @@ extension CloudSync {
         case .lookup:
             if let remote = decode(Lookup.self, record) { incoming.lookups.append(remote) }
         case .historyCleared:
-            incoming.clearedAt = record["cleared"] as? Date
+            incoming.clearedAt = SyncPayload.clearDate(record["cleared"] as? Date)
         }
     }
 
@@ -135,11 +135,14 @@ extension CloudSync {
                 clearedAt: nil)
         case .historyCleared:
             try? stores.lookups.applyRemote(
-                saving: [], deleting: [], clearedAt: server["cleared"] as? Date)
+                saving: [], deleting: [],
+                clearedAt: SyncPayload.clearDate(server["cleared"] as? Date))
         }
     }
 
-    private func decode<Record: Decodable>(_ type: Record.Type, _ record: CKRecord) -> Record? {
-        (record["json"] as? Data).flatMap { try? SyncPayload.decode(type, from: $0) }
+    private func decode<Record: Decodable & Sanitizable>(_ type: Record.Type, _ record: CKRecord)
+        -> Record?
+    {
+        (record["json"] as? Data).flatMap { SyncPayload.intake(type, from: $0) }
     }
 }

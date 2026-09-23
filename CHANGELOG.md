@@ -15,6 +15,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 ### Unreleased (next build)
 
 - **Search is ready to type.** Switching to the search tab puts the cursor in the field, and every result and history line shows its reading with the pitch drawn over it.
+- **Safer with what comes from outside.** Shared collections, records from your other devices, photos and covers are checked and cleaned before the app keeps them: oversized files and images are refused, text that could hide or reverse what it says is cleaned, and a broken schedule is dropped instead of breaking reviews.
 ### build 9 — 2026-09-23
 
 - **iCloud sync.** Your cards, collections with their covers, and lookup history are kept the same on your devices through your own iCloud: a card kept on the phone is there to review on the iPad, and one answered on both before they met keeps both answers. On in Settings, where it can be turned off and shows how it is doing. The export there is now *Back up cards*.

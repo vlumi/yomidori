@@ -49,6 +49,7 @@ public enum FSRS {
 
     public static func retrievability(of state: ReviewState, at date: Date) -> Double {
         let elapsed = max(0, date.timeIntervalSince(state.lastReview) / day)
+        guard state.stability.isFinite, state.stability > 0 else { return 0 }
         return pow(1 + factor * elapsed / state.stability, decay)
     }
 
