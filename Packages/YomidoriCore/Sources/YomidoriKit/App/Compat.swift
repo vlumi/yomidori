@@ -14,6 +14,13 @@ extension View {
         #endif
     }
 
+    func navigationBarTitleDisplayModeInline() -> some View {
+        #if os(iOS)
+        navigationBarTitleDisplayMode(.inline)
+        #else
+        self
+        #endif
+    }
 }
 
 extension View {
