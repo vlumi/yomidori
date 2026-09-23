@@ -53,7 +53,7 @@ use for its own input.
   smallest line under a tap. Nothing else in the app does coordinate arithmetic.
 - **The capture screen** (Kit, `Capture/`): the page frozen and read.
   `Camera` is the back camera behind a preview that
-  only frames, with one button, *Read the page* under the text-scanning glyph,
+  only frames, with one round button, the text-scanning glyph named *Read the page*,
   that keeps the next frame of the stream at the sensor's full resolution: a
   frame grab, not a photo capture, so nothing is written to the library and
   there is no shutter sound (mandatory for photo capture in Japan, where the
