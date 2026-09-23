@@ -153,7 +153,7 @@ yomidori/
     ├── Sources/YomidoriMangaOCR/   manga-ocr through Core ML: a CGImage in, a String out; coverage-ignored
     ├── Sources/YomidoriKit/        SwiftUI + UIKit + Vision, depends on Core, Dictionary, MeCab and MangaOCR; coverage-ignored
     │   ├── App/                    AppRoot (the tabs, TabStack), HomeView, Screen, Destinations, TabTaps, SettingsView, SwipeBack, AboutView, NoticesView, AppInfo, Palette, Compat, FlowLayout, FitsOrStacks, JapaneseText (`Text(japanese:)`), SettingsKey — one type per file
-    │   ├── Capture/                Camera, CameraPreview, FrameSink, Still, TextRecognizer, LiveText*, CaptureState, CaptureView and its drawer, the camera buttons, page buttons, readouts and reader
+    │   ├── Capture/                Camera, CameraPreview, FrameSink, Still, TextRecognizer, LiveText*, CaptureState, CaptureView (+Pages) and its drawer, the camera buttons, PageControls with the ZoomSlider, TextPage, readouts and reader
     │   ├── Cards/                  CardsView, CardView and its sections, StudyView, LessonView/LessonCard, ReviewView with front, back and PitchChoices, RankName/RankChart, Collection* screens, CoverScanView, TagsEditor, CoverArchive, Cards (the store roots), MeaningFold
     │   ├── Reading/                TranscriptReadout, WordReadout, WordDetails/WordSections, EntryView/EntryRow, KanjiView/KanjiRow, StrokeOrderView, SearchView, LookupHistoryView, TokenFlow, WordTitle, PitchReading, DictionaryButton, KeepButton, SentenceKeeper, TokenizerChoice
     │   ├── Demo/                   DemoMode, DemoData, DemoText, DemoRenderer — the seeded demo (see Demo mode)

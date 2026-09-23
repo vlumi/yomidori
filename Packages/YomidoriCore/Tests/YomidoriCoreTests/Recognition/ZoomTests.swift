@@ -28,4 +28,15 @@ final class ZoomTests: XCTestCase {
         let zoom = Zoom(scale: 2, offset: CGSize(width: 900, height: -900)).clamped(in: bounds)
         XCTAssertEqual(zoom.offset, CGSize(width: 200, height: -200))
     }
+
+    func testASliderPositionIsARatioAlongTheRange() {
+        let range: ClosedRange<CGFloat> = 1...4
+        XCTAssertEqual(Zoom.fraction(of: 1, in: range), 0)
+        XCTAssertEqual(Zoom.fraction(of: 2, in: range), 0.5, accuracy: 0.0001)
+        XCTAssertEqual(Zoom.fraction(of: 9, in: range), 1)
+        XCTAssertEqual(Zoom.scale(at: 0.5, in: range), 2, accuracy: 0.0001)
+        XCTAssertEqual(Zoom.scale(at: 2, in: range), 4, accuracy: 0.0001)
+        XCTAssertEqual(Zoom.fraction(of: 2, in: 3...3), 0)
+        XCTAssertEqual(Zoom(scale: 2).scaled(to: 3, in: bounds).scale, 3, accuracy: 0.0001)
+    }
 }
