@@ -100,10 +100,14 @@ test:  ## Run the package logic tests (no Xcode project needed)
 	@Scripts/test.sh
 
 .PHONY: lint
-lint:  ## SwiftLint + swift-format, both strict (as CI runs them)
+# markdownlint is pinned like SwiftLint, so CI and a local run agree (npx fetches it).
+MARKDOWNLINT := markdownlint-cli2@0.23.3
+
+lint:  ## SwiftLint, swift-format and markdownlint, all strict (as CI runs them)
 	@swiftlint lint --strict
 	@swift format lint --strict --recursive --configuration .swift-format \
 		Packages/YomidoriCore/Sources Packages/YomidoriCore/Tests Sources
+	@npx --yes $(MARKDOWNLINT) '*.md'
 
 .PHONY: format
 format:  ## Rewrite sources with swift-format

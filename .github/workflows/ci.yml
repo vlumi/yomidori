@@ -43,6 +43,10 @@ jobs:
         run: |
           swift format lint --strict --recursive --configuration .swift-format \
             Packages/YomidoriCore/Sources Packages/YomidoriCore/Tests Sources
+      - name: markdownlint
+        # The docs are read as rendered Markdown and CHANGELOG is parsed by the release
+        # lane; pinned like SwiftLint (keep in step with the Makefile's MARKDOWNLINT).
+        run: npx --yes markdownlint-cli2@0.23.3 '*.md'
 
   test:
     name: Test core logic

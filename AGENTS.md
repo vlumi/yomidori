@@ -181,7 +181,7 @@ Everything is a `make` target so Xcode never has to be opened
 
 ```sh
 make test              # package logic tests (swift test; no Xcode project needed)
-make lint              # SwiftLint + swift-format, both --strict, as CI runs them
+make lint              # SwiftLint + swift-format --strict, and markdownlint on the docs, as CI runs them
 make format            # rewrite sources with swift-format
 make build-ios         # generate the project if stale, build the app for the simulator (unsigned)
 make run-iphone        # build + install + launch on an iPhone simulator (DEVICE="SE" to pick)
