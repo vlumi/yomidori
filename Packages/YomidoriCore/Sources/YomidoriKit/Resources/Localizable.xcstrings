@@ -31,6 +31,16 @@
         }
       }
     },
+    "%lld new words, waiting for a lesson; %lld you already had." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい言葉%1$lld語はレッスン待ちに入りました。%2$lld語は既にありました。"
+          }
+        }
+      }
+    },
     "%lld percent" : {
       "localizations" : {
         "ja" : {
@@ -617,6 +627,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "アクセントの表し方"
+          }
+        }
+      }
+    },
+    "Import a collection…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コレクションを読み込む…"
           }
         }
       }
@@ -1421,6 +1441,16 @@
         }
       }
     },
+    "Share this collection" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このコレクションを共有"
+          }
+        }
+      }
+    },
     "Shelve, never review" : {
       "localizations" : {
         "ja" : {
@@ -1621,12 +1651,32 @@
         }
       }
     },
+    "That file is not a Yomidori collection." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このファイルはヨミドリのコレクションではありません。"
+          }
+        }
+      }
+    },
     "The line runs over the high morae and falls where the accent does; the number is the mora after which it falls, 0 when it never does. Tokyo accent, from Kanjium." : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "線は高い拍の上を通り、アクセントの位置で下がります。数字は何拍目のあとで下がるかで、0は下がらないことを表します。東京式アクセント、Kanjiumのデータによる。"
+          }
+        }
+      }
+    },
+    "The words and the sentences they were met in, for another reader to start fresh; no photos, no cover, no reviews." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "言葉と、出会った文だけを渡します。受け取った人は一から学べます。写真、表紙、復習の記録は含みません。"
           }
         }
       }

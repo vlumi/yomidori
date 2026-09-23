@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Share a collection.** A collection's screen shares it as a .yomidori file, its words and the sentences they were met in, without photos, cover or reviews. Opened on another phone, from AirDrop, Messages or Files, or imported from the collections list, it joins the collection of the same name: new words wait for a lesson, words already kept gain the sentences they lacked.
 ### build 8 — 2026-09-23
 
 - **Vision reads a vertical page.** In Vision mode a paperback's columns come back as lines with their places on the page, so a column is tapped as a line is and a kept sentence's crop is cut from a vertical page as from a horizontal one; the older text request, which never read vertical print, is gone, and the percentage under a tapped line is the request's own confidence.

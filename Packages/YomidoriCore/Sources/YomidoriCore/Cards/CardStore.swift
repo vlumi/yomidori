@@ -148,6 +148,12 @@ public final class FileCardStore: CardStore {
         didChange?()
     }
 
+    /// Many changes in one write, as an import makes them.
+    public func replaceAll(_ transform: ([Card]) -> [Card]) throws {
+        try queue.sync { try save(transform(all())) }
+        didChange?()
+    }
+
     private func all() -> [Card] {
         if let loaded { return loaded }
         let decoder = JSONDecoder()
