@@ -360,8 +360,13 @@ stays the default is a field question. manga-ocr over a whole page remains
 possible as a second reading, the boxes cutting the page into the lines it
 reads, but no longer stands between the app and positions.
 
-The recognized characters are shown as editable text on the card, so an OCR
-error is a one-character fix there; the same on the page itself is still to do.
+The recognized characters are shown as editable text on the card, and one
+misread character is fixed on the page itself: `CharacterFix` offers the
+characters of the dictionary's words spelled like the rest of the word (a `LIKE`
+with one wildcard over the kanji forms, a stem also tried as its dictionary
+forms), and the correction is a `TextFix` over the transcript, so the lookup,
+the kept sentence and the copy all read corrected. Editing longer runs on the
+page is still to do.
 
 The camera is one source of a still, not the only one. A screenshot of an
 e-book app or a web page enters the same screen through the photo picker, and

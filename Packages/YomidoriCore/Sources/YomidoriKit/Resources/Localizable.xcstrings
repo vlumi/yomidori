@@ -481,6 +481,16 @@
         }
       }
     },
+    "Fix a character" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文字を直す"
+          }
+        }
+      }
+    },
     "Flat" : {
       "localizations" : {
         "ja" : {
@@ -971,6 +981,16 @@
         }
       }
     },
+    "No word in the dictionary fits." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "辞書に当てはまる言葉がありません。"
+          }
+        }
+      }
+    },
     "None" : {
       "localizations" : {
         "ja" : {
@@ -1087,6 +1107,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "音読み"
+          }
+        }
+      }
+    },
+    "Or type the right one" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "または正しい文字を入力"
           }
         }
       }
@@ -1651,6 +1681,16 @@
         }
       }
     },
+    "Tap the character that was misread." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み違えた文字をタップしてください。"
+          }
+        }
+      }
+    },
     "That file is not a Yomidori collection." : {
       "localizations" : {
         "ja" : {
@@ -1787,6 +1827,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "同梱しているもの"
+          }
+        }
+      }
+    },
+    "Words that fit" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当てはまる言葉"
           }
         }
       }

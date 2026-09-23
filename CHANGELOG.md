@@ -14,7 +14,10 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The Read button is a round glyph.** The text-scanning glyph alone on a round button where the shutter sits, no caption; VoiceOver still names it *Read the page*.
+- **Fix a misread character.** Under a word from the page, *Fix a character* shows the word's characters; tap the one the recognizer got wrong and pick the right one from the dictionary's words spelled like the rest (街皮 offers 樹 for 樹皮), or type it. The page's text is corrected in place, so the word is looked up again and Keep saves the corrected sentence; the rest of the word stays as it was.
 - **Share a collection.** A collection's screen shares it as a .yomidori file, its words and the sentences they were met in, without photos, cover or reviews. Opened on another phone, from AirDrop, Messages or Files, or imported from the collections list, it joins the collection of the same name: new words wait for a lesson, words already kept gain the sentences they lacked.
+
 ### build 8 — 2026-09-23
 
 - **Vision reads a vertical page.** In Vision mode a paperback's columns come back as lines with their places on the page, so a column is tapped as a line is and a kept sentence's crop is cut from a vertical page as from a horizontal one; the older text request, which never read vertical print, is gone, and the percentage under a tapped line is the request's own confidence.

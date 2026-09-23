@@ -33,6 +33,18 @@ public struct FoundWord: Equatable, Sendable {
 public enum WordFinder {
     public static let longestSpan = 4
 
+    /// The tokens of `line` that overlap `range`, counted in characters of `text`, the line
+    /// the tokens were cut from.
+    public static func tokens(_ line: [Token], overlapping range: Range<Int>, in text: String)
+        -> [Token]
+    {
+        line.filter { token in
+            let start = text.distance(from: text.startIndex, to: token.range.lowerBound)
+            let end = text.distance(from: text.startIndex, to: token.range.upperBound)
+            return start < range.upperBound && end > range.lowerBound
+        }
+    }
+
     public static func words(in tokens: [Token], dictionary: (any WordDictionary)?) -> [FoundWord] {
         var found: [FoundWord] = []
         var index = 0

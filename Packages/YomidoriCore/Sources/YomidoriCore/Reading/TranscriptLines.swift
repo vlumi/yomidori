@@ -26,14 +26,25 @@ public struct TranscriptLines {
     }
 
     /// The line a selection on the page shown falls in. The selection's indices belong to
-    /// `page`, whose text starts `pageOffset` characters into the joined transcript.
+    /// `page`, whose text starts `pageOffset` characters into the joined transcript before
+    /// `fixes`; `transcript` is the one after them.
     public func lineIndex(
         ofSelection range: Range<String.Index>?, in page: String, pageOffset: Int,
-        transcript: String
+        transcript: String, fixes: [TextFix] = []
     ) -> Int? {
         guard let range, range.lowerBound <= page.endIndex else { return nil }
         let offset = pageOffset + page.distance(from: page.startIndex, to: range.lowerBound)
-        return lineIndex(atOffset: offset, in: transcript)
+        return lineIndex(atOffset: TextFix.map(offset: offset, through: fixes), in: transcript)
+    }
+
+    /// Where a token of `lines[line]` starts, in characters: into its line, and into the
+    /// transcript.
+    public func offsets(of token: Token, onLine line: Int, in transcript: String)
+        -> (inLine: Int, inTranscript: Int)
+    {
+        let text = lines[line]
+        let inLine = text.distance(from: text.startIndex, to: token.range.lowerBound)
+        return (inLine, transcript.distance(from: transcript.startIndex, to: starts[line]) + inLine)
     }
 }
 
