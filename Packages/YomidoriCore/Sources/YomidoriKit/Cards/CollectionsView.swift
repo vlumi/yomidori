@@ -80,7 +80,7 @@ struct CollectionRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            if let coverID = collection.coverID, let image = StillArchive.load(coverID) {
+            if let coverID = collection.coverID, let image = CoverArchive.load(coverID) {
                 Image(decorative: image, scale: 1)
                     .resizable()
                     .scaledToFill()

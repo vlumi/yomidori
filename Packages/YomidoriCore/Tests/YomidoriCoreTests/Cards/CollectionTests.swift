@@ -79,7 +79,7 @@ final class CollectionTests: XCTestCase {
         let sheep = UUID()
         let wood = UUID()
         let sighting = Sighting(
-            sentence: "樹皮。", surface: "樹皮", offset: 0, stillIDs: [], source: nil, date: Date())
+            sentence: "樹皮。", surface: "樹皮", offset: 0, source: nil, date: Date())
         var card = try cards.keep(
             sighting, headword: "樹皮", reading: "じゅひ", entryID: nil, collection: sheep)
         XCTAssertEqual(card.collectionIDs, [sheep])

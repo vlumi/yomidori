@@ -189,8 +189,6 @@ public struct Sighting: Identifiable, Hashable, Codable, Sendable {
     /// The word's form on the page and where it starts in `sentence`, in characters.
     public let surface: String
     public let offset: Int
-    public let stillIDs: [UUID]
-    public let cropID: UUID?
     public let source: String?
     public let date: Date
 
@@ -206,76 +204,28 @@ public struct Sighting: Identifiable, Hashable, Codable, Sendable {
     public func withSentence(_ text: String) -> Sighting {
         let sentence = text.trimmingCharacters(in: .whitespacesAndNewlines)
         let unchanged = Sighting(
-            id: id, sentence: sentence, surface: surface, offset: offset, stillIDs: stillIDs,
-            cropID: cropID, source: source, date: date)
+            id: id, sentence: sentence, surface: surface, offset: offset, source: source,
+            date: date)
         if let range = unchanged.surfaceRange, sentence[range] == surface { return unchanged }
         let offset = sentence.range(of: surface).map {
             sentence.distance(from: sentence.startIndex, to: $0.lowerBound)
         }
         return Sighting(
-            id: id, sentence: sentence, surface: surface, offset: offset ?? -1, stillIDs: stillIDs,
-            cropID: cropID, source: source, date: date)
+            id: id, sentence: sentence, surface: surface, offset: offset ?? -1, source: source,
+            date: date)
     }
 
-    public func withoutImages() -> Sighting {
-        Sighting(
-            id: id, sentence: sentence, surface: surface, offset: offset, stillIDs: [], cropID: nil,
-            source: source, date: date)
-    }
-
-    public var hasImages: Bool {
-        !stillIDs.isEmpty || cropID != nil
-    }
-
+    /// Cards once kept page photos and a crop of the sentence; those keys are no longer read.
     public init(
-        id: UUID = UUID(), sentence: String, surface: String, offset: Int, stillIDs: [UUID],
-        cropID: UUID? = nil, source: String?, date: Date
+        id: UUID = UUID(), sentence: String, surface: String, offset: Int, source: String?,
+        date: Date
     ) {
         self.id = id
         self.sentence = sentence
         self.surface = surface
         self.offset = offset
-        self.stillIDs = stillIDs
-        self.cropID = cropID
         self.source = source
         self.date = date
-    }
-
-    private enum CodingKeys: String, CodingKey {
-        case id, sentence, surface, offset, stillIDs, cropID, source, date
-        // Earlier shapes of `stillIDs`, still read: one still, or a still and its continuation.
-        case stillID, continuationStillID
-    }
-
-    public init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        id = try c.decode(UUID.self, forKey: .id)
-        sentence = try c.decode(String.self, forKey: .sentence)
-        surface = try c.decode(String.self, forKey: .surface)
-        offset = try c.decode(Int.self, forKey: .offset)
-        source = try c.decodeIfPresent(String.self, forKey: .source)
-        cropID = try c.decodeIfPresent(UUID.self, forKey: .cropID)
-        date = try c.decode(Date.self, forKey: .date)
-        if let ids = try c.decodeIfPresent([UUID].self, forKey: .stillIDs) {
-            stillIDs = ids
-        } else {
-            stillIDs = [
-                try c.decodeIfPresent(UUID.self, forKey: .stillID),
-                try c.decodeIfPresent(UUID.self, forKey: .continuationStillID),
-            ].compactMap { $0 }
-        }
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encode(id, forKey: .id)
-        try c.encode(sentence, forKey: .sentence)
-        try c.encode(surface, forKey: .surface)
-        try c.encode(offset, forKey: .offset)
-        try c.encode(stillIDs, forKey: .stillIDs)
-        try c.encodeIfPresent(cropID, forKey: .cropID)
-        try c.encodeIfPresent(source, forKey: .source)
-        try c.encode(date, forKey: .date)
     }
 }
 
@@ -285,17 +235,5 @@ extension Card {
     /// Whether the card is in one of `chosen`; none chosen means every card.
     public func isIn(anyOf chosen: Set<UUID>) -> Bool {
         chosen.isEmpty || !chosen.isDisjoint(with: collectionIDs)
-    }
-}
-
-extension Sighting {
-    /// The crop first, then the pages.
-    public var imageIDs: [UUID] { [cropID].compactMap { $0 } + stillIDs }
-}
-
-extension Sequence where Element == Card {
-    /// Every image some card still refers to; a still is shared by every card kept from its page.
-    public var referencedImageIDs: Set<UUID> {
-        Set(flatMap(\.sightings).flatMap(\.imageIDs))
     }
 }

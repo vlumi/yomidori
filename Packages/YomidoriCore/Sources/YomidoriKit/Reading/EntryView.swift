@@ -41,7 +41,7 @@ struct EntryView: View {
 
     private func keep() {
         let sighting = Sighting(
-            sentence: "", surface: entry.headword, offset: 0, stillIDs: [], source: nil,
+            sentence: "", surface: entry.headword, offset: 0, source: nil,
             date: Date())
         if (try? Cards.store?.keep(
             sighting, headword: entry.headword, reading: reading, entryID: entry.id,

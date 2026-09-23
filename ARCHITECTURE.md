@@ -141,7 +141,7 @@ use for its own input.
 - **`TranscriptReadout`**, **`WordFinder`** and **`WordReadout`** (Kit, Core):
   the drawer under a frozen page. Its header is the collection Keep files a word
   under (a menu, remembered), the tokenizer as a small menu (the system's or
-  MeCab, so the same page can be cut both ways), the photo toggle and Copy. A
+  MeCab, so the same page can be cut both ways) and Copy. A
   selection on the still, or a tap in the *Recognized text* strip (`TokenFlow`,
   folded by default), is tokenized and read as words by `WordFinder`: consecutive
   tokens the dictionary knows as one word join (蛍光灯), an inflected stem finds
@@ -155,10 +155,10 @@ use for its own input.
 - **`Card`**, **`Sighting`** and **`FileCardStore`** (Core): a card is one word
   in its dictionary form with its reading, the key together; a sighting is the
   word as it was met once, the sentence as it stood on the page, the word's form
-  and offset in it, the stills it came from by id, and when. Keeping a word
+  and offset in it, where it was met, and when; never a photo. Keeping a word
   already kept adds a sighting, never a card; the same kanji read another way is
   another card. A card also carries when it was created and last modified (a
-  sighting added, a sentence corrected, photos dropped; never a review), its
+  sighting added, a sentence corrected; never a review), its
   three review states, a log of every answer (`ReviewEntry`: date, question,
   grade, overruled or not), the meanings the reader accepts beside the glosses,
   where it stands (waiting, started, or shelved) and the collections it is in.
@@ -166,26 +166,19 @@ use for its own input.
   atomically on every change: a reader's cards number in the hundreds or low
   thousands, which one file reads in a blink, and one file is what a sync or a
   backup copies; Settings shares that file as it is, which is the export. Every shape the file has had still decodes, and the tests keep
-  one of each. The reading, pitch and meaning are not stored; they are looked up
-  live.
+  one of each, the cards that once carried page photos and crops among them,
+  whose photo fields are no longer read. The reading, pitch and meaning are not
+  stored; they are looked up live.
 - **`Sentence`** (Core): the sentence around a word, from the previous full stop
   to the next with its closing quote, across the page's wrapped lines, which in
   a book are wraps and nothing more; open when the page ends before a full stop.
   Its continuation on the next page is that page's beginning up to its first
   full stop. Tested on a page of wrapped lines with quotes.
-- **`LineCrop`** (Core): where a sentence sits on the still, as the union of the
-  recognized lines whose text is part of it, padded by a line's thickness; a line
-  counts when a run of it is in the sentence, six characters or six tenths of the
-  shorter, since the recognizer and the sentence rarely agree on every character.
-  Nil where no line matches, and the whole still stands in.
 - **Keeping a word** (Kit): *Keep* on a word's row saves the sentence it stands
   in, as `Sentence` cuts it, with the word's form and offset, into the current
-  collection. The page still and the crop of the sentence's lines (`LineCrop`,
-  where a recognizer gave positions) are kept only while the photo toggle is on,
-  scaled to two thousand pixels on the longer side as JPEGs in Application
-  Support (`StillArchive`), and can be dropped from the card later; a still is
-  shared by every card kept from its page and its file goes only when no card
-  refers to it. The card's key is the dictionary entry's headword and reading
+  collection. No photo of the page is kept: the text is the card, and photos
+  would be what makes the cards heavy to sync (they were kept on request until
+  2026-09-23; the first launch after deletes them). The card's key is the dictionary entry's headword and reading
   when the word was found, else the tokenizer's form. A spread of several pages
   is read as one text: the + over the picture keeps this page's text and takes
   the next, and `Spread` joins the pages at the seam with no break, so a word
@@ -195,9 +188,8 @@ use for its own input.
   one: the word with its pitch, the dictionary's sections around it
   (`WordSections`), its collections ticked, the moves between the stacks, the
   reader's own accepted meanings, the dates and the good/again counts per
-  question (`CardFacts`), and every sighting with the word marked, the photos,
-  and rows to correct the sentence (the word is found again in the corrected
-  text) or remove the photos.
+  question (`CardFacts`), and every sighting with the word marked and a row to
+  correct the sentence (the word is found again in the corrected text).
 - **`FSRS`**, **`Grade`** and **`ReviewState`** (Core): the free spaced
   repetition scheduler, version 5, with its published default parameters and a
   desired retention of 90 %, with one departure: a lapse costs at most one rank,
@@ -249,6 +241,8 @@ use for its own input.
   The cover is scanned with the camera or picked from the photos, and the words
   read off it, Vision's lines tallest first with Live Text filling in, are
   offered for the name and the note so a title is picked rather than typed.
+  Covers are the one image the app keeps, scaled to six hundred pixels as JPEGs
+  beside the stores (`CoverArchive`), since the reader takes each on purpose.
   Removing a collection only takes it off its cards. Their own JSON beside the
   cards.
   A collection is shared as a `.yomidori` file (`SharedCollection`, JSON, a type
@@ -350,7 +344,7 @@ withholds is positions, and Vision's `RecognizeDocumentsRequest` (iOS 26)
 supplies them: on a real paperback (2026-09-22) it read the vertical Mincho
 columns as lines with boxes, where the older text request, now gone, read
 nothing vertical. Each line comes with its direction and a box for any range of
-its text, so the sentence crop works on a vertical page as on a horizontal one.
+its text.
 Still to build on the boxes: the app's own tap-to-token highlight in Vision
 mode, the tap landing on a character, the line cut into words, the word lit on
 the page and read out below; and a furigana filter by height, dropping the thin
@@ -406,8 +400,7 @@ The scheduler, the lessons, the ranks and the one-document store are built (see
 *What exists*). What remains: the FSRS parameters stay the published defaults
 until there are enough answers in the cards' logs to fit them, a question for
 much later; graphs from those logs (intake against reviews over time, the rank
-counts as a history); a fuller export, one archive with the stills, and its
-import; and iCloud sync of the document, the Mac section's first step.
+counts as a history); a fuller export, and its import; and iCloud sync of the document, the Mac section's first step.
 
 ### Dictionary and meaning
 

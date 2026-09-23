@@ -40,7 +40,7 @@ enum DemoData {
         if cover,
             let image = DemoRenderer.cover(
                 work.title, author: work.author, hue: hues[collections.collections().count % 2]),
-            let id = try? StillArchive.save(Still(image: image))
+            let id = try? CoverArchive.save(image)
         {
             collection.coverID = id
         }
@@ -125,8 +125,8 @@ private struct CardSeeder {
             text.range(of: headword).map { text.distance(from: text.startIndex, to: $0.lowerBound) }
         }
         let sighting = Sighting(
-            sentence: sentence ?? "", surface: headword, offset: offset ?? 0, stillIDs: [],
-            source: nil, date: now.addingTimeInterval(-daysAgo * 86_400))
+            sentence: sentence ?? "", surface: headword, offset: offset ?? 0, source: nil,
+            date: now.addingTimeInterval(-daysAgo * 86_400))
         return try? store.keep(
             sighting, headword: headword, reading: reading, entryID: nil, collection: collection?.id
         )

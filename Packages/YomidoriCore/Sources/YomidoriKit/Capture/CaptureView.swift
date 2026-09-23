@@ -235,8 +235,7 @@ public struct CaptureView: View {
             let transcripts = pages.map(\.transcript) + [current]
             TranscriptReadout(
                 transcript: Spread.join(transcripts),
-                stills: pages.map(\.still) + [still].compactMap { $0 },
-                currentTranscript: current, currentLines: lines,
+                currentTranscript: current,
                 pageOffset: Spread.offset(ofPage: pages.count, in: transcripts),
                 selection: selection)
         } else if LiveText.isSupported {
@@ -277,8 +276,8 @@ public struct CaptureView: View {
     }
 
     private func addPage() {
-        guard let still, let transcript = currentTranscript else { return }
-        pages.append(Page(still: still, transcript: transcript))
+        guard still != nil, let transcript = currentTranscript else { return }
+        pages.append(Page(transcript: transcript))
         retake()
     }
 

@@ -5,9 +5,7 @@ import YomidoriMeCab
 
 struct TranscriptReadout: View {
     let transcript: String
-    let stills: [Still]
     let currentTranscript: String
-    let currentLines: [RecognizedLine]
     /// Where the page on screen starts in the joined transcript, in characters.
     let pageOffset: Int
     @ObservedObject var selection: LiveTextSelection
@@ -21,8 +19,6 @@ struct TranscriptReadout: View {
     @State private var words: [FoundWord] = []
     @State private var keptSurfaces: Set<String> = []
     @AppStorage(SettingsKey.transcriptExpanded) private var expanded = false
-    @State private var archived: [UUID: UUID] = [:]
-    @AppStorage(SettingsKey.keepsPhotos) private var keepsPhotos = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -65,16 +61,6 @@ struct TranscriptReadout: View {
                 .controlSize(.small)
             Spacer()
             tokenizerMenu
-            Toggle(isOn: $keepsPhotos) {
-                Label {
-                    Text("Keep the photo too", bundle: .module)
-                } icon: {
-                    Image(systemName: keepsPhotos ? "photo.fill" : "photo")
-                }
-            }
-            .toggleStyle(.button)
-            .labelStyle(.iconOnly)
-            .controlSize(.small)
             Button {
                 Clipboard.copy(fixed)
             } label: {
@@ -190,14 +176,8 @@ struct TranscriptReadout: View {
 
     private func keep(_ word: FoundWord) {
         let keeper = SentenceKeeper(
-            transcript: fixed, transcriptLines: transcriptLines, tokenLines: lines,
-            stills: stills,
-            currentLines: currentLines, source: nil, keepsImages: keepsPhotos)
-        guard let store = Cards.store,
-            let sighting = keeper.sighting(for: word, archived: &archived)
-        else {
-            return
-        }
+            transcript: fixed, transcriptLines: transcriptLines, tokenLines: lines, source: nil)
+        guard let store = Cards.store, let sighting = keeper.sighting(for: word) else { return }
         let entry = word.entries.first
         let headword = entry?.headword ?? word.dictionaryForm ?? word.surface
         let reading = Kana.hiragana(entry?.readings.first ?? word.reading)

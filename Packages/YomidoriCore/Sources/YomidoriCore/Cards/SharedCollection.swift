@@ -73,7 +73,7 @@ public struct SharedCollection: Codable, Equatable, Sendable {
         for word in words {
             let sightings = word.sentences.map {
                 Sighting(
-                    sentence: $0.sentence, surface: $0.surface, offset: $0.offset, stillIDs: [],
+                    sentence: $0.sentence, surface: $0.surface, offset: $0.offset,
                     source: $0.source, date: date)
             }
             if let index = cards.firstIndex(where: {

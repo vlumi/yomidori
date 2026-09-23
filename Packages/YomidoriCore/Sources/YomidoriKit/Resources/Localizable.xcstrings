@@ -711,16 +711,6 @@
         }
       }
     },
-    "Keep the photo too" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "写真も残す"
-          }
-        }
-      }
-    },
     "Kept" : {
       "localizations" : {
         "ja" : {
@@ -1317,16 +1307,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "表紙を消す"
-          }
-        }
-      }
-    },
-    "Remove the photos" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "写真を消す"
           }
         }
       }

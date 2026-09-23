@@ -112,7 +112,7 @@ The load-bearing decisions and their rationale live in
   pick, each on its own schedule; the meaning is a tap further on the page and
   never shown unasked.
 - **The book is the corpus.** A card's front is the sentence as it stood on the
-  page (OCR text plus the crop), so example sentences need no corpus, no license
+  page, so example sentences need no corpus, no license
   and no generation. One card per word; sentences accumulate across books.
 - **Testable logic goes in `YomidoriCore`.** The coverage gate covers Core; the
   SwiftUI/Vision/camera layer (`YomidoriKit`) is ignored wholesale, so logic
@@ -142,7 +142,7 @@ yomidori/
     │   ├── Cards/                  Card, Sighting, CardStore + its JSON file, Collection, Lesson, LookupHistory, WordKey
     │   ├── Dictionary/             DictionaryEntry, the WordDictionary protocol and its lookups, KanjiEntry, SVGPath
     │   ├── Reading/                Token, Tokenizer, SystemTokenizer, Deinflector, WordFinder, PitchAccent, Sentence, Spread, TranscriptLines
-    │   ├── Recognition/            RecognizedLine, TextGeometry, LineCrop, CloseUpGeometry (the Vision-box ↔ view seam), Zoom, DrawerDetents, CoverLines
+    │   ├── Recognition/            RecognizedLine, TextGeometry, CloseUpGeometry (the Vision-box ↔ view seam), Zoom, DrawerDetents, CoverLines
     │   ├── Scheduling/             FSRS, Rank, ReadingCheck, MeaningCheck
     │   └── Text/                   MarkdownBlocks
     ├── Sources/YomidoriDictionary/ JMdict, the SQLite reader over the bundled database (system SQLite)
@@ -151,7 +151,7 @@ yomidori/
     ├── Sources/YomidoriKit/        SwiftUI + UIKit + Vision, depends on Core, Dictionary, MeCab and MangaOCR; coverage-ignored
     │   ├── App/                    AppRoot (the tabs, TabStack), HomeView, Screen, Destinations, TabTaps, SettingsView, SwipeBack, AboutView, NoticesView, AppInfo, Palette, Compat, FlowLayout, FitsOrStacks, JapaneseText (`Text(japanese:)`), SettingsKey — one type per file
     │   ├── Capture/                Camera, CameraPreview, FrameSink, Still, TextRecognizer, LiveText*, CaptureState, CaptureView and its drawer, the camera buttons, page buttons, readouts and reader
-    │   ├── Cards/                  CardsView, CardView and its sections, StudyView, LessonView/LessonCard, ReviewView with front, back and PitchChoices, RankName/RankChart, Collection* screens, CoverScanView, TagsEditor, StillArchive, Cards (the store roots), MeaningFold
+    │   ├── Cards/                  CardsView, CardView and its sections, StudyView, LessonView/LessonCard, ReviewView with front, back and PitchChoices, RankName/RankChart, Collection* screens, CoverScanView, TagsEditor, CoverArchive, Cards (the store roots), MeaningFold
     │   ├── Reading/                TranscriptReadout, WordReadout, WordDetails/WordSections, EntryView/EntryRow, KanjiView/KanjiRow, StrokeOrderView, SearchView, LookupHistoryView, TokenFlow, WordTitle, PitchReading, DictionaryButton, KeepButton, SentenceKeeper, TokenizerChoice
     │   ├── Demo/                   DemoMode, DemoData, DemoText, DemoRenderer — the seeded demo (see Demo mode)
     │   └── Resources/              Localizable.xcstrings (the Kit's strings, en + ja)
@@ -258,7 +258,7 @@ Agent-specific mechanics on top of that:
 
 `make demo-iphone` launches the simulator build with `-yomidori-demo`
 (`Scripts/demo.sh`, like the siblings' launchers). `YomidoriKit/Demo`: `DemoMode`
-routes every store (cards, collections, lookups, stills) to a temp folder wiped
+routes every store (cards, collections, lookups, covers) to a temp folder wiped
 and reseeded at each launch and the settings to their own defaults suite;
 `DemoData` seeds some hundred cards from four public-domain openings (漱石's
 吾輩は猫である, 太宰's 走れメロス, 芥川's 羅生門, 賢治's 銀河鉄道の夜) and a shop sign, at

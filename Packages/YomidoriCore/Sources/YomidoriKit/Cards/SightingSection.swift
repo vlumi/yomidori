@@ -1,12 +1,10 @@
 import SwiftUI
 import YomidoriCore
 
-/// One sighting on a card: the sentence with the word marked, its photos, and the rows
-/// that correct the sentence or drop the photos.
+/// One sighting on a card: the sentence with the word marked, and the row that corrects it.
 struct SightingSection: View {
     let sighting: Sighting
     let edit: () -> Void
-    let removeImages: () -> Void
 
     var body: some View {
         Section {
@@ -17,28 +15,11 @@ struct SightingSection: View {
             } else {
                 MarkedSentence(sighting: sighting)
             }
-            ForEach(sighting.imageIDs, id: \.self) { id in
-                if let image = StillArchive.load(id) {
-                    Image(decorative: image, scale: 1)
-                        .resizable()
-                        .scaledToFit()
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
-                }
-            }
             Button(action: edit) {
                 Label {
                     Text("Correct the sentence", bundle: .module)
                 } icon: {
                     Image(systemName: "pencil")
-                }
-            }
-            if sighting.hasImages {
-                Button(role: .destructive, action: removeImages) {
-                    Label {
-                        Text("Remove the photos", bundle: .module)
-                    } icon: {
-                        Image(systemName: "photo.badge.minus")
-                    }
                 }
             }
         } header: {

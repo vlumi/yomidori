@@ -26,8 +26,6 @@ struct CardView: View {
             ForEach(card.sightings.sorted { $0.date > $1.date }) { sighting in
                 SightingSection(sighting: sighting) {
                     editing = sighting
-                } removeImages: {
-                    removeImages(of: sighting)
                 }
             }
         }
@@ -43,10 +41,5 @@ struct CardView: View {
     private func replace(_ sighting: Sighting) {
         card.replace(sighting)
         try? Cards.store?.update(card)
-    }
-
-    private func removeImages(of sighting: Sighting) {
-        replace(sighting.withoutImages())
-        StillArchive.remove(sighting.imageIDs, keptBy: Cards.store?.cards() ?? [])
     }
 }
