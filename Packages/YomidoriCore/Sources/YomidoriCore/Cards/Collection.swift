@@ -9,10 +9,12 @@ public struct Collection: Identifiable, Hashable, Codable, Sendable {
     public var note: String
     public var tags: [String]
     public var coverID: UUID?
+    /// Stamped by the store on every save; between devices the later version wins whole.
+    public var modified: Date
 
     public init(
         id: UUID = UUID(), name: String, created: Date = Date(), note: String = "",
-        tags: [String] = [], coverID: UUID? = nil
+        tags: [String] = [], coverID: UUID? = nil, modified: Date? = nil
     ) {
         self.id = id
         self.name = name
@@ -20,10 +22,11 @@ public struct Collection: Identifiable, Hashable, Codable, Sendable {
         self.note = note
         self.tags = tags
         self.coverID = coverID
+        self.modified = modified ?? created
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, name, created, note, tags, coverID
+        case id, name, created, note, tags, coverID, modified
     }
 
     public init(from decoder: Decoder) throws {
@@ -34,6 +37,11 @@ public struct Collection: Identifiable, Hashable, Codable, Sendable {
         note = try c.decodeIfPresent(String.self, forKey: .note) ?? ""
         tags = try c.decodeIfPresent([String].self, forKey: .tags) ?? []
         coverID = try c.decodeIfPresent(UUID.self, forKey: .coverID)
+        modified = try c.decodeIfPresent(Date.self, forKey: .modified) ?? created
+    }
+
+    public func merged(with other: Collection) -> Collection {
+        other.modified > modified ? other : self
     }
 
     /// Tags as typed, comma-separated, each once, empties dropped.
@@ -61,47 +69,49 @@ public protocol CollectionStore {
 
 /// One JSON document beside the cards, written whole on every change.
 public final class FileCollectionStore: CollectionStore {
-    private let url: URL
-    private var loaded: [Collection]?
+    public let file: RecordFile<Collection>
+    private let now: () -> Date
 
-    public init(url: URL) {
-        self.url = url
+    public init(url: URL, now: @escaping () -> Date = Date.init) {
+        file = RecordFile(url: url, label: "fi.misaki.yomidori.collections") { $0.id.uuidString }
+        self.now = now
     }
 
     public func collections() -> [Collection] {
-        if let loaded { return loaded }
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        let collections =
-            (try? Data(contentsOf: url)).flatMap {
-                try? decoder.decode([Collection].self, from: $0)
-            }
-            ?? []
-        loaded = collections
-        return collections
+        file.records()
     }
 
     /// Adds the collection, or replaces the one with its id.
     public func save(_ collection: Collection) throws {
-        var all = collections()
-        if let index = all.firstIndex(where: { $0.id == collection.id }) {
-            all[index] = collection
-        } else {
-            all.append(collection)
+        var stamped = collection
+        stamped.modified = now()
+        try file.write { all in
+            if let index = all.firstIndex(where: { $0.id == collection.id }) {
+                guard !all[index].sameContent(as: collection) else { return }
+                all[index] = stamped
+            } else {
+                all.append(stamped)
+            }
         }
-        try write(all)
     }
 
     public func remove(_ collection: Collection) throws {
-        try write(collections().filter { $0.id != collection.id })
+        try file.write { $0.removeAll { $0.id == collection.id } }
     }
 
-    private func write(_ collections: [Collection]) throws {
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .iso8601
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        try encoder.encode(collections).write(to: url, options: .atomic)
-        loaded = collections
+    public func applyRemote(saving saved: [Collection], deleting deleted: Set<UUID>) throws {
+        try file.write(.remote) {
+            $0.apply(saving: saved, deleting: Set(deleted.map(\.uuidString)), key: \.id.uuidString)
+        }
+    }
+}
+
+extension Collection {
+    /// Equal but for when it was saved, so saving it unchanged is no change.
+    func sameContent(as other: Collection) -> Bool {
+        var stamped = other
+        stamped.modified = modified
+        return stamped == self
     }
 }
 

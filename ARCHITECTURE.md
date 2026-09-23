@@ -169,6 +169,17 @@ use for its own input.
   one of each, the cards that once carried page photos and crops among them,
   whose photo fields are no longer read. The reading, pitch and meaning are not
   stored; they are looked up live.
+- **`RecordFile`** (Core): the one JSON store under the cards, the collections
+  and the lookup history: loaded once, changed under a lock, written whole and
+  atomically, and every write reported by the keys it saved and deleted and by
+  whether it was made here or came from another device, so sync sends only what
+  was done here and the screens refresh for both. The merges sync needs when a
+  record changed on two devices at once are Core's too: a card keeps the union
+  of its sightings, answers, accepted meanings and collections, each question
+  the schedule of its later answer, and where it stands from the side touched
+  last; a collection is stamped on every save and the later one wins whole; a
+  lookup keeps its later date, and a clear of the history is a date every device
+  drops older lookups by, so one that was offline does not bring them back.
 - **`Sentence`** (Core): the sentence around a word, from the previous full stop
   to the next with its closing quote, across the page's wrapped lines, which in
   a book are wraps and nothing more; open when the page ends before a full stop.

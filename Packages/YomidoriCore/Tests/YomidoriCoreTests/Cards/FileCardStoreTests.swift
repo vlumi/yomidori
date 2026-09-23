@@ -207,7 +207,7 @@ final class FileCardStoreTests: XCTestCase {
     func testTheStoreTellsItsListenerAfterEveryWrite() throws {
         let store = FileCardStore(url: url)
         var changes = 0
-        store.didChange = { changes += 1 }
+        store.file.onChange = { _, _ in changes += 1 }
         var card = try store.keep(
             sighting("樹皮の匂いがした。", "樹皮"), headword: "樹皮", reading: "じゅひ", entryID: nil)
         card.start(at: Date())

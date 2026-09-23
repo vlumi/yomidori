@@ -34,7 +34,7 @@ enum Cards {
                 url: directory.appendingPathComponent("collections.json")),
             lookups: FileLookupHistory(url: directory.appendingPathComponent("lookups.json")))
         CoverArchive.migrate(covers: stores.collections.collections().compactMap(\.coverID))
-        stores.cards.didChange = {
+        stores.cards.file.onChange = { _, _ in
             NotificationCenter.default.post(name: cardsDidChange, object: nil)
         }
         if DemoMode.isRequested {

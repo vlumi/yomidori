@@ -64,7 +64,7 @@ final class SharedCollectionTests: XCTestCase {
         defer { try? FileManager.default.removeItem(at: url) }
         let store = FileCardStore(url: url)
         var writes = 0
-        store.didChange = { writes += 1 }
+        store.file.onChange = { _, _ in writes += 1 }
         let shared = SharedCollection(
             collection: book, cards: [card("樹皮", "じゅひ", "樹皮の匂いがした。", in: [book.id])])
         try store.replaceAll { shared.merge(into: $0, collection: book.id, at: self.date).cards }
