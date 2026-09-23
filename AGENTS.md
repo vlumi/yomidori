@@ -139,7 +139,7 @@ yomidori/
 └── Packages/YomidoriCore/          Swift package — all the code
     ├── Sources/YomidoriCore/       Pure logic — tested, coverage-gated; grouped by domain as it grows:
     │   ├── Kana.swift              katakana ↔ hiragana, the first of the reading helpers
-    │   ├── Cards/                  Card, Sighting, CardStore + its JSON file, Collection, Lesson, LookupHistory, WordKey
+    │   ├── Cards/                  Card, Sighting, CardStore, Collection, Lesson, LookupHistory, WordKey; RecordFile (the one JSON store under all three) and the sync merges
     │   ├── Dictionary/             DictionaryEntry, the WordDictionary protocol and its lookups, KanjiEntry, SVGPath
     │   ├── Reading/                Token, Tokenizer, SystemTokenizer, Deinflector, WordFinder, PitchAccent, Sentence, Spread, TranscriptLines
     │   ├── Recognition/            RecognizedLine, TextGeometry, CloseUpGeometry (the Vision-box ↔ view seam), Zoom, DrawerDetents, CoverLines

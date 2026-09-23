@@ -37,46 +37,80 @@ public protocol LookupHistory {
     func clear() throws
 }
 
-/// One JSON document, newest first, a word once, at most `limit` lines.
+extension Lookup {
+    /// The same word looked up on two devices: the later lookup stands.
+    public func merged(with other: Lookup) -> Lookup {
+        other.date > date ? other : self
+    }
+}
+
+/// One JSON document, newest first, a word once, at most `limit` lines. A clear is a date
+/// kept beside it, so a device that was offline drops what it had from before the clear
+/// instead of bringing it back.
 public final class FileLookupHistory: LookupHistory {
     public static let limit = 500
-    private let url: URL
-    private var loaded: [Lookup]?
+    public let file: RecordFile<Lookup>
+    private let clearedURL: URL
+    private let now: () -> Date
+    /// Told of a clear made here, for sync to send.
+    public var onClear: ((Date) -> Void)?
 
-    public init(url: URL) {
-        self.url = url
+    public init(url: URL, now: @escaping () -> Date = Date.init) {
+        file = RecordFile(url: url, label: "fi.misaki.yomidori.lookups") { $0.id }
+        clearedURL = url.deletingPathExtension().appendingPathExtension("cleared.json")
+        self.now = now
+    }
+
+    public var clearedAt: Date? {
+        (try? Data(contentsOf: clearedURL)).flatMap {
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            return try? decoder.decode(Date.self, from: $0)
+        }
     }
 
     public func lookups() -> [Lookup] {
-        if let loaded { return loaded }
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        let lookups =
-            (try? Data(contentsOf: url)).flatMap { try? decoder.decode([Lookup].self, from: $0) }
-            ?? []
-        loaded = lookups
-        return lookups
+        file.records()
     }
 
     public func record(_ lookup: Lookup) throws {
-        var all = lookups().filter { $0.id != lookup.id }
-        all.insert(lookup, at: 0)
-        try write(Array(all.prefix(Self.limit)))
+        try file.write { all in
+            all.removeAll { $0.id == lookup.id }
+            all.insert(lookup, at: 0)
+            all = Array(all.prefix(Self.limit))
+        }
     }
 
     public func remove(_ lookup: Lookup) throws {
-        try write(lookups().filter { $0.id != lookup.id })
+        try file.write { $0.removeAll { $0.id == lookup.id } }
     }
 
     public func clear() throws {
-        try write([])
+        let date = now()
+        try setClearedAt(date)
+        try file.write { $0 = [] }
+        onClear?(date)
     }
 
-    private func write(_ lookups: [Lookup]) throws {
+    /// Another device's lookups and clear: nothing older than the latest clear survives.
+    public func applyRemote(saving saved: [Lookup], deleting deleted: Set<String>, clearedAt: Date?)
+        throws
+    {
+        if let clearedAt, clearedAt > (self.clearedAt ?? .distantPast) {
+            try setClearedAt(clearedAt)
+        }
+        let cutoff = self.clearedAt ?? .distantPast
+        try file.write(.remote) { all in
+            all.apply(saving: saved.filter { $0.date > cutoff }, deleting: deleted, key: \.id)
+            all.removeAll { $0.date <= cutoff }
+            all.sort { $0.date > $1.date }
+            all = Array(all.prefix(Self.limit))
+        }
+    }
+
+    private func setClearedAt(_ date: Date) throws {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        try encoder.encode(lookups).write(to: url, options: .atomic)
-        loaded = lookups
+        try encoder.encode(date).write(to: clearedURL, options: .atomic)
     }
 }

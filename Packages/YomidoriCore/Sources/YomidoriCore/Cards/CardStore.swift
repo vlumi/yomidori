@@ -87,29 +87,25 @@ extension CardStore {
 
 /// One JSON document, written whole and atomically on every change.
 public final class FileCardStore: CardStore {
-    public let url: URL
-    private var loaded: [Card]?
-    private let queue = DispatchQueue(label: "fi.misaki.yomidori.cards")
-    /// Called after every write, outside the store's lock, so a listener may read back.
-    public var didChange: (() -> Void)?
+    public let file: RecordFile<Card>
+    public var url: URL { file.url }
 
     public init(url: URL) {
-        self.url = url
+        file = RecordFile(url: url, label: "fi.misaki.yomidori.cards") { $0.id.uuidString }
     }
 
     public func cards() -> [Card] {
-        queue.sync { all() }
+        file.records()
     }
 
     public func card(headword: String, reading: String) -> Card? {
-        queue.sync { all().first { $0.headword == headword && $0.reading == reading } }
+        cards().first { $0.headword == headword && $0.reading == reading }
     }
 
     public func keep(
         _ sighting: Sighting, headword: String, reading: String, entryID: Int?, collection: UUID?
     ) throws -> Card {
-        let kept = try queue.sync { () -> Card in
-            var cards = all()
+        try file.write { cards in
             let index: Int
             if let found = cards.firstIndex(where: {
                 $0.headword == headword && $0.reading == reading
@@ -124,52 +120,29 @@ public final class FileCardStore: CardStore {
                 index = cards.count - 1
             }
             if let collection { cards[index].add(to: collection) }
-            try save(cards)
             return cards[index]
         }
-        didChange?()
-        return kept
     }
 
     public func remove(_ card: Card) throws {
-        try queue.sync {
-            try save(all().filter { $0.id != card.id })
-        }
-        didChange?()
+        try file.write { $0.removeAll { $0.id == card.id } }
     }
 
     public func update(_ card: Card) throws {
-        try queue.sync {
-            var cards = all()
+        try file.write { cards in
             guard let index = cards.firstIndex(where: { $0.id == card.id }) else { return }
             cards[index] = card
-            try save(cards)
         }
-        didChange?()
     }
 
     /// Many changes in one write, as an import makes them.
     public func replaceAll(_ transform: ([Card]) -> [Card]) throws {
-        try queue.sync { try save(transform(all())) }
-        didChange?()
+        try file.write { $0 = transform($0) }
     }
 
-    private func all() -> [Card] {
-        if let loaded { return loaded }
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        let cards =
-            (try? Data(contentsOf: url)).flatMap { try? decoder.decode([Card].self, from: $0) }
-            ?? []
-        loaded = cards
-        return cards
-    }
-
-    private func save(_ cards: [Card]) throws {
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .iso8601
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        try encoder.encode(cards).write(to: url, options: .atomic)
-        loaded = cards
+    public func applyRemote(saving saved: [Card], deleting deleted: Set<UUID>) throws {
+        try file.write(.remote) {
+            $0.apply(saving: saved, deleting: Set(deleted.map(\.uuidString)), key: \.id.uuidString)
+        }
     }
 }
