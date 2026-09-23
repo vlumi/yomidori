@@ -27,7 +27,10 @@ extension CaptureView {
         }
     }
 
+    /// Back to the camera at once: whatever was still reading the old page is cancelled with
+    /// the page, and its result, should it come, is dropped.
     func retake() {
+        recognizing = false
         still = nil
         page.pasted = nil
         picked = nil
