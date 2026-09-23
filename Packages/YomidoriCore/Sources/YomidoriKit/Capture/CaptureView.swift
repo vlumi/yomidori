@@ -10,7 +10,8 @@ public struct CaptureView: View {
     @State private var recognizing = false
     @State private var readingCloseUp = false
     @State var picked: PhotosPickerItem?
-    @State private var zoomControl = ZoomControl()
+    @StateObject private var zoomControl = ZoomControl()
+    @AppStorage(SettingsKey.pageControlsSide) private var controlsSide: PageControlsSide = .right
     @State private var closeUpTask: Task<Void, Never>?
     @AppStorage(SettingsKey.readoutFraction) private var readoutFraction = DrawerDetents.all[0]
     /// The drawer's height the page is laid out to: the fraction as the last drag left it,
@@ -130,23 +131,13 @@ public struct CaptureView: View {
             }
         }
         .frame(width: area.width, height: area.height)
-        .overlay(alignment: .bottomTrailing) {
-            ZoomButtons { factor in zoomPage(by: factor, in: area) }
-                .padding(.trailing, 12)
-                .padding(.bottom, 64)
-        }
-        .overlay(alignment: .bottomLeading) {
-            PageButton(
-                symbol: "plus", label: Text("Add next page", bundle: .module), action: addPage
+        .overlay(alignment: controlsSide.alignment) {
+            PageControls(
+                side: controlsSide, pageCount: pages.isEmpty ? nil : pages.count + 1,
+                canAddPage: currentTranscript != nil, addPage: addPage, startOver: startOver,
+                zoom: zoomFraction(in: area)
             )
-            .disabled(currentTranscript == nil)
             .padding(12)
-        }
-        .overlay(alignment: .topTrailing) {
-            if !pages.isEmpty {
-                StartOverButton(pageCount: pages.count + 1, action: startOver)
-                    .padding(12)
-            }
         }
         // Tapping Read while a page is up is the retake.
         .onTabReselect(.read) { retake() }
@@ -175,12 +166,15 @@ public struct CaptureView: View {
         }
     }
 
-    private func zoomPage(by factor: CGFloat, in area: CGSize) {
+    /// The slider's place: Live Text's scroll view reports its own; the other modes' zoom is
+    /// the page state's.
+    private func zoomFraction(in area: CGSize) -> Binding<Double> {
         if mode == .liveText {
-            zoomControl.zoom(by: factor)
-        } else {
-            withAnimation(.easeInOut(duration: 0.2)) { zoom = zoom.stepped(by: factor, in: area) }
+            return Binding(get: { zoomControl.fraction }, set: { zoomControl.set($0) })
         }
+        return Binding(
+            get: { Zoom.fraction(of: zoom.scale, in: Zoom.range) },
+            set: { zoom = zoom.scaled(to: Zoom.scale(at: $0, in: Zoom.range), in: area) })
     }
 
     private func drawer(screenHeight: CGFloat) -> some View {

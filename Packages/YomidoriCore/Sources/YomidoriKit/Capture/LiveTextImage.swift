@@ -17,7 +17,8 @@ struct LiveTextImage: UIViewRepresentable {
         let view = ZoomingImageView(image: UIImage(cgImage: still.image))
         view.imageView.addInteraction(context.coordinator.interaction)
         view.interaction = context.coordinator.interaction
-        zoomControl.zoom = { [weak view] factor in view?.zoom(by: factor) }
+        zoomControl.apply = { [weak view] fraction in view?.zoom(toFraction: fraction) }
+        view.reportZoom = { [weak zoomControl] fraction in zoomControl?.report(fraction) }
         return view
     }
 
@@ -123,9 +124,11 @@ struct LiveTextImage: UIViewRepresentable {
             contentInset = UIEdgeInsets(top: dy, left: dx, bottom: dy, right: dx)
         }
 
-        func zoom(by factor: CGFloat) {
-            let scale = min(max(zoomScale * factor, minimumZoomScale), maximumZoomScale)
-            setZoomScale(scale, animated: true)
+        var reportZoom: ((Double) -> Void)?
+
+        func zoom(toFraction fraction: Double) {
+            setZoomScale(
+                Zoom.scale(at: fraction, in: minimumZoomScale...maximumZoomScale), animated: false)
         }
 
         func viewForZooming(in scrollView: UIScrollView) -> UIView? {
@@ -135,6 +138,7 @@ struct LiveTextImage: UIViewRepresentable {
         func scrollViewDidZoom(_ scrollView: UIScrollView) {
             center()
             interaction?.setContentsRectNeedsUpdate()
+            reportZoom?(Zoom.fraction(of: zoomScale, in: minimumZoomScale...maximumZoomScale))
         }
     }
 }

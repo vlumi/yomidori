@@ -751,6 +751,16 @@
         }
       }
     },
+    "Left" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左"
+          }
+        }
+      }
+    },
     "Lesson" : {
       "localizations" : {
         "ja" : {
@@ -1134,6 +1144,16 @@
         }
       }
     },
+    "Page controls" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ページの操作"
+          }
+        }
+      }
+    },
     "Page read" : {
       "localizations" : {
         "ja" : {
@@ -1370,6 +1390,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "今すぐ復習する"
+          }
+        }
+      }
+    },
+    "Right" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右"
           }
         }
       }
@@ -1754,6 +1784,16 @@
         }
       }
     },
+    "The zoom and the page buttons stand in one column on this side of the picture, the zoom nearest your thumb: the side of the hand that holds the phone." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ズームとページのボタンを、写真のこちら側に一列に並べます。ズームは親指に一番近い所に。電話を持つ手の側を選んでください。"
+          }
+        }
+      }
+    },
     "Tokenizer" : {
       "localizations" : {
         "ja" : {
@@ -1924,22 +1964,12 @@
         }
       }
     },
-    "Zoom in" : {
+    "Zoom" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "拡大する"
-          }
-        }
-      }
-    },
-    "Zoom out" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "縮小する"
+            "value" : "ズーム"
           }
         }
       }

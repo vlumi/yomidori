@@ -29,6 +29,24 @@ public struct Zoom: Equatable, Sendable {
         ).clamped(in: bounds)
     }
 
+    /// A slider's place along a zoom range, 0 to 1, spaced by ratio so each stretch of the
+    /// slider zooms by the same factor.
+    public static func fraction(of scale: CGFloat, in range: ClosedRange<CGFloat>) -> Double {
+        guard range.lowerBound > 0, range.upperBound > range.lowerBound else { return 0 }
+        let clamped = min(max(scale, range.lowerBound), range.upperBound)
+        return Double(log(clamped / range.lowerBound) / log(range.upperBound / range.lowerBound))
+    }
+
+    public static func scale(at fraction: Double, in range: ClosedRange<CGFloat>) -> CGFloat {
+        let fraction = CGFloat(min(max(fraction, 0), 1))
+        return range.lowerBound * pow(range.upperBound / range.lowerBound, fraction)
+    }
+
+    /// Zoomed to `scale` about the view's center, as a pinch there would.
+    public func scaled(to scale: CGFloat, in bounds: CGSize) -> Zoom {
+        stepped(by: scale / self.scale, in: bounds)
+    }
+
     public func clamped(in bounds: CGSize) -> Zoom {
         let slackX = bounds.width * (scale - 1) / 2
         let slackY = bounds.height * (scale - 1) / 2

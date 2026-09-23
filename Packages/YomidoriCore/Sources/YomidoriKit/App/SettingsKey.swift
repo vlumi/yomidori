@@ -5,4 +5,5 @@ enum SettingsKey {
     static let lessonOrder = "lessonOrder"
     static let lessonSize = "lessonSize"
     static let iCloudSync = "iCloudSync"
+    static let pageControlsSide = "pageControlsSide"
 }

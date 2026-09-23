@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @AppStorage(SwipeBack.key) private var swipeBack = true
     @AppStorage(SettingsKey.iCloudSync) private var iCloudSync = true
+    @AppStorage(SettingsKey.pageControlsSide) private var controlsSide: PageControlsSide = .right
     @ObservedObject private var sync = Sync.shared
 
     var body: some View {
@@ -15,6 +16,19 @@ struct SettingsView: View {
                 Text(
                     // swiftlint:disable:next line_length
                     "Swiping in from the left edge goes back a screen, as everywhere on iOS. Off, only the back button does, so a swipe meant for a word never leaves the page.",
+                    bundle: .module)
+            }
+            Section {
+                Picker(selection: $controlsSide) {
+                    Text("Left", bundle: .module).tag(PageControlsSide.left)
+                    Text("Right", bundle: .module).tag(PageControlsSide.right)
+                } label: {
+                    Text("Page controls", bundle: .module)
+                }
+            } footer: {
+                Text(
+                    // swiftlint:disable:next line_length
+                    "The zoom and the page buttons stand in one column on this side of the picture, the zoom nearest your thumb: the side of the hand that holds the phone.",
                     bundle: .module)
             }
             Section {
