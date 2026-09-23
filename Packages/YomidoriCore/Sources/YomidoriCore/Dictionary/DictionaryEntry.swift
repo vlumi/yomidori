@@ -50,11 +50,18 @@ public protocol WordDictionary {
     func kanji(_ literal: String) -> KanjiEntry?
     /// Entries with a kanji form that contains `text` and is not `text`, common words first.
     func entries(containing text: String, limit: Int) -> [DictionaryEntry]
+    /// Entries with a kanji form spelled as `form` except at `index`, where any one character
+    /// stands; common words first.
+    func entries(spelledLike form: String, anyCharacterAt index: Int, limit: Int)
+        -> [DictionaryEntry]
 }
 
 extension WordDictionary {
     public func kanji(_ literal: String) -> KanjiEntry? { nil }
     public func entries(containing text: String, limit: Int) -> [DictionaryEntry] { [] }
+    public func entries(spelledLike form: String, anyCharacterAt index: Int, limit: Int)
+        -> [DictionaryEntry]
+    { [] }
 
     /// Other words read the same way, written in kanji, common first.
     public func homophones(of entry: DictionaryEntry) -> [DictionaryEntry] {

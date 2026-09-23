@@ -13,6 +13,10 @@ struct TranscriptReadout: View {
     @ObservedObject var selection: LiveTextSelection
     @AppStorage(TokenizerChoice.key) private var choice: TokenizerChoice = .system
     @State private var lines: [[Token]] = []
+    /// The reader's corrections to the transcript, cleared with a new page.
+    @State private var fixes: [TextFix] = []
+    /// After a fix, the stretch of a line whose words are found again.
+    @State private var refind: (line: Int, range: Range<Int>)?
     @State private var transcriptLines = TranscriptLines("")
     @State private var words: [FoundWord] = []
     @State private var keptSurfaces: Set<String> = []
@@ -50,7 +54,8 @@ struct TranscriptReadout: View {
             }
             .tint(.secondary)
         }
-        .task(id: "\(choice)|\(transcript)") { tokenize() }
+        .task(id: "\(choice)|\(fixed)") { tokenize() }
+        .onChange(of: transcript) { fixes = [] }
         .task(id: "\(choice)|\(selection.text)") { showSelection() }
     }
 
@@ -71,7 +76,7 @@ struct TranscriptReadout: View {
             .labelStyle(.iconOnly)
             .controlSize(.small)
             Button {
-                Clipboard.copy(transcript)
+                Clipboard.copy(fixed)
             } label: {
                 Label {
                     Text("Copy", bundle: .module)
@@ -108,12 +113,40 @@ struct TranscriptReadout: View {
     }
 
     private func wordReadout(_ word: FoundWord) -> some View {
-        WordReadout(
+        let line = lines.firstIndex { $0.contains(word.first) }
+        return WordReadout(
             word: word, accent: word.entries.first.flatMap { JMdict.bundled?.pitchAccent(of: $0) },
-            kept: keptSurfaces.contains(word.surface), canKeep: Cards.store != nil
+            kept: keptSurfaces.contains(word.surface), canKeep: Cards.store != nil,
+            fix: line.map { line in
+                { index, replacement in fix(word, onLine: line, index, replacement) }
+            }
         ) {
             keep(word)
         }
+    }
+
+    /// The transcript as recognized, with the reader's corrections in.
+    private var fixed: String {
+        TextFix.apply(fixes, to: transcript)
+    }
+
+    /// Corrects one character of a word on the page and finds the words shown again, so the
+    /// readout, the sentence Keep saves and the copy all read as corrected.
+    private func fix(_ word: FoundWord, onLine line: Int, _ index: Int, _ replacement: String) {
+        let text = fixed
+        let start = transcriptLines.offsets(of: word.first, onLine: line, in: text)
+        let shown = words.filter { lines[line].contains($0.first) }
+        let spanStart =
+            shown.map { transcriptLines.offsets(of: $0.first, onLine: line, in: text).inLine }.min()
+            ?? start.inLine
+        let spanEnd =
+            shown.map {
+                transcriptLines.offsets(of: $0.first, onLine: line, in: text).inLine
+                    + $0.surface.count
+            }.max() ?? start.inLine + word.surface.count
+        fixes.append(
+            TextFix(offset: start.inTranscript + index, length: 1, replacement: replacement))
+        refind = (line, spanStart..<(spanEnd + replacement.count - 1))
     }
 
     private var tokenizer: (any Tokenizer)? {
@@ -123,8 +156,18 @@ struct TranscriptReadout: View {
     private func tokenize() {
         words = []
         keptSurfaces = []
-        transcriptLines = TranscriptLines(transcript)
+        transcriptLines = TranscriptLines(fixed)
         lines = transcriptLines.lines.map { tokenizer?.tokens(in: $0) ?? [] }
+        if let refind, lines.indices.contains(refind.line) {
+            let tokens = WordFinder.tokens(
+                lines[refind.line], overlapping: refind.range,
+                in: transcriptLines.lines[refind.line])
+            words = WordFinder.words(in: tokens, dictionary: JMdict.bundled)
+            for entry in words.compactMap(\.entries.first) {
+                Cards.noteLookup(of: entry, from: .page)
+            }
+        }
+        refind = nil
     }
 
     /// The strip's own tokens on that line are preferred, so Keep knows the sentence.
@@ -134,7 +177,7 @@ struct TranscriptReadout: View {
         let found = WordFinder.words(in: tokens, dictionary: JMdict.bundled)
         if let line = transcriptLines.lineIndex(
             ofSelection: selection.range, in: currentTranscript, pageOffset: pageOffset,
-            transcript: transcript)
+            transcript: fixed, fixes: fixes)
         {
             words = found.map { $0.aligned(to: lines[line]) ?? $0 }
         } else {
@@ -147,7 +190,7 @@ struct TranscriptReadout: View {
 
     private func keep(_ word: FoundWord) {
         let keeper = SentenceKeeper(
-            transcript: transcript, transcriptLines: transcriptLines, tokenLines: lines,
+            transcript: fixed, transcriptLines: transcriptLines, tokenLines: lines,
             stills: stills,
             currentLines: currentLines, source: nil, keepsImages: keepsPhotos)
         guard let store = Cards.store,

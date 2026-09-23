@@ -61,6 +61,28 @@ public final class JMdict: WordDictionary {
         }
     }
 
+    public func entries(spelledLike form: String, anyCharacterAt index: Int, limit: Int)
+        -> [DictionaryEntry]
+    {
+        var characters = Array(form).map { character -> String in
+            let text = String(character)
+            return text == "%" || text == "_" || text == "\\" ? "\\" + text : text
+        }
+        guard characters.indices.contains(index) else { return [] }
+        characters[index] = "_"
+        let pattern = characters.joined()
+        return queue.sync {
+            let ids = rows(
+                """
+                SELECT DISTINCT e.id FROM kanji k JOIN entry e ON e.id = k.entry
+                WHERE k.text LIKE ?1 ESCAPE '\\' AND k.text <> ?2
+                ORDER BY e.common DESC, e.id LIMIT \(limit)
+                """, binds: [pattern, form]
+            ).compactMap { Int($0[0]) }
+            return ids.map(entry(id:))
+        }
+    }
+
     public func pitchAccents(for headword: String, reading: String) -> [PitchAccent] {
         queue.sync {
             let downsteps =
