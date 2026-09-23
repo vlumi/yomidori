@@ -1,6 +1,6 @@
 # Privacy Policy
 
-_Last updated: 2026-09-23_
+_Last updated: 2026-09-23._
 
 **Yomidori does not collect, store, or transmit any personal data.**
 

@@ -14,11 +14,12 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
-- **Search is ready to type.** Switching to the search tab puts the cursor in the field, and every result and history line shows its reading with the pitch drawn over it.
 - **Start again while a page is read.** Tap Read while the page is still being read, a blurred shot or one frozen too soon, and the camera is back at once: the reading is abandoned, not waited for. The two recognizers also read side by side now, so a page is ready sooner.
-- **The page's controls on your side.** The zoom is a slider now, one stroke of the thumb instead of taps, and it stands with the next-page button and the spread's way out in one column on one side of the picture, the zoom nearest the thumb. Settings puts that column left or right, for the hand that holds the phone.
 - **Paste text to read.** Beside the photo library under the camera, the paste button puts copied text where the page would be: select in it and its words read out as from a photo, to keep, look up and fix the same way. Tap Read to go back to the camera.
+- **The page's controls on your side.** The zoom is a slider now, one stroke of the thumb instead of taps, and it stands with the next-page button and the spread's way out in one column on one side of the picture, the zoom nearest the thumb. Settings puts that column left or right, for the hand that holds the phone.
+- **Search is ready to type.** Switching to the search tab puts the cursor in the field, and every result and history line shows its reading with the pitch drawn over it.
 - **Safer with what comes from outside.** Shared collections, records from your other devices, photos and covers are checked and cleaned before the app keeps them: oversized files and images are refused, text that could hide or reverse what it says is cleaned, and a broken schedule is dropped instead of breaking reviews.
+
 ### build 9 — 2026-09-23
 
 - **iCloud sync.** Your cards, collections with their covers, and lookup history are kept the same on your devices through your own iCloud: a card kept on the phone is there to review on the iPad, and one answered on both before they met keeps both answers. On in Settings, where it can be turned off and shows how it is doing. The export there is now *Back up cards*.
