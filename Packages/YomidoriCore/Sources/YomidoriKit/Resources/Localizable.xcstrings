@@ -201,6 +201,16 @@
         }
       }
     },
+    "Back up cards" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードをバックアップ"
+          }
+        }
+      }
+    },
     "Begin" : {
       "localizations" : {
         "ja" : {
@@ -467,16 +477,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "広げる・畳む"
-          }
-        }
-      }
-    },
-    "Export cards" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カードを書き出す"
           }
         }
       }
@@ -1501,6 +1501,16 @@
         }
       }
     },
+    "Sign in to iCloud in Settings to sync." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同期するには、設定でiCloudにサインインしてください。"
+          }
+        }
+      }
+    },
     "Start" : {
       "localizations" : {
         "ja" : {
@@ -1527,6 +1537,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "最初から"
+          }
+        }
+      }
+    },
+    "Starting…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開始中…"
           }
         }
       }
@@ -1577,6 +1597,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "左端からのスワイプで前の画面に戻ります（iOSの標準）。オフにすると戻るボタンだけが戻るので、言葉を選ぼうとしたスワイプでページを離れることがありません。"
+          }
+        }
+      }
+    },
+    "Sync failed: %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同期できませんでした: %@"
+          }
+        }
+      }
+    },
+    "Sync with iCloud" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloudで同期"
+          }
+        }
+      }
+    },
+    "Syncing…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同期中…"
           }
         }
       }
@@ -1741,6 +1791,16 @@
         }
       }
     },
+    "Up to date" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最新です"
+          }
+        }
+      }
+    },
     "Use" : {
       "localizations" : {
         "ja" : {
@@ -1841,12 +1901,22 @@
         }
       }
     },
-    "Your cards as one JSON file, to keep a copy or to move them; the photos stay on the device." : {
+    "Your cards as one small file, to keep a copy wherever you like." : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カードを1つのJSONファイルとして書き出します。控えにも、移すのにも。写真は端末に残ります。"
+            "value" : "カードを小さなファイル1つにまとめます。好きな場所に控えを保存できます。"
+          }
+        }
+      }
+    },
+    "Your cards, collections with their covers, and lookup history, kept the same on your devices through your own iCloud. Nothing goes anywhere else." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード、表紙付きのコレクション、調べた言葉の履歴を、あなた自身のiCloudを通じてお使いの端末で揃えます。それ以外の場所には何も送りません。"
           }
         }
       }

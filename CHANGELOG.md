@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **iCloud sync.** Your cards, collections with their covers, and lookup history are kept the same on your devices through your own iCloud: a card kept on the phone is there to review on the iPad, and one answered on both before they met keeps both answers. On in Settings, where it can be turned off and shows how it is doing. The export there is now *Back up cards*.
 - **Cards keep text, not photos.** The photo toggle under a page is gone, and so are the page photos and sentence crops on cards and reviews: the first launch deletes the ones kept, which would otherwise weigh on syncing. A card keeps its sentences as before. Covers stay, stored smaller.
 - **The Read button is a round glyph.** The text-scanning glyph alone on a round button where the shutter sits, no caption; VoiceOver still names it *Read the page*.
 - **Fix a misread character.** Under a word from the page, *Fix a character* shows the word's characters; tap the one the recognizer got wrong and pick the right one from the dictionary's words spelled like the rest (街皮 offers 樹 for 樹皮), or type it. The page's text is corrected in place, so the word is looked up again and Keep saves the corrected sentence; the rest of the word stays as it was.

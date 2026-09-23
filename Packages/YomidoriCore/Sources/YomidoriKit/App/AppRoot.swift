@@ -20,6 +20,7 @@ public struct AppRoot: View {
     @State private var dueCount = 0
     @State private var imported: CollectionImport?
     @State private var importFailed = false
+    @Environment(\.scenePhase) private var scenePhase
 
     public init() {}
 
@@ -81,7 +82,11 @@ public struct AppRoot: View {
             }
         }
         .collectionImportAlerts(imported: $imported, failed: $importFailed)
-        .onReceive(NotificationCenter.default.publisher(for: Cards.cardsDidChange)) { _ in
+        .task { Sync.shared.start() }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { Sync.shared.fetch() }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: Cards.didChange)) { _ in
             dueCount = Cards.dueItems(at: Date()).count
         }
     }

@@ -21,11 +21,11 @@ before it is built.
 
 ## Two targets, one seam
 
-| | `YomidoriCore` | `YomidoriDictionary` | `YomidoriMeCab` | `YomidoriMangaOCR` | `YomidoriKit` |
-| --- | --- | --- | --- | --- | --- |
-| holds | kana and reading helpers, the token model and the OS's tokenizer, the dictionary entry model, the cards and the scheduler | `JMdict`, the reader over the bundled SQLite database, behind Core's `WordDictionary` | MeCab with IPADic behind Core's `Tokenizer`, the one third-party dependency, kept apart so it can be cut | manga-ocr through Core ML, a `CGImage` in and a `String` out, present only when the models are bundled | SwiftUI screens, the camera, Vision text recognition, the palette |
-| imports | Foundation | YomidoriCore, the system's SQLite3 | YomidoriCore, Mecab-Swift | YomidoriCore, CoreML | SwiftUI, UIKit and Vision (iOS only), YomidoriCore, YomidoriDictionary, YomidoriMeCab, YomidoriMangaOCR |
-| tested | headless, coverage-gated | headless, on a fixture built by the same script | headless, on the same fixture | coverage-ignored (the models are not in the tests) | coverage-ignored |
+| | `YomidoriCore` | `YomidoriDictionary` | `YomidoriMeCab` | `YomidoriMangaOCR` | `YomidoriSync` | `YomidoriKit` |
+| --- | --- | --- | --- | --- | --- | --- |
+| holds | kana and reading helpers, the token model and the OS's tokenizer, the dictionary entry model, the cards and the scheduler | `JMdict`, the reader over the bundled SQLite database, behind Core's `WordDictionary` | MeCab with IPADic behind Core's `Tokenizer`, the one third-party dependency, kept apart so it can be cut | manga-ocr through Core ML, a `CGImage` in and a `String` out, present only when the models are bundled | `CloudSync`, iCloud sync through CloudKit's sync engine, the one code that talks off the device | SwiftUI screens, the camera, Vision text recognition, the palette |
+| imports | Foundation | YomidoriCore, the system's SQLite3 | YomidoriCore, Mecab-Swift | YomidoriCore, CoreML | YomidoriCore, CloudKit | SwiftUI, UIKit and Vision (iOS only), YomidoriCore, YomidoriDictionary, YomidoriMeCab, YomidoriMangaOCR |
+| tested | headless, coverage-gated | headless, on a fixture built by the same script | headless, on the same fixture | coverage-ignored (the models are not in the tests) | coverage-ignored (CloudKit needs an account; the naming, payload and merges it uses are Core's, tested) | coverage-ignored |
 
 The rule: **testable logic goes in YomidoriCore.** The Kit compiles on macOS
 too, today because `swift test` runs on the Mac and later for the Mac app the
@@ -169,6 +169,23 @@ use for its own input.
   one of each, the cards that once carried page photos and crops among them,
   whose photo fields are no longer read. The reading, pitch and meaning are not
   stored; they are looked up live.
+- **Sync** (`CloudSync` in `YomidoriSync`, `Sync` in Kit): the cards, the
+  collections with their covers and the lookup history kept the same on the
+  reader's devices through their own iCloud, CloudKit's private database driven
+  by `CKSyncEngine`. One record per card, collection and looked-up word
+  (`SyncName`, the store key made ASCII; `SyncPayload`, the same JSON the stores
+  write), a cover as the collection record's asset, and one record for the date
+  the history was last cleared. The local files are the truth: this device's
+  writes go out as they are made (the stores report them as local), another
+  device's are laid over them (reported as remote, so they are not sent back),
+  merged by Core's rules only where this device changed the same record and had
+  not sent it yet; a save that finds a newer version on the server merges it in
+  and goes again on top of it. Each record's server system fields are kept so a
+  save updates the version it knows. Deletions are CloudKit's own, not
+  tombstones; a zone deleted from iCloud, or a new account, is filled again
+  from this device. Pushes wake the engine, and the app fetches when it comes
+  to the front. On unless turned off in Settings, never in the demo, and
+  nothing happens without an iCloud account.
 - **`RecordFile`** (Core): the one JSON store under the cards, the collections
   and the lookup history: loaded once, changed under a lock, written whole and
   atomically, and every write reported by the keys it saved and deleted and by

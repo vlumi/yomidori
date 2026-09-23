@@ -44,7 +44,8 @@ and a card you truly forgot goes back to waiting instead of haunting you.
   reading; the app speaks when you say you don't.
 - **Everything on the device.** Text recognition, tokenizing, readings, pitch,
   cards: all local, offline, from dictionaries bundled with the app. No account,
-  no server, no model in the cloud. A word you look up never leaves the phone.
+  no server, no model in the cloud. A word you look up never leaves the phone;
+  your cards sync between your devices through your own iCloud, if you like.
 - **The book is the corpus.** Example sentences are the ones you actually read,
   as they stood on your page, not a corpus written for someone else.
 - **iPhone and iPad, iOS 26 up.** A Mac app is planned,

@@ -25,4 +25,6 @@ ignore:
   - "Packages/YomidoriCore/Sources/YomidoriKit/**"
   # Runs a Core ML model the tests do not have (it is built, not committed).
   - "Packages/YomidoriCore/Sources/YomidoriMangaOCR/**"
+  # Talks to CloudKit, which needs an account; what it runs on is Core's, tested there.
+  - "Packages/YomidoriCore/Sources/YomidoriSync/**"
   - "Packages/YomidoriCore/Tests/**"

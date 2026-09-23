@@ -42,6 +42,7 @@ struct LookupHistoryView: View {
             }
         }
         .task(id: generation) { reload() }
+        .onReceive(NotificationCenter.default.publisher(for: Cards.didChange)) { _ in reload() }
     }
 
     private func reload() {
