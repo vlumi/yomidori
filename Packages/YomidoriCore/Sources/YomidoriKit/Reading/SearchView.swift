@@ -8,6 +8,9 @@ struct SearchView: View {
     @State private var kept: Set<String> = []
     /// Bumped when the history is cleared, so its view reloads.
     @State private var historyGeneration = 0
+    @State private var accents: [Int: PitchAccent] = [:]
+    @FocusState private var searching: Bool
+    @EnvironmentObject private var taps: TabTaps
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -27,7 +30,7 @@ struct SearchView: View {
             ForEach(results) { entry in
                 NavigationLink(value: entry) {
                     EntryRow(
-                        entry: entry,
+                        entry: entry, accent: accents[entry.id],
                         kept: kept.contains(
                             WordKey.of(
                                 headword: entry.headword,
@@ -36,6 +39,11 @@ struct SearchView: View {
             }
         }
         .searchable(text: $query, prompt: Text("Kana, kanji, or English", bundle: .module))
+        .searchFocused($searching)
+        // Switched to, the tab is for typing: the field takes the keyboard at once.
+        .onChange(of: taps.shown, initial: true) { _, shown in
+            if shown == .search { searching = true }
+        }
         .navigationTitle(Text("Search", bundle: .module))
         .toolbar {
             if SearchQuery.kind(of: query) == .empty, Cards.lookups?.lookups().isEmpty == false {
@@ -53,6 +61,10 @@ struct SearchView: View {
             try? await Task.sleep(for: .milliseconds(150))
             guard !Task.isCancelled else { return }
             results = JMdict.bundled?.search(query, limit: 50) ?? []
+            accents = Dictionary(
+                results.compactMap { entry in
+                    JMdict.bundled?.pitchAccent(of: entry).map { (entry.id, $0) }
+                }, uniquingKeysWith: { first, _ in first })
             kept = Cards.keptWords()
         }
     }

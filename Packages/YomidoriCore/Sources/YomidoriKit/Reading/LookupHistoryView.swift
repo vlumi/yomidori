@@ -22,7 +22,9 @@ struct LookupHistoryView: View {
                 if let entry = JMdict.bundled?.entry(withID: lookup.entryID) {
                     NavigationLink(value: entry) {
                         HStack(spacing: 12) {
-                            EntryRow(entry: entry, kept: kept.contains(lookup.id))
+                            EntryRow(
+                                entry: entry, accent: JMdict.bundled?.pitchAccent(of: entry),
+                                kept: kept.contains(lookup.id))
                             Image(systemName: lookup.source == .page ? "camera" : "magnifyingglass")
                                 .font(.caption2)
                                 .foregroundStyle(.secondary)
