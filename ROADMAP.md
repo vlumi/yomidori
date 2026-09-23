@@ -43,7 +43,7 @@ The whole idea rests on on-device text recognition reading real books: vertical 
 
 Decided 2026-09-18: a Mac app is wanted, after the phone's recognizer question is settled, since the Mac inherits whatever that decides. Core is pure and the Kit already compiles on macOS, so the cost is the input, the sync and a target.
 
-- [ ] **Cards that follow.** iCloud sync of the cards, the collections with their covers and the lookup history, so a card kept on the phone is reviewed on the Mac and the other way round; conflicts merged by sightings and reviews, never by picking a side. The prerequisite for the rest of this section, and it serves an iPad too.
+- [ ] **Cards that follow.** *Built 2026-09-23: iCloud sync through CloudKit of the cards, the collections with their covers and the lookup history, merged by sightings and answers, never by picking a side.* Left: tried on two real devices, the CloudKit schema deployed to production before a TestFlight build syncs, and live refresh on the screens that load only on appear.
 - [ ] **A Mac target.** No camera: a pasted sentence goes straight to the tokenizer, a pasted or dropped screenshot goes through Live Text as on the phone, with the Mac's own selection overlay on the image. Same bundle id under the same App Store record. The release lane's macOS scope, inherited from the siblings, comes back into use.
 - [ ] **Review on a keyboard.** Space to reveal, two keys to grade. *Typing is how every review is answered already, on every platform: the reading strictly, the meaning leniently with the reader's own accepted meanings, the pitch by a pick. What remains is the Mac's own keys.* A typing tutor proper, with drills and speed, is a different product and stays out.
 
@@ -61,4 +61,4 @@ Decided 2026-09-18: a Mac app is wanted, after the phone's recognizer question i
 
 ## Deliberately out of scope
 
-Per [ARCHITECTURE.md](ARCHITECTURE.md): no server, no accounts, no analytics, no ads, no network at runtime, no cloud model. No furigana over the whole page and no page translation, ever — help only where asked. No watch or TV target; the Mac has its own section above. No third-party runtime code beyond the one tokenizer decision.
+Per [ARCHITECTURE.md](ARCHITECTURE.md): no server of ours, no accounts, no analytics, no ads, nothing off the device but sync to the reader's own iCloud, no cloud model. No furigana over the whole page and no page translation, ever — help only where asked. No watch or TV target; the Mac has its own section above. No third-party runtime code beyond the one tokenizer decision.

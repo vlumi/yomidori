@@ -1,6 +1,7 @@
 import Foundation
 import YomidoriCore
 import YomidoriDictionary
+import YomidoriSync
 
 /// The app's stores, in Application Support, or in the demo's folder when launched so; the
 /// demo folder is seeded the first time it is asked for.
@@ -14,7 +15,7 @@ enum Cards {
 
     static let store: FileCardStore? = stores?.cards
     /// Posted after every write to the cards, for the counts shown outside the store's screens.
-    static let cardsDidChange = Notification.Name("fi.misaki.yomidori.cardsDidChange")
+    static let didChange = Notification.Name("fi.misaki.yomidori.storesDidChange")
     /// The settings the screens write to: the demo's own suite in the demo.
     static var defaults: UserDefaults { DemoMode.defaults ?? .standard }
     static let collections: FileCollectionStore? = stores?.collections
@@ -34,15 +35,41 @@ enum Cards {
                 url: directory.appendingPathComponent("collections.json")),
             lookups: FileLookupHistory(url: directory.appendingPathComponent("lookups.json")))
         CoverArchive.migrate(covers: stores.collections.collections().compactMap(\.coverID))
-        stores.cards.file.onChange = { _, _ in
-            NotificationCenter.default.post(name: cardsDidChange, object: nil)
-        }
+        stores.cards.file.onChange = { changed(.card, $0, $1) }
+        stores.collections.file.onChange = { changed(.collection, $0, $1) }
+        stores.lookups.file.onChange = { changed(.lookup, $0, $1) }
+        stores.lookups.onClear = { _ in Sync.engine?.historyCleared() }
         if DemoMode.isRequested {
             DemoData.seed(
                 cards: stores.cards, collections: stores.collections, lookups: stores.lookups)
         }
         return stores
     }()
+
+    /// Every write refreshes the screens; this device's own also go to sync.
+    private static func changed(_ kind: SyncKind, _ change: RecordChange, _ origin: ChangeOrigin) {
+        if origin == .local { Sync.engine?.recordsChanged(kind, change) }
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: didChange, object: nil)
+        }
+    }
+
+    /// The stores as sync sees them, covers included.
+    static var syncStores: CloudSync.Stores? {
+        guard let stores else { return nil }
+        return CloudSync.Stores(
+            cards: stores.cards, collections: stores.collections, lookups: stores.lookups,
+            coverURL: { id in
+                (try? CoverArchive.url(for: id)).flatMap {
+                    FileManager.default.fileExists(atPath: $0.path) ? $0 : nil
+                }
+            },
+            saveCover: { id, url in
+                guard let destination = try? CoverArchive.url(for: id) else { return }
+                try? FileManager.default.removeItem(at: destination)
+                try? FileManager.default.copyItem(at: url, to: destination)
+            })
+    }
 
     static func noteLookup(of entry: DictionaryEntry, from source: Lookup.Source) {
         guard Lookup.isWorthKeeping(entry) else { return }

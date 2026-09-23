@@ -1,6 +1,6 @@
 # Privacy Policy
 
-_Last updated: 2026-09-22_
+_Last updated: 2026-09-23_
 
 **Yomidori does not collect, store, or transmit any personal data.**
 
@@ -8,9 +8,13 @@ Everything happens on your device:
 
 - **No data is sent to us.** Yomidori has no server, no account, no sign-in, no
   analytics, no advertising, and no third-party SDKs. We receive nothing.
-- **No network access.** The app makes no network connections of any kind. It
-  requests no network-related permissions. Text recognition, dictionary lookups
-  and readings all run on the device, from dictionaries bundled with the app.
+- **Your own iCloud, and nothing else.** With iCloud sync on (Settings, on by
+  default), your cards, collections with their covers, and lookup history are
+  kept in your private iCloud database, so your devices show the same. Apple
+  stores it under your Apple Account; we cannot read it. Turn sync off and
+  nothing leaves the device. Apart from that the app makes no network
+  connections: text recognition, dictionary lookups and readings all run on the
+  device, from dictionaries bundled with the app.
 - **The camera.** The one permission the app uses is the camera, to read the
   page in front of you. Frames are processed on the device to recognize the
   text and are never uploaded anywhere or kept: a card keeps the sentence as

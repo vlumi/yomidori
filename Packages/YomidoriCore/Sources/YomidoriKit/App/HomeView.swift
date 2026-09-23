@@ -91,9 +91,12 @@ struct HomeView: View {
                 }
             }
         }
-        .onAppear {
-            dueCount = Cards.dueItems(at: Date()).count
-            waitingCount = Cards.store?.waiting().count ?? 0
-        }
+        .onAppear(perform: reload)
+        .onReceive(NotificationCenter.default.publisher(for: Cards.didChange)) { _ in reload() }
+    }
+
+    private func reload() {
+        dueCount = Cards.dueItems(at: Date()).count
+        waitingCount = Cards.store?.waiting().count ?? 0
     }
 }

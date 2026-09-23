@@ -64,9 +64,11 @@ describing intent as fact otherwise.
   `Text(_, bundle:)` / `String(localized:)`, never hardcoded literals. Japanese
   *content* (the words, readings, sentences) is data, not UI, and is never
   localized.
-- **Everything runs on the device.** No server, no account, no analytics, no
-  network at runtime. No cloud model, ever: a word looked up never leaves the
-  phone. This is a product rule as much as a privacy one ([PRIVACY.md](PRIVACY.md)
+- **Everything runs on the device.** No server of ours, no account, no
+  analytics. The one thing that leaves the device is sync, and only to the
+  reader's own iCloud (`YomidoriSync`, CloudKit's private database, switchable
+  in Settings). No cloud model, ever: a word looked up is never sent anywhere to
+  be looked up. This is a product rule as much as a privacy one ([PRIVACY.md](PRIVACY.md)
   promises it).
 - **Dictionary data is built, not committed.** `make dictionary` runs
   `Scripts/data/build-jmdict.py`, which downloads JMdict_e, KANJIDIC2, KRADFILE,
@@ -147,6 +149,7 @@ yomidori/
     │   └── Text/                   MarkdownBlocks
     ├── Sources/YomidoriDictionary/ JMdict, the SQLite reader over the bundled database (system SQLite)
     ├── Sources/YomidoriMeCab/      MeCab + IPADic behind Tokenizer — the one third-party dependency, quarantined
+    ├── Sources/YomidoriSync/       CloudSync: iCloud sync through CKSyncEngine, the only CloudKit code; coverage-ignored
     ├── Sources/YomidoriMangaOCR/   manga-ocr through Core ML: a CGImage in, a String out; coverage-ignored
     ├── Sources/YomidoriKit/        SwiftUI + UIKit + Vision, depends on Core, Dictionary, MeCab and MangaOCR; coverage-ignored
     │   ├── App/                    AppRoot (the tabs, TabStack), HomeView, Screen, Destinations, TabTaps, SettingsView, SwipeBack, AboutView, NoticesView, AppInfo, Palette, Compat, FlowLayout, FitsOrStacks, JapaneseText (`Text(japanese:)`), SettingsKey — one type per file
@@ -288,8 +291,9 @@ launch. Nothing of this runs without the argument.
   character in the Kit.
 - **Coordinates from Vision are normalized and y-up**; convert to view space at
   the one seam that maps a tap to a character, nowhere else.
-- **No network code**, not even behind a flag. If something needs a download
-  (a dictionary update, say), it becomes an App Store update.
+- **No network code outside `YomidoriSync`**, and that one talks only to the
+  reader's private CloudKit database. If something needs a download (a
+  dictionary update, say), it becomes an App Store update.
 - `.vscode/` is gitignored and must not be pushed.
 - When you change what a tap does or what a card asks, update `README.md` too.
 

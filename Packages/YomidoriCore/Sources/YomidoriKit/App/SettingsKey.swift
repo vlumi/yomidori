@@ -4,4 +4,5 @@ enum SettingsKey {
     static let transcriptExpanded = "transcriptExpanded"
     static let lessonOrder = "lessonOrder"
     static let lessonSize = "lessonSize"
+    static let iCloudSync = "iCloudSync"
 }

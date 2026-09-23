@@ -27,6 +27,14 @@ targets:
         buildPhase: resources
     entitlements:
       path: Sources/iOS/Yomidori.entitlements
+      # Generated from here on every build, so these are the source; the file only mirrors
+      # them. iCloud (CloudKit) for sync, and the pushes that tell it another device synced.
+      properties:
+        aps-environment: development
+        com.apple.developer.icloud-container-identifiers:
+          - iCloud.fi.misaki.yomidori
+        com.apple.developer.icloud-services:
+          - CloudKit
     info:
       path: Sources/iOS/Info.plist
       properties:
@@ -57,6 +65,8 @@ targets:
             LSHandlerRank: Owner
             LSItemContentTypes: [fi.misaki.yomidori.collection]
         LSSupportsOpeningDocumentsInPlace: false
+        # CloudKit's pushes tell the sync engine another device changed something.
+        UIBackgroundModes: [remote-notification]
         # All four orientations: a universal (iPhone + iPad) app must support
         # them for iPad multitasking, or App Store validation rejects the build.
         # A book is read in either orientation anyway.

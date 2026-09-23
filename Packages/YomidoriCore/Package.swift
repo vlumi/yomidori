@@ -50,9 +50,18 @@ let package = Package(
             name: "YomidoriMangaOCR",
             dependencies: ["YomidoriCore"]
         ),
+        // iCloud sync through CloudKit: the one target that talks to anything off the device,
+        // and only to the reader's own iCloud.
+        .target(
+            name: "YomidoriSync",
+            dependencies: ["YomidoriCore"]
+        ),
         .target(
             name: "YomidoriKit",
-            dependencies: ["YomidoriCore", "YomidoriMeCab", "YomidoriDictionary", "YomidoriMangaOCR"],
+            dependencies: [
+                "YomidoriCore", "YomidoriMeCab", "YomidoriDictionary", "YomidoriMangaOCR",
+                "YomidoriSync",
+            ],
             resources: [.process("Resources/Localizable.xcstrings")]
         ),
         // YomidoriKit is a dependency so `swift test` compiles it for macOS; no test imports it.

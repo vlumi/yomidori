@@ -50,9 +50,12 @@ struct StudyView: View {
             }
         }
         .navigationTitle(Text("Study", bundle: .module))
-        .onAppear {
-            cards = Cards.store?.cards() ?? []
-            dueCount = Cards.dueItems(at: Date()).count
-        }
+        .onAppear(perform: reload)
+        .onReceive(NotificationCenter.default.publisher(for: Cards.didChange)) { _ in reload() }
+    }
+
+    private func reload() {
+        cards = Cards.store?.cards() ?? []
+        dueCount = Cards.dueItems(at: Date()).count
     }
 }
