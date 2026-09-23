@@ -52,10 +52,31 @@ public struct SharedCollection: Codable, Equatable, Sendable {
         return try encoder.encode(self)
     }
 
+    /// A shared collection is words and sentences; five megabytes is thousands of them.
+    public static let largestFile = 5_000_000
+    public static let mostWords = 20_000
+
+    /// Only a file in this format, of a sane size, and cleaned: every string cut and freed of
+    /// control characters, every list bounded, words without a headword or reading dropped.
     public static func decoded(from data: Data) throws -> SharedCollection {
+        guard data.count <= largestFile else { throw DecodeError() }
         let shared = try JSONDecoder().decode(SharedCollection.self, from: data)
         guard shared.format == format, shared.version == 1 else { throw DecodeError() }
-        return shared
+        let name = Sanitize.text(shared.name, limit: Intake.nameLength)
+        guard !name.isEmpty else { throw DecodeError() }
+        return SharedCollection(
+            name: name, note: Sanitize.text(shared.note, limit: Intake.noteLength),
+            tags: Sanitize.texts(shared.tags, count: Intake.tags, limit: Intake.tagLength),
+            words: shared.words.prefix(mostWords).compactMap { $0.sanitized() })
+    }
+
+    private init(name: String, note: String, tags: [String], words: [Word]) {
+        format = Self.format
+        version = 1
+        self.name = name
+        self.note = note
+        self.tags = tags
+        self.words = words
     }
 
     public struct Merged: Equatable, Sendable {
@@ -98,5 +119,24 @@ public struct SharedCollection: Codable, Equatable, Sendable {
             }
         }
         return Merged(cards: cards, added: added, joined: joined)
+    }
+}
+
+extension SharedCollection.Word {
+    func sanitized() -> SharedCollection.Word? {
+        let headword = Sanitize.text(headword, limit: Intake.wordLength)
+        let reading = Sanitize.text(reading, limit: Intake.readingLength)
+        guard !headword.isEmpty, !reading.isEmpty else { return nil }
+        return SharedCollection.Word(
+            headword: headword, reading: reading, entryID: entryID,
+            sentences: sentences.prefix(Intake.sightings).map { sentence in
+                let clean = Sighting(
+                    sentence: sentence.sentence, surface: sentence.surface, offset: sentence.offset,
+                    source: sentence.source, date: Date()
+                ).sanitized()
+                return SharedCollection.Sentence(
+                    sentence: clean.sentence, surface: clean.surface, offset: clean.offset,
+                    source: clean.source)
+            })
     }
 }

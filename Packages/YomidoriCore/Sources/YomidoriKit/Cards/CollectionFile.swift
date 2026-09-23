@@ -42,6 +42,8 @@ extension Cards {
     static func importCollection(from url: URL) throws -> CollectionImport {
         let accessing = url.startAccessingSecurityScopedResource()
         defer { if accessing { url.stopAccessingSecurityScopedResource() } }
+        let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? .max
+        guard size <= SharedCollection.largestFile else { throw CocoaError(.fileReadTooLarge) }
         let shared = try SharedCollection.decoded(from: Data(contentsOf: url))
         guard let store, let collections else { throw CocoaError(.fileReadUnknown) }
         var collection =

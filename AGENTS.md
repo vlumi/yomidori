@@ -294,6 +294,13 @@ launch. Nothing of this runs without the argument.
 - **No network code outside `YomidoriSync`**, and that one talks only to the
   reader's private CloudKit database. If something needs a download (a
   dictionary update, say), it becomes an App Store update.
+- **Nothing from outside is trusted.** Text, records and images that enter from a
+  shared file, another device, the photo library or the clipboard go through
+  Core's intake before they reach a store or a screen: `Sanitize` for text
+  (control and bidirectional characters out, a length cap), `Intake` and the
+  records' `sanitized()` for bounded lists and sane numbers, `ImageIntake` for
+  images (image data only, a size cap, the pixel count read before decoding).
+  A new way in uses them too, with a test that feeds it hostile input.
 - `.vscode/` is gitignored and must not be pushed.
 - When you change what a tap does or what a card asks, update `README.md` too.
 

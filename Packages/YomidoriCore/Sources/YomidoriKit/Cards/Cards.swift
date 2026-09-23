@@ -65,9 +65,12 @@ enum Cards {
                 }
             },
             saveCover: { id, url in
-                guard let destination = try? CoverArchive.url(for: id) else { return }
-                try? FileManager.default.removeItem(at: destination)
-                try? FileManager.default.copyItem(at: url, to: destination)
+                // Decoded with care and drawn anew, never copied as it came.
+                guard
+                    let image = ImageIntake.image(
+                        at: url, longestSide: Int(CoverArchive.longestSide))
+                else { return }
+                _ = try? CoverArchive.save(image, as: id)
             })
     }
 
