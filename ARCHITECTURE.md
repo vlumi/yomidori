@@ -251,6 +251,11 @@ use for its own input.
   offered for the name and the note so a title is picked rather than typed.
   Removing a collection only takes it off its cards. Their own JSON beside the
   cards.
+  A collection is shared as a `.yomidori` file (`SharedCollection`, JSON, a type
+  the app declares and opens): name, note, tags and each word with its sentences,
+  never a photo, the cover or a review, so the file is small and the receiver
+  starts fresh. Importing merges into the collection of the same name, new words
+  waiting, known ones gaining the sentences they lacked, in one write.
 - **Kanji** (`KanjiEntry`, `KanjiStroke`, `SVGPath` in Core; `KanjiView`,
   `StrokeOrderView`, `WordDetails`, `WordSections` in Kit): KANJIDIC2's readings,
   meanings and school facts, KRADFILE's components and KanjiVG's strokes are in

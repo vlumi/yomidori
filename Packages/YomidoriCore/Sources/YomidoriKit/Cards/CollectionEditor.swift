@@ -11,6 +11,7 @@ struct CollectionEditor: View {
     @State private var persistedCoverID: UUID?
     @State private var scannedCoverIDs: Set<UUID> = []
     @State private var saved = false
+    @State private var isSaved = false
 
     var body: some View {
         Form {
@@ -70,6 +71,25 @@ struct CollectionEditor: View {
                 }
             }
             TagsEditor(tags: $collection.tags, known: others.allTags)
+            if isSaved {
+                Section {
+                    ShareLink(
+                        item: CollectionFile(collection: collection),
+                        preview: SharePreview(collection.name)
+                    ) {
+                        Label {
+                            Text("Share this collection", bundle: .module)
+                        } icon: {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                    }
+                } footer: {
+                    Text(
+                        // swiftlint:disable:next line_length
+                        "The words and the sentences they were met in, for another reader to start fresh; no photos, no cover, no reviews.",
+                        bundle: .module)
+                }
+            }
         }
         .navigationTitle(Text(verbatim: collection.name.isEmpty ? "" : collection.name))
         .toolbar {
@@ -89,6 +109,7 @@ struct CollectionEditor: View {
             let all = Cards.collections?.collections() ?? []
             others = all.filter { $0.id != collection.id }
             persistedCoverID = all.first { $0.id == collection.id }?.coverID
+            isSaved = all.contains { $0.id == collection.id }
         }
         .onChange(of: collection.coverID) { _, scanned in
             if let scanned, scanned != persistedCoverID { scannedCoverIDs.insert(scanned) }

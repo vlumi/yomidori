@@ -20,8 +20,9 @@ Everything happens on your device:
   photos you chose to keep, your answers — your collections, a history of the
   last words you looked up, and the app's own settings, kept in the app's own
   local storage so they persist between launches. Deleting the app removes
-  them all; Settings exports the cards as one file, and any card, collection
-  or history entry can be deleted in the app.
+  them all; Settings exports the cards as one file, a collection can be shared
+  as a file of its words and sentences (no photos), both only where you send
+  them, and any card, collection or history entry can be deleted in the app.
 - **No tracking.** The app does not track you across apps or websites and does
   not use any device identifiers for advertising.
 - **Children.** Because the app collects no data at all, it collects none from

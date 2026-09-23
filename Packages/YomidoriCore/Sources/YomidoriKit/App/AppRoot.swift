@@ -18,6 +18,8 @@ public struct AppRoot: View {
     @StateObject private var capture = CaptureState()
     @StateObject private var taps = TabTaps()
     @State private var dueCount = 0
+    @State private var imported: CollectionImport?
+    @State private var importFailed = false
 
     public init() {}
 
@@ -70,6 +72,15 @@ public struct AppRoot: View {
         .environmentObject(taps)
         .onAppear { if DemoMode.isRequested { DemoData.seed(capture) } }
         .task(id: tab) { dueCount = Cards.dueItems(at: Date()).count }
+        .onOpenURL { url in
+            if let done = try? Cards.importCollection(from: url) {
+                imported = done
+                tab = .cards
+            } else {
+                importFailed = true
+            }
+        }
+        .collectionImportAlerts(imported: $imported, failed: $importFailed)
         .onReceive(NotificationCenter.default.publisher(for: Cards.cardsDidChange)) { _ in
             dueCount = Cards.dueItems(at: Date()).count
         }

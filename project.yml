@@ -43,6 +43,20 @@ targets:
         NSCameraUsageDescription: Yomidori takes a still of the page you are reading. The image stays on this device.
         # System-default launch screen (plain background).
         UILaunchScreen: {}
+        # A shared collection is a .yomidori file (JSON) the app owns and opens, from AirDrop,
+        # Messages or Files; the file is copied in, never edited in place.
+        UTExportedTypeDeclarations:
+          - UTTypeIdentifier: fi.misaki.yomidori.collection
+            UTTypeDescription: Yomidori collection
+            UTTypeConformsTo: [public.json, public.data]
+            UTTypeTagSpecification:
+              public.filename-extension: [yomidori]
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: Yomidori collection
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Owner
+            LSItemContentTypes: [fi.misaki.yomidori.collection]
+        LSSupportsOpeningDocumentsInPlace: false
         # All four orientations: a universal (iPhone + iPad) app must support
         # them for iPad multitasking, or App Store validation rejects the build.
         # A book is read in either orientation anyway.

@@ -5,6 +5,9 @@ import YomidoriCore
 /// removes (which only takes the collection off its cards).
 struct CollectionsView: View {
     @State private var collections: [Collection] = []
+    @State private var importing = false
+    @State private var imported: CollectionImport?
+    @State private var failed = false
 
     var body: some View {
         List {
@@ -26,6 +29,17 @@ struct CollectionsView: View {
         }
         .navigationTitle(Text("Collections", bundle: .module))
         .toolbar {
+            ToolbarItem(placement: .secondaryAction) {
+                Button {
+                    importing = true
+                } label: {
+                    Label {
+                        Text("Import a collection…", bundle: .module)
+                    } icon: {
+                        Image(systemName: "square.and.arrow.down")
+                    }
+                }
+            }
             ToolbarItem(placement: .primaryAction) {
                 NavigationLink(value: Collection(name: "")) {
                     Label {
@@ -37,6 +51,18 @@ struct CollectionsView: View {
             }
         }
         .onAppear(perform: reload)
+        .fileImporter(
+            isPresented: $importing, allowedContentTypes: [.yomidoriCollection, .json]
+        ) { result in
+            guard let url = try? result.get() else { return }
+            if let done = try? Cards.importCollection(from: url) {
+                imported = done
+                reload()
+            } else {
+                failed = true
+            }
+        }
+        .collectionImportAlerts(imported: $imported, failed: $failed)
     }
 
     private func count(in collection: Collection) -> Int {
