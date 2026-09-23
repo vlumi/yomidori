@@ -33,6 +33,7 @@ enum Cards {
             collections: FileCollectionStore(
                 url: directory.appendingPathComponent("collections.json")),
             lookups: FileLookupHistory(url: directory.appendingPathComponent("lookups.json")))
+        CoverArchive.migrate(covers: stores.collections.collections().compactMap(\.coverID))
         stores.cards.didChange = {
             NotificationCenter.default.post(name: cardsDidChange, object: nil)
         }
@@ -67,7 +68,7 @@ enum Cards {
         try? store?.forget(collection: collection.id)
         try? collections?.remove(collection)
         if let cover = collection.coverID {
-            StillArchive.remove([cover], keptBy: store?.cards() ?? [])
+            CoverArchive.remove([cover])
         }
         if currentCollectionID() == collection.id {
             defaults.removeObject(forKey: currentCollectionKey)

@@ -20,8 +20,8 @@ final class FileCardStoreTests: XCTestCase {
         let offset = sentence.distance(
             from: sentence.startIndex, to: sentence.range(of: surface)!.lowerBound)
         return Sighting(
-            sentence: sentence, surface: surface, offset: offset, stillIDs: [],
-            source: "羊をめぐる冒険 p.12", date: date)
+            sentence: sentence, surface: surface, offset: offset, source: "羊をめぐる冒険 p.12", date: date
+        )
     }
 
     func testAnEmptyStoreHasNoCards() {
@@ -158,8 +158,7 @@ final class FileCardStoreTests: XCTestCase {
             """
         try old.write(to: url, atomically: true, encoding: .utf8)
         let card = try XCTUnwrap(FileCardStore(url: url).cards().first)
-        XCTAssertEqual(card.sightings[0].stillIDs, [still])
-        XCTAssertNil(card.sightings[0].cropID)
+        XCTAssertEqual(card.sightings[0].sentence, "樹皮。")
         XCTAssertEqual(card.modified, card.sightings[0].date)
         XCTAssertEqual(card.log, [])
     }

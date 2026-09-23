@@ -46,7 +46,7 @@ and a card you truly forgot goes back to waiting instead of haunting you.
   cards: all local, offline, from dictionaries bundled with the app. No account,
   no server, no model in the cloud. A word you look up never leaves the phone.
 - **The book is the corpus.** Example sentences are the ones you actually read,
-  cropped from your own capture, not a corpus written for someone else.
+  as they stood on your page, not a corpus written for someone else.
 - **iPhone and iPad, iOS 26 up.** A Mac app is planned,
   for reading on the screen and reviewing on a keyboard.
 - **English and Japanese** interfaces from day one, on a String Catalog.

@@ -13,8 +13,7 @@ final class SharedCollectionTests: XCTestCase {
             headword: headword, reading: reading, entryID: 1,
             sightings: [
                 Sighting(
-                    sentence: sentence, surface: headword, offset: 0, stillIDs: [UUID()],
-                    cropID: UUID(), source: "p.12", date: date)
+                    sentence: sentence, surface: headword, offset: 0, source: "p.12", date: date)
             ],
             created: date, collectionIDs: ids)
         card.start(at: date)
@@ -57,8 +56,6 @@ final class SharedCollectionTests: XCTestCase {
         XCTAssertTrue(new.isWaiting)
         XCTAssertNil(new.review)
         XCTAssertEqual(new.collectionIDs, [target])
-        XCTAssertEqual(new.sightings.first?.stillIDs, [])
-        XCTAssertNil(new.sightings.first?.cropID)
         XCTAssertEqual(new.sightings.first?.source, "p.12")
     }
 

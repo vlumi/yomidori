@@ -161,7 +161,7 @@ struct CoverScanView: View {
     }
 
     private func keep() {
-        if let still, let id = try? StillArchive.save(still) {
+        if let still, let id = try? CoverArchive.save(still.image) {
             collection.coverID = id
         }
         dismiss()

@@ -9,7 +9,6 @@ extension CaptureView {
     }
 
     struct Page {
-        let still: Still
         let transcript: String
     }
 

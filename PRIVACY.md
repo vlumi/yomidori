@@ -13,11 +13,10 @@ Everything happens on your device:
   and readings all run on the device, from dictionaries bundled with the app.
 - **The camera.** The one permission the app uses is the camera, to read the
   page in front of you. Frames are processed on the device to recognize the
-  text and are never uploaded anywhere. A frame is kept only when you keep a
-  word from it with the photo toggle on: the page and the crop of the sentence
-  then stay on that card.
-- **What's stored locally.** Your cards — the words, their sentences, the
-  photos you chose to keep, your answers — your collections, a history of the
+  text and are never uploaded anywhere or kept: a card keeps the sentence as
+  text. The one photo the app stores is a collection's cover, when you scan one.
+- **What's stored locally.** Your cards — the words, their sentences, your
+  answers — your collections and their covers, a history of the
   last words you looked up, and the app's own settings, kept in the app's own
   local storage so they persist between launches. Deleting the app removes
   them all; Settings exports the cards as one file, a collection can be shared

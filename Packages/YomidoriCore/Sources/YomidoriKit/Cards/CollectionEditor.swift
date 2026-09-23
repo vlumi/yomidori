@@ -17,7 +17,7 @@ struct CollectionEditor: View {
         Form {
             Section {
                 HStack(alignment: .top, spacing: 16) {
-                    if let coverID = collection.coverID, let image = StillArchive.load(coverID) {
+                    if let coverID = collection.coverID, let image = CoverArchive.load(coverID) {
                         Image(decorative: image, scale: 1)
                             .resizable()
                             .scaledToFit()
@@ -134,6 +134,6 @@ struct CollectionEditor: View {
     }
 
     private func removeCovers(_ ids: Set<UUID>) {
-        StillArchive.remove(Array(ids), keptBy: Cards.store?.cards() ?? [])
+        CoverArchive.remove(Array(ids))
     }
 }
