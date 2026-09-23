@@ -4,12 +4,12 @@ import VisionKit
 import YomidoriCore
 
 public struct CaptureView: View {
-    @StateObject private var camera = Camera()
-    @StateObject private var selection = LiveTextSelection()
-    @EnvironmentObject private var page: CaptureState
+    @StateObject var camera = Camera()
+    @StateObject var selection = LiveTextSelection()
+    @EnvironmentObject var page: CaptureState
     @State private var recognizing = false
     @State private var readingCloseUp = false
-    @State private var picked: PhotosPickerItem?
+    @State var picked: PhotosPickerItem?
     @State private var zoomControl = ZoomControl()
     @State private var closeUpTask: Task<Void, Never>?
     @AppStorage(SettingsKey.readoutFraction) private var readoutFraction = DrawerDetents.all[0]
@@ -24,11 +24,11 @@ public struct CaptureView: View {
 
     public init() {}
 
-    private var still: Still? {
+    var still: Still? {
         get { page.still }
         nonmutating set { page.still = newValue }
     }
-    private var pages: [Page] {
+    var pages: [Page] {
         get { page.pages }
         nonmutating set { page.pages = newValue }
     }
@@ -64,6 +64,12 @@ public struct CaptureView: View {
                 if let still {
                     stillView(still, in: pageArea(in: geometry.size))
                     drawer(screenHeight: geometry.size.height)
+                } else if let pasted = page.pasted {
+                    TextPage(text: pasted, selection: selection)
+                        .frame(height: pageArea(in: geometry.size).height)
+                        .frame(maxHeight: .infinity, alignment: .top)
+                        .onTabReselect(.read) { retake() }
+                    drawer(screenHeight: geometry.size.height)
                 } else {
                     VStack(spacing: 0) {
                         cameraView
@@ -71,7 +77,7 @@ public struct CaptureView: View {
                     }
                 }
             }
-            .onAppear { if still == nil { camera.start() } }
+            .onAppear { if still == nil, page.pasted == nil { camera.start() } }
             .onDisappear { camera.stop() }
             .task(id: picked) { await loadPicked() }
             .task(id: still?.id) {
@@ -179,30 +185,33 @@ public struct CaptureView: View {
 
     private func drawer(screenHeight: CGFloat) -> some View {
         CaptureDrawer(
-            hasStill: still != nil, screenHeight: screenHeight,
+            hasStill: still != nil || page.pasted != nil, screenHeight: screenHeight,
             fraction: Binding(get: { liveFraction ?? readoutFraction }, set: { liveFraction = $0 }),
             settled: { fraction in settle(at: DrawerDetents.nearest(fraction)) },
             toggled: toggleDrawer
         ) {
-            Picker(selection: $page.mode) {
-                Text("Live Text", bundle: .module).tag(Mode.liveText)
-                Text("Vision", bundle: .module).tag(Mode.vision)
-                Text("Close-up", bundle: .module).tag(Mode.closeUp)
-            } label: {
-                Text("Recognizer", bundle: .module)
+            if page.pasted == nil {
+                Picker(selection: $page.mode) {
+                    Text("Live Text", bundle: .module).tag(Mode.liveText)
+                    Text("Vision", bundle: .module).tag(Mode.vision)
+                    Text("Close-up", bundle: .module).tag(Mode.closeUp)
+                } label: {
+                    Text("Recognizer", bundle: .module)
+                }
+                .pickerStyle(.segmented)
             }
-            .pickerStyle(.segmented)
             readout
-            if still != nil {
+            if still != nil || page.pasted != nil {
                 Text("Tap Read again for a new page.", bundle: .module)
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
             }
         } buttons: {
-            if still == nil {
+            if still == nil, page.pasted == nil {
                 CameraButtons(
                     picked: $picked, ready: camera.access == .ready,
-                    label: Text("Read the page", bundle: .module), freeze: takeStill)
+                    label: Text("Read the page", bundle: .module), freeze: takeStill,
+                    paste: paste)
             }
         }
     }
@@ -212,6 +221,8 @@ public struct CaptureView: View {
             ProgressView {
                 Text("Reading the page…", bundle: .module)
             }
+        } else if page.pasted != nil {
+            transcript
         } else {
             switch mode {
             case .vision:
@@ -225,7 +236,8 @@ public struct CaptureView: View {
     }
 
     /// The page's text: Live Text's, or the one the page came with.
-    private var currentTranscript: String? {
+    var currentTranscript: String? {
+        if let pasted = page.pasted { return pasted }
         if let analysis, analysis.hasResults(for: .text) { return analysis.transcript }
         return page.transcript
     }
@@ -264,42 +276,6 @@ public struct CaptureView: View {
             closeUp = read
             readingCloseUp = false
         }
-    }
-
-    private func takeStill() {
-        Task { @MainActor in
-            if let taken = await camera.takeStill() {
-                camera.stop()
-                still = taken
-            }
-        }
-    }
-
-    private func addPage() {
-        guard still != nil, let transcript = currentTranscript else { return }
-        pages.append(Page(transcript: transcript))
-        retake()
-    }
-
-    private func startOver() {
-        pages = []
-        if still != nil {
-            retake()
-        }
-    }
-
-    private func retake() {
-        still = nil
-        picked = nil
-        camera.start()
-    }
-
-    private func loadPicked() async {
-        guard let picked, let data = try? await picked.loadTransferable(type: Data.self),
-            let loaded = Still(data: data), !Task.isCancelled
-        else { return }
-        camera.stop()
-        still = loaded
     }
 
     private func recognize() async {

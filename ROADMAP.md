@@ -44,7 +44,7 @@ The whole idea rests on on-device text recognition reading real books: vertical 
 Decided 2026-09-18: a Mac app is wanted, after the phone's recognizer question is settled, since the Mac inherits whatever that decides. Core is pure and the Kit already compiles on macOS, so the cost is the input, the sync and a target.
 
 - [ ] **Cards that follow.** *Built 2026-09-23: iCloud sync through CloudKit of the cards, the collections with their covers and the lookup history, merged by sightings and answers, never by picking a side.* Schema in production since 2026-09-23. Left: tried on two real devices, and live refresh on the screens that load only on appear.
-- [ ] **A Mac target.** No camera: a pasted sentence goes straight to the tokenizer, a pasted or dropped screenshot goes through Live Text as on the phone, with the Mac's own selection overlay on the image. Same bundle id under the same App Store record. The release lane's macOS scope, inherited from the siblings, comes back into use.
+- [ ] **A Mac target.** No camera: a pasted sentence goes straight to the tokenizer (on the phone since 2026-09-23, as a page of text), a pasted or dropped screenshot goes through Live Text as on the phone, with the Mac's own selection overlay on the image. Same bundle id under the same App Store record. The release lane's macOS scope, inherited from the siblings, comes back into use.
 - [ ] **Review on a keyboard.** Space to reveal, two keys to grade. *Typing is how every review is answered already, on every platform: the reading strictly, the meaning leniently with the reader's own accepted meanings, the pitch by a pick. What remains is the Mac's own keys.* A typing tutor proper, with drills and speed, is a different product and stays out.
 
 ## Store — *out the door*

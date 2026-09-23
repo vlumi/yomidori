@@ -24,7 +24,7 @@ type a guess, and a translation app translates the whole page.
 
 Yomidori does one thing at that moment. Frame the line, tap *Read the page*,
 and the page freezes on the screen; reading on the phone itself, give it a
-screenshot from your photos instead. Tap the word, in a vertical column or a horizontal
+screenshot from your photos, or paste the text itself. Tap the word, in a vertical column or a horizontal
 line, and the whole word lights up with its reading in kana and its pitch
 accent, in a sheet your thumb can reach. The meaning is one more tap away, and never shown before
 you ask.

@@ -6,6 +6,8 @@ struct CameraButtons: View {
     let ready: Bool
     let label: Text
     let freeze: () -> Void
+    /// Where the text of a paste goes; nil where only an image will do.
+    var paste: ((String) -> Void)?
 
     var body: some View {
         HStack {
@@ -29,7 +31,20 @@ struct CameraButtons: View {
             .tint(Palette.nightGreen)
             .accessibilityLabel(label)
             .disabled(!ready)
-            Color.clear.frame(maxWidth: .infinity, maxHeight: 1)
+            if let paste {
+                // The system's own button pastes without asking, since the tap is the consent.
+                PasteButton(payloadType: String.self) { strings in
+                    if let text = strings.first {
+                        Task { @MainActor in paste(text) }
+                    }
+                }
+                .labelStyle(.iconOnly)
+                .buttonBorderShape(.circle)
+                .tint(Palette.nightGreen)
+                .frame(maxWidth: .infinity)
+            } else {
+                Color.clear.frame(maxWidth: .infinity, maxHeight: 1)
+            }
         }
     }
 }
