@@ -7,7 +7,7 @@ public struct CaptureView: View {
     @StateObject var camera = Camera()
     @StateObject var selection = LiveTextSelection()
     @EnvironmentObject var page: CaptureState
-    @State private var recognizing = false
+    @State var recognizing = false
     @State private var readingCloseUp = false
     @State var picked: PhotosPickerItem?
     @StateObject private var zoomControl = ZoomControl()
@@ -212,8 +212,14 @@ public struct CaptureView: View {
 
     @ViewBuilder private var readout: some View {
         if recognizing {
-            ProgressView {
-                Text("Reading the page…", bundle: .module)
+            VStack(spacing: 6) {
+                ProgressView {
+                    Text("Reading the page…", bundle: .module)
+                }
+                Text("Blurred or not quite framed? Tap Read to start again.", bundle: .module)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
             }
         } else if page.pasted != nil {
             transcript
@@ -284,9 +290,12 @@ public struct CaptureView: View {
         page.recognizedStillID = nil
         guard let still else { return }
         recognizing = true
-        let recognized = (try? await TextRecognizer.recognize(still)) ?? []
-        let analyzed = LiveText.isSupported ? try? await LiveText.analyze(still) : nil
-        guard !Task.isCancelled else { return }
+        // Both engines at once, as child tasks: a retake cancels this task, and the cancel
+        // reaches both instead of waiting for the first to finish.
+        async let visionLines = (try? TextRecognizer.recognize(still)) ?? []
+        async let liveText = LiveText.isSupported ? try? LiveText.analyze(still) : nil
+        let (recognized, analyzed) = await (visionLines, liveText)
+        guard !Task.isCancelled, self.still?.id == still.id else { return }
         lines = recognized
         analysis = analyzed
         page.recognizedStillID = still.id

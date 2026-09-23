@@ -221,6 +221,16 @@
         }
       }
     },
+    "Blurred or not quite framed? Tap Read to start again." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ぼやけた、またはずれた？「読む」をタップすると撮り直せます。"
+          }
+        }
+      }
+    },
     "By tag" : {
       "localizations" : {
         "ja" : {
