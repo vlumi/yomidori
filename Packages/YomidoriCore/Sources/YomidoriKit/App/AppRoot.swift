@@ -83,6 +83,7 @@ public struct AppRoot: View {
         }
         .collectionImportAlerts(imported: $imported, failed: $importFailed)
         .task { Sync.shared.start() }
+        .onChange(of: tab, initial: true) { _, shown in taps.shown = shown }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { Sync.shared.fetch() }
         }

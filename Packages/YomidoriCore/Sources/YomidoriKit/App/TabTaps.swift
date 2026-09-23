@@ -5,6 +5,8 @@ import SwiftUI
 @MainActor
 final class TabTaps: ObservableObject {
     @Published private(set) var counts: [AppTab: Int] = [:]
+    /// The tab showing, for a screen that acts on being switched to.
+    @Published var shown: AppTab?
 
     func tapped(_ tab: AppTab) {
         counts[tab, default: 0] += 1
