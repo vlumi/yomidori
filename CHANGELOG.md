@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 13 — 2026-09-24
+
 - **The kanji-by-parts button is back.** The grid button at the end of the search box shows again when the Search tab opens with the keyboard up; it went missing when the tab started taking the keyboard as it is shown.
 
 ### build 12 — 2026-09-24
