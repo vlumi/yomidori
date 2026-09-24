@@ -71,17 +71,30 @@ public enum WordFinder {
     }
 
     public static func words(in tokens: [Token], dictionary: (any WordDictionary)?) -> [FoundWord] {
-        var found: [FoundWord] = []
+        segments(in: tokens, dictionary: dictionary).filter(\.isShown).map(\.word)
+    }
+
+    /// Every piece of a run of tokens in order, the words and what is no word to look up
+    /// (punctuation, particles, endings), so the run can be shown whole.
+    public struct Segment: Equatable, Sendable {
+        public let word: FoundWord
+        public let isShown: Bool
+    }
+
+    public static func segments(in tokens: [Token], dictionary: (any WordDictionary)?)
+        -> [Segment]
+    {
+        var found: [Segment] = []
         var index = 0
         while index < tokens.count {
             guard tokens[index].isWord else {
+                found.append(
+                    Segment(word: FoundWord(tokens: [tokens[index]], entries: []), isShown: false))
                 index += 1
                 continue
             }
             let word = longestWord(from: index, in: tokens, dictionary: dictionary)
-            if isShown(word) {
-                found.append(word)
-            }
+            found.append(Segment(word: word, isShown: isShown(word)))
             index += word.tokens.count
         }
         return found

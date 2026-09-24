@@ -491,6 +491,16 @@
         }
       }
     },
+    "Extend the selection to here" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ここまで選択を広げる"
+          }
+        }
+      }
+    },
     "Fix a character" : {
       "localizations" : {
         "ja" : {
@@ -827,16 +837,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "この端末ではテキスト認識表示を使えません。"
-          }
-        }
-      }
-    },
-    "Looking it up…" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "調べています…"
           }
         }
       }
@@ -1310,6 +1310,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "読み取り中…"
+          }
+        }
+      }
+    },
+    "Reading the words…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "言葉を読み取っています…"
           }
         }
       }

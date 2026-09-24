@@ -7,9 +7,10 @@ struct StillView: View {
     @Binding var zoom: Zoom
     let still: Still
     let lines: [RecognizedLine]
-    let selected: Int?
-    let highlight: CGRect?
+    let selected: Set<Int>
+    let highlights: [CGRect]
     let onTap: (CGPoint, CGRect) -> Void
+    var onLongPress: ((CGPoint, CGRect) -> Void)?
 
     var body: some View {
         GeometryReader { geometry in
@@ -21,7 +22,7 @@ struct StillView: View {
                     .offset(x: frame.minX, y: frame.minY)
                 ForEach(lines.indices, id: \.self) { index in
                     let rect = TextGeometry.viewRect(for: lines[index].box, in: frame)
-                    let isSelected = index == selected
+                    let isSelected = selected.contains(index)
                     RoundedRectangle(cornerRadius: 3)
                         .fill(Palette.nightGreen.opacity(isSelected ? 0.35 : 0.12))
                         .overlay(
@@ -35,8 +36,8 @@ struct StillView: View {
                         .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
                         .accessibilityAction { onTap(CGPoint(x: rect.midX, y: rect.midY), frame) }
                 }
-                if let highlight {
-                    let rect = TextGeometry.viewRect(for: highlight, in: frame)
+                ForEach(highlights.indices, id: \.self) { index in
+                    let rect = TextGeometry.viewRect(for: highlights[index], in: frame)
                     RoundedRectangle(cornerRadius: 4)
                         .stroke(Palette.nightGreen, lineWidth: 2)
                         .frame(width: rect.width, height: rect.height)
@@ -48,6 +49,16 @@ struct StillView: View {
             .gesture(
                 SpatialTapGesture(count: 2).onEnded { _ in zoom = Zoom() }
                     .exclusively(before: SpatialTapGesture().onEnded { onTap($0.location, frame) })
+            )
+            .simultaneousGesture(
+                LongPressGesture(minimumDuration: 0.4)
+                    .sequenced(before: DragGesture(minimumDistance: 0))
+                    .onEnded { value in
+                        if case .second(true, let drag?) = value {
+                            onLongPress?(drag.location, frame)
+                        }
+                    },
+                including: onLongPress == nil ? .none : .all
             )
             .zoomable($zoom, in: geometry.size)
             .accessibilityAction(named: Text("Reset zoom", bundle: .module)) { zoom = Zoom() }

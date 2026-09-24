@@ -35,7 +35,7 @@ public struct CaptureView: View {
         get { page.pages }
         nonmutating set { page.pages = newValue }
     }
-    private var mode: Mode {
+    var mode: Mode {
         get { page.mode }
         nonmutating set { page.mode = newValue }
     }
@@ -46,10 +46,6 @@ public struct CaptureView: View {
     private var analysis: ImageAnalysis? {
         get { page.analysis }
         nonmutating set { page.analysis = newValue }
-    }
-    var selected: Int? {
-        get { page.selected }
-        nonmutating set { page.selected = newValue }
     }
     private var closeUp: CloseUp? {
         get { page.closeUp }
@@ -83,7 +79,7 @@ public struct CaptureView: View {
             .onAppear { if still == nil, page.pasted == nil { camera.start() } }
             .onDisappear { camera.stop() }
             .task(id: picked) { await loadPicked() }
-            .onChange(of: page.mode) { clearWord() }
+            .onChange(of: page.mode) { page.selectedRange = nil }
             .task(id: still?.id) {
                 guard still?.id != page.recognizedStillID else { return }
                 zoom =
@@ -120,17 +116,16 @@ public struct CaptureView: View {
             switch mode {
             case .vision:
                 StillView(
-                    zoom: $page.zoom, still: still, lines: lines, selected: selected,
-                    highlight: page.wordBox,
-                    onTap: tapWord)
+                    zoom: $page.zoom, still: still, lines: lines, selected: selectedLines,
+                    highlights: selectionBoxes, onTap: tapWord, onLongPress: extendWord)
             case .liveText:
                 LiveTextImage(
                     still: still, analysis: analysis, selection: selection,
                     zoomControl: zoomControl)
             case .closeUp:
                 StillView(
-                    zoom: $page.zoom, still: still, lines: lines, selected: nil,
-                    highlight: closeUp?.box, onTap: readCloseUp)
+                    zoom: $page.zoom, still: still, lines: lines, selected: [],
+                    highlights: closeUp.map { [$0.box] } ?? [], onTap: readCloseUp)
             }
         }
         .frame(width: area.width, height: area.height)
@@ -251,7 +246,7 @@ public struct CaptureView: View {
             TranscriptReadout(
                 transcript: Spread.join(transcripts),
                 currentTranscript: current,
-                pageOffset: Spread.offset(ofPage: pages.count, in: transcripts),
+                pageOffset: pageOffset,
                 selection: selection)
         } else if LiveText.isSupported {
             Text("Nothing was recognized.", bundle: .module)
@@ -283,8 +278,7 @@ public struct CaptureView: View {
         lines = []
         analysis = nil
         page.transcript = nil
-        selected = nil
-        page.wordBox = nil
+        page.selectedRange = nil
         closeUp = nil
         closeUpTask?.cancel()
         closeUpTask = nil

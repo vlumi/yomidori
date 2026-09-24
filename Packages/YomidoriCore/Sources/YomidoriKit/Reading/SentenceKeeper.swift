@@ -7,8 +7,9 @@ struct SentenceKeeper {
     let tokenLines: [[Token]]
     let source: String?
 
-    func sighting(for word: FoundWord) -> Sighting? {
-        guard let line = tokenLines.firstIndex(where: { $0.contains(word.first) }) else {
+    /// `line` where the caller knows it; else the first line holding the word's first token.
+    func sighting(for word: FoundWord, onLine known: Int? = nil) -> Sighting? {
+        guard let line = known ?? tokenLines.firstIndex(where: { $0.contains(word.first) }) else {
             return nil
         }
         let found = transcriptLines.sentence(around: word.first, onLine: line, in: transcript)

@@ -8,7 +8,7 @@ import UIKit
 /// the same way, so the words under it read out as from a photo.
 struct TextPage: UIViewRepresentable {
     let text: String
-    let selection: LiveTextSelection
+    @ObservedObject var selection: LiveTextSelection
 
     func makeUIView(context: Context) -> UITextView {
         let view = UITextView()
@@ -27,6 +27,10 @@ struct TextPage: UIViewRepresentable {
     func updateUIView(_ view: UITextView, context: Context) {
         if view.text != text { view.text = text }
         context.coordinator.text = text
+        if let requested = selection.requested, requested.upperBound <= text.endIndex {
+            let range = NSRange(requested, in: text)
+            if view.selectedRange != range { view.selectedRange = range }
+        }
     }
 
     func makeCoordinator() -> Coordinator {

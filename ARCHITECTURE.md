@@ -99,16 +99,25 @@ use for its own input.
   coordinates whatever the zoom, so the geometry seam knows nothing of it. The
   screen shows any of the three, switched at the bottom, so they can be
   compared on the same page.
-- **The tap in Vision mode** (`VisionPage`, `RecognizedLine.characterBoxes`,
-  `WordFinder.word(atCharacter:)` in Core): the document request gives a box for
-  any range of a line's text, so each character's box is kept with its line. A
-  tap picks the line under it and the character nearest along the line (across a
-  column hardly counts), the tokenizer's words over the line give the one
-  covering it, and its characters' boxes, united, outline it on the page. The
-  word goes to the drawer as a selection into Vision's own transcript, its lines
-  joined in reading order, so the readout, Keep's sentence and *Fix a character*
-  are the same code as for Live Text. Without character boxes, a character is
-  placed by its share of the line.
+- **The tap in Vision mode** (`VisionPage`, `RecognizedLine.characterBoxes` in
+  Core): the document request gives a box for any range of a line's text, so each
+  character's box is kept with its line. A tap picks the line under it and the
+  character nearest along the line (across a column hardly counts), which is a
+  place in the page's reading, and so a chunk; a selection is outlined by the
+  union of its characters' boxes on each line it touches. Without character
+  boxes, a character is placed by its share of the line.
+- **The page read once** (`PageReading` in Core, `PageReader` in Kit): when a
+  page's text is known or changes (a new page, a fix, another tokenizer), every
+  line is cut into chunks, off the main thread and one page at a time: the words
+  as `WordFinder` finds them and the pieces between (punctuation, particles,
+  endings), each with its range in the page's text. The selection is one range of
+  that text, kept whole to its chunks, and everything shows it: the recognized-text
+  strip (`ChunkFlow`) lights its chunks, the picture outlines it (Vision mode, by
+  the characters' boxes) or shows it as Live Text's or the pasted text's own
+  selection, and the drawer lists it, the phrase first when it spans several
+  chunks (looked up whole, for an expression the tokenizer split) and then each
+  word. A tap anywhere selects a word, a long press stretches the selection to
+  another; a tap is a lookup in the reading, nothing is parsed again.
 - **`Token`** and **`SystemTokenizer`** (Core): a sentence cut into words by the
   OS's own Japanese analyzer, each with its reading in context as hiragana. The
   analyzer is reached through `CFStringTokenizer`, which offers a Latin

@@ -30,8 +30,13 @@ struct LiveTextImage: UIViewRepresentable {
         if context.coordinator.interaction.analysis !== analysis {
             context.coordinator.interaction.analysis = analysis
         }
-        // While a word is looked up the page takes no new selection.
+        // While the page is read into words it takes no selection.
         uiView.imageView.isUserInteractionEnabled = !selection.looking
+        if let requested = selection.requested,
+            context.coordinator.interaction.selectedRanges != [requested]
+        {
+            context.coordinator.interaction.selectedRanges = [requested]
+        }
     }
 
     func makeCoordinator() -> Coordinator {
