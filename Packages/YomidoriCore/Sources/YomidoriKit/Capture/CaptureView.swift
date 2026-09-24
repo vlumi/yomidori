@@ -12,7 +12,7 @@ public struct CaptureView: View {
     @State private var readingCloseUp = false
     @State var picked: PhotosPickerItem?
     @StateObject private var zoomControl = ZoomControl()
-    @AppStorage(TokenizerChoice.key) private var tokenizerChoice: TokenizerChoice = .system
+    @AppStorage(TokenizerChoice.key) var tokenizerChoice: TokenizerChoice = .system
     @AppStorage(SettingsKey.pageControlsSide) private var controlsSide: PageControlsSide = .right
     @State private var closeUpTask: Task<Void, Never>?
     @AppStorage(SettingsKey.readoutFraction) private var readoutFraction = DrawerDetents.all[0]
@@ -39,7 +39,7 @@ public struct CaptureView: View {
         get { page.mode }
         nonmutating set { page.mode = newValue }
     }
-    private var lines: [RecognizedLine] {
+    var lines: [RecognizedLine] {
         get { page.lines }
         nonmutating set { page.lines = newValue }
     }
@@ -47,7 +47,7 @@ public struct CaptureView: View {
         get { page.analysis }
         nonmutating set { page.analysis = newValue }
     }
-    private var selected: Int? {
+    var selected: Int? {
         get { page.selected }
         nonmutating set { page.selected = newValue }
     }
@@ -264,37 +264,6 @@ public struct CaptureView: View {
 
     /// A tap on a Vision line lands on a character; the word over it is outlined and given to
     /// the drawer as a selection, as Live Text's would be, so it reads, keeps and fixes alike.
-    private func tapWord(at point: CGPoint, in frame: CGRect) {
-        let page = VisionPage(lines: lines)
-        guard let hit = page.character(at: point, in: frame) else {
-            clearWord()
-            return
-        }
-        let line = page.lines[hit.line]
-        selected = lines.firstIndex(of: line)
-        let tokens = tokenizerChoice.tokenizer?.tokens(in: line.text) ?? []
-        guard
-            let found = WordFinder.word(
-                atCharacter: hit.character, in: tokens, text: line.text, dictionary: JMdict.bundled)
-        else {
-            self.page.wordBox = nil
-            return
-        }
-        self.page.wordBox = line.box(ofCharacters: found.range)
-        let transcript = page.transcript
-        let start = transcript.index(
-            transcript.startIndex, offsetBy: page.starts[hit.line] + found.range.lowerBound)
-        selection.range = start..<transcript.index(start, offsetBy: found.range.count)
-        selection.text = found.word.surface
-    }
-
-    private func clearWord() {
-        page.wordBox = nil
-        selected = nil
-        selection.text = ""
-        selection.range = nil
-    }
-
     private func readCloseUp(at point: CGPoint, in frame: CGRect) {
         guard let still,
             let geometry = CloseUpGeometry(

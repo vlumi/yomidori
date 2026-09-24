@@ -50,7 +50,18 @@ public enum WordFinder {
     public static func word(
         atCharacter offset: Int, in tokens: [Token], text: String, dictionary: (any WordDictionary)?
     ) -> (word: FoundWord, range: Range<Int>)? {
-        for word in words(in: tokens, dictionary: dictionary) {
+        // Only the tokens a word covering the tapped one could span: a dictionary word is at
+        // most `longestSpan` tokens, so nothing further off can reach it.
+        guard
+            let tapped = tokens.firstIndex(where: {
+                let start = text.distance(from: text.startIndex, to: $0.range.lowerBound)
+                let end = text.distance(from: text.startIndex, to: $0.range.upperBound)
+                return (start..<end).contains(offset)
+            })
+        else { return nil }
+        let window = Array(
+            tokens[max(0, tapped - longestSpan + 1)..<min(tokens.count, tapped + longestSpan)])
+        for word in words(in: window, dictionary: dictionary) {
             let start = text.distance(from: text.startIndex, to: word.tokens[0].range.lowerBound)
             let end = text.distance(
                 from: text.startIndex, to: word.tokens[word.tokens.count - 1].range.upperBound)

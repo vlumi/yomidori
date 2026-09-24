@@ -10,7 +10,7 @@ import UIKit
 struct LiveTextImage: UIViewRepresentable {
     let still: Still
     let analysis: ImageAnalysis?
-    let selection: LiveTextSelection
+    @ObservedObject var selection: LiveTextSelection
     let zoomControl: ZoomControl
 
     func makeUIView(context: Context) -> ZoomingImageView {
@@ -23,8 +23,15 @@ struct LiveTextImage: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: ZoomingImageView, context: Context) {
-        uiView.imageView.image = UIImage(cgImage: still.image)
-        context.coordinator.interaction.analysis = analysis
+        if context.coordinator.stillID != still.id {
+            context.coordinator.stillID = still.id
+            uiView.imageView.image = UIImage(cgImage: still.image)
+        }
+        if context.coordinator.interaction.analysis !== analysis {
+            context.coordinator.interaction.analysis = analysis
+        }
+        // While a word is looked up the page takes no new selection.
+        uiView.imageView.isUserInteractionEnabled = !selection.looking
     }
 
     func makeCoordinator() -> Coordinator {
@@ -37,13 +44,14 @@ struct LiveTextImage: UIViewRepresentable {
 
     @MainActor final class Coordinator {
         let interaction = ImageAnalysisInteraction()
+        var stillID: UUID?
         private let selection: LiveTextSelection
         private var timer: Timer?
 
         init(selection: LiveTextSelection) {
             self.selection = selection
             interaction.preferredInteractionTypes = .textSelection
-            timer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
+            timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
                 Task { @MainActor in self?.poll() }
             }
         }

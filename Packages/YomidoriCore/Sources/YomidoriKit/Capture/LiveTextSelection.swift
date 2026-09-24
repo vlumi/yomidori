@@ -6,4 +6,6 @@ import Foundation
 final class LiveTextSelection: ObservableObject {
     @Published var text = ""
     @Published var range: Range<String.Index>?
+    /// A word is being looked up for the selection; the page takes no other tap meanwhile.
+    @Published var looking = false
 }
