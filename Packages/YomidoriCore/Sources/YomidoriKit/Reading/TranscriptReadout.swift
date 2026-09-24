@@ -17,17 +17,28 @@ struct TranscriptReadout: View {
     @State private var refind: (line: Int, range: Range<Int>)?
     @State private var transcriptLines = TranscriptLines("")
     @State private var words: [FoundWord] = []
+    @State private var currentLookup: UUID?
     @State private var keptSurfaces: Set<String> = []
     @AppStorage(SettingsKey.transcriptExpanded) private var expanded = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             header
-            ForEach(words.indices, id: \.self) { index in
-                if index > 0 {
-                    Divider()
+            if selection.looking {
+                HStack(spacing: 10) {
+                    ProgressView()
+                    Text("Looking it up…", bundle: .module)
+                        .foregroundStyle(.secondary)
                 }
-                wordReadout(words[index])
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.vertical, 6)
+            } else {
+                ForEach(words.indices, id: \.self) { index in
+                    if index > 0 {
+                        Divider()
+                    }
+                    wordReadout(words[index])
+                }
             }
             if choice == .mecab, MeCabTokenizer.shared == nil {
                 Text("MeCab could not load its dictionary.", bundle: .module)
@@ -37,6 +48,7 @@ struct TranscriptReadout: View {
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(lines.indices, id: \.self) { index in
                         TokenFlow(tokens: lines[index], selected: words.first?.first) { token in
+                            guard !selection.looking else { return }
                             words = WordFinder.words(in: [token], dictionary: JMdict.bundled)
                         }
                     }
@@ -52,7 +64,7 @@ struct TranscriptReadout: View {
         }
         .task(id: "\(choice)|\(fixed)") { tokenize() }
         .onChange(of: transcript) { fixes = [] }
-        .task(id: "\(choice)|\(selection.text)") { showSelection() }
+        .task(id: "\(choice)|\(selection.text)") { await showSelection() }
     }
 
     private var header: some View {
@@ -157,10 +169,21 @@ struct TranscriptReadout: View {
     }
 
     /// The strip's own tokens on that line are preferred, so Keep knows the sentence.
-    private func showSelection() {
+    private func showSelection() async {
         let text = selection.text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !text.isEmpty, let tokens = tokenizer?.tokens(in: text) else { return }
-        let found = WordFinder.words(in: tokens, dictionary: JMdict.bundled)
+        guard !text.isEmpty, let tokenizer else {
+            selection.looking = false
+            return
+        }
+        // The spinner is drawn before the lookup holds the main thread. It goes when the latest
+        // lookup ends however it ends, cancelled included, so the page is never left blocked.
+        let lookup = UUID()
+        currentLookup = lookup
+        selection.looking = true
+        defer { if currentLookup == lookup { selection.looking = false } }
+        try? await Task.sleep(for: .milliseconds(30))
+        guard !Task.isCancelled else { return }
+        let found = WordFinder.words(in: tokenizer.tokens(in: text), dictionary: JMdict.bundled)
         if let line = transcriptLines.lineIndex(
             ofSelection: selection.range, in: currentTranscript, pageOffset: pageOffset,
             transcript: fixed, fixes: fixes)
@@ -169,8 +192,10 @@ struct TranscriptReadout: View {
         } else {
             words = found
         }
-        for entry in words.compactMap(\.entries.first) {
-            Cards.noteLookup(of: entry, from: .page)
+        // The history's write is a file; off the main thread, it costs the reader nothing.
+        let entries = words.compactMap(\.entries.first)
+        Task.detached(priority: .utility) {
+            for entry in entries { Cards.noteLookup(of: entry, from: .page) }
         }
     }
 

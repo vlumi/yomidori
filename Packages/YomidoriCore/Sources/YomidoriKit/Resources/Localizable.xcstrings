@@ -831,6 +831,16 @@
         }
       }
     },
+    "Looking it up…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "調べています…"
+          }
+        }
+      }
+    },
     "manga-ocr" : {
       "shouldTranslate" : false
     },
