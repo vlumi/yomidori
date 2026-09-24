@@ -194,21 +194,24 @@ use for its own input.
   stored; they are looked up live.
 - **Sync** (`CloudSync` in `YomidoriSync`, `Sync` in Kit): the cards, the
   collections with their covers and the lookup history kept the same on the
-  reader's devices through their own iCloud, CloudKit's private database driven
-  by `CKSyncEngine`. One record per card, collection and looked-up word
-  (`SyncName`, the store key made ASCII; `SyncPayload`, the same JSON the stores
-  write), a cover as the collection record's asset, and one record for the date
-  the history was last cleared. The local files are the truth: this device's
-  writes go out as they are made (the stores report them as local), another
-  device's are laid over them (reported as remote, so they are not sent back),
-  merged by Core's rules only where this device changed the same record and had
-  not sent it yet; a save that finds a newer version on the server merges it in
-  and goes again on top of it. Each record's server system fields are kept so a
-  save updates the version it knows. Deletions are CloudKit's own, not
-  tombstones; a zone deleted from iCloud, or a new account, is filled again
-  from this device. Pushes wake the engine, and the app fetches when it comes
-  to the front. On unless turned off in Settings, never in the demo, and
-  nothing happens without an iCloud account.
+  reader's devices through their own iCloud, CloudKit's private database
+  driven by `CKSyncEngine`. One record per card, collection and looked-up word
+  (`SyncName`, the store key made ASCII; `SyncPayload`, the same JSON the
+  stores write), a cover as the collection record's asset, and one record for
+  the date the history was last cleared. A card's id is made from its word
+  (`WordKey.cardID`, a name-based UUID), so the same word kept on two devices
+  is one record, merged like any other. Changes made while sync is off are
+  kept (`UnsentChanges`) and sent when it starts. The local files are the
+  truth: this device's writes go out as they are made (the stores report them
+  as local), another device's are laid over them (reported as remote, so they
+  are not sent back), merged by Core's rules only where this device changed
+  the same record and had not sent it yet; a save that finds a newer version
+  on the server merges it in and goes again on top of it. Each record's server
+  system fields are kept so a save updates the version it knows. Deletions are
+  CloudKit's own, not tombstones; a zone deleted from iCloud, or a new
+  account, is filled again from this device. Pushes wake the engine, and the
+  app fetches when it comes to the front. On unless turned off in Settings,
+  never in the demo, and nothing happens without an iCloud account.
 - **Intake** (`Sanitize`, `Intake`, `ImageIntake` in Core): what comes from
   outside, a shared collection, a record from another device, a photo, pasted
   text, is made safe before it is stored or shown. Text loses control

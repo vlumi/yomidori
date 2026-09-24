@@ -25,14 +25,16 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     /// The collections the card is in, a book each usually; none is fine.
     public var collectionIDs: [UUID]
 
+    /// `id` is left out for a new card: it is the word's own (see `WordKey.cardID`), so the
+    /// same word kept on two devices is one card to sync.
     public init(
-        id: UUID = UUID(), headword: String, reading: String, entryID: Int?,
+        id: UUID? = nil, headword: String, reading: String, entryID: Int?,
         sightings: [Sighting], created: Date, modified: Date? = nil, review: ReviewState? = nil,
         meaningReview: ReviewState? = nil, pitchReview: ReviewState? = nil,
         log: [ReviewEntry] = [], acceptedMeanings: [String] = [], started: Date? = nil,
         shelved: Bool = false, collectionIDs: [UUID] = []
     ) {
-        self.id = id
+        self.id = id ?? WordKey.cardID(headword: headword, reading: reading)
         self.headword = headword
         self.reading = reading
         self.entryID = entryID

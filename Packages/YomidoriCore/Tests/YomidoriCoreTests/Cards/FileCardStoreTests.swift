@@ -291,4 +291,38 @@ final class FileCardStoreTests: XCTestCase {
         XCTAssertTrue(text.contains("\"headword\" : \"樹皮\""))
         XCTAssertTrue(text.contains("1970-01-12T13:46:40Z"))
     }
+
+    // TEMPORARY: goes with `keyCardsByWord`.
+    func testOldCardsAreKeyedByTheirWordAndMergedWithTheirTwins() throws {
+        let store = FileCardStore(url: url)
+        let old = Card(
+            id: UUID(), headword: "樹皮", reading: "じゅひ", entryID: 1,
+            sightings: [sighting("樹皮の匂い。", "樹皮")], created: Date(timeIntervalSince1970: 10),
+            acceptedMeanings: ["bark"], collectionIDs: [UUID()])
+        let twin = Card(
+            id: UUID(), headword: "樹皮", reading: "じゅひ", entryID: 1,
+            sightings: [sighting("樹皮が剥げた。", "樹皮")], created: Date(timeIntervalSince1970: 20),
+            collectionIDs: [UUID()])
+        let other = Card(
+            id: UUID(), headword: "部屋", reading: "へや", entryID: 2, sightings: [],
+            created: Date(timeIntervalSince1970: 30))
+        try store.replaceAll { _ in [old, twin, other] }
+        var changes: [RecordChange] = []
+        store.file.onChange = { change, _ in changes.append(change) }
+        try store.keyCardsByWord()
+        let cards = store.cards()
+        XCTAssertEqual(cards.map(\.headword), ["樹皮", "部屋"])
+        XCTAssertEqual(cards[0].id, WordKey.cardID(headword: "樹皮", reading: "じゅひ"))
+        XCTAssertEqual(cards[0].sightings.count, 2)
+        XCTAssertEqual(Set(cards[0].collectionIDs), Set(old.collectionIDs + twin.collectionIDs))
+        XCTAssertEqual(cards[0].acceptedMeanings, ["bark"])
+        XCTAssertEqual(cards[0].created, old.created)
+        XCTAssertEqual(
+            Set(changes.flatMap(\.deleted)), Set([old, twin, other].map(\.id.uuidString)))
+        XCTAssertEqual(Set(changes.flatMap(\.saved)), Set(cards.map(\.id.uuidString)))
+        // Once keyed, nothing more to do.
+        changes = []
+        try store.keyCardsByWord()
+        XCTAssertTrue(changes.isEmpty)
+    }
 }
