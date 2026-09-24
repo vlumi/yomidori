@@ -89,6 +89,7 @@ struct CoverScanView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 8))
             Button {
                 self.still = nil
+                picked = nil
                 camera.start()
             } label: {
                 Label {

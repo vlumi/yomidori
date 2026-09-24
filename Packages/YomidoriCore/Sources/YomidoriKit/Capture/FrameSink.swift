@@ -15,6 +15,11 @@ final class FrameSink: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate,
         pending = continuation
     }
 
+    func cancel() {
+        pending?.resume(returning: nil)
+        pending = nil
+    }
+
     func captureOutput(
         _ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer,
         from connection: AVCaptureConnection

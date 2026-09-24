@@ -44,25 +44,25 @@ struct LiveTextImage: UIViewRepresentable {
         Coordinator(selection: selection)
     }
 
-    static func dismantleUIView(_ uiView: ZoomingImageView, coordinator: Coordinator) {
-        coordinator.stop()
-    }
-
-    @MainActor final class Coordinator {
+    @MainActor final class Coordinator: NSObject, ImageAnalysisInteractionDelegate {
         let interaction = ImageAnalysisInteraction()
         var stillID: UUID?
         private let selection: LiveTextSelection
-        private var timer: Timer?
 
         init(selection: LiveTextSelection) {
             self.selection = selection
+            super.init()
             interaction.preferredInteractionTypes = .textSelection
-            timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
-                Task { @MainActor in self?.poll() }
-            }
+            interaction.delegate = self
         }
 
-        private func poll() {
+        func textSelectionDidChange(_ interaction: ImageAnalysisInteraction) {
+            // Told during an update of the view (a selection set from elsewhere): recorded
+            // after it, not within.
+            DispatchQueue.main.async { [weak self] in self?.selectionChanged() }
+        }
+
+        private func selectionChanged() {
             let text = interaction.selectedText
             let range = interaction.selectedRanges.first.flatMap { range in
                 interaction.analysis.map { analysis -> Range<Int> in
@@ -75,11 +75,6 @@ struct LiveTextImage: UIViewRepresentable {
             guard text != selection.text || range != selection.range else { return }
             selection.text = text
             selection.range = range
-        }
-
-        func stop() {
-            timer?.invalidate()
-            timer = nil
         }
     }
 
@@ -160,7 +155,9 @@ struct LiveTextImage: UIViewRepresentable {
         func scrollViewDidZoom(_ scrollView: UIScrollView) {
             center()
             interaction?.setContentsRectNeedsUpdate()
-            reportZoom?(Zoom.fraction(of: zoomScale, in: minimumZoomScale...maximumZoomScale))
+            // Reported after the layout pass it may come from, not within it.
+            let fraction = Zoom.fraction(of: zoomScale, in: minimumZoomScale...maximumZoomScale)
+            DispatchQueue.main.async { [weak self] in self?.reportZoom?(fraction) }
         }
     }
 }

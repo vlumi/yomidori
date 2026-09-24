@@ -278,7 +278,7 @@ public struct CaptureView: View {
         lines = []
         analysis = nil
         page.transcript = nil
-        page.selectedRange = nil
+        page.newPage(keepingFixes: !pages.isEmpty)
         selection.clear()
         closeUp = nil
         closeUpTask?.cancel()

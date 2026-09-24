@@ -22,6 +22,18 @@ final class CaptureState: ObservableObject {
     @Published var selectedRange: Range<Int>?
     /// The reader's corrections to the page's text, cleared with a new page.
     @Published var fixes: [TextFix] = []
+    /// What `reading` was read from, the tokenizer and the text, so a return to the page
+    /// does not read it again.
+    var readingKey: String?
+
+    /// A new page, or a new spread: the reading and the selection go, and so do the fixes
+    /// unless earlier pages of the same spread still carry them.
+    func newPage(keepingFixes: Bool = false) {
+        reading = nil
+        readingKey = nil
+        selectedRange = nil
+        if !keepingFixes { fixes = [] }
+    }
     @Published var closeUp: CaptureView.CloseUp?
     @Published var zoom = Zoom()
     /// The still the lines and the analysis belong to; a return does not read it again.
