@@ -38,6 +38,9 @@ public final class RecordFile<Record: Codable & Equatable>: @unchecked Sendable 
     private let key: (Record) -> String
     private let queue: DispatchQueue
     private var loaded: [Record]?
+    /// Records this build could not read (written by a newer one, say), kept as they were and
+    /// written back untouched, so a file is never shrunk by what cannot be decoded.
+    private var unreadable: [Any] = []
     public var onChange: ((RecordChange, ChangeOrigin) -> Void)?
 
     public init(url: URL, label: String, key: @escaping (Record) -> String) {
@@ -67,13 +70,29 @@ public final class RecordFile<Record: Codable & Equatable>: @unchecked Sendable 
         return result
     }
 
+    /// Record by record: one that does not decode is set aside, not the whole file lost with
+    /// it. A file that is no JSON array at all is moved aside, never written over.
     private func all() -> [Record] {
         if let loaded { return loaded }
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        let records =
-            (try? Data(contentsOf: url)).flatMap { try? decoder.decode([Record].self, from: $0) }
-            ?? []
+        var records: [Record] = []
+        unreadable = []
+        if let data = try? Data(contentsOf: url) {
+            if let elements = (try? JSONSerialization.jsonObject(with: data)) as? [Any] {
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601
+                for element in elements {
+                    if let json = try? JSONSerialization.data(withJSONObject: element),
+                        let record = try? decoder.decode(Record.self, from: json)
+                    {
+                        records.append(record)
+                    } else {
+                        unreadable.append(element)
+                    }
+                }
+            } else {
+                setAside()
+            }
+        }
         loaded = records
         return records
     }
@@ -82,8 +101,23 @@ public final class RecordFile<Record: Codable & Equatable>: @unchecked Sendable 
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        try encoder.encode(records).write(to: url, options: .atomic)
+        var data = try encoder.encode(records)
+        if !unreadable.isEmpty,
+            let readable = try JSONSerialization.jsonObject(with: data) as? [Any]
+        {
+            data = try JSONSerialization.data(
+                withJSONObject: readable + unreadable, options: [.prettyPrinted, .sortedKeys])
+        }
+        try data.write(to: url, options: .atomic)
         loaded = records
+    }
+
+    /// The unreadable file kept beside the store under a dated name, for recovery by hand.
+    private func setAside() {
+        let stamp = ISO8601DateFormatter().string(from: Date()).replacingOccurrences(
+            of: ":", with: "-")
+        let aside = url.deletingPathExtension().appendingPathExtension("unreadable-\(stamp).json")
+        try? FileManager.default.moveItem(at: url, to: aside)
     }
 }
 

@@ -124,7 +124,8 @@ struct CollectionEditor: View {
         var record = collection
         record.name = record.name.trimmingCharacters(in: .whitespaces)
         record.note = record.note.trimmingCharacters(in: .whitespaces)
-        try? Cards.collections?.save(record)
+        // The old cover goes only once the collection no longer needs it on disk.
+        guard (try? Cards.collections?.save(record)) != nil else { return }
         saved = true
         var stale = scannedCoverIDs
         if let old = persistedCoverID, old != record.coverID { stale.insert(old) }
