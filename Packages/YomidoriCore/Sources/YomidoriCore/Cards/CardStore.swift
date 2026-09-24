@@ -135,28 +135,6 @@ public final class FileCardStore: CardStore {
         }
     }
 
-    // TEMPORARY: remove once the cards kept before ids were made from the word are re-keyed
-    // (one device, at the launch after this ships), with its test and its call in `Cards`.
-    /// Every card under its word's own id; cards of one word are merged into one. The old
-    /// ids go out to sync as deletes, the new as saves.
-    public func keyCardsByWord() throws {
-        try file.write { cards in
-            guard cards.contains(where: { $0.id != $0.wordID }) else { return }
-            var order: [UUID] = []
-            var byWord: [UUID: Card] = [:]
-            for card in cards.sorted(by: { $0.created < $1.created }) {
-                let rekeyed = card.withID(card.wordID)
-                if let earlier = byWord[card.wordID] {
-                    byWord[card.wordID] = earlier.merged(with: rekeyed)
-                } else {
-                    order.append(card.wordID)
-                    byWord[card.wordID] = rekeyed
-                }
-            }
-            cards = order.compactMap { byWord[$0] }
-        }
-    }
-
     /// Many changes in one write, as an import makes them.
     public func replaceAll(_ transform: ([Card]) -> [Card]) throws {
         try file.write { $0 = transform($0) }
@@ -166,18 +144,5 @@ public final class FileCardStore: CardStore {
         try file.write(.remote) {
             $0.apply(saving: saved, deleting: Set(deleted.map(\.uuidString)), key: \.id.uuidString)
         }
-    }
-}
-
-// TEMPORARY: goes with `keyCardsByWord`.
-extension Card {
-    fileprivate var wordID: UUID { WordKey.cardID(headword: headword, reading: reading) }
-
-    fileprivate func withID(_ id: UUID) -> Card {
-        Card(
-            id: id, headword: headword, reading: reading, entryID: entryID, sightings: sightings,
-            created: created, modified: modified, review: review, meaningReview: meaningReview,
-            pitchReview: pitchReview, log: log, acceptedMeanings: acceptedMeanings,
-            started: started, shelved: shelved, collectionIDs: collectionIDs)
     }
 }
