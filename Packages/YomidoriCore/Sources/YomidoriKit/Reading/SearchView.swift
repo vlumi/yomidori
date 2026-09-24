@@ -78,11 +78,18 @@ struct SearchView: View {
         .task(id: query) {
             try? await Task.sleep(for: .milliseconds(150))
             guard !Task.isCancelled else { return }
-            results = JMdict.bundled?.search(query, limit: 50) ?? []
-            accents = Dictionary(
-                results.compactMap { entry in
-                    JMdict.bundled?.pitchAccent(of: entry).map { (entry.id, $0) }
-                }, uniquingKeysWith: { first, _ in first })
+            // Off the main thread: a short English prefix matches thousands of glosses.
+            let query = query
+            let found = await Task.detached(priority: .userInitiated) {
+                let results = JMdict.bundled?.search(query, limit: 50) ?? []
+                let accents = Dictionary(
+                    results.compactMap { entry in
+                        JMdict.bundled?.pitchAccent(of: entry).map { (entry.id, $0) }
+                    }, uniquingKeysWith: { first, _ in first })
+                return (results, accents)
+            }.value
+            guard !Task.isCancelled else { return }
+            (results, accents) = found
             kept = Cards.keptWords()
         }
     }

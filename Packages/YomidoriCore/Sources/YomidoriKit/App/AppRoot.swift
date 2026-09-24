@@ -94,7 +94,7 @@ public struct AppRoot: View {
                 Sync.shared.fetch()
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: Cards.didChange)) { _ in
+        .onReceive(Cards.changes(of: [.card])) { _ in
             dueCount = Cards.dueItems(at: Date()).count
         }
     }

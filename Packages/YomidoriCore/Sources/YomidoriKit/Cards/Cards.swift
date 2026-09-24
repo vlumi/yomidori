@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import YomidoriCore
 import YomidoriDictionary
@@ -14,8 +15,17 @@ enum Cards {
     }
 
     static let store: FileCardStore? = stores?.cards
-    /// Posted after every write to the cards, for the counts shown outside the store's screens.
+    /// Posted after every write to a store, with the kind written as its object.
     static let didChange = Notification.Name("fi.misaki.yomidori.storesDidChange")
+
+    /// Writes to the stores of `kinds`, so a lookup noted doesn't reload the card screens.
+    static func changes(of kinds: Set<SyncKind>)
+        -> Publishers.Filter<NotificationCenter.Publisher>
+    {
+        NotificationCenter.default.publisher(for: didChange).filter { note in
+            (note.object as? String).flatMap(SyncKind.init(rawValue:)).map(kinds.contains) ?? true
+        }
+    }
     /// The settings the screens write to: the demo's own suite in the demo.
     static var defaults: UserDefaults { DemoMode.defaults ?? .standard }
     static let collections: FileCollectionStore? = stores?.collections
@@ -50,7 +60,7 @@ enum Cards {
     private static func changed(_ kind: SyncKind, _ change: RecordChange, _ origin: ChangeOrigin) {
         if origin == .local { Sync.engine?.recordsChanged(kind, change) }
         DispatchQueue.main.async {
-            NotificationCenter.default.post(name: didChange, object: nil)
+            NotificationCenter.default.post(name: didChange, object: kind.rawValue)
         }
     }
 

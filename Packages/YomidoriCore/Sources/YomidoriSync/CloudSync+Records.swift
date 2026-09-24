@@ -12,15 +12,14 @@ extension CloudSync {
         let record = blankRecord(recordID, type: kind.recordType)
         switch kind {
         case .card:
-            guard let card = stores.cards.cards().first(where: { $0.id.uuidString == key }),
+            guard let id = UUID(uuidString: key),
+                let card = stores.cards.cards().first(where: { $0.id == id }),
                 let data = try? SyncPayload.encode(card)
             else { return nil }
             record["json"] = data
         case .collection:
-            guard
-                let collection = stores.collections.collections().first(where: {
-                    $0.id.uuidString == key
-                }),
+            guard let id = UUID(uuidString: key),
+                let collection = stores.collections.collections().first(where: { $0.id == id }),
                 let data = try? SyncPayload.encode(collection)
             else { return nil }
             record["json"] = data

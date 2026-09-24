@@ -19,6 +19,11 @@ public final class JMdict: WordDictionary {
 
     private var db: OpaquePointer?
     let queue = DispatchQueue(label: "fi.misaki.yomidori.jmdict")
+    /// Only touched on `queue`: statements prepared once, and the entries and word matches
+    /// already read, since a page asks for the same few thousand again and again.
+    private var statements: [String: OpaquePointer] = [:]
+    private var entryCache = BoundedCache<Int, DictionaryEntry>(limit: 8192)
+    private var matchCache = BoundedCache<String, [Int]>(limit: 8192)
 
     public init(url: URL) throws {
         let flags = SQLITE_OPEN_READONLY | SQLITE_OPEN_NOMUTEX
@@ -33,6 +38,7 @@ public final class JMdict: WordDictionary {
     }
 
     deinit {
+        statements.values.forEach { sqlite3_finalize($0) }
         sqlite3_close(db)
     }
 
@@ -50,15 +56,18 @@ public final class JMdict: WordDictionary {
     /// every entry: a tenth of a second per word, thousands of words to a page.
     public func entries(matching text: String) -> [DictionaryEntry] {
         queue.sync {
-            let ids = rows(
-                """
-                SELECT e.id FROM entry e
-                WHERE e.id IN (
-                    SELECT entry FROM kanji WHERE text = ?1
-                    UNION SELECT entry FROM reading WHERE text = ?1)
-                ORDER BY e.common DESC, e.id
-                """, bind: text
-            ).compactMap { Int($0[0]) }
+            let ids =
+                matchCache[text]
+                ?? rows(
+                    """
+                    SELECT e.id FROM entry e
+                    WHERE e.id IN (
+                        SELECT entry FROM kanji WHERE text = ?1
+                        UNION SELECT entry FROM reading WHERE text = ?1)
+                    ORDER BY e.common DESC, e.id
+                    """, bind: text
+                ).compactMap { Int($0[0]) }
+            matchCache[text] = ids
             return ids.map(entry(id:))
         }
     }
@@ -150,6 +159,7 @@ public final class JMdict: WordDictionary {
     }
 
     func entry(id: Int) -> DictionaryEntry {
+        if let cached = entryCache[id] { return cached }
         let idText = String(id)
         let kanji = rows("SELECT text FROM kanji WHERE entry = ?1 ORDER BY ord", bind: idText).map {
             $0[0]
@@ -166,18 +176,24 @@ public final class JMdict: WordDictionary {
                 glosses: $0[1].components(separatedBy: "; "))
         }
         let common = rows("SELECT common FROM entry WHERE id = ?1", bind: idText).first?[0] == "1"
-        return DictionaryEntry(
+        let entry = DictionaryEntry(
             id: id, kanji: kanji, readings: readings, senses: senses, common: common)
+        entryCache[id] = entry
+        return entry
     }
 
     func rows(_ sql: String, bind: String?) -> [[String]] {
         rows(sql, binds: bind.map { [$0] } ?? [])
     }
 
+    /// Run on `queue`; each SQL is prepared once and its statement kept. What SQL spells into
+    /// itself (a LIMIT, a count of parts) takes few values, so few statements are kept.
     func rows(_ sql: String, binds: [String]) -> [[String]] {
-        var statement: OpaquePointer?
-        guard sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK else { return [] }
-        defer { sqlite3_finalize(statement) }
+        guard let statement = statement(sql) else { return [] }
+        defer {
+            sqlite3_reset(statement)
+            sqlite3_clear_bindings(statement)
+        }
         let transient = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
         for (index, bind) in binds.enumerated() {
             sqlite3_bind_text(statement, Int32(index + 1), bind, -1, transient)
@@ -191,5 +207,35 @@ public final class JMdict: WordDictionary {
                 })
         }
         return result
+    }
+
+    private func statement(_ sql: String) -> OpaquePointer? {
+        if let statement = statements[sql] { return statement }
+        var statement: OpaquePointer?
+        guard sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK else {
+            sqlite3_finalize(statement)
+            return nil
+        }
+        statements[sql] = statement
+        return statement
+    }
+}
+
+/// A dictionary that forgets everything once it holds `limit` values: cheap, and enough for
+/// what a reader looks at in one sitting.
+struct BoundedCache<Key: Hashable, Value> {
+    let limit: Int
+    private var values: [Key: Value] = [:]
+
+    init(limit: Int) {
+        self.limit = limit
+    }
+
+    subscript(key: Key) -> Value? {
+        get { values[key] }
+        set {
+            if values.count >= limit, values[key] == nil { values.removeAll(keepingCapacity: true) }
+            values[key] = newValue
+        }
     }
 }

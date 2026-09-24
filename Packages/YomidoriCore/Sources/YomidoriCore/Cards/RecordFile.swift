@@ -128,10 +128,15 @@ extension Array {
         saving saved: [Element], deleting deleted: Set<String>, key: (Element) -> String
     ) {
         removeAll { deleted.contains(key($0)) }
+        var places = Dictionary(
+            enumerated().map { (key($0.element), $0.offset) },
+            uniquingKeysWith: { first, _ in first })
         for record in saved {
-            if let index = firstIndex(where: { key($0) == key(record) }) {
+            let recordKey = key(record)
+            if let index = places[recordKey] {
                 self[index] = record
             } else {
+                places[recordKey] = count
                 append(record)
             }
         }

@@ -33,9 +33,20 @@ enum CoverArchive {
         return id
     }
 
+    /// Decoded covers, for rows that ask on every render; keyed by the file's date too, so a
+    /// cover replaced by sync is read again.
+    private static let decoded = NSCache<NSString, CGImage>()
+
     static func load(_ id: UUID) -> CGImage? {
-        guard let url = try? url(for: id) else { return nil }
-        return image(at: url)
+        guard let url = try? url(for: id),
+            let modified = try? url.resourceValues(forKeys: [.contentModificationDateKey])
+                .contentModificationDate
+        else { return nil }
+        let key = "\(id.uuidString) \(modified.timeIntervalSince1970)" as NSString
+        if let image = decoded.object(forKey: key) { return image }
+        guard let image = image(at: url) else { return nil }
+        decoded.setObject(image, forKey: key)
+        return image
     }
 
     static func remove(_ ids: [UUID]) {
