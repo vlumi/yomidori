@@ -49,8 +49,6 @@ enum Cards {
         stores.collections.file.onChange = { changed(.collection, $0, $1) }
         stores.lookups.file.onChange = { changed(.lookup, $0, $1) }
         stores.lookups.onClear = { _ in Sync.historyCleared() }
-        // TEMPORARY: see `FileCardStore.keyCardsByWord`. After `onChange`, so sync hears.
-        try? stores.cards.keyCardsByWord()
         if DemoMode.isRequested {
             DemoData.seed(
                 cards: stores.cards, collections: stores.collections, lookups: stores.lookups)
