@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 12 — 2026-09-24
+
 - **One card per word across devices.** The same word kept on two devices, even offline, becomes one card when they sync, its sentences, collections and meanings together; cards kept before are given their word's id once, at the first launch, merging any duplicates.
 - **Sync keeps every change.** Cards kept, changed or deleted while iCloud sync was off, or before it started, are sent when it is on again; a card deleted here while another device changed it stays deleted, and one changed here while another device deleted it is kept; a card open on screen follows a review or another device instead of writing its old copy back.
 - **Quicker pages and search.** A page is read into its words about four times faster, and in a moment when read again; searching in English no longer holds up typing; looking a word up no longer reloads the card screens, and covers are not decoded again on every scroll.
