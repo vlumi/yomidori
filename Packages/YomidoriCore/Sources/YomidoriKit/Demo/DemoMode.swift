@@ -12,6 +12,15 @@ public enum DemoMode {
         CommandLine.arguments.contains(argument)
     }
 
+    /// `-yomidori-tab search` opens the demo on that tab, for looking at a screen or taking
+    /// its screenshot without a hand on the simulator.
+    static var tab: AppTab? {
+        guard isRequested, let index = CommandLine.arguments.firstIndex(of: "-yomidori-tab"),
+            index + 1 < CommandLine.arguments.count
+        else { return nil }
+        return AppTab(rawValue: CommandLine.arguments[index + 1])
+    }
+
     /// The settings suite, emptied at launch; nil outside the demo.
     public static let defaults: UserDefaults? = {
         guard isRequested, let defaults = UserDefaults(suiteName: suite) else { return nil }

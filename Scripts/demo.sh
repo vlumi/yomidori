@@ -5,6 +5,7 @@
 # screens can be looked at without a camera. The real simulator data is never touched.
 #   PLATFORM=iphone|ipad   (default iphone)
 #   DEVICE=<name pattern>  override the simulator pick
+#   TAB=home|read|study|cards|search   open on that tab (default: where it was left)
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -35,5 +36,5 @@ app="$(find .build-xcode/Build/Products/Debug-iphonesimulator \
 
 xcrun simctl terminate "$udid" "$BUNDLE" >/dev/null 2>&1 || true
 xcrun simctl install "$udid" "$app"
-xcrun simctl launch "$udid" "$BUNDLE" -yomidori-demo >/dev/null
+xcrun simctl launch "$udid" "$BUNDLE" -yomidori-demo ${TAB:+-yomidori-tab "$TAB"} >/dev/null
 echo "Demo launched on $udid — seeded cards, collections and a page; nothing persists."
