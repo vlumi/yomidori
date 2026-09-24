@@ -29,7 +29,9 @@ struct FlowLayout: Layout {
         var widest: CGFloat = 0
         for subview in subviews {
             let size = subview.sizeThatFits(.unspecified)
-            if x > 0, x + size.width > width {
+            // Half a point of slack: laid out at the width it measured, rounding alone must not
+            // push the last item onto a row of its own.
+            if x > 0, x + size.width > width + 0.5 {
                 x = 0
                 y += rowHeight + spacing
                 rowHeight = 0

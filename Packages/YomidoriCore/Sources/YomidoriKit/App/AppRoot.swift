@@ -71,7 +71,10 @@ public struct AppRoot: View {
         .tint(Palette.nightGreen)
         .environmentObject(capture)
         .environmentObject(taps)
-        .onAppear { if DemoMode.isRequested { DemoData.seed(capture) } }
+        .onAppear {
+            if DemoMode.isRequested { DemoData.seed(capture) }
+            if let shown = DemoMode.tab { tab = shown }
+        }
         .task(id: tab) { dueCount = Cards.dueItems(at: Date()).count }
         .onOpenURL { url in
             if let done = try? Cards.importCollection(from: url) {
