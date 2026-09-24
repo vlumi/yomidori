@@ -66,21 +66,35 @@ extension CloudSync {
     }
 
     func apply(_ changes: CKSyncEngine.Event.FetchedRecordZoneChanges, _ syncEngine: CKSyncEngine) {
-        let pending = Set(
-            syncEngine.state.pendingRecordZoneChanges.compactMap { change -> String? in
-                if case .saveRecord(let id) = change { return id.recordName }
-                return nil
-            })
+        var pendingSaves: Set<String> = []
+        var pendingDeletes: Set<String> = []
+        for change in syncEngine.state.pendingRecordZoneChanges {
+            switch change {
+            case .saveRecord(let id): pendingSaves.insert(id.recordName)
+            case .deleteRecord(let id): pendingDeletes.insert(id.recordName)
+            @unknown default: break
+            }
+        }
         var incoming = Incoming()
         for modification in changes.modifications {
             let record = modification.record
-            remember(record)
-            take(record, changedHere: pending.contains(record.recordID.recordName), into: &incoming)
+            // Deleted here and not yet sent: the delete goes out, the card doesn't come back.
+            guard !pendingDeletes.contains(record.recordID.recordName) else { continue }
+            // Remembered only once taken, so one this version can't read is not written
+            // over by a save of the older copy.
+            if take(
+                record, changedHere: pendingSaves.contains(record.recordID.recordName),
+                into: &incoming)
+            {
+                remember(record)
+            }
         }
         var deleted: [SyncKind: Set<String>] = [:]
         for deletion in changes.deletions {
             lock.withLock { systemFields[deletion.recordID.recordName] = nil }
             let recordName = deletion.recordID.recordName
+            // Changed here and not yet sent: the change wins, and goes out as a new record.
+            guard !pendingSaves.contains(recordName) else { continue }
             if let kind = SyncName.kind(ofRecordName: recordName),
                 let key = key(of: recordName, kind: kind)
             {
@@ -104,15 +118,19 @@ extension CloudSync {
 
     /// One record from another device; merged with the local one only where this device has
     /// changed it too and not yet sent the change.
-    private func take(_ record: CKRecord, changedHere: Bool, into incoming: inout Incoming) {
-        guard let kind = SyncName.kind(ofRecordName: record.recordID.recordName) else { return }
+    @discardableResult
+    private func take(_ record: CKRecord, changedHere: Bool, into incoming: inout Incoming) -> Bool
+    {
+        guard let kind = SyncName.kind(ofRecordName: record.recordID.recordName) else {
+            return false
+        }
         switch kind {
         case .card:
-            guard let remote = decode(Card.self, record) else { return }
+            guard let remote = decode(Card.self, record) else { return false }
             let local = changedHere ? stores.cards.cards().first { $0.id == remote.id } : nil
             incoming.cards.append(local.map { $0.merged(with: remote) } ?? remote)
         case .collection:
-            guard let remote = decode(Collection.self, record) else { return }
+            guard let remote = decode(Collection.self, record) else { return false }
             if let coverID = remote.coverID, let url = (record["cover"] as? CKAsset)?.fileURL {
                 stores.saveCover(coverID, url)
             }
@@ -120,27 +138,35 @@ extension CloudSync {
                 changedHere ? stores.collections.collections().first { $0.id == remote.id } : nil
             incoming.collections.append(local.map { $0.merged(with: remote) } ?? remote)
         case .lookup:
-            if let remote = decode(Lookup.self, record) { incoming.lookups.append(remote) }
+            guard let remote = decode(Lookup.self, record) else { return false }
+            incoming.lookups.append(remote)
         case .historyCleared:
             incoming.clearedAt = SyncPayload.clearDate(record["cleared"] as? Date)
         }
+        return true
     }
 
-    func mergeLocally(_ server: CKRecord) {
-        guard let kind = SyncName.kind(ofRecordName: server.recordID.recordName) else { return }
+    /// The server's version taken into the local one; false when it can't be read.
+    func mergeLocally(_ server: CKRecord) -> Bool {
+        guard let kind = SyncName.kind(ofRecordName: server.recordID.recordName) else {
+            return false
+        }
         switch kind {
         case .card:
-            guard let remote = decode(Card.self, server),
-                let local = stores.cards.cards().first(where: { $0.id == remote.id })
-            else { return }
+            guard let remote = decode(Card.self, server) else { return false }
+            // Gone here since: the retried save finds nothing and is dropped.
+            guard let local = stores.cards.cards().first(where: { $0.id == remote.id }) else {
+                return true
+            }
             try? stores.cards.applyRemote(saving: [local.merged(with: remote)], deleting: [])
         case .collection:
-            guard let remote = decode(Collection.self, server),
+            guard let remote = decode(Collection.self, server) else { return false }
+            guard
                 let local = stores.collections.collections().first(where: { $0.id == remote.id })
-            else { return }
+            else { return true }
             try? stores.collections.applyRemote(saving: [local.merged(with: remote)], deleting: [])
         case .lookup:
-            guard let remote = decode(Lookup.self, server) else { return }
+            guard let remote = decode(Lookup.self, server) else { return false }
             let local = stores.lookups.lookups().first { $0.id == remote.id }
             try? stores.lookups.applyRemote(
                 saving: [local.map { $0.merged(with: remote) } ?? remote], deleting: [],
@@ -150,6 +176,7 @@ extension CloudSync {
                 saving: [], deleting: [],
                 clearedAt: SyncPayload.clearDate(server["cleared"] as? Date))
         }
+        return true
     }
 
     private func decode<Record: Decodable & Sanitizable>(_ type: Record.Type, _ record: CKRecord)

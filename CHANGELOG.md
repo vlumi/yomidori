@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Sync keeps every change.** Cards kept, changed or deleted while iCloud sync was off, or before it started, are sent when it is on again; a card deleted here while another device changed it stays deleted, and one changed here while another device deleted it is kept; a card open on screen follows a review or another device instead of writing its old copy back.
 - **Quicker pages and search.** A page is read into its words about four times faster, and in a moment when read again; searching in English no longer holds up typing; looking a word up no longer reloads the card screens, and covers are not decoded again on every scroll.
 - **No crash on a long word with iCloud on.** Looking up a long word or phrase (お誕生日おめでとうございます) no longer crashes the app when iCloud sync is on, nor keeps crashing it at every launch after. Pressing two answer buttons at once in a review or lesson counts one answer instead of crashing on the last card or skipping the next; the same meaning can't be accepted twice.
 - **Cards can't be lost to a file the app can't fully read.** A card, collection or lookup this version cannot read (one written by a newer version, say) is kept as it was and written back, instead of the whole file being read as empty and overwritten; a file that can't be read at all is set aside. Covers are kept too if moving them to their new folder or saving a collection fails.

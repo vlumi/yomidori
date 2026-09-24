@@ -25,6 +25,39 @@ final class Sync: ObservableObject {
     private nonisolated(unsafe) static var current: CloudSync?
     private nonisolated static let engineLock = NSLock()
 
+    /// A change made here: to the engine, or kept for when sync is on again.
+    nonisolated static func recordsChanged(_ kind: SyncKind, _ change: RecordChange) {
+        engineLock.withLock {
+            if let current {
+                current.recordsChanged(kind, change)
+            } else {
+                keepUnsent { $0.note(kind, change) }
+            }
+        }
+    }
+
+    nonisolated static func historyCleared() {
+        engineLock.withLock {
+            if let current {
+                current.historyCleared()
+            } else {
+                keepUnsent { $0.noteHistoryCleared() }
+            }
+        }
+    }
+
+    /// Called under `engineLock`; not in the demo, whose changes never sync.
+    private nonisolated static func keepUnsent(_ note: (inout UnsentChanges) -> Void) {
+        guard !DemoMode.isRequested, let url = unsentURL else { return }
+        var unsent = UnsentChanges.read(from: url)
+        note(&unsent)
+        try? unsent.write(to: url)
+    }
+
+    private nonisolated static var unsentURL: URL? {
+        try? Cards.directory().appendingPathComponent("sync-unsent.json")
+    }
+
     func start() {
         guard Self.engine == nil, !DemoMode.isRequested,
             Cards.defaults.object(forKey: SettingsKey.iCloudSync) as? Bool ?? true
@@ -47,7 +80,14 @@ final class Sync: ObservableObject {
                 }
             }
         }
-        Self.engineLock.withLock { Self.current = engine }
+        // Under the lock, so no change falls between what was kept and the engine taking over.
+        Self.engineLock.withLock {
+            if let url = Self.unsentURL {
+                engine.send(UnsentChanges.read(from: url))
+                try? UnsentChanges().write(to: url)
+            }
+            Self.current = engine
+        }
         status = .syncing
     }
 

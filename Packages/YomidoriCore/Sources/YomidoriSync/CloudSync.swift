@@ -108,6 +108,18 @@ public final class CloudSync: CKSyncEngineDelegate, @unchecked Sendable {
         engine?.state.add(pendingRecordZoneChanges: [.saveRecord(id(.historyCleared))])
     }
 
+    /// What was changed while sync was off.
+    public func send(_ unsent: UnsentChanges) {
+        let zoneID = zone.zoneID
+        engine?.state.add(
+            pendingRecordZoneChanges: unsent.saved.map {
+                .saveRecord(CKRecord.ID(recordName: $0, zoneID: zoneID))
+            }
+                + unsent.deleted.map {
+                    .deleteRecord(CKRecord.ID(recordName: $0, zoneID: zoneID))
+                })
+    }
+
     /// Everything this device has, as when sync starts or the account changes.
     private func sendEverything() {
         recordsChanged(.card, RecordChange(saved: stores.cards.cards().map(\.id.uuidString)))
@@ -195,10 +207,12 @@ public final class CloudSync: CKSyncEngineDelegate, @unchecked Sendable {
             case .serverRecordChanged:
                 // Another device got there first: take its version into the local one, merged,
                 // and send the merge on top of it.
-                if let server = failure.error.serverRecord {
-                    remember(server)
-                    mergeLocally(server)
+                // One this version can't read (written by a newer one) is left as it is.
+                guard let server = failure.error.serverRecord, mergeLocally(server) else {
+                    syncEngine.state.remove(pendingRecordZoneChanges: [.saveRecord(recordID)])
+                    continue
                 }
+                remember(server)
                 retry.append(.saveRecord(recordID))
             case .zoneNotFound:
                 syncEngine.state.add(pendingDatabaseChanges: [.saveZone(zone)])

@@ -36,6 +36,11 @@ struct CardView: View {
         .task(id: card.id) {
             details = await WordDetails.load(headword: card.headword, reading: card.reading)
         }
+        // A review, or another device, may change the card while it is open; the next edit
+        // then writes over the stored card, not the one this screen started with.
+        .onReceive(Cards.changes(of: [.card])) { _ in
+            if let stored = Cards.store?.card(id: card.id), stored != card { card = stored }
+        }
     }
 
     private func replace(_ sighting: Sighting) {

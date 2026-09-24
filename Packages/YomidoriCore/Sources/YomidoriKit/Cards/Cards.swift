@@ -48,7 +48,7 @@ enum Cards {
         stores.cards.file.onChange = { changed(.card, $0, $1) }
         stores.collections.file.onChange = { changed(.collection, $0, $1) }
         stores.lookups.file.onChange = { changed(.lookup, $0, $1) }
-        stores.lookups.onClear = { _ in Sync.engine?.historyCleared() }
+        stores.lookups.onClear = { _ in Sync.historyCleared() }
         if DemoMode.isRequested {
             DemoData.seed(
                 cards: stores.cards, collections: stores.collections, lookups: stores.lookups)
@@ -58,7 +58,7 @@ enum Cards {
 
     /// Every write refreshes the screens; this device's own also go to sync.
     private static func changed(_ kind: SyncKind, _ change: RecordChange, _ origin: ChangeOrigin) {
-        if origin == .local { Sync.engine?.recordsChanged(kind, change) }
+        if origin == .local { Sync.recordsChanged(kind, change) }
         DispatchQueue.main.async {
             NotificationCenter.default.post(name: didChange, object: kind.rawValue)
         }
