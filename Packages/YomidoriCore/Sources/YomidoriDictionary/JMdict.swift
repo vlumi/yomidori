@@ -46,14 +46,16 @@ public final class JMdict: WordDictionary {
         }
     }
 
+    /// Through the kanji and reading indexes, not a join with OR across them, which scans
+    /// every entry: a tenth of a second per word, thousands of words to a page.
     public func entries(matching text: String) -> [DictionaryEntry] {
         queue.sync {
             let ids = rows(
                 """
-                SELECT DISTINCT e.id FROM entry e
-                LEFT JOIN kanji k ON k.entry = e.id
-                LEFT JOIN reading r ON r.entry = e.id
-                WHERE k.text = ?1 OR r.text = ?1
+                SELECT e.id FROM entry e
+                WHERE e.id IN (
+                    SELECT entry FROM kanji WHERE text = ?1
+                    UNION SELECT entry FROM reading WHERE text = ?1)
                 ORDER BY e.common DESC, e.id
                 """, bind: text
             ).compactMap { Int($0[0]) }
@@ -107,12 +109,14 @@ public final class JMdict: WordDictionary {
                 let katakana = Kana.katakana(trimmed)
                 let ids = rows(
                     """
-                    SELECT DISTINCT e.id FROM entry e
-                    LEFT JOIN kanji k ON k.entry = e.id
-                    LEFT JOIN reading r ON r.entry = e.id
-                    WHERE (k.text >= ?1 AND k.text < ?2) OR (r.text >= ?1 AND r.text < ?2)
-                       OR (r.text >= ?3 AND r.text < ?4)
-                    ORDER BY e.common DESC, length(COALESCE(k.text, r.text)), e.id
+                    SELECT e.id FROM (
+                        SELECT entry, length(text) AS size FROM kanji
+                        WHERE text >= ?1 AND text < ?2
+                        UNION ALL SELECT entry, length(text) FROM reading
+                        WHERE (text >= ?1 AND text < ?2) OR (text >= ?3 AND text < ?4)
+                    ) m JOIN entry e ON e.id = m.entry
+                    GROUP BY e.id
+                    ORDER BY e.common DESC, MIN(m.size), e.id
                     LIMIT \(limit)
                     """,
                     binds: [trimmed, trimmed + "\u{10FFFF}", katakana, katakana + "\u{10FFFF}"]

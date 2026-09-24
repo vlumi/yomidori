@@ -3,68 +3,117 @@ import YomidoriCore
 import YomidoriDictionary
 import YomidoriMeCab
 
+/// The drawer under a page: the words selected, and the page's text as its chunks. The page is
+/// read into words once (`PageReading`), when its text is known or changes, and a selection
+/// is a range of that text, made on the page, in the strip or on the picture alike.
 struct TranscriptReadout: View {
     let transcript: String
     let currentTranscript: String
     /// Where the page on screen starts in the joined transcript, in characters.
     let pageOffset: Int
     @ObservedObject var selection: LiveTextSelection
+    @EnvironmentObject private var page: CaptureState
     @AppStorage(TokenizerChoice.key) private var choice: TokenizerChoice = .system
-    @State private var lines: [[Token]] = []
-    /// The reader's corrections to the transcript, cleared with a new page.
-    @State private var fixes: [TextFix] = []
-    /// After a fix, the stretch of a line whose words are found again.
-    @State private var refind: (line: Int, range: Range<Int>)?
-    @State private var transcriptLines = TranscriptLines("")
-    @State private var words: [FoundWord] = []
-    @State private var currentLookup: UUID?
     @State private var keptSurfaces: Set<String> = []
+    /// Where the selection goes once a fix has been read in.
+    @State private var afterFix: Range<Int>?
     @AppStorage(SettingsKey.transcriptExpanded) private var expanded = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             header
-            if selection.looking {
+            if page.reading == nil {
                 HStack(spacing: 10) {
                     ProgressView()
-                    Text("Looking it up…", bundle: .module)
+                    Text("Reading the words…", bundle: .module)
                         .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, 6)
-            } else {
-                ForEach(words.indices, id: \.self) { index in
-                    if index > 0 {
-                        Divider()
-                    }
-                    wordReadout(words[index])
-                }
+            } else if let reading = page.reading, let range = page.selectedRange {
+                selectionRows(reading, range)
             }
             if choice == .mecab, MeCabTokenizer.shared == nil {
                 Text("MeCab could not load its dictionary.", bundle: .module)
                     .foregroundStyle(.secondary)
             }
-            DisclosureGroup(isExpanded: $expanded) {
-                VStack(alignment: .leading, spacing: 6) {
-                    ForEach(lines.indices, id: \.self) { index in
-                        TokenFlow(tokens: lines[index], selected: words.first?.first) { token in
-                            guard !selection.looking else { return }
-                            words = WordFinder.words(in: [token], dictionary: JMdict.bundled)
-                        }
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top, 4)
-            } label: {
-                Text("Recognized text", bundle: .module)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            if let reading = page.reading {
+                strip(reading)
             }
-            .tint(.secondary)
         }
-        .task(id: "\(choice)|\(fixed)") { tokenize() }
-        .onChange(of: transcript) { fixes = [] }
-        .task(id: "\(choice)|\(selection.text)") { await showSelection() }
+        .task(id: "\(choice)|\(fixed)") { await read() }
+        .onChange(of: transcript) {
+            page.fixes = []
+            page.selectedRange = nil
+        }
+        .onChange(of: selection.range) { selectionOnPage() }
+        .onChange(of: page.selectedRange) { _, range in
+            requestOnPage(range)
+            noteLookups(range)
+        }
+    }
+
+    private func strip(_ reading: PageReading) -> some View {
+        DisclosureGroup(isExpanded: $expanded) {
+            VStack(alignment: .leading, spacing: 6) {
+                ForEach(reading.lines.lines.indices, id: \.self) { line in
+                    ChunkFlow(
+                        chunks: reading.chunks.filter { $0.line == line },
+                        selected: page.selectedRange,
+                        select: { page.selectedRange = $0.range },
+                        extend: extend)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.top, 4)
+        } label: {
+            Text("Recognized text", bundle: .module)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .tint(.secondary)
+    }
+
+    /// The selection stretched to a chunk: from where it starts to the chunk, whichever way.
+    private func extend(_ chunk: PageReading.Chunk) {
+        guard let range = page.selectedRange else {
+            if chunk.isWord { page.selectedRange = chunk.range }
+            return
+        }
+        page.selectedRange =
+            min(
+                range.lowerBound, chunk.range.lowerBound)..<max(
+                range.upperBound, chunk.range.upperBound)
+    }
+
+    /// Several chunks: the phrase first, looked up whole when the dictionary knows it, then
+    /// each word. One chunk: its word.
+    @ViewBuilder private func selectionRows(_ reading: PageReading, _ range: Range<Int>)
+        -> some View
+    {
+        let chunks = reading.chunks(in: range)
+        let words = chunks.filter(\.isWord)
+        if chunks.count > 1 {
+            PhraseRow(reading: reading, chunks: chunks) {
+                keep($0, onLine: chunks[0].line, in: reading)
+            }
+            if !words.isEmpty { Divider() }
+        }
+        ForEach(words) { chunk in
+            if chunk.id != words.first?.id { Divider() }
+            wordReadout(chunk, in: reading)
+        }
+    }
+
+    private func wordReadout(_ chunk: PageReading.Chunk, in reading: PageReading) -> some View {
+        WordReadout(
+            word: chunk.word,
+            accent: chunk.word.entries.first.flatMap { JMdict.bundled?.pitchAccent(of: $0) },
+            kept: keptSurfaces.contains(chunk.surface), canKeep: Cards.store != nil,
+            fix: { index, replacement in fix(chunk, index, replacement) }
+        ) {
+            keep(chunk.word, onLine: chunk.line, in: reading)
+        }
     }
 
     private var header: some View {
@@ -110,99 +159,87 @@ struct TranscriptReadout: View {
         .accessibilityValue(Text(choice == .system ? "System" : "MeCab", bundle: .module))
     }
 
-    private func wordReadout(_ word: FoundWord) -> some View {
-        let line = lines.firstIndex { $0.contains(word.first) }
-        return WordReadout(
-            word: word, accent: word.entries.first.flatMap { JMdict.bundled?.pitchAccent(of: $0) },
-            kept: keptSurfaces.contains(word.surface), canKeep: Cards.store != nil,
-            fix: line.map { line in
-                { index, replacement in fix(word, onLine: line, index, replacement) }
-            }
-        ) {
-            keep(word)
-        }
-    }
-
     /// The transcript as recognized, with the reader's corrections in.
     private var fixed: String {
-        TextFix.apply(fixes, to: transcript)
+        TextFix.apply(page.fixes, to: transcript)
     }
 
-    /// Corrects one character of a word on the page and finds the words shown again, so the
-    /// readout, the sentence Keep saves and the copy all read as corrected.
-    private func fix(_ word: FoundWord, onLine line: Int, _ index: Int, _ replacement: String) {
+    /// The page read into words, off the main thread; taps wait until it is done.
+    private func read() async {
+        page.reading = nil
+        selection.looking = true
         let text = fixed
-        let start = transcriptLines.offsets(of: word.first, onLine: line, in: text)
-        let shown = words.filter { lines[line].contains($0.first) }
-        let spanStart =
-            shown.map { transcriptLines.offsets(of: $0.first, onLine: line, in: text).inLine }.min()
-            ?? start.inLine
-        let spanEnd =
-            shown.map {
-                transcriptLines.offsets(of: $0.first, onLine: line, in: text).inLine
-                    + $0.surface.count
-            }.max() ?? start.inLine + word.surface.count
-        fixes.append(
-            TextFix(offset: start.inTranscript + index, length: 1, replacement: replacement))
-        refind = (line, spanStart..<(spanEnd + replacement.count - 1))
-    }
-
-    private var tokenizer: (any Tokenizer)? {
-        choice.tokenizer
-    }
-
-    private func tokenize() {
-        words = []
+        let reading = await PageReader.shared.read(text, with: choice)
+        guard !Task.isCancelled else { return }
         keptSurfaces = []
-        transcriptLines = TranscriptLines(fixed)
-        lines = transcriptLines.lines.map { tokenizer?.tokens(in: $0) ?? [] }
-        if let refind, lines.indices.contains(refind.line) {
-            let tokens = WordFinder.tokens(
-                lines[refind.line], overlapping: refind.range,
-                in: transcriptLines.lines[refind.line])
-            words = WordFinder.words(in: tokens, dictionary: JMdict.bundled)
-            for entry in words.compactMap(\.entries.first) {
-                Cards.noteLookup(of: entry, from: .page)
-            }
-        }
-        refind = nil
+        page.reading = reading
+        page.selectedRange = afterFix.flatMap(reading.whole)
+        afterFix = nil
+        selection.looking = false
     }
 
-    /// The strip's own tokens on that line are preferred, so Keep knows the sentence.
-    private func showSelection() async {
-        let text = selection.text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !text.isEmpty, let tokenizer else {
-            selection.looking = false
+    /// Corrects one character of a word and reads the page again, the selection kept on it,
+    /// so the readout, Keep's sentence and the copy all read as corrected.
+    private func fix(_ chunk: PageReading.Chunk, _ index: Int, _ replacement: String) {
+        page.fixes.append(
+            TextFix(offset: chunk.range.lowerBound + index, length: 1, replacement: replacement))
+        let range = page.selectedRange ?? chunk.range
+        afterFix = range.lowerBound..<(range.upperBound + replacement.count - 1)
+    }
+
+    /// A selection made on the page itself (Live Text's, the pasted text's), as whole chunks.
+    private func selectionOnPage() {
+        guard let reading = page.reading, let range = selection.range,
+            range.upperBound <= currentTranscript.endIndex
+        else { return }
+        let start =
+            pageOffset
+            + currentTranscript.distance(from: currentTranscript.startIndex, to: range.lowerBound)
+        let end = start + currentTranscript[range].count
+        let mapped =
+            TextFix.map(
+                offset: start, through: page.fixes)..<TextFix.map(offset: end, through: page.fixes)
+        guard !mapped.isEmpty, let whole = reading.whole(mapped), whole != page.selectedRange else {
             return
         }
-        // The spinner is drawn before the lookup holds the main thread. It goes when the latest
-        // lookup ends however it ends, cancelled included, so the page is never left blocked.
-        let lookup = UUID()
-        currentLookup = lookup
-        selection.looking = true
-        defer { if currentLookup == lookup { selection.looking = false } }
-        try? await Task.sleep(for: .milliseconds(30))
-        guard !Task.isCancelled else { return }
-        let found = WordFinder.words(in: tokenizer.tokens(in: text), dictionary: JMdict.bundled)
-        if let line = transcriptLines.lineIndex(
-            ofSelection: selection.range, in: currentTranscript, pageOffset: pageOffset,
-            transcript: fixed, fixes: fixes)
-        {
-            words = found.map { $0.aligned(to: lines[line]) ?? $0 }
-        } else {
-            words = found
+        page.selectedRange = whole
+    }
+
+    /// The selection shown by the page view too, where it falls on the page on screen and the
+    /// text is as recognized.
+    private func requestOnPage(_ range: Range<Int>?) {
+        guard let range, page.fixes.isEmpty else {
+            selection.requested = nil
+            return
         }
-        // The history's write is a file; off the main thread, it costs the reader nothing.
-        let entries = words.compactMap(\.entries.first)
+        let start = range.lowerBound - pageOffset
+        let end = range.upperBound - pageOffset
+        guard start >= 0, end <= currentTranscript.count else {
+            selection.requested = nil
+            return
+        }
+        let lower = currentTranscript.index(currentTranscript.startIndex, offsetBy: start)
+        selection.requested = lower..<currentTranscript.index(lower, offsetBy: end - start)
+    }
+
+    /// The words selected go into the lookup history, off the main thread.
+    private func noteLookups(_ range: Range<Int>?) {
+        guard let reading = page.reading, let range else { return }
+        let entries = reading.chunks(in: range).filter(\.isWord).compactMap(\.word.entries.first)
         Task.detached(priority: .utility) {
             for entry in entries { Cards.noteLookup(of: entry, from: .page) }
         }
     }
 
-    private func keep(_ word: FoundWord) {
+    private func keep(_ word: FoundWord, onLine line: Int, in reading: PageReading) {
         let keeper = SentenceKeeper(
-            transcript: fixed, transcriptLines: transcriptLines, tokenLines: lines, source: nil)
-        guard let store = Cards.store, let sighting = keeper.sighting(for: word) else { return }
+            transcript: reading.text, transcriptLines: reading.lines,
+            tokenLines: reading.tokenLines,
+            source: nil)
+        guard let store = Cards.store, let sighting = keeper.sighting(for: word, onLine: line)
+        else {
+            return
+        }
         let entry = word.entries.first
         let headword = entry?.headword ?? word.dictionaryForm ?? word.surface
         let reading = Kana.hiragana(entry?.readings.first ?? word.reading)
@@ -212,5 +249,33 @@ struct TranscriptReadout: View {
                 collection: Cards.currentCollectionID())) != nil
         else { return }
         keptSurfaces.insert(word.surface)
+    }
+}
+
+/// Several chunks selected together: the phrase as it stands on the page, and, when the
+/// dictionary knows it whole (an expression the tokenizer split), its entry as a word.
+private struct PhraseRow: View {
+    let reading: PageReading
+    let chunks: [PageReading.Chunk]
+    let keep: (FoundWord) -> Void
+
+    var body: some View {
+        let phrase = chunks.map(\.surface).joined()
+        let entries =
+            JMdict.bundled?.entries(forAny: Deinflector.candidates(for: phrase)) ?? []
+        let tokens = chunks.flatMap(\.word.tokens)
+        if !entries.isEmpty, !tokens.isEmpty {
+            WordReadout(
+                word: FoundWord(tokens: tokens, entries: entries),
+                accent: entries.first.flatMap { JMdict.bundled?.pitchAccent(of: $0) },
+                kept: false, canKeep: Cards.store != nil
+            ) {
+                keep(FoundWord(tokens: tokens, entries: entries))
+            }
+        } else {
+            Text(japanese: phrase)
+                .font(.title3)
+                .textSelection(.enabled)
+        }
     }
 }

@@ -1,54 +1,64 @@
 import SwiftUI
 import YomidoriCore
-import YomidoriDictionary
 
-/// The tap in Vision mode: the character under the finger, the word over it outlined and
-/// handed to the drawer as a selection.
+/// Vision mode's picture as a view of the page's reading: a tap selects the word under the
+/// finger, a long press stretches the selection to it, and the selection, made anywhere, is
+/// outlined over its characters.
 extension CaptureView {
-    /// The line lights up and the drawer shows a spinner at once; the lookup follows a frame
-    /// later, and no other tap is taken until it is done.
     func tapWord(at point: CGPoint, in frame: CGRect) {
-        guard !selection.looking else { return }
-        let page = VisionPage(lines: lines)
-        guard let hit = page.character(at: point, in: frame) else {
-            clearWord()
+        guard let chunk = chunk(at: point, in: frame), chunk.isWord else { return }
+        page.selectedRange = chunk.range
+    }
+
+    func extendWord(at point: CGPoint, in frame: CGRect) {
+        guard let chunk = chunk(at: point, in: frame) else { return }
+        guard let range = page.selectedRange else {
+            if chunk.isWord { page.selectedRange = chunk.range }
             return
         }
-        let line = page.lines[hit.line]
-        selected = lines.firstIndex(of: line)
-        self.page.wordBox = nil
-        selection.looking = true
-        let tokenizer = tokenizerChoice.tokenizer
-        Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(30))
-            let tokens = tokenizer?.tokens(in: line.text) ?? []
-            guard
-                let found = WordFinder.word(
-                    atCharacter: hit.character, in: tokens, text: line.text,
-                    dictionary: JMdict.bundled)
-            else {
-                selection.looking = false
-                return
-            }
-            self.page.wordBox = line.box(ofCharacters: found.range)
-            let transcript = page.transcript
-            let start = transcript.index(
-                transcript.startIndex, offsetBy: page.starts[hit.line] + found.range.lowerBound)
-            let range = start..<transcript.index(start, offsetBy: found.range.count)
-            // The same word again: the readout has it already and will not look again.
-            if selection.text == found.word.surface, selection.range == range {
-                selection.looking = false
-            }
-            selection.range = range
-            selection.text = found.word.surface
+        page.selectedRange =
+            min(
+                range.lowerBound, chunk.range.lowerBound)..<max(
+                range.upperBound, chunk.range.upperBound)
+    }
+
+    /// The chunk of the reading under a point on the picture; nil until the page is read.
+    private func chunk(at point: CGPoint, in frame: CGRect) -> PageReading.Chunk? {
+        guard let reading = page.reading, !selection.looking else { return nil }
+        let vision = VisionPage(lines: lines)
+        guard let hit = vision.character(at: point, in: frame) else { return nil }
+        let offset = pageOffset + vision.starts[hit.line] + hit.character
+        return reading.chunk(at: TextFix.map(offset: offset, through: page.fixes))
+    }
+
+    /// The selection over Vision's lines, one box per line it touches, normalized like them.
+    var selectionBoxes: [CGRect] {
+        guard mode == .vision, let range = page.selectedRange, page.fixes.isEmpty else { return [] }
+        let vision = VisionPage(lines: lines)
+        return vision.lines.indices.compactMap { index in
+            let start = pageOffset + vision.starts[index]
+            let line = start..<(start + vision.lines[index].text.count)
+            let overlap = line.clamped(to: range)
+            guard !overlap.isEmpty else { return nil }
+            return vision.lines[index].box(
+                ofCharacters: (overlap.lowerBound - start)..<(overlap.upperBound - start))
         }
     }
 
-    func clearWord() {
-        guard !selection.looking else { return }
-        page.wordBox = nil
-        selected = nil
-        selection.text = ""
-        selection.range = nil
+    /// The lines the selection touches, lit as a whole.
+    var selectedLines: Set<Int> {
+        guard mode == .vision, let range = page.selectedRange else { return [] }
+        let vision = VisionPage(lines: lines)
+        return Set(
+            vision.lines.indices.filter { index in
+                let start = pageOffset + vision.starts[index]
+                return (start..<(start + vision.lines[index].text.count)).overlaps(range)
+            }.compactMap { lines.firstIndex(of: vision.lines[$0]) })
+    }
+
+    /// Where the page on screen starts in the text of all the pages together.
+    var pageOffset: Int {
+        guard let current = currentTranscript else { return 0 }
+        return Spread.offset(ofPage: pages.count, in: pages.map(\.transcript) + [current])
     }
 }

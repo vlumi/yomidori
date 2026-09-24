@@ -6,6 +6,10 @@ import Foundation
 final class LiveTextSelection: ObservableObject {
     @Published var text = ""
     @Published var range: Range<String.Index>?
-    /// A word is being looked up for the selection; the page takes no other tap meanwhile.
+    /// The page is being read into its words; it takes no tap or selection meanwhile.
     @Published var looking = false
+    /// A selection made elsewhere (the strip, a Vision tap) for the page view to show as its
+    /// own, as a range of the page's own text; the page reports it back through `text` and
+    /// `range`, which then change nothing.
+    @Published var requested: Range<String.Index>?
 }
