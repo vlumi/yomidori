@@ -340,9 +340,14 @@ use for its own input.
   radicals as a kanji that contains them (汁 for 氵, 化 for 亻); those show as the
   radical with its own stroke count and query as written. Chosen parts give the
   kanji that have them all, fewest strokes first, and fade the parts no kanji
-  shares with them; a kanji picked is appended to the search, and the sheet stays
-  for the next. It opens from a row at the top of the search list and from above
-  the keyboard, since the navigation bar hides while the field is focused.
+  shares with them; a kanji picked closes the sheet and goes in at the search
+  field's cursor, or over its selection (`Insertion`, in UTF-16 offsets as the
+  field counts them, a stale cursor held to the text, never splitting a
+  character; the field's cursor comes from iOS 26's `searchSelection`). It opens
+  from a button at the end of the search box itself: SwiftUI's search field takes
+  no accessory, so `SearchFieldButton` finds the `UISearchTextField` once it has
+  the keyboard and sets the button as its right view, and nothing happens if it
+  is not found.
 - **`MangaOCR`** (its own target): manga-ocr, a vision transformer reading one
   line or bubble of Japanese at a time, vertical included, converted to Core ML
   by `Scripts/data/build-mangaocr.py`: the encoder as it is, the decoder

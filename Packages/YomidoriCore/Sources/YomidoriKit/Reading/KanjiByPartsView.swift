@@ -3,10 +3,10 @@ import YomidoriCore
 import YomidoriDictionary
 
 /// A kanji found by the parts the reader can see in it: tap parts, pick from the kanji that
-/// have them all, and it joins the search; the sheet stays for the next one, so a word is
-/// built kanji by kanji. Parts that no longer lead anywhere dim.
+/// have them all, and the sheet closes with it; the search puts it at its cursor. Parts that
+/// no longer lead anywhere dim.
 struct KanjiByPartsView: View {
-    @Binding var query: String
+    let pick: (String) -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var groups: [KanjiPart.Group] = []
     @State private var chosen: [String] = []
@@ -16,7 +16,6 @@ struct KanjiByPartsView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                queryLine
                 matchesStrip
                 Divider()
                 partsGrid
@@ -25,19 +24,19 @@ struct KanjiByPartsView: View {
             .navigationBarTitleDisplayModeInline()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("Cancel", bundle: .module)
+                    }
+                }
+                ToolbarItem(placement: .primaryAction) {
                     if !chosen.isEmpty {
                         Button {
                             chosen = []
                         } label: {
                             Text("Clear", bundle: .module)
                         }
-                    }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Text("Done", bundle: .module)
                     }
                 }
             }
@@ -48,32 +47,6 @@ struct KanjiByPartsView: View {
             }
         }
         .presentationDetents([.large])
-    }
-
-    private var queryLine: some View {
-        HStack {
-            Image(systemName: "magnifyingglass")
-                .foregroundStyle(.secondary)
-            Text(japanese: query)
-                .font(.title2)
-                .lineLimit(1)
-            Spacer()
-            if !query.isEmpty {
-                Button {
-                    query.removeLast()
-                } label: {
-                    Label {
-                        Text("Delete the last character", bundle: .module)
-                    } icon: {
-                        Image(systemName: "delete.left")
-                    }
-                }
-                .labelStyle(.iconOnly)
-                .font(.title3)
-            }
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
     }
 
     @ViewBuilder private var matchesStrip: some View {
@@ -90,8 +63,8 @@ struct KanjiByPartsView: View {
                 LazyHStack(spacing: 6) {
                     ForEach(matches, id: \.self) { kanji in
                         Button {
-                            query.append(kanji)
-                            chosen = []
+                            pick(kanji)
+                            dismiss()
                         } label: {
                             Text(japanese: kanji)
                                 .font(.largeTitle)

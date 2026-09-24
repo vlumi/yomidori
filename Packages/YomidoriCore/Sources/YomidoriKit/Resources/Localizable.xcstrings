@@ -401,32 +401,12 @@
         }
       }
     },
-    "Delete the last character" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "最後の文字を消す"
-          }
-        }
-      }
-    },
     "Dictionary" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "辞書"
-          }
-        }
-      }
-    },
-    "Done" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "完了"
           }
         }
       }

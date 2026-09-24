@@ -11,6 +11,10 @@ struct SearchView: View {
     @State private var accents: [Int: PitchAccent] = [:]
     @FocusState private var searching: Bool
     @State private var buildingKanji = false
+    /// The field's cursor or selection, and where it stood when the parts sheet opened.
+    @State private var selection: TextSelection?
+    @State private var selectionAtParts: TextSelection?
+    @State private var fieldButton: SearchFieldButton?
     @EnvironmentObject private var taps: TabTaps
 
     var body: some View {
@@ -21,13 +25,6 @@ struct SearchView: View {
 
     private var list: some View {
         List {
-            // In the list, not the navigation bar, which hides while the field is focused.
-            Button {
-                buildingKanji = true
-            } label: {
-                partsLabel
-            }
-            .tint(Palette.nightGreen)
             if SearchQuery.kind(of: query) == .empty {
                 LookupHistoryView(generation: historyGeneration)
                     .id(TabTop.id)
@@ -48,19 +45,22 @@ struct SearchView: View {
         }
         .searchable(text: $query, prompt: Text("Kana, kanji, or English", bundle: .module))
         .searchFocused($searching)
+        .searchSelection($selection)
+        // The parts sheet opens from a button at the end of the search box, put there once
+        // the field has the keyboard.
+        .onChange(of: searching) { _, focused in
+            guard focused else { return }
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(300))
+                partsButton().install()
+            }
+        }
         // Switched to, the tab is for typing: the field takes the keyboard at once.
         .onChange(of: taps.shown, initial: true) { _, shown in
             if shown == .search { searching = true }
         }
         .navigationTitle(Text("Search", bundle: .module))
         .toolbar {
-            ToolbarItem(placement: .keyboard) {
-                Button {
-                    buildingKanji = true
-                } label: {
-                    partsLabel
-                }
-            }
             if SearchQuery.kind(of: query) == .empty, Cards.lookups?.lookups().isEmpty == false {
                 ToolbarItem(placement: .primaryAction) {
                     Button(role: .destructive) {
@@ -73,7 +73,7 @@ struct SearchView: View {
             }
         }
         .sheet(isPresented: $buildingKanji, onDismiss: { searching = true }) {
-            KanjiByPartsView(query: $query)
+            KanjiByPartsView(pick: insert)
         }
         .task(id: query) {
             try? await Task.sleep(for: .milliseconds(150))
@@ -87,11 +87,31 @@ struct SearchView: View {
         }
     }
 
-    private var partsLabel: some View {
-        Label {
-            Text("Kanji by parts", bundle: .module)
-        } icon: {
-            Image(systemName: "square.grid.3x3.square")
+    /// The kanji at the cursor, or over the selection, as the field stood when the sheet
+    /// opened; the cursor then right after it.
+    private func insert(_ kanji: String) {
+        let result = Insertion.insert(kanji, into: query, replacing: utf16Range(selectionAtParts))
+        query = result.text
+        let cursor = String.Index(utf16Offset: result.cursor, in: result.text)
+        Task { @MainActor in selection = TextSelection(insertionPoint: cursor) }
+    }
+
+    private func utf16Range(_ selection: TextSelection?) -> Range<Int>? {
+        guard case .selection(let range) = selection?.indices, range.upperBound <= query.endIndex
+        else { return nil }
+        return range.lowerBound.utf16Offset(in: query)..<range.upperBound.utf16Offset(in: query)
+    }
+
+    private func partsButton() -> SearchFieldButton {
+        if let fieldButton { return fieldButton }
+        let button = SearchFieldButton(
+            symbol: "square.grid.3x3.square",
+            label: String(localized: "Kanji by parts", bundle: .module)
+        ) {
+            selectionAtParts = selection
+            buildingKanji = true
         }
+        fieldButton = button
+        return button
     }
 }
