@@ -65,8 +65,12 @@ struct LiveTextImage: UIViewRepresentable {
         private func selectionChanged() {
             let text = interaction.selectedText
             let range = interaction.selectedRanges.first.flatMap { range in
-                interaction.analysis.map { analysis -> Range<Int> in
+                interaction.analysis.flatMap { analysis -> Range<Int>? in
                     let transcript = analysis.transcript
+                    // A selection outliving the analysis it came from: nothing to report.
+                    guard range.lowerBound >= transcript.startIndex,
+                        range.upperBound <= transcript.endIndex
+                    else { return nil }
                     let start = transcript.distance(
                         from: transcript.startIndex, to: range.lowerBound)
                     return start..<(start + transcript[range].count)

@@ -34,7 +34,12 @@ public final class CloudSync: CKSyncEngineDelegate, @unchecked Sendable {
         case failed(String)
     }
 
-    public var onStatus: (@Sendable (Status) -> Void)?
+    /// Told of each change of status, from the engine's own threads.
+    public var onStatus: (@Sendable (Status) -> Void)? {
+        get { lock.withLock { statusHandler } }
+        set { lock.withLock { statusHandler = newValue } }
+    }
+    private var statusHandler: (@Sendable (Status) -> Void)?
 
     let stores: Stores
     let zone = CKRecordZone(zoneName: "Yomidori")
@@ -44,7 +49,12 @@ public final class CloudSync: CKSyncEngineDelegate, @unchecked Sendable {
     /// Each record's system fields as the server last sent them, so a save is an update of
     /// that version and not a conflict with it.
     var systemFields: [String: Data]
-    private var engine: CKSyncEngine?
+    /// Read from whichever thread wrote a store, and let go of by `stop()`.
+    private var engine: CKSyncEngine? {
+        get { lock.withLock { currentEngine } }
+        set { lock.withLock { currentEngine = newValue } }
+    }
+    private var currentEngine: CKSyncEngine?
 
     public init(containerIdentifier: String, stores: Stores, directory: URL) {
         self.stores = stores
@@ -70,8 +80,11 @@ public final class CloudSync: CKSyncEngineDelegate, @unchecked Sendable {
 
     /// Stops sending and fetching; the state is kept for when sync is turned on again.
     public func stop() async {
+        let engine = lock.withLock { () -> CKSyncEngine? in
+            defer { currentEngine = nil }
+            return currentEngine
+        }
         await engine?.cancelOperations()
-        engine = nil
     }
 
     /// Asks for what other devices did, as when the app comes to the front.

@@ -52,16 +52,4 @@ final class VisionPageTests: XCTestCase {
             RecognizedLine(text: "樹皮", box: .zero, confidence: 1, characterBoxes: [.zero])
                 .characterBoxes, [])
     }
-
-    func testTheTappedCharacterPicksTheWordOverIt() {
-        let text = "樹皮の匂いがした。"
-        let tokens = SystemTokenizer().tokens(in: text)
-        let bark = WordFinder.word(atCharacter: 1, in: tokens, text: text, dictionary: nil)
-        XCTAssertEqual(bark?.word.surface, "樹皮")
-        XCTAssertEqual(bark?.range, 0..<2)
-        let smell = WordFinder.word(atCharacter: 3, in: tokens, text: text, dictionary: nil)
-        XCTAssertEqual(smell?.word.surface, "匂い")
-        XCTAssertEqual(smell?.range, 3..<5)
-        XCTAssertNil(WordFinder.word(atCharacter: 8, in: tokens, text: text, dictionary: nil))
-    }
 }

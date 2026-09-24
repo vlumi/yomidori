@@ -17,6 +17,22 @@ final class SyncRecordTests: XCTestCase {
         XCTAssertNil(SyncName(recordName: "deck-1"))
     }
 
+    func testATooLongNameIsHashedAndFoundAmongKeys() {
+        let key = WordKey.of(headword: "明けましておめでとうございます", reading: "あけましておめでとうございます")
+        let name = SyncName(.lookup, key).recordName
+        XCTAssertLessThanOrEqual(name.utf8.count, 255)
+        XCTAssertTrue(name.allSatisfy(\.isASCII))
+        XCTAssertTrue(name.hasPrefix("lookup-_"))
+        XCTAssertNil(SyncName(recordName: name))
+        XCTAssertEqual(SyncName.kind(ofRecordName: name), .lookup)
+        XCTAssertEqual(SyncName.key(ofRecordName: name, among: ["他", key]), key)
+        XCTAssertNil(SyncName.key(ofRecordName: name, among: ["他"]))
+        let short = SyncName(.lookup, "他 た")
+        XCTAssertEqual(SyncName.key(ofRecordName: short.recordName, among: []), short.key)
+        // A short key starting with an underscore is spelled, not taken for a hash.
+        XCTAssertEqual(SyncName(recordName: SyncName(.lookup, "_x").recordName)?.key, "_x")
+    }
+
     func testACardTravelsWhole() throws {
         var card = Card(
             headword: "樹皮", reading: "じゅひ", entryID: 1,

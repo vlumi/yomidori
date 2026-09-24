@@ -11,10 +11,20 @@ public struct SystemTokenizer: Tokenizer {
             nil, cfText, CFRangeMake(0, CFStringGetLength(cfText)),
             kCFStringTokenizerUnitWordBoundary, Locale(identifier: "ja") as CFLocale)
         var tokens: [Token] = []
+        // Where the last token ended, in UTF-16.
+        var covered = 0
         while CFStringTokenizerAdvanceToNextToken(tokenizer).rawValue != 0 {
             let cfRange = CFStringTokenizerGetCurrentTokenRange(tokenizer)
-            let start = String.Index(utf16Offset: cfRange.location, in: text)
-            let end = String.Index(utf16Offset: cfRange.location + cfRange.length, in: text)
+            // The tokenizer may stop inside a character (気 of 気 + U+FE0F, は + ZWJ): grown
+            // to whole characters, and a token that is then already covered is dropped.
+            let whole = (text as NSString).rangeOfComposedCharacterSequences(
+                for: NSRange(location: cfRange.location, length: cfRange.length))
+            let lower = max(whole.location, covered)
+            let upper = whole.location + whole.length
+            guard upper > lower else { continue }
+            covered = upper
+            let start = String.Index(utf16Offset: lower, in: text)
+            let end = String.Index(utf16Offset: upper, in: text)
             let surface = String(text[start..<end])
             let isWord = surface.unicodeScalars.contains { CharacterSet.letters.contains($0) }
             let latin =

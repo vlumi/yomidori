@@ -15,60 +15,10 @@ public struct FoundWord: Equatable, Sendable {
     public var reading: String { tokens.map(\.reading).joined() }
     public var dictionaryForm: String? { tokens.count == 1 ? tokens[0].dictionaryForm : nil }
     public var first: Token { tokens[0] }
-
-    /// The same word spelled by the tokens of `line`, or nil when the line lacks it.
-    public func aligned(to line: [Token]) -> FoundWord? {
-        let surfaces = tokens.map(\.surface)
-        guard line.count >= surfaces.count else { return nil }
-        for start in 0...(line.count - surfaces.count) {
-            let run = line[start..<start + surfaces.count]
-            if run.map(\.surface) == surfaces {
-                return FoundWord(tokens: Array(run), entries: entries)
-            }
-        }
-        return nil
-    }
 }
 
 public enum WordFinder {
     public static let longestSpan = 4
-
-    /// The tokens of `line` that overlap `range`, counted in characters of `text`, the line
-    /// the tokens were cut from.
-    public static func tokens(_ line: [Token], overlapping range: Range<Int>, in text: String)
-        -> [Token]
-    {
-        line.filter { token in
-            let start = text.distance(from: text.startIndex, to: token.range.lowerBound)
-            let end = text.distance(from: text.startIndex, to: token.range.upperBound)
-            return start < range.upperBound && end > range.lowerBound
-        }
-    }
-
-    /// The word covering the character at `offset` of `text`, the line the tokens were cut from,
-    /// with its range there in characters; nil on punctuation or what is no word to look up.
-    public static func word(
-        atCharacter offset: Int, in tokens: [Token], text: String, dictionary: (any WordDictionary)?
-    ) -> (word: FoundWord, range: Range<Int>)? {
-        // Only the tokens a word covering the tapped one could span: a dictionary word is at
-        // most `longestSpan` tokens, so nothing further off can reach it.
-        guard
-            let tapped = tokens.firstIndex(where: {
-                let start = text.distance(from: text.startIndex, to: $0.range.lowerBound)
-                let end = text.distance(from: text.startIndex, to: $0.range.upperBound)
-                return (start..<end).contains(offset)
-            })
-        else { return nil }
-        let window = Array(
-            tokens[max(0, tapped - longestSpan + 1)..<min(tokens.count, tapped + longestSpan)])
-        for word in words(in: window, dictionary: dictionary) {
-            let start = text.distance(from: text.startIndex, to: word.tokens[0].range.lowerBound)
-            let end = text.distance(
-                from: text.startIndex, to: word.tokens[word.tokens.count - 1].range.upperBound)
-            if (start..<end).contains(offset) { return (word, start..<end) }
-        }
-        return nil
-    }
 
     public static func words(in tokens: [Token], dictionary: (any WordDictionary)?) -> [FoundWord] {
         segments(in: tokens, dictionary: dictionary).filter(\.isShown).map(\.word)

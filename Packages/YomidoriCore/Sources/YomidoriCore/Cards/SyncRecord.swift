@@ -1,3 +1,4 @@
+import CryptoKit
 import Foundation
 
 /// What sync keeps in iCloud, one record per card, collection and looked-up word, and one
@@ -19,8 +20,10 @@ public enum SyncKind: String, CaseIterable, Sendable {
     }
 }
 
-/// A record's name in iCloud: its kind and its store key. CloudKit wants names in ASCII, so
-/// a lookup's key, a word and its reading, is percent-encoded.
+/// A record's name in iCloud: its kind and its store key. CloudKit wants names in ASCII and
+/// no longer than 255 characters, so a lookup's key, a word and its reading, is
+/// percent-encoded, and one too long for that (お誕生日おめでとうございます) is named by its
+/// hash instead, which can't be read back into the key.
 public struct SyncName: Equatable, Hashable, Sendable {
     public let kind: SyncKind
     public let key: String
@@ -31,18 +34,42 @@ public struct SyncName: Equatable, Hashable, Sendable {
     }
 
     public static let historyCleared = SyncName(.historyCleared, "cleared")
+    static let longest = 255
+    /// Starts a hashed key; percent-encoding never writes it.
+    private static let hashMark = "_"
 
     public var recordName: String {
-        "\(kind.rawValue)-"
+        let spelled =
+            "\(kind.rawValue)-"
             + (key.addingPercentEncoding(withAllowedCharacters: .alphanumerics.union(["-"])) ?? key)
+        guard spelled.utf8.count > Self.longest else { return spelled }
+        let hash = SHA256.hash(data: Data(key.utf8)).map { String(format: "%02x", $0) }.joined()
+        return "\(kind.rawValue)-\(Self.hashMark)\(hash)"
     }
 
+    /// The name read back; nil for a hashed one, whose key only a list of keys can find (see
+    /// `key(ofRecordName:among:)`).
     public init?(recordName: String) {
-        guard let dash = recordName.firstIndex(of: "-"),
-            let kind = SyncKind(rawValue: String(recordName[..<dash])),
-            let key = String(recordName[recordName.index(after: dash)...]).removingPercentEncoding
+        guard let kind = Self.kind(ofRecordName: recordName) else { return nil }
+        let rest = String(recordName.drop { $0 != "-" }.dropFirst())
+        guard !rest.hasPrefix(Self.hashMark), let key = rest.removingPercentEncoding
         else { return nil }
         self.init(kind, key)
+    }
+
+    /// The kind of any record name this app writes, hashed or not.
+    public static func kind(ofRecordName recordName: String) -> SyncKind? {
+        guard let dash = recordName.firstIndex(of: "-") else { return nil }
+        return SyncKind(rawValue: String(recordName[..<dash]))
+    }
+
+    /// The key a record name stands for, looked for among `keys` when the name is hashed.
+    public static func key(
+        ofRecordName recordName: String, among keys: @autoclosure () -> [String]
+    ) -> String? {
+        if let name = SyncName(recordName: recordName) { return name.key }
+        guard let kind = kind(ofRecordName: recordName) else { return nil }
+        return keys().first { SyncName(kind, $0).recordName == recordName }
     }
 }
 

@@ -108,7 +108,10 @@ struct LessonView: View {
     }
 
     private func advance(_ card: Card, _ verdict: LessonCard.Verdict) {
-        var changed = card
+        // Two buttons pressed at once both land here with the same card: take it once.
+        guard cards?.first?.id == card.id else { return }
+        // The stored card, which another device may have changed since the lesson began.
+        var changed = Cards.store?.card(id: card.id) ?? card
         switch verdict {
         case .start:
             changed.start(at: Date())

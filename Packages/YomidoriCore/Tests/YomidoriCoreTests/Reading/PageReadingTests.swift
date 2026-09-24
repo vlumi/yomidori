@@ -36,6 +36,18 @@ final class PageReadingTests: XCTestCase {
         XCTAssertEqual(page.chunks.map(\.id), Array(page.chunks.indices))
     }
 
+    func testChunksCoverWholeCharactersOfOddText() {
+        for text in ["葛\u{E0100}の花", "天気\u{FE0F}です", "は\u{200D}い", "👩‍👩‍👧と\n👍🏽"] {
+            let page = PageReading(
+                text: text, tokens: SystemTokenizer().tokens(in:), dictionary: Stub())
+            let characters = Array(text)
+            for chunk in page.chunks {
+                XCTAssertFalse(chunk.range.isEmpty, text)
+                XCTAssertEqual(String(characters[chunk.range]), chunk.surface, text)
+            }
+        }
+    }
+
     func testAPlaceFindsItsChunkAndARangeTheChunksItTouches() {
         let page = read()
         XCTAssertEqual(page.chunk(at: 1)?.surface, "樹皮")

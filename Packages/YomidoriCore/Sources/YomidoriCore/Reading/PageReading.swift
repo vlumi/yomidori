@@ -30,9 +30,13 @@ public struct PageReading: Sendable {
         lines = TranscriptLines(text)
         tokenLines = lines.lines.map(tokens)
         var chunks: [Chunk] = []
+        // Each line's start counted on from the one before, not from the top of the page.
+        var counted = (index: text.startIndex, offset: 0)
         for (line, lineTokens) in tokenLines.enumerated() {
             let lineText = lines.lines[line]
-            let lineStart = text.distance(from: text.startIndex, to: lines.starts[line])
+            let lineStart =
+                counted.offset + text.distance(from: counted.index, to: lines.starts[line])
+            counted = (lines.starts[line], lineStart)
             for segment in WordFinder.segments(in: lineTokens, dictionary: dictionary) {
                 let first = segment.word.tokens[0].range.lowerBound
                 let last = segment.word.tokens[segment.word.tokens.count - 1].range.upperBound

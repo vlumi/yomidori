@@ -9,7 +9,8 @@ struct AcceptedMeanings: View {
 
     var body: some View {
         Section {
-            ForEach(card.acceptedMeanings, id: \.self) { meaning in
+            // By place: meanings merged from another device may repeat one.
+            ForEach(Array(card.acceptedMeanings.enumerated()), id: \.offset) { _, meaning in
                 Text(verbatim: meaning)
             }
             .onDelete { offsets in
@@ -21,9 +22,9 @@ struct AcceptedMeanings: View {
             }
             .onSubmit {
                 let meaning = draft.trimmingCharacters(in: .whitespaces)
-                guard !meaning.isEmpty else { return }
-                card.acceptedMeanings.append(meaning)
                 draft = ""
+                guard !meaning.isEmpty, !card.acceptedMeanings.contains(meaning) else { return }
+                card.acceptedMeanings.append(meaning)
                 save()
             }
         } header: {

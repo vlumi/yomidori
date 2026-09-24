@@ -198,6 +198,10 @@ struct ReviewView: View {
         _ item: ReviewItem, _ grade: Grade, reconciled: Bool = false,
         accepting meaning: String? = nil
     ) {
+        // Two buttons pressed at once both land here with the same item: grade it once.
+        guard let current = queue.first, current.card.id == item.card.id,
+            current.question == item.question
+        else { return }
         let reviewed = try? Cards.store?.answer(
             item, grade: grade, at: Date(), reconciled: reconciled, accepting: meaning)
         revealed = false
