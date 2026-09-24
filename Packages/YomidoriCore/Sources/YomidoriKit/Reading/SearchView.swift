@@ -10,6 +10,7 @@ struct SearchView: View {
     @State private var historyGeneration = 0
     @State private var accents: [Int: PitchAccent] = [:]
     @FocusState private var searching: Bool
+    @State private var buildingKanji = false
     @EnvironmentObject private var taps: TabTaps
 
     var body: some View {
@@ -20,6 +21,13 @@ struct SearchView: View {
 
     private var list: some View {
         List {
+            // In the list, not the navigation bar, which hides while the field is focused.
+            Button {
+                buildingKanji = true
+            } label: {
+                partsLabel
+            }
+            .tint(Palette.nightGreen)
             if SearchQuery.kind(of: query) == .empty {
                 LookupHistoryView(generation: historyGeneration)
                     .id(TabTop.id)
@@ -46,6 +54,13 @@ struct SearchView: View {
         }
         .navigationTitle(Text("Search", bundle: .module))
         .toolbar {
+            ToolbarItem(placement: .keyboard) {
+                Button {
+                    buildingKanji = true
+                } label: {
+                    partsLabel
+                }
+            }
             if SearchQuery.kind(of: query) == .empty, Cards.lookups?.lookups().isEmpty == false {
                 ToolbarItem(placement: .primaryAction) {
                     Button(role: .destructive) {
@@ -57,6 +72,9 @@ struct SearchView: View {
                 }
             }
         }
+        .sheet(isPresented: $buildingKanji, onDismiss: { searching = true }) {
+            KanjiByPartsView(query: $query)
+        }
         .task(id: query) {
             try? await Task.sleep(for: .milliseconds(150))
             guard !Task.isCancelled else { return }
@@ -66,6 +84,14 @@ struct SearchView: View {
                     JMdict.bundled?.pitchAccent(of: entry).map { (entry.id, $0) }
                 }, uniquingKeysWith: { first, _ in first })
             kept = Cards.keptWords()
+        }
+    }
+
+    private var partsLabel: some View {
+        Label {
+            Text("Kanji by parts", bundle: .module)
+        } icon: {
+            Image(systemName: "square.grid.3x3.square")
         }
     }
 }

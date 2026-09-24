@@ -42,6 +42,54 @@ extension JMdict {
         }
     }
 
+    public func kanjiParts() -> [KanjiPart] {
+        queue.sync {
+            rows(
+                """
+                SELECT c.component, k.strokes
+                FROM (SELECT DISTINCT component FROM kanji_component) c
+                LEFT JOIN kanji_info k ON k.literal = c.component
+                ORDER BY k.strokes, c.component
+                """, bind: nil
+            ).map { KanjiPart(component: $0[0], strokes: Int($0[1])) }
+        }
+    }
+
+    public func kanji(withParts parts: [String], limit: Int) -> [String] {
+        guard !parts.isEmpty else { return [] }
+        return queue.sync {
+            rows(
+                """
+                SELECT c.literal FROM kanji_component c
+                LEFT JOIN kanji_info k ON k.literal = c.literal
+                WHERE c.component IN (\(placeholders(parts.count)))
+                GROUP BY c.literal HAVING COUNT(DISTINCT c.component) = \(Set(parts).count)
+                ORDER BY k.strokes IS NULL, k.strokes, k.freq IS NULL, k.freq, c.literal
+                LIMIT \(limit)
+                """, binds: parts
+            ).map { $0[0] }
+        }
+    }
+
+    public func parts(foundWith parts: [String]) -> Set<String> {
+        guard !parts.isEmpty else { return [] }
+        return queue.sync {
+            Set(
+                rows(
+                    """
+                    SELECT DISTINCT component FROM kanji_component WHERE literal IN (
+                        SELECT literal FROM kanji_component
+                        WHERE component IN (\(placeholders(parts.count)))
+                        GROUP BY literal HAVING COUNT(DISTINCT component) = \(Set(parts).count))
+                    """, binds: parts
+                ).map { $0[0] })
+        }
+    }
+
+    private func placeholders(_ count: Int) -> String {
+        (1...count).map { "?\($0)" }.joined(separator: ", ")
+    }
+
     private func point(_ x: String, _ y: String) -> CGPoint? {
         guard let x = Double(x), let y = Double(y) else { return nil }
         return CGPoint(x: x, y: y)

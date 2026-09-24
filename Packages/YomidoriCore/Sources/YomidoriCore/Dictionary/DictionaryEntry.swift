@@ -54,6 +54,13 @@ public protocol WordDictionary {
     /// stands; common words first.
     func entries(spelledLike form: String, anyCharacterAt index: Int, limit: Int)
         -> [DictionaryEntry]
+    /// Every part kanji are built from.
+    func kanjiParts() -> [KanjiPart]
+    /// The kanji built from all of `parts` (by `KanjiPart.component`), fewest strokes first.
+    func kanji(withParts parts: [String], limit: Int) -> [String]
+    /// The parts found together with all of `parts` in some kanji, so adding one of them
+    /// still leaves a kanji to find.
+    func parts(foundWith parts: [String]) -> Set<String>
 }
 
 extension WordDictionary {
@@ -62,6 +69,9 @@ extension WordDictionary {
     public func entries(spelledLike form: String, anyCharacterAt index: Int, limit: Int)
         -> [DictionaryEntry]
     { [] }
+    public func kanjiParts() -> [KanjiPart] { [] }
+    public func kanji(withParts parts: [String], limit: Int) -> [String] { [] }
+    public func parts(foundWith parts: [String]) -> Set<String> { [] }
 
     /// Other words read the same way, written in kanji, common first.
     public func homophones(of entry: DictionaryEntry) -> [DictionaryEntry] {

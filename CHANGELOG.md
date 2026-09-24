@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Find a kanji by its parts.** In search, the grid button opens every part kanji are built from, by stroke count: tap the ones you see, pick from the kanji that have them all, and it goes into the search; parts that lead nowhere fade, and the sheet stays open to build the next kanji of a word.
+
 ### build 10 — 2026-09-23
 
 - **Start again while a page is read.** Tap Read while the page is still being read, a blurred shot or one frozen too soon, and the camera is back at once: the reading is abandoned, not waited for. The two recognizers also read side by side now, so a page is ready sooner.
