@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 11 — 2026-09-24
+
 - **No more words made of endings.** Endings and particles next to each other no longer turn into an unrelated word spelled the same in kana (逢ったが no longer shows 箍, *hoop*); kana expressions like かもしれない still read as one.
 - **One page, one selection, and taps at once.** A page is read into its words once, in a moment, and the picture, the recognized text and the drawer show the same selection: tap a word in any of them and it is lit in all three. A long press stretches the selection to another word, across lines if you like, and the drawer shows the whole phrase first (looked up as one when the dictionary knows it) and each word under it. Taps are instant: a word lookup that searched the whole dictionary each time now uses its indexes, which also speeds up search.
 - **Tap a word in Vision mode.** A tap on a line lands on the character under your finger, and the word there is outlined on the page and read out in the drawer, with its reading, pitch, meaning, Keep and Fix a character, as a Live Text selection is; vertical columns included. The sentences it keeps come from Vision's own reading of the page.
