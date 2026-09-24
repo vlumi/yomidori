@@ -27,9 +27,9 @@ struct TextPage: UIViewRepresentable {
     func updateUIView(_ view: UITextView, context: Context) {
         if view.text != text { view.text = text }
         context.coordinator.text = text
-        if let requested = selection.requested, requested.upperBound <= text.endIndex {
-            let range = NSRange(requested, in: text)
-            if view.selectedRange != range { view.selectedRange = range }
+        if let requested = selection.requested, let range = CharacterRange.of(requested, in: text) {
+            let selected = NSRange(range, in: text)
+            if view.selectedRange != selected { view.selectedRange = selected }
         }
     }
 
@@ -49,7 +49,10 @@ struct TextPage: UIViewRepresentable {
         func textViewDidChangeSelection(_ view: UITextView) {
             let range = Range(view.selectedRange, in: text)
             selection.text = range.map { String(text[$0]) } ?? ""
-            selection.range = range
+            selection.range = range.map { range in
+                let start = text.distance(from: text.startIndex, to: range.lowerBound)
+                return start..<(start + text[range].count)
+            }
         }
     }
 }

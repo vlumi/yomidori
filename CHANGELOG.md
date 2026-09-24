@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **No crash on a retake.** Retaking a page after selecting a word in Live Text and pressing Read the page no longer crashes the app.
+
 ### build 11 — 2026-09-24
 
 - **No more words made of endings.** Endings and particles next to each other no longer turn into an unrelated word spelled the same in kana (逢ったが no longer shows 箍, *hoop*); kana expressions like かもしれない still read as one.

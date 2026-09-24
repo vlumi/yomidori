@@ -32,10 +32,11 @@ struct LiveTextImage: UIViewRepresentable {
         }
         // While the page is read into words it takes no selection.
         uiView.imageView.isUserInteractionEnabled = !selection.looking
-        if let requested = selection.requested,
-            context.coordinator.interaction.selectedRanges != [requested]
+        if let analysis, let requested = selection.requested,
+            let range = CharacterRange.of(requested, in: analysis.transcript),
+            context.coordinator.interaction.selectedRanges != [range]
         {
-            context.coordinator.interaction.selectedRanges = [requested]
+            context.coordinator.interaction.selectedRanges = [range]
         }
     }
 
@@ -63,9 +64,17 @@ struct LiveTextImage: UIViewRepresentable {
 
         private func poll() {
             let text = interaction.selectedText
-            guard text != selection.text else { return }
+            let range = interaction.selectedRanges.first.flatMap { range in
+                interaction.analysis.map { analysis -> Range<Int> in
+                    let transcript = analysis.transcript
+                    let start = transcript.distance(
+                        from: transcript.startIndex, to: range.lowerBound)
+                    return start..<(start + transcript[range].count)
+                }
+            }
+            guard text != selection.text || range != selection.range else { return }
             selection.text = text
-            selection.range = interaction.selectedRanges.first
+            selection.range = range
         }
 
         func stop() {

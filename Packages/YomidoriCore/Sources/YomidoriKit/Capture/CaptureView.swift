@@ -279,6 +279,7 @@ public struct CaptureView: View {
         analysis = nil
         page.transcript = nil
         page.selectedRange = nil
+        selection.clear()
         closeUp = nil
         closeUpTask?.cancel()
         closeUpTask = nil
