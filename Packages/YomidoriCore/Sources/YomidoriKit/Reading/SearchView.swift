@@ -48,12 +48,8 @@ struct SearchView: View {
         .searchSelection($selection)
         // The parts sheet opens from a button at the end of the search box, put there once
         // the field has the keyboard.
-        .onChange(of: searching) { _, focused in
-            guard focused else { return }
-            Task { @MainActor in
-                try? await Task.sleep(for: .milliseconds(300))
-                partsButton().install()
-            }
+        .task(id: searching) {
+            if searching { await partsButton().install() }
         }
         // Switched to, the tab is for typing: the field takes the keyboard at once.
         .onChange(of: taps.shown, initial: true) { _, shown in
