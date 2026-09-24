@@ -6,18 +6,20 @@ extension CloudSync {
     // MARK: Records out
 
     func record(for recordID: CKRecord.ID) -> CKRecord? {
-        guard let name = SyncName(recordName: recordID.recordName) else { return nil }
-        let record = blankRecord(recordID, type: name.kind.recordType)
-        switch name.kind {
+        guard let kind = SyncName.kind(ofRecordName: recordID.recordName),
+            let key = key(of: recordID.recordName, kind: kind)
+        else { return nil }
+        let record = blankRecord(recordID, type: kind.recordType)
+        switch kind {
         case .card:
-            guard let card = stores.cards.cards().first(where: { $0.id.uuidString == name.key }),
+            guard let card = stores.cards.cards().first(where: { $0.id.uuidString == key }),
                 let data = try? SyncPayload.encode(card)
             else { return nil }
             record["json"] = data
         case .collection:
             guard
                 let collection = stores.collections.collections().first(where: {
-                    $0.id.uuidString == name.key
+                    $0.id.uuidString == key
                 }),
                 let data = try? SyncPayload.encode(collection)
             else { return nil }
@@ -25,7 +27,7 @@ extension CloudSync {
             record["cover"] = collection.coverID.flatMap(stores.coverURL).map(
                 CKAsset.init(fileURL:))
         case .lookup:
-            guard let lookup = stores.lookups.lookups().first(where: { $0.id == name.key }),
+            guard let lookup = stores.lookups.lookups().first(where: { $0.id == key }),
                 let data = try? SyncPayload.encode(lookup)
             else { return nil }
             record["json"] = data
@@ -34,6 +36,14 @@ extension CloudSync {
             record["cleared"] = cleared
         }
         return record
+    }
+
+    /// The store key a record name stands for; a lookup's name may be a hash, found among the
+    /// lookups this device has.
+    private func key(of recordName: String, kind: SyncKind) -> String? {
+        SyncName.key(
+            ofRecordName: recordName,
+            among: kind == .lookup ? stores.lookups.lookups().map(\.id) : [])
     }
 
     private func blankRecord(_ recordID: CKRecord.ID, type: String) -> CKRecord {
@@ -71,8 +81,11 @@ extension CloudSync {
         var deleted: [SyncKind: Set<String>] = [:]
         for deletion in changes.deletions {
             lock.withLock { systemFields[deletion.recordID.recordName] = nil }
-            if let name = SyncName(recordName: deletion.recordID.recordName) {
-                deleted[name.kind, default: []].insert(name.key)
+            let recordName = deletion.recordID.recordName
+            if let kind = SyncName.kind(ofRecordName: recordName),
+                let key = key(of: recordName, kind: kind)
+            {
+                deleted[kind, default: []].insert(key)
             }
         }
         saveSystemFields()
@@ -93,8 +106,8 @@ extension CloudSync {
     /// One record from another device; merged with the local one only where this device has
     /// changed it too and not yet sent the change.
     private func take(_ record: CKRecord, changedHere: Bool, into incoming: inout Incoming) {
-        guard let name = SyncName(recordName: record.recordID.recordName) else { return }
-        switch name.kind {
+        guard let kind = SyncName.kind(ofRecordName: record.recordID.recordName) else { return }
+        switch kind {
         case .card:
             guard let remote = decode(Card.self, record) else { return }
             let local = changedHere ? stores.cards.cards().first { $0.id == remote.id } : nil
@@ -115,8 +128,8 @@ extension CloudSync {
     }
 
     func mergeLocally(_ server: CKRecord) {
-        guard let name = SyncName(recordName: server.recordID.recordName) else { return }
-        switch name.kind {
+        guard let kind = SyncName.kind(ofRecordName: server.recordID.recordName) else { return }
+        switch kind {
         case .card:
             guard let remote = decode(Card.self, server),
                 let local = stores.cards.cards().first(where: { $0.id == remote.id })

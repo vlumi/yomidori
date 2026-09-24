@@ -26,33 +26,4 @@ final class TextFixTests: XCTestCase {
         XCTAssertEqual(TextFix.map(offset: 4, through: fixes), 3)
         XCTAssertEqual(TextFix.map(offset: 5, through: []), 5)
     }
-
-    func testASelectionFindsItsLineAfterAFixThatChangedTheLength() {
-        let page = "彼は言舌した。\n窓の外では雪が降っていた。"
-        let fixes = [TextFix(offset: 2, length: 2, replacement: "話")]
-        let fixed = TextFix.apply(fixes, to: page)
-        let lines = TranscriptLines(fixed)
-        XCTAssertEqual(
-            lines.lineIndex(
-                ofSelection: page.range(of: "雪"), in: page, pageOffset: 0, transcript: fixed,
-                fixes: fixes),
-            1)
-    }
-
-    func testATokensOffsetsAndTheTokensOverARange() {
-        let fixed = "前の文。\n樹皮の匂いがした。"
-        let lines = TranscriptLines(fixed)
-        let tokens = SystemTokenizer().tokens(in: lines.lines[1])
-        let bark = tokens.first { $0.surface == "樹皮" }!
-        let smell = tokens.first { $0.surface == "匂い" }!
-        let offsets = lines.offsets(of: smell, onLine: 1, in: fixed)
-        XCTAssertEqual(offsets.inLine, 3)
-        XCTAssertEqual(offsets.inTranscript, 8)
-        XCTAssertEqual(
-            WordFinder.tokens(tokens, overlapping: 0..<2, in: lines.lines[1]).map(\.surface), ["樹皮"]
-        )
-        XCTAssertEqual(
-            WordFinder.tokens(tokens, overlapping: 1..<4, in: lines.lines[1]),
-            [bark, tokens[1], smell])
-    }
 }

@@ -25,8 +25,15 @@ struct TextPage: UIViewRepresentable {
     }
 
     func updateUIView(_ view: UITextView, context: Context) {
-        if view.text != text { view.text = text }
+        // The coordinator knows the new text before the view, and a selection reset by the
+        // new text isn't published in the middle of this update (the page's own state is
+        // cleared with it).
         context.coordinator.text = text
+        if view.text != text {
+            context.coordinator.applying = true
+            view.text = text
+            context.coordinator.applying = false
+        }
         if let requested = selection.requested, let range = CharacterRange.of(requested, in: text) {
             let selected = NSRange(range, in: text)
             if view.selectedRange != selected {

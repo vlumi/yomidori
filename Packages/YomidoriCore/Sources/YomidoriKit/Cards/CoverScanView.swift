@@ -109,7 +109,8 @@ struct CoverScanView: View {
                 Text("Nothing was read off the cover.", bundle: .module)
                     .foregroundStyle(.secondary)
             }
-            ForEach(lines, id: \.self) { line in
+            // By place: a title printed twice is read twice.
+            ForEach(Array(lines.enumerated()), id: \.offset) { _, line in
                 FitsOrStacks {
                     Text(japanese: line)
                         .frame(maxWidth: .infinity, alignment: .leading)

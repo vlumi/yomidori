@@ -190,10 +190,14 @@ final class Camera: ObservableObject {
     private func focusNear(_ device: AVCaptureDevice) {
         guard (try? device.lockForConfiguration()) != nil else { return }
         defer { device.unlockForConfiguration() }
-        let wide =
+        let switchOver =
             device.virtualDeviceSwitchOverVideoZoomFactors.first.map { CGFloat(truncating: $0) }
             ?? 1
-        zoomRange = wide...min(wide * 5, device.maxAvailableVideoZoomFactor)
+        // Kept inside what the device allows now; a virtual device may allow less.
+        let lowest = device.minAvailableVideoZoomFactor
+        let highest = max(lowest, device.maxAvailableVideoZoomFactor)
+        let wide = min(max(switchOver, lowest), highest)
+        zoomRange = wide...max(wide, min(wide * 5, highest))
         device.videoZoomFactor = wide
         if device.isFocusModeSupported(.continuousAutoFocus) {
             device.focusMode = .continuousAutoFocus

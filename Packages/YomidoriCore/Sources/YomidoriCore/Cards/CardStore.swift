@@ -59,7 +59,7 @@ extension CardStore {
         accepting meaning: String? = nil
     ) throws -> Card {
         var card = self.card(id: item.card.id) ?? item.card
-        if let meaning {
+        if let meaning, !card.acceptedMeanings.contains(meaning) {
             card.acceptedMeanings.append(meaning)
         }
         card.answer(item.question, grade: grade, at: date, reconciled: reconciled)

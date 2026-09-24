@@ -23,7 +23,7 @@ final class Sync: ObservableObject {
         engineLock.withLock { current }
     }
     private nonisolated(unsafe) static var current: CloudSync?
-    private static let engineLock = NSLock()
+    private nonisolated static let engineLock = NSLock()
 
     func start() {
         guard Self.engine == nil, !DemoMode.isRequested,
@@ -36,8 +36,10 @@ final class Sync: ObservableObject {
         guard let stores = Cards.syncStores, let directory = try? Cards.directory() else { return }
         let engine = CloudSync(
             containerIdentifier: Self.containerIdentifier, stores: stores, directory: directory)
-        engine.onStatus = { status in
+        engine.onStatus = { [weak engine] status in
             Task { @MainActor in
+                // An engine stopped since has nothing more to say.
+                guard let engine, Sync.engine === engine else { return }
                 switch status {
                 case .syncing: Sync.shared.status = .syncing
                 case .upToDate: Sync.shared.status = .upToDate

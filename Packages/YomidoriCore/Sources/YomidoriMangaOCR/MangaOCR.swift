@@ -37,10 +37,12 @@ public final class MangaOCR {
 
     public func read(_ image: CGImage) throws -> String {
         let pixels = try Self.pixels(of: image)
-        let memory = try encoder.prediction(
-            from: MLDictionaryFeatureProvider(dictionary: ["pixels": pixels])
-        )
-        .featureValue(for: "memory")!.multiArrayValue!
+        guard
+            let memory = try encoder.prediction(
+                from: MLDictionaryFeatureProvider(dictionary: ["pixels": pixels])
+            )
+            .featureValue(for: "memory")?.multiArrayValue
+        else { throw Self.unexpectedModel }
         let ids = try MLMultiArray(shape: [1, NSNumber(value: Self.maxLength)], dataType: .int32)
         let mask = try MLMultiArray(
             shape: [1, NSNumber(value: Self.maxLength)], dataType: .float32)
@@ -55,9 +57,11 @@ public final class MangaOCR {
             let input = try MLDictionaryFeatureProvider(dictionary: [
                 "ids": ids, "mask": mask, "memory": memory,
             ])
-            let logits = try decoder.prediction(from: input).featureValue(for: "logits")!
-                .multiArrayValue!
-            let next = Self.argmax(logits, row: step - 1)
+            guard
+                let logits = try decoder.prediction(from: input).featureValue(for: "logits")?
+                    .multiArrayValue,
+                let next = Self.argmax(logits, row: step - 1)
+            else { throw Self.unexpectedModel }
             if next == Int(Self.end) { break }
             tokens.append(next)
             ids[step] = NSNumber(value: Int32(next))
@@ -98,22 +102,29 @@ public final class MangaOCR {
         return array
     }
 
-    private static func argmax(_ logits: MLMultiArray, row: Int) -> Int {
+    /// A model whose outputs aren't the ones this code was written for.
+    static let unexpectedModel = CocoaError(.featureUnsupported)
+
+    /// The likeliest token at `row` of logits shaped [1, rows, vocabulary], following the
+    /// array's strides; nil for any other shape.
+    private static func argmax(_ logits: MLMultiArray, row: Int) -> Int? {
+        guard logits.shape.count == 3, row < logits.shape[1].intValue else { return nil }
         let vocabulary = logits.shape[2].intValue
-        let base = row * vocabulary
+        let base = row * logits.strides[1].intValue
+        let step = logits.strides[2].intValue
         var best = 0
         var bestValue = -Float.infinity
         switch logits.dataType {
         case .float16:
             let pointer = logits.dataPointer.assumingMemoryBound(to: Float16.self)
-            for i in 0..<vocabulary where Float(pointer[base + i]) > bestValue {
-                bestValue = Float(pointer[base + i])
+            for i in 0..<vocabulary where Float(pointer[base + i * step]) > bestValue {
+                bestValue = Float(pointer[base + i * step])
                 best = i
             }
         default:
             let pointer = logits.dataPointer.assumingMemoryBound(to: Float32.self)
-            for i in 0..<vocabulary where pointer[base + i] > bestValue {
-                bestValue = pointer[base + i]
+            for i in 0..<vocabulary where pointer[base + i * step] > bestValue {
+                bestValue = pointer[base + i * step]
                 best = i
             }
         }

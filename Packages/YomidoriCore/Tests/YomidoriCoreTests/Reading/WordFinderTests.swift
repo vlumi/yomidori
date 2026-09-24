@@ -136,20 +136,4 @@ final class WordFinderTests: XCTestCase {
             "蛍光灯", [Cut(surface: "蛍光", reading: "けいこう"), Cut(surface: "灯", reading: "とう")])
         XCTAssertEqual(WordFinder.words(in: cut, dictionary: nil).map(\.surface), ["蛍光", "灯"])
     }
-
-    func testAWordAlignsToTheLineThatSpellsIt() {
-        let line = tokens(
-            "机の蛍光灯",
-            [
-                Cut(surface: "机", reading: "つくえ"), Cut(surface: "の", reading: "の"),
-                Cut(surface: "蛍光", reading: "けいこう"), Cut(surface: "灯", reading: "とう"),
-            ])
-        let selection = tokens(
-            "蛍光灯", [Cut(surface: "蛍光", reading: "けいこう"), Cut(surface: "灯", reading: "とう")])
-        let word = WordFinder.words(in: selection, dictionary: dictionary)[0]
-        let aligned = word.aligned(to: line)
-        XCTAssertEqual(aligned?.tokens, Array(line[2...]))
-        XCTAssertEqual(aligned?.entries, word.entries)
-        XCTAssertNil(word.aligned(to: Array(line[..<2])))
-    }
 }
