@@ -198,8 +198,11 @@ use for its own input.
   by `CKSyncEngine`. One record per card, collection and looked-up word
   (`SyncName`, the store key made ASCII; `SyncPayload`, the same JSON the stores
   write), a cover as the collection record's asset, and one record for the date
-  the history was last cleared. The local files are the truth: this device's
-  writes go out as they are made (the stores report them as local), another
+  the history was last cleared. A card's id is made from its word
+  (`WordKey.cardID`, a name-based UUID), so the same word kept on two devices is
+  one record, merged like any other. Changes made while sync is off are kept
+  (`UnsentChanges`) and sent when it starts. The local files are the truth:
+  this device's writes go out as they are made (the stores report them as local), another
   device's are laid over them (reported as remote, so they are not sent back),
   merged by Core's rules only where this device changed the same record and had
   not sent it yet; a save that finds a newer version on the server merges it in
