@@ -87,4 +87,51 @@ final class RecordFileTests: XCTestCase {
             FileLookupHistory(url: directory.appendingPathComponent("phone.json")).clearedAt,
             cleared)
     }
+
+    func testARecordThatDoesNotDecodeIsKeptAndWrittenBackNotLostWithTheRest() throws {
+        let url = directory.appendingPathComponent("cards.json")
+        let store = FileCardStore(url: url)
+        try store.keep(
+            Sighting(sentence: "樹皮。", surface: "樹皮", offset: 0, source: nil, date: start),
+            headword: "樹皮", reading: "じゅひ", entryID: 1)
+        // A card a newer build wrote, with a grade this one does not know.
+        var elements = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [[String: Any]])
+        var newer = elements[0]
+        newer["id"] = UUID().uuidString
+        newer["headword"] = "頷く"
+        newer["log"] = [
+            [
+                "date": "2026-09-18T00:00:00Z", "question": "reading", "grade": "easy",
+                "reconciled": false,
+            ]
+        ]
+        elements.append(newer)
+        try JSONSerialization.data(withJSONObject: elements).write(to: url)
+        let reopened = FileCardStore(url: url)
+        XCTAssertEqual(reopened.cards().map(\.headword), ["樹皮"])
+        try reopened.keep(
+            Sighting(sentence: "相槌を打つ。", surface: "相槌", offset: 0, source: nil, date: start),
+            headword: "相槌", reading: "あいづち", entryID: 2)
+        let written = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [[String: Any]])
+        XCTAssertEqual(written.count, 3)
+        XCTAssertTrue(written.contains { $0["headword"] as? String == "頷く" })
+    }
+
+    func testAFileThatIsNoListIsSetAsideNotWrittenOver() throws {
+        let url = directory.appendingPathComponent("cards.json")
+        try Data("not json at all".utf8).write(to: url)
+        let store = FileCardStore(url: url)
+        XCTAssertEqual(store.cards(), [])
+        try store.keep(
+            Sighting(sentence: "樹皮。", surface: "樹皮", offset: 0, source: nil, date: start),
+            headword: "樹皮", reading: "じゅひ", entryID: 1)
+        let aside = try FileManager.default.contentsOfDirectory(atPath: directory.path)
+            .filter { $0.hasPrefix("cards.unreadable-") }
+        XCTAssertEqual(aside.count, 1)
+        XCTAssertEqual(
+            try String(contentsOf: directory.appendingPathComponent(aside[0]), encoding: .utf8),
+            "not json at all")
+    }
 }

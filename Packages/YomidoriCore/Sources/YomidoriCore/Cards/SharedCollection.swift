@@ -100,12 +100,13 @@ public struct SharedCollection: Codable, Equatable, Sendable {
             if let index = cards.firstIndex(where: {
                 $0.headword == word.headword && $0.reading == word.reading
             }) {
-                let known = Set(cards[index].sightings.map(\.sentence))
+                var known = Set(cards[index].sightings.map(\.sentence))
                 for sighting in sightings
                 where !sighting.sentence.isEmpty
                     && !known.contains(sighting.sentence)
                 {
                     cards[index].add(sighting)
+                    known.insert(sighting.sentence)
                 }
                 cards[index].add(to: collection)
                 joined += 1
