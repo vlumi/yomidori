@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Tidy search and history rows.** Each entry is two even lines, the word with its reading and pitch, then its meaning; no more words squeezed into a column, rows left half empty, or pitch numbers cut off.
+
 ### build 10 — 2026-09-23
 
 - **Start again while a page is read.** Tap Read while the page is still being read, a blurred shot or one frozen too soon, and the camera is back at once: the reading is abandoned, not waited for. The two recognizers also read side by side now, so a page is ready sooner.
