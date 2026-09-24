@@ -98,7 +98,13 @@ public enum WordFinder {
             let span = Array(tokens[start..<stop])
             guard span.allSatisfy(\.isWord) else { continue }
             let surface = span.map(\.surface).joined()
-            let entries = dictionary.entries(forAny: Deinflector.candidates(for: surface))
+            var entries = dictionary.entries(forAny: Deinflector.candidates(for: surface))
+            // Endings and particles side by side spell many a word in kana (た + が is 箍 or 誰が,
+            // し + た is 下); a join of kana alone counts only as what is first of all an
+            // expression, かもしれない.
+            if Kana.isKana(surface) {
+                entries = entries.filter { $0.senses.first?.partsOfSpeech.contains("exp") == true }
+            }
             if !entries.isEmpty {
                 return FoundWord(tokens: span, entries: entries)
             }

@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **No more words made of endings.** Endings and particles next to each other no longer turn into an unrelated word spelled the same in kana (逢ったが no longer shows 箍, *hoop*); kana expressions like かもしれない still read as one.
 - **A tap answers at once.** Tapping a word lights its line and shows *Looking it up…* straight away, and the page takes no other tap until the word is found; the lookup itself is lighter, and a Live Text selection is noticed sooner.
 - **Tap a word in Vision mode.** A tap on a line lands on the character under your finger, and the word there is outlined on the page and read out in the drawer, with its reading, pitch, meaning, Keep and Fix a character, as a Live Text selection is; vertical columns included. The sentences it keeps come from Vision's own reading of the page.
 - **Find a kanji by its parts.** While you type a search, the grid button at the end of the search box opens every part kanji are built from, by stroke count: tap the ones you see, parts that lead nowhere fade, and pick from the kanji that have them all; it goes in where your cursor was, or over what you had selected, and you are back to typing.

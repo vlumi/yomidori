@@ -39,6 +39,36 @@ final class WordFinderTests: XCTestCase {
         }
     }
 
+    func testKanaPiecesJoinOnlyIntoAnExpression() {
+        struct Kana: WordDictionary {
+            func entries(matching text: String) -> [DictionaryEntry] {
+                let pos: [String: String] = ["たが": "n", "かもしれない": "exp", "逢う": "v5u"]
+                guard let tag = pos[text] else { return [] }
+                return [
+                    DictionaryEntry(
+                        id: text.hashValue, kanji: [], readings: [text],
+                        senses: [DictionaryEntry.Sense(partsOfSpeech: [tag], glosses: ["g"])],
+                        common: true)
+                ]
+            }
+            func pitchAccents(for headword: String, reading: String) -> [PitchAccent] { [] }
+            func search(_ query: String, limit: Int) -> [DictionaryEntry] { [] }
+        }
+        let hoop = WordFinder.words(
+            in: tokens("たが", [Cut(surface: "た", reading: "た"), Cut(surface: "が", reading: "が")]),
+            dictionary: Kana())
+        XCTAssertFalse(hoop.contains { $0.surface == "たが" })
+        let maybe = WordFinder.words(
+            in: tokens(
+                "かもしれない",
+                [
+                    Cut(surface: "かも", reading: "かも"), Cut(surface: "しれ", reading: "しれ"),
+                    Cut(surface: "ない", reading: "ない"),
+                ]),
+            dictionary: Kana())
+        XCTAssertEqual(maybe.map(\.surface), ["かもしれない"])
+    }
+
     func testTokensTheDictionaryKnowsAsOneWordJoin() {
         let words = WordFinder.words(
             in: tokens(
