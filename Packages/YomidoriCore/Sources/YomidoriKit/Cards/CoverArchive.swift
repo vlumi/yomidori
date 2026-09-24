@@ -53,13 +53,16 @@ enum CoverArchive {
             let stills = try? Cards.directory().appendingPathComponent("Stills", isDirectory: true),
             FileManager.default.fileExists(atPath: stills.path)
         else { return }
+        // The folder goes only once every cover in it has a copy here; else it stays, and the
+        // move is tried again at the next launch.
+        var copied = true
         for id in covers {
             let old = stills.appendingPathComponent("\(id.uuidString).jpg")
-            if let image = image(at: old) {
-                _ = try? save(image, as: id)
-            }
+            guard FileManager.default.fileExists(atPath: old.path) else { continue }
+            if let image = image(at: old), (try? save(image, as: id)) != nil { continue }
+            copied = false
         }
-        try? FileManager.default.removeItem(at: stills)
+        if copied { try? FileManager.default.removeItem(at: stills) }
     }
 
     private static func image(at url: URL) -> CGImage? {

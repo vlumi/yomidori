@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Cards can't be lost to a file the app can't fully read.** A card, collection or lookup this version cannot read (one written by a newer version, say) is kept as it was and written back, instead of the whole file being read as empty and overwritten; a file that can't be read at all is set aside. Covers are kept too if moving them to their new folder or saving a collection fails.
 - **No crash on a retake.** Retaking a page after selecting a word in Live Text and pressing Read the page no longer crashes the app.
 
 ### build 11 — 2026-09-24
