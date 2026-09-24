@@ -99,6 +99,16 @@ use for its own input.
   coordinates whatever the zoom, so the geometry seam knows nothing of it. The
   screen shows any of the three, switched at the bottom, so they can be
   compared on the same page.
+- **The tap in Vision mode** (`VisionPage`, `RecognizedLine.characterBoxes`,
+  `WordFinder.word(atCharacter:)` in Core): the document request gives a box for
+  any range of a line's text, so each character's box is kept with its line. A
+  tap picks the line under it and the character nearest along the line (across a
+  column hardly counts), the tokenizer's words over the line give the one
+  covering it, and its characters' boxes, united, outline it on the page. The
+  word goes to the drawer as a selection into Vision's own transcript, its lines
+  joined in reading order, so the readout, Keep's sentence and *Fix a character*
+  are the same code as for Live Text. Without character boxes, a character is
+  placed by its share of the line.
 - **`Token`** and **`SystemTokenizer`** (Core): a sentence cut into words by the
   OS's own Japanese analyzer, each with its reading in context as hiragana. The
   analyzer is reached through `CFStringTokenizer`, which offers a Latin
@@ -403,9 +413,8 @@ supplies them: on a real paperback (2026-09-22) it read the vertical Mincho
 columns as lines with boxes, where the older text request, now gone, read
 nothing vertical. Each line comes with its direction and a box for any range of
 its text.
-Still to build on the boxes: the app's own tap-to-token highlight in Vision
-mode, the tap landing on a character, the line cut into words, the word lit on
-the page and read out below; and a furigana filter by height, dropping the thin
+Built on the boxes: the app's own tap in Vision mode (see *What exists*). Still
+to build: a furigana filter by height, dropping the thin
 ruby lines beside the columns, if the request returns them as lines of their
 own. Once the tap on the page is the app's own, whether Live Text's selection
 stays the default is a field question. manga-ocr over a whole page remains

@@ -1734,16 +1734,6 @@
         }
       }
     },
-    "Tap a line to see what was read." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "行をタップすると、読み取った文字が見られます。"
-          }
-        }
-      }
-    },
     "Tap a word to read it up close." : {
       "localizations" : {
         "ja" : {

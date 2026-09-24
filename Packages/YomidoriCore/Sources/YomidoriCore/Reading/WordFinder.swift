@@ -45,6 +45,20 @@ public enum WordFinder {
         }
     }
 
+    /// The word covering the character at `offset` of `text`, the line the tokens were cut from,
+    /// with its range there in characters; nil on punctuation or what is no word to look up.
+    public static func word(
+        atCharacter offset: Int, in tokens: [Token], text: String, dictionary: (any WordDictionary)?
+    ) -> (word: FoundWord, range: Range<Int>)? {
+        for word in words(in: tokens, dictionary: dictionary) {
+            let start = text.distance(from: text.startIndex, to: word.tokens[0].range.lowerBound)
+            let end = text.distance(
+                from: text.startIndex, to: word.tokens[word.tokens.count - 1].range.upperBound)
+            if (start..<end).contains(offset) { return (word, start..<end) }
+        }
+        return nil
+    }
+
     public static func words(in tokens: [Token], dictionary: (any WordDictionary)?) -> [FoundWord] {
         var found: [FoundWord] = []
         var index = 0
