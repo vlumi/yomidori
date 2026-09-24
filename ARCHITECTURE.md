@@ -335,6 +335,14 @@ use for its own input.
   opens as a tapped word does, with its pitch, senses and the system dictionary,
   and *Keep* makes a card with no sentence yet, which the review then asks by
   the word alone until a page supplies one.
+- **Kanji by parts** (`KanjiPart` in Core, `KanjiByPartsView` in Kit): KRADFILE's
+  parts by stroke count, as a grid in a sheet from search. KRADFILE writes some
+  radicals as a kanji that contains them (汁 for 氵, 化 for 亻); those show as the
+  radical with its own stroke count and query as written. Chosen parts give the
+  kanji that have them all, fewest strokes first, and fade the parts no kanji
+  shares with them; a kanji picked is appended to the search, and the sheet stays
+  for the next. It opens from a row at the top of the search list and from above
+  the keyboard, since the navigation bar hides while the field is focused.
 - **`MangaOCR`** (its own target): manga-ocr, a vision transformer reading one
   line or bubble of Japanese at a time, vertical included, converted to Core ML
   by `Scripts/data/build-mangaocr.py`: the encoder as it is, the decoder
