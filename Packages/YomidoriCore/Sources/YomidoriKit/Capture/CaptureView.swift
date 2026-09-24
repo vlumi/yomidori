@@ -2,6 +2,7 @@ import PhotosUI
 import SwiftUI
 import VisionKit
 import YomidoriCore
+import YomidoriDictionary
 
 public struct CaptureView: View {
     @StateObject var camera = Camera()
@@ -11,6 +12,7 @@ public struct CaptureView: View {
     @State private var readingCloseUp = false
     @State var picked: PhotosPickerItem?
     @StateObject private var zoomControl = ZoomControl()
+    @AppStorage(TokenizerChoice.key) private var tokenizerChoice: TokenizerChoice = .system
     @AppStorage(SettingsKey.pageControlsSide) private var controlsSide: PageControlsSide = .right
     @State private var closeUpTask: Task<Void, Never>?
     @AppStorage(SettingsKey.readoutFraction) private var readoutFraction = DrawerDetents.all[0]
@@ -81,6 +83,7 @@ public struct CaptureView: View {
             .onAppear { if still == nil, page.pasted == nil { camera.start() } }
             .onDisappear { camera.stop() }
             .task(id: picked) { await loadPicked() }
+            .onChange(of: page.mode) { clearWord() }
             .task(id: still?.id) {
                 guard still?.id != page.recognizedStillID else { return }
                 zoom =
@@ -118,8 +121,8 @@ public struct CaptureView: View {
             case .vision:
                 StillView(
                     zoom: $page.zoom, still: still, lines: lines, selected: selected,
-                    highlight: nil,
-                    onTap: selectLine)
+                    highlight: page.wordBox,
+                    onTap: tapWord)
             case .liveText:
                 LiveTextImage(
                     still: still, analysis: analysis, selection: selection,
@@ -225,9 +228,7 @@ public struct CaptureView: View {
             transcript
         } else {
             switch mode {
-            case .vision:
-                VisionReadout(lines: lines, selected: selected)
-            case .liveText:
+            case .vision, .liveText:
                 transcript
             case .closeUp:
                 CloseUpReadout(reading: readingCloseUp, closeUp: closeUp)
@@ -235,9 +236,11 @@ public struct CaptureView: View {
         }
     }
 
-    /// The page's text: Live Text's, or the one the page came with.
+    /// The page's text: pasted, Vision's lines in Vision mode, Live Text's, or the one the page
+    /// came with.
     var currentTranscript: String? {
         if let pasted = page.pasted { return pasted }
+        if mode == .vision, !lines.isEmpty { return VisionPage(lines: lines).transcript }
         if let analysis, analysis.hasResults(for: .text) { return analysis.transcript }
         return page.transcript
     }
@@ -259,8 +262,37 @@ public struct CaptureView: View {
         }
     }
 
-    private func selectLine(at point: CGPoint, in frame: CGRect) {
-        selected = TextGeometry.lineIndex(at: point, in: frame, lines: lines)
+    /// A tap on a Vision line lands on a character; the word over it is outlined and given to
+    /// the drawer as a selection, as Live Text's would be, so it reads, keeps and fixes alike.
+    private func tapWord(at point: CGPoint, in frame: CGRect) {
+        let page = VisionPage(lines: lines)
+        guard let hit = page.character(at: point, in: frame) else {
+            clearWord()
+            return
+        }
+        let line = page.lines[hit.line]
+        selected = lines.firstIndex(of: line)
+        let tokens = tokenizerChoice.tokenizer?.tokens(in: line.text) ?? []
+        guard
+            let found = WordFinder.word(
+                atCharacter: hit.character, in: tokens, text: line.text, dictionary: JMdict.bundled)
+        else {
+            self.page.wordBox = nil
+            return
+        }
+        self.page.wordBox = line.box(ofCharacters: found.range)
+        let transcript = page.transcript
+        let start = transcript.index(
+            transcript.startIndex, offsetBy: page.starts[hit.line] + found.range.lowerBound)
+        selection.range = start..<transcript.index(start, offsetBy: found.range.count)
+        selection.text = found.word.surface
+    }
+
+    private func clearWord() {
+        page.wordBox = nil
+        selected = nil
+        selection.text = ""
+        selection.range = nil
     }
 
     private func readCloseUp(at point: CGPoint, in frame: CGRect) {
@@ -283,6 +315,7 @@ public struct CaptureView: View {
         analysis = nil
         page.transcript = nil
         selected = nil
+        page.wordBox = nil
         closeUp = nil
         closeUpTask?.cancel()
         closeUpTask = nil

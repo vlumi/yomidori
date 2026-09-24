@@ -16,6 +16,8 @@ final class CaptureState: ObservableObject {
     /// Text pasted in place of a page, cleaned; nil while a photo or the camera is up.
     @Published var pasted: String?
     @Published var selected: Int?
+    /// The word tapped in Vision mode, normalized like the lines' boxes, outlined on the page.
+    @Published var wordBox: CGRect?
     @Published var closeUp: CaptureView.CloseUp?
     @Published var zoom = Zoom()
     /// The still the lines and the analysis belong to; a return does not read it again.
