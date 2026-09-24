@@ -51,7 +51,7 @@ struct StudyView: View {
         }
         .navigationTitle(Text("Study", bundle: .module))
         .onAppear(perform: reload)
-        .onReceive(NotificationCenter.default.publisher(for: Cards.didChange)) { _ in reload() }
+        .onReceive(Cards.changes(of: [.card])) { _ in reload() }
     }
 
     private func reload() {

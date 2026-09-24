@@ -51,7 +51,7 @@ struct CollectionsView: View {
             }
         }
         .onAppear(perform: reload)
-        .onReceive(NotificationCenter.default.publisher(for: Cards.didChange)) { _ in reload() }
+        .onReceive(Cards.changes(of: [.collection, .card])) { _ in reload() }
         .fileImporter(
             isPresented: $importing, allowedContentTypes: [.yomidoriCollection, .json]
         ) { result in

@@ -45,7 +45,7 @@ struct CardsView: View {
             }
         }
         .onAppear(perform: reload)
-        .onReceive(NotificationCenter.default.publisher(for: Cards.didChange)) { _ in reload() }
+        .onReceive(Cards.changes(of: [.card, .collection])) { _ in reload() }
     }
 
     @ViewBuilder private func stack(_ cards: [Card], header: Text) -> some View {

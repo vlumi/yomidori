@@ -53,9 +53,7 @@ public enum WordFinder {
     private static func longestWord(
         from start: Int, in tokens: [Token], dictionary: (any WordDictionary)?
     ) -> FoundWord {
-        let single = FoundWord(
-            tokens: [tokens[start]], entries: dictionary?.entries(for: tokens[start]) ?? [])
-        guard let dictionary else { return single }
+        guard let dictionary else { return FoundWord(tokens: [tokens[start]], entries: []) }
         let end = min(tokens.count, start + longestSpan)
         for stop in stride(from: end, to: start + 1, by: -1) {
             let span = Array(tokens[start..<stop])
@@ -72,7 +70,8 @@ public enum WordFinder {
                 return FoundWord(tokens: span, entries: entries)
             }
         }
-        return single
+        // Looked up only when no longer word was found.
+        return FoundWord(tokens: [tokens[start]], entries: dictionary.entries(for: tokens[start]))
     }
 
     /// Kana alone with nothing in the dictionary is a particle, an ending or a fragment of
