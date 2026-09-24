@@ -401,12 +401,32 @@
         }
       }
     },
+    "Delete the last character" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最後の文字を消す"
+          }
+        }
+      }
+    },
     "Dictionary" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "辞書"
+          }
+        }
+      }
+    },
+    "Done" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了"
           }
         }
       }
@@ -711,6 +731,16 @@
         }
       }
     },
+    "Kanji by parts" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "部品で漢字を探す"
+          }
+        }
+      }
+    },
     "Keep" : {
       "localizations" : {
         "ja" : {
@@ -980,6 +1010,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "コレクションはまだありません。本ごとに、など。"
+          }
+        }
+      }
+    },
+    "No kanji has all of these parts." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "これらの部品をすべて持つ漢字はありません。"
           }
         }
       }
@@ -1750,6 +1790,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "読み違えた文字をタップしてください。"
+          }
+        }
+      }
+    },
+    "Tap the parts you see in the kanji." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "漢字に見える部品をタップしてください。"
           }
         }
       }

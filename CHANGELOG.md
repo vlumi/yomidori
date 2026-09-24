@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Find a kanji by its parts.** In search, *Kanji by parts* (the row at the top, or above the keyboard) opens every part kanji are built from, by stroke count: tap the ones you see, pick from the kanji that have them all, and it goes into the search; parts that lead nowhere fade, and the sheet stays open to build the next kanji of a word.
 - **Tidy search and history rows.** Each entry is two even lines, the word with its reading and pitch, then its meaning; no more words squeezed into a column, rows left half empty, or pitch numbers cut off.
 
 ### build 10 — 2026-09-23
