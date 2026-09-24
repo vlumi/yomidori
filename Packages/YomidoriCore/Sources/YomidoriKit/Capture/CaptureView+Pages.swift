@@ -31,6 +31,8 @@ extension CaptureView {
     /// the page, and its result, should it come, is dropped.
     func retake() {
         recognizing = false
+        selection.clear()
+        page.selectedRange = nil
         still = nil
         page.pasted = nil
         picked = nil

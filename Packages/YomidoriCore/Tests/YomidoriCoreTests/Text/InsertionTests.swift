@@ -31,4 +31,14 @@ final class InsertionTests: XCTestCase {
         XCTAssertEqual(
             Insertion.insert("X", into: "か\u{3099}き", replacing: 1..<1).text, "Xか\u{3099}き")
     }
+
+    func testCharacterOffsetsBecomeARangeOnlyWhereTheyFit() throws {
+        let text = "樹皮の匂い"
+        let range = try XCTUnwrap(CharacterRange.of(1..<3, in: text))
+        XCTAssertEqual(String(text[range]), "皮の")
+        XCTAssertNil(CharacterRange.of(3..<9, in: text))
+        XCTAssertNil(CharacterRange.of(-1..<2, in: text))
+        XCTAssertNil(CharacterRange.of(0..<1, in: ""))
+        XCTAssertEqual(CharacterRange.of(0..<0, in: ""), "".startIndex..<"".startIndex)
+    }
 }

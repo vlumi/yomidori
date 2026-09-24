@@ -34,3 +34,13 @@ public enum Insertion {
         return up ? character.location + character.length : character.location
     }
 }
+
+/// Character offsets made into a range of a particular text, only when they fit it: a range
+/// kept from another text (the page before a retake) must never reach the APIs that trap on it.
+public enum CharacterRange {
+    public static func of(_ range: Range<Int>, in text: String) -> Range<String.Index>? {
+        guard range.lowerBound >= 0, range.upperBound <= text.count else { return nil }
+        let lower = text.index(text.startIndex, offsetBy: range.lowerBound)
+        return lower..<text.index(lower, offsetBy: range.count)
+    }
+}

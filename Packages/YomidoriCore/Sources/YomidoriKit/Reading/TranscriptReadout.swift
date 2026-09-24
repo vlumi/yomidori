@@ -190,12 +190,10 @@ struct TranscriptReadout: View {
     /// A selection made on the page itself (Live Text's, the pasted text's), as whole chunks.
     private func selectionOnPage() {
         guard let reading = page.reading, let range = selection.range,
-            range.upperBound <= currentTranscript.endIndex
+            range.lowerBound >= 0, range.upperBound <= currentTranscript.count
         else { return }
-        let start =
-            pageOffset
-            + currentTranscript.distance(from: currentTranscript.startIndex, to: range.lowerBound)
-        let end = start + currentTranscript[range].count
+        let start = pageOffset + range.lowerBound
+        let end = pageOffset + range.upperBound
         let mapped =
             TextFix.map(
                 offset: start, through: page.fixes)..<TextFix.map(offset: end, through: page.fixes)
@@ -218,8 +216,7 @@ struct TranscriptReadout: View {
             selection.requested = nil
             return
         }
-        let lower = currentTranscript.index(currentTranscript.startIndex, offsetBy: start)
-        selection.requested = lower..<currentTranscript.index(lower, offsetBy: end - start)
+        selection.requested = start..<end
     }
 
     /// The words selected go into the lookup history, off the main thread.
