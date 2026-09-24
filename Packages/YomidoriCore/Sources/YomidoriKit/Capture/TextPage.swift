@@ -29,7 +29,11 @@ struct TextPage: UIViewRepresentable {
         context.coordinator.text = text
         if let requested = selection.requested, let range = CharacterRange.of(requested, in: text) {
             let selected = NSRange(range, in: text)
-            if view.selectedRange != selected { view.selectedRange = selected }
+            if view.selectedRange != selected {
+                context.coordinator.applying = true
+                view.selectedRange = selected
+                context.coordinator.applying = false
+            }
         }
     }
 
@@ -46,7 +50,11 @@ struct TextPage: UIViewRepresentable {
             self.selection = selection
         }
 
+        /// A selection being set from elsewhere, already known: not reported back.
+        var applying = false
+
         func textViewDidChangeSelection(_ view: UITextView) {
+            guard !applying else { return }
             let range = Range(view.selectedRange, in: text)
             selection.text = range.map { String(text[$0]) } ?? ""
             selection.range = range.map { range in

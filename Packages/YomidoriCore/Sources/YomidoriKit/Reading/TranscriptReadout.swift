@@ -42,10 +42,6 @@ struct TranscriptReadout: View {
             }
         }
         .task(id: "\(choice)|\(fixed)") { await read() }
-        .onChange(of: transcript) {
-            page.fixes = []
-            page.selectedRange = nil
-        }
         .onChange(of: selection.range) { selectionOnPage() }
         .onChange(of: page.selectedRange) { _, range in
             requestOnPage(range)
@@ -165,15 +161,24 @@ struct TranscriptReadout: View {
     }
 
     /// The page read into words, off the main thread; taps wait until it is done.
+    /// Not again for a page already read this way: a return to the tab keeps the reading
+    /// and the selection.
     private func read() async {
+        let text = fixed
+        let key = "\(choice)|\(text)"
+        guard page.reading == nil || page.readingKey != key else {
+            selection.looking = false
+            return
+        }
+        let previous = afterFix ?? page.selectedRange
         page.reading = nil
         selection.looking = true
-        let text = fixed
         let reading = await PageReader.shared.read(text, with: choice)
         guard !Task.isCancelled else { return }
         keptSurfaces = []
         page.reading = reading
-        page.selectedRange = afterFix.flatMap(reading.whole)
+        page.readingKey = key
+        page.selectedRange = previous.flatMap(reading.whole)
         afterFix = nil
         selection.looking = false
     }

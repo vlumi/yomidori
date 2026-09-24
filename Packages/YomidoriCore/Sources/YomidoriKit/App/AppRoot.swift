@@ -88,7 +88,11 @@ public struct AppRoot: View {
         .task { Sync.shared.start() }
         .onChange(of: tab, initial: true) { _, shown in taps.shown = shown }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { Sync.shared.fetch() }
+            // Started here too, so signing in to iCloud while away starts sync on return.
+            if phase == .active {
+                Sync.shared.start()
+                Sync.shared.fetch()
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: Cards.didChange)) { _ in
             dueCount = Cards.dueItems(at: Date()).count
@@ -119,7 +123,9 @@ private struct TabStack<Root: View>: View {
         NavigationStack(path: $path) {
             root().swipeBackSetting().appDestinations()
         }
-        .onTabReselect(tab) { path = NavigationPath() }
+        .onTabTap(tab) { taps in
+            if path.isEmpty { taps.tappedAtRoot(tab) } else { path = NavigationPath() }
+        }
         .onAppear { if stored { restore() } }
         .task(id: path) { if stored { store() } }
     }

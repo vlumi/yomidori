@@ -5,11 +5,18 @@ import SwiftUI
 @MainActor
 final class TabTaps: ObservableObject {
     @Published private(set) var counts: [AppTab: Int] = [:]
+    /// Taps that found the tab's stack already at its root: the ones a root screen acts on
+    /// (scroll to the top, a retake), never the tap that only popped a pushed screen.
+    @Published private(set) var rootCounts: [AppTab: Int] = [:]
     /// The tab showing, for a screen that acts on being switched to.
     @Published var shown: AppTab?
 
     func tapped(_ tab: AppTab) {
         counts[tab, default: 0] += 1
+    }
+
+    func tappedAtRoot(_ tab: AppTab) {
+        rootCounts[tab, default: 0] += 1
     }
 }
 
@@ -24,7 +31,7 @@ private struct OnTabReselect: ViewModifier {
     @EnvironmentObject private var taps: TabTaps
 
     func body(content: Content) -> some View {
-        content.onChange(of: taps.counts[tab] ?? 0) { _, _ in perform() }
+        content.onChange(of: taps.rootCounts[tab] ?? 0) { _, _ in perform() }
     }
 }
 
@@ -38,5 +45,23 @@ extension View {
         onTabReselect(tab) {
             withAnimation(.easeOut(duration: 0.25)) { proxy.scrollTo(TabTop.id, anchor: .top) }
         }
+    }
+}
+
+/// A tab's stack sees every tap on its tab, and passes to its root the ones that found it
+/// there.
+private struct OnTabTap: ViewModifier {
+    let tab: AppTab
+    let perform: (TabTaps) -> Void
+    @EnvironmentObject private var taps: TabTaps
+
+    func body(content: Content) -> some View {
+        content.onChange(of: taps.counts[tab] ?? 0) { _, _ in perform(taps) }
+    }
+}
+
+extension View {
+    func onTabTap(_ tab: AppTab, perform: @escaping (TabTaps) -> Void) -> some View {
+        modifier(OnTabTap(tab: tab, perform: perform))
     }
 }

@@ -30,13 +30,19 @@ final class Camera: ObservableObject {
     private var rotationObservation: NSKeyValueObservation?
     private var zoomRange: ClosedRange<CGFloat> = 1...1
     private var zoomAtPinchStart: CGFloat = 1
+    /// Whether the camera should run, set at once by start and stop; the queue checks it, so a
+    /// stop that overtakes a start still waiting on the permission leaves the camera off.
+    private let wanted = NSLock()
+    private nonisolated(unsafe) var wantsRunning = false
     #endif
 
     func start() {
         #if os(iOS)
+        wanted.withLock { wantsRunning = true }
         AVCaptureDevice.requestAccess(for: .video) { [self] granted in
             guard granted else { return set(.denied) }
             queue.async { [self] in
+                guard wanted.withLock({ wantsRunning }) else { return }
                 if !configured {
                     configured = true
                     guard configure() else { return set(.unavailable) }
@@ -50,9 +56,14 @@ final class Camera: ObservableObject {
         #endif
     }
 
+    /// A frame still waited for is answered with nothing, not left to arrive at the next start.
     func stop() {
         #if os(iOS)
-        queue.async { [self] in session.stopRunning() }
+        wanted.withLock { wantsRunning = false }
+        queue.async { [self] in
+            frames.cancel()
+            session.stopRunning()
+        }
         #endif
     }
 

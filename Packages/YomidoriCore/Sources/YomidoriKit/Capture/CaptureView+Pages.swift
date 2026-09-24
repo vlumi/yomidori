@@ -5,12 +5,15 @@ import YomidoriCore
 /// How a page comes and goes: the camera, the photo library, a paste; the next page, a start
 /// over, a retake.
 extension CaptureView {
+    /// A frame that arrives after the page was filled some other way (a paste, a photo, the
+    /// tab left and the camera stopped) is dropped.
     func takeStill() {
         Task { @MainActor in
-            if let taken = await camera.takeStill() {
-                camera.stop()
-                still = taken
+            guard let taken = await camera.takeStill(), still == nil, page.pasted == nil else {
+                return
             }
+            camera.stop()
+            still = taken
         }
     }
 
@@ -22,6 +25,7 @@ extension CaptureView {
 
     func startOver() {
         pages = []
+        page.newPage()
         if still != nil {
             retake()
         }
@@ -44,6 +48,7 @@ extension CaptureView {
         let cleaned = Sanitize.text(text, limit: Self.longestPaste, keepsNewlines: true)
             .trimmingCharacters(in: .whitespacesAndNewlines)
         guard !cleaned.isEmpty else { return }
+        page.newPage()
         camera.stop()
         pages = []
         selection.text = ""
@@ -59,5 +64,7 @@ extension CaptureView {
         else { return }
         camera.stop()
         still = loaded
+        // Loaded once: a return to the tab must not read the photo again.
+        self.picked = nil
     }
 }
