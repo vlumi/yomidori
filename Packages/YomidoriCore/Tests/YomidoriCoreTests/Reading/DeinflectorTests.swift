@@ -64,4 +64,19 @@ final class DeinflectorTests: XCTestCase {
         assertCandidates("古く", include: "古い")
         assertCandidates("寒か", include: "寒い")
     }
+
+    func testEndingsComeOffTheVerbOrAdjective() {
+        XCTAssertTrue(Deinflector.conjugated("頼みたい").contains("頼む"))
+        XCTAssertFalse(Deinflector.conjugated("頼みたい").contains("頼み"))
+        XCTAssertEqual(Deinflector.conjugated("認めよう"), ["認める"])
+        XCTAssertEqual(Deinflector.conjugated("読もう"), ["読む"])
+        XCTAssertTrue(Deinflector.conjugated("行きましょう").contains("行く"))
+        XCTAssertTrue(Deinflector.conjugated("寒くない").contains("寒い"))
+        XCTAssertTrue(Deinflector.conjugated("待たない").contains("待つ"))
+        XCTAssertTrue(Deinflector.conjugated("食べたかった").contains("食べる"))
+        XCTAssertTrue(Deinflector.conjugated("勉強したい").contains("勉強"))
+        XCTAssertTrue(Deinflector.conjugated("勉強しよう").contains("勉強"))
+        XCTAssertEqual(Deinflector.conjugated("樹皮"), [])
+        XCTAssertEqual(Deinflector.conjugated("たい"), [])
+    }
 }
