@@ -136,4 +136,43 @@ final class WordFinderTests: XCTestCase {
             "蛍光灯", [Cut(surface: "蛍光", reading: "けいこう"), Cut(surface: "灯", reading: "とう")])
         XCTAssertEqual(WordFinder.words(in: cut, dictionary: nil).map(\.surface), ["蛍光", "灯"])
     }
+
+    private struct Tagged: WordDictionary {
+        /// Text to (reading, part of speech) of each entry spelled so.
+        let words: [String: [(String, String)]]
+
+        func entries(matching text: String) -> [DictionaryEntry] {
+            (words[text] ?? []).enumerated().map { index, word in
+                DictionaryEntry(
+                    id: text.hashValue &+ index, kanji: [text], readings: [word.0],
+                    senses: [DictionaryEntry.Sense(partsOfSpeech: [word.1], glosses: ["g"])],
+                    common: true)
+            }
+        }
+        func pitchAccents(for headword: String, reading: String) -> [PitchAccent] { [] }
+        func search(_ query: String, limit: Int) -> [DictionaryEntry] { [] }
+    }
+
+    func testAVerbWithItsEndingCutOffIsTheVerbWhole() {
+        let dictionary = Tagged(words: [
+            "頼み": [("たのみ", "n")], "頼む": [("たのむ", "v5m")], "たい": [("たい", "n")],
+            "認める": [("みとめる", "v1")],
+        ])
+        let wanted = tokens(
+            "頼みたい", [Cut(surface: "頼み", reading: "たのみ"), Cut(surface: "たい", reading: "たい")])
+        let words = WordFinder.words(in: wanted, dictionary: dictionary)
+        XCTAssertEqual(words.map(\.surface), ["頼みたい"])
+        XCTAssertEqual(words.first?.entries.first?.headword, "頼む")
+        let admit = WordFinder.words(
+            in: tokens("認めよう", [Cut(surface: "認めよう", reading: "みとめよう")]),
+            dictionary: dictionary)
+        XCTAssertEqual(admit.first?.entries.first?.headword, "認める")
+    }
+
+    func testTheTokenizersReadingPicksAmongEntriesSpelledAlike() {
+        let dictionary = Tagged(words: ["本": [("もと", "n"), ("ほん", "n")]])
+        let book = WordFinder.words(
+            in: tokens("本", [Cut(surface: "本", reading: "ほん")]), dictionary: dictionary)
+        XCTAssertEqual(book.first?.entries.first?.readings, ["ほん"])
+    }
 }

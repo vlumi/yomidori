@@ -33,6 +33,21 @@ public struct DictionaryEntry: Hashable, Sendable, Identifiable {
 
     /// A particle, an auxiliary or the copula, by JMdict's own marks: every marked sense is
     /// one of those.
+    /// A verb, a する noun or an i-adjective: a word endings can be put on.
+    public var isConjugable: Bool {
+        senses.contains { sense in
+            sense.partsOfSpeech.contains { pos in
+                pos == "adj-i" || (pos.hasPrefix("v") && !["vi", "vt"].contains(pos))
+            }
+        }
+    }
+
+    /// Whether the word is read `reading` (katakana counting as hiragana).
+    public func isRead(_ reading: String) -> Bool {
+        let wanted = Kana.hiragana(reading)
+        return readings.contains { Kana.hiragana($0) == wanted }
+    }
+
     public var isFunctionWord: Bool {
         let function: Set<String> = ["prt", "aux", "aux-v", "aux-adj", "cop"]
         let marked = senses.filter { !$0.partsOfSpeech.isEmpty }
@@ -89,9 +104,23 @@ extension WordDictionary {
     /// The tokenizer's dictionary form, then the word and its deinflections, then its reading;
     /// the first candidate with entries wins.
     public func entries(for token: Token) -> [DictionaryEntry] {
-        entries(
+        let found = entries(
             forAny: [token.dictionaryForm].compactMap { $0 }
-                + Deinflector.candidates(for: token.surface) + [token.reading])
+                + Deinflector.candidates(for: token.surface))
+        if !found.isEmpty { return found.preferring(reading: token.reading) }
+        if !Kana.isKana(token.surface) {
+            let conjugated = entries(conjugatedFrom: token.surface)
+            if !conjugated.isEmpty { return conjugated }
+        }
+        return entries(matching: token.reading)
+    }
+
+    /// A verb or adjective under an ending (認めよう → 認める); nothing else is taken, so a
+    /// noun spelled like the stem (頼み) doesn't stand in for the verb.
+    public func entries(conjugatedFrom surface: String) -> [DictionaryEntry] {
+        Deinflector.conjugated(surface).lazy
+            .map { self.entries(matching: $0).filter(\.isConjugable) }
+            .first { !$0.isEmpty } ?? []
     }
 
     /// The first candidate with entries wins.
@@ -120,5 +149,13 @@ public enum SearchQuery {
                 || (0xF900...0xFAFF).contains(scalar.value)
         }
         return japanese ? .japanese : .gloss
+    }
+}
+
+extension Array where Element == DictionaryEntry {
+    /// The entries read as the tokenizer read the word first (本 as ほん before 元 as もと),
+    /// the dictionary's order kept otherwise.
+    public func preferring(reading: String) -> [DictionaryEntry] {
+        filter { $0.isRead(reading) } + filter { !$0.isRead(reading) }
     }
 }
