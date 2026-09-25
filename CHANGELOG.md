@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Progress.** A new screen off the Study tab shows the reviewing done: today's answers, how many were right, the minutes spent and the days in a row; the same for all time; and by day, the answers stacked by reading, meaning and pitch, the share right, the cards at each rank as they stood each morning, and the words started. The time spent on each answer is kept from now on.
+
 ### build 14 — 2026-09-25
 
 - **A steadier camera after a retake.** A page taken after a retake no longer comes out upside down, darker than the view, or from the wider camera: the camera is no longer turned between shots, and the picture is turned to the way the phone is held instead.

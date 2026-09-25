@@ -21,6 +21,14 @@ public enum DemoMode {
         return AppTab(rawValue: CommandLine.arguments[index + 1])
     }
 
+    /// `-yomidori-screen progress` pushes that screen on the tab shown, for the same reason.
+    static var screen: Screen? {
+        guard isRequested, let index = CommandLine.arguments.firstIndex(of: "-yomidori-screen"),
+            index + 1 < CommandLine.arguments.count
+        else { return nil }
+        return Screen(demoName: CommandLine.arguments[index + 1])
+    }
+
     /// The settings suite, emptied at launch; nil outside the demo.
     public static let defaults: UserDefaults? = {
         guard isRequested, let defaults = UserDefaults(suiteName: suite) else { return nil }

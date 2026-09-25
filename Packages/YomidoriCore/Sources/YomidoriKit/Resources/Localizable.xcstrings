@@ -181,6 +181,16 @@
         }
       }
     },
+    "All time" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "これまで"
+          }
+        }
+      }
+    },
     "An author, say" : {
       "localizations" : {
         "ja" : {
@@ -397,6 +407,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "表紙"
+          }
+        }
+      }
+    },
+    "Day" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日"
+          }
+        }
+      }
+    },
+    "Days in a row" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "連続日数"
           }
         }
       }
@@ -651,6 +681,16 @@
         }
       }
     },
+    "Hours" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "時間"
+          }
+        }
+      }
+    },
     "How pitch is drawn" : {
       "localizations" : {
         "ja" : {
@@ -894,6 +934,16 @@
         }
       }
     },
+    "Minutes" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分"
+          }
+        }
+      }
+    },
     "Modified" : {
       "localizations" : {
         "ja" : {
@@ -1114,6 +1164,16 @@
         }
       }
     },
+    "Nothing reviewed yet. Do a lesson, then a review." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ復習がありません。レッスンのあとに復習を。"
+          }
+        }
+      }
+    },
     "Nothing was read off the cover." : {
       "localizations" : {
         "ja" : {
@@ -1224,6 +1284,26 @@
         }
       }
     },
+    "Progress" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "進捗"
+          }
+        }
+      }
+    },
+    "Question" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題"
+          }
+        }
+      }
+    },
     "Random" : {
       "localizations" : {
         "ja" : {
@@ -1260,6 +1340,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ランク"
+          }
+        }
+      }
+    },
+    "Ranks by day" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日ごとのランク"
           }
         }
       }
@@ -1444,12 +1534,42 @@
         }
       }
     },
+    "Reviews" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "復習"
+          }
+        }
+      }
+    },
+    "Reviews by day" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日ごとの復習"
+          }
+        }
+      }
+    },
     "Right" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "右"
+          }
+        }
+      }
+    },
+    "Right by day" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日ごとの正答率"
           }
         }
       }
@@ -1844,6 +1964,16 @@
         }
       }
     },
+    "Today" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日"
+          }
+        }
+      }
+    },
     "Tokenizer" : {
       "localizations" : {
         "ja" : {
@@ -1950,6 +2080,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "同梱しているもの"
+          }
+        }
+      }
+    },
+    "Words started" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "始めた語"
+          }
+        }
+      }
+    },
+    "Words started by day" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日ごとに始めた語"
           }
         }
       }

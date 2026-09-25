@@ -10,6 +10,8 @@ struct ReviewView: View {
     @State private var revealed = false
     @State private var answer = ""
     @State private var verdict: Bool?
+    /// When the question now showing came up, for the time spent on it.
+    @State private var shown = Date()
     @FocusState private var typing: Bool
     @AccessibilityFocusState private var verdictFocused: Bool
 
@@ -24,6 +26,7 @@ struct ReviewView: View {
         }
         .navigationTitle(Text("Review", bundle: .module))
         .onAppear(perform: reload)
+        .onChange(of: queue.first) { shown = Date() }
     }
 
     private func review(_ item: ReviewItem) -> some View {
@@ -202,8 +205,10 @@ struct ReviewView: View {
         guard let current = queue.first, current.card.id == item.card.id,
             current.question == item.question
         else { return }
+        let now = Date()
         let reviewed = try? Cards.store?.answer(
-            item, grade: grade, at: Date(), reconciled: reconciled, accepting: meaning)
+            item, grade: grade, at: now, reconciled: reconciled, accepting: meaning,
+            seconds: Int(now.timeIntervalSince(shown).rounded()))
         revealed = false
         answer = ""
         verdict = nil

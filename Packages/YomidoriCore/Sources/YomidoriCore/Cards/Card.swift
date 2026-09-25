@@ -121,11 +121,14 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     /// The scheduler's verdict and a line in the log; `reconciled` when the reader overruled
     /// a wrong verdict.
     public mutating func answer(
-        _ question: Question, grade: Grade, at date: Date, reconciled: Bool = false
+        _ question: Question, grade: Grade, at date: Date, reconciled: Bool = false,
+        seconds: Int = 0
     ) {
         setState(FSRS.review(state(for: question), grade: grade, at: date), for: question)
         log.append(
-            ReviewEntry(date: date, question: question, grade: grade, reconciled: reconciled))
+            ReviewEntry(
+                date: date, question: question, grade: grade, reconciled: reconciled,
+                seconds: seconds))
     }
 
     public func answers(to question: Question, graded grade: Grade) -> Int {
@@ -170,12 +173,29 @@ public struct ReviewEntry: Hashable, Codable, Sendable {
     public let question: Question
     public let grade: Grade
     public let reconciled: Bool
+    /// From the question shown to the answer graded, at most `longestCounted`: a phone put
+    /// down mid-question doesn't count as an hour's study.
+    public let seconds: Int
 
-    public init(date: Date, question: Question, grade: Grade, reconciled: Bool) {
+    public static let longestCounted = 60
+
+    public init(date: Date, question: Question, grade: Grade, reconciled: Bool, seconds: Int = 0) {
         self.date = date
         self.question = question
         self.grade = grade
         self.reconciled = reconciled
+        self.seconds = min(max(seconds, 0), Self.longestCounted)
+    }
+
+    /// A entry written before the time was kept reads as 0 seconds, not as unreadable.
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        self.init(
+            date: try c.decode(Date.self, forKey: .date),
+            question: try c.decode(Question.self, forKey: .question),
+            grade: try c.decode(Grade.self, forKey: .grade),
+            reconciled: try c.decode(Bool.self, forKey: .reconciled),
+            seconds: try c.decodeIfPresent(Int.self, forKey: .seconds) ?? 0)
     }
 }
 

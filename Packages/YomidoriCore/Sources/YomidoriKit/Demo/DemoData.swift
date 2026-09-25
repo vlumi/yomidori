@@ -9,7 +9,8 @@ import YomidoriDictionary
 /// now, so the queue is in the same state at every launch.
 enum DemoData {
     static func seed(
-        cards: FileCardStore, collections: FileCollectionStore, lookups: FileLookupHistory
+        cards: FileCardStore, collections: FileCollectionStore, lookups: FileLookupHistory,
+        snapshots: FileRankSnapshots
     ) {
         let seeder = CardSeeder(store: cards, now: Date())
         for (index, work) in (DemoText.works + [DemoText.sign]).enumerated() {
@@ -27,6 +28,33 @@ enum DemoData {
             }
         }
         seedLookups(into: lookups)
+        seedSnapshots(into: snapshots, ending: cards.cards())
+    }
+
+    /// Six weeks of ranks up to yesterday, walked back from the cards as they stand: fewer
+    /// cards the further back, and the higher a rank the faster it thins. Today's is taken
+    /// from the cards as on any day.
+    private static func seedSnapshots(into snapshots: FileRankSnapshots, ending cards: [Card]) {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let final = RankSnapshot.of(cards, day: today).counts
+        let history = (1...42).reversed().compactMap { daysAgo -> RankSnapshot? in
+            guard let day = calendar.date(byAdding: .day, value: -daysAgo, to: today) else {
+                return nil
+            }
+            let back = Double(daysAgo) / 42
+            var counts = Rank.allCases.map { rank -> Int in
+                let thinning = rank == .nest ? 0.3 : 0.4 + 0.12 * Double(rank.rawValue)
+                return Int((Double(final[rank.rawValue]) * max(0, 1 - back * thinning)).rounded())
+            }
+            // The eggs make up the total, which grows as pages are read.
+            let total = Int((Double(final.reduce(0, +)) * (1 - back * 0.6)).rounded())
+            let others = counts.enumerated().filter { $0.offset != Rank.egg.rawValue }
+                .map(\.element).reduce(0, +)
+            counts[Rank.egg.rawValue] = max(0, total - others)
+            return RankSnapshot(day: day, counts: counts)
+        }
+        try? snapshots.replaceAll(history)
     }
 
     private static func seedCollection(
@@ -147,7 +175,8 @@ private struct CardSeeder {
             card.answer(
                 step < standing.again ? .reading : .meaning,
                 grade: step < standing.again ? .again : .good,
-                at: now.addingTimeInterval(-Double(3 + standing.again - step) * 86_400))
+                at: now.addingTimeInterval(-Double(3 + standing.again - step) * 86_400),
+                seconds: 6 + step * 4)
         }
         if standing.stability > 100 { card.acceptedMeanings = ["(my own wording)"] }
     }
