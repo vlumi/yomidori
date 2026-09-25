@@ -44,6 +44,13 @@ struct StudyView: View {
             if !cards.isEmpty {
                 Section {
                     RankChart(cards: cards)
+                    NavigationLink(value: Screen.progress) {
+                        Label {
+                            Text("Progress", bundle: .module)
+                        } icon: {
+                            Image(systemName: "chart.xyaxis.line")
+                        }
+                    }
                 } header: {
                     Text("Ranks", bundle: .module)
                 }
@@ -55,6 +62,7 @@ struct StudyView: View {
     }
 
     private func reload() {
+        Cards.snapshotRanks()
         cards = Cards.store?.cards() ?? []
         dueCount = Cards.dueItems(at: Date()).count
     }

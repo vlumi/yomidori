@@ -24,6 +24,8 @@ struct Destinations: ViewModifier {
                         LessonView()
                     case .collections:
                         CollectionsView()
+                    case .progress:
+                        ProgressScreen()
                     }
                 }
                 .swipeBackSetting()

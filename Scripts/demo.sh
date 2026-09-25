@@ -36,5 +36,5 @@ app="$(find .build-xcode/Build/Products/Debug-iphonesimulator \
 
 xcrun simctl terminate "$udid" "$BUNDLE" >/dev/null 2>&1 || true
 xcrun simctl install "$udid" "$app"
-xcrun simctl launch "$udid" "$BUNDLE" -yomidori-demo ${TAB:+-yomidori-tab "$TAB"} >/dev/null
+xcrun simctl launch "$udid" "$BUNDLE" -yomidori-demo ${TAB:+-yomidori-tab "$TAB"} ${SCREEN:+-yomidori-screen "$SCREEN"} >/dev/null
 echo "Demo launched on $udid — seeded cards, collections and a page; nothing persists."

@@ -30,11 +30,13 @@ enum Cards {
     static var defaults: UserDefaults { DemoMode.defaults ?? .standard }
     static let collections: FileCollectionStore? = stores?.collections
     static let lookups: FileLookupHistory? = stores?.lookups
+    static let snapshots: FileRankSnapshots? = stores?.snapshots
 
     private struct Stores {
         let cards: FileCardStore
         let collections: FileCollectionStore
         let lookups: FileLookupHistory
+        let snapshots: FileRankSnapshots
     }
 
     private static let stores: Stores? = {
@@ -43,7 +45,8 @@ enum Cards {
             cards: FileCardStore(url: directory.appendingPathComponent("cards.json")),
             collections: FileCollectionStore(
                 url: directory.appendingPathComponent("collections.json")),
-            lookups: FileLookupHistory(url: directory.appendingPathComponent("lookups.json")))
+            lookups: FileLookupHistory(url: directory.appendingPathComponent("lookups.json")),
+            snapshots: FileRankSnapshots(url: directory.appendingPathComponent("progress.json")))
         CoverArchive.migrate(covers: stores.collections.collections().compactMap(\.coverID))
         stores.cards.file.onChange = { changed(.card, $0, $1) }
         stores.collections.file.onChange = { changed(.collection, $0, $1) }
@@ -51,10 +54,17 @@ enum Cards {
         stores.lookups.onClear = { _ in Sync.historyCleared() }
         if DemoMode.isRequested {
             DemoData.seed(
-                cards: stores.cards, collections: stores.collections, lookups: stores.lookups)
+                cards: stores.cards, collections: stores.collections, lookups: stores.lookups,
+                snapshots: stores.snapshots)
         }
         return stores
     }()
+
+    /// The day's first look at the ranks, kept for the progress charts; nothing after that.
+    static func snapshotRanks() {
+        guard let store, let snapshots else { return }
+        try? snapshots.take(of: store.cards(), at: Date())
+    }
 
     /// Every write refreshes the screens; this device's own also go to sync.
     private static func changed(_ kind: SyncKind, _ change: RecordChange, _ origin: ChangeOrigin) {

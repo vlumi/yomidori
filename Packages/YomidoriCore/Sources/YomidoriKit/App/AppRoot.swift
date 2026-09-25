@@ -92,6 +92,7 @@ public struct AppRoot: View {
             if phase == .active {
                 Sync.shared.start()
                 Sync.shared.fetch()
+                Cards.snapshotRanks()
             }
         }
         .onReceive(Cards.changes(of: [.card])) { _ in
@@ -126,7 +127,12 @@ private struct TabStack<Root: View>: View {
         .onTabTap(tab) { taps in
             if path.isEmpty { taps.tappedAtRoot(tab) } else { path = NavigationPath() }
         }
-        .onAppear { if stored { restore() } }
+        .onAppear {
+            if stored { restore() }
+            if let screen = DemoMode.screen, DemoMode.tab == tab, path.isEmpty {
+                path.append(screen)
+            }
+        }
         .task(id: path) { if stored { store() } }
     }
 

@@ -192,6 +192,14 @@ use for its own input.
   one of each, the cards that once carried page photos and crops among them,
   whose photo fields are no longer read. The reading, pitch and meaning are not
   stored; they are looked up live.
+- **Progress** (`Progress`, `RankSnapshot` in Core; `ProgressScreen` in Kit): the
+  reviewing done, by day. The answers, how many were right and the seconds spent
+  are folded from the cards' own logs (`ReviewEntry` keeps the seconds, capped at
+  a minute); the words started come from the cards' start dates; the streak is
+  the days in a row with an answer, today forgiven until it ends. The ranks by
+  day are the one thing kept apart: `FileRankSnapshots` writes the day's first
+  look at the counts to `progress.json`, this device's own, since every device
+  sees the same cards. The screen is reached from the Study tab.
 - **Sync** (`CloudSync` in `YomidoriSync`, `Sync` in Kit): the cards, the
   collections with their covers and the lookup history kept the same on the
   reader's devices through their own iCloud, CloudKit's private database
