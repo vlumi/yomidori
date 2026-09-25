@@ -16,6 +16,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 - **A steadier camera after a retake.** A page taken after a retake no longer comes out upside down, darker than the view, or from the wider camera: the camera is no longer turned between shots, and the picture is turned to the way the phone is held instead.
 - **Verbs with their endings read as the verb.** 頼みたい reads as 頼む instead of 頼み and たい, 認めよう as 認める, 読もう as 読む, 行きましょう as 行く, 勉強したい as 勉強; and where the dictionary spells several words alike, the one read as on the page comes first (本 as ほん, not もと; 彼 as かれ).
+- **No furigana in Vision's reading.** The small kana printed beside a word (僅 with わず) no longer end up in the text Vision reads, so 僅かに reads as 僅かに, not 僅わずかに.
 
 ### build 13 — 2026-09-24
 

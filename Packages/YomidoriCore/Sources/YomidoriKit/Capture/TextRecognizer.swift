@@ -30,6 +30,7 @@ enum TextRecognizer {
         }
         return RecognizedLine(
             text: text, box: line.boundingRegion.boundingBox.cgRect, confidence: line.confidence,
-            characterBoxes: boxes)
+            characterBoxes: boxes
+        ).droppingRuby()
     }
 }
