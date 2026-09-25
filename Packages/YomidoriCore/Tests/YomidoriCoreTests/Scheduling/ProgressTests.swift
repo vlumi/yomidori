@@ -51,6 +51,41 @@ final class ProgressTests: XCTestCase {
         XCTAssertEqual(total.seconds, 42)
     }
 
+    func testDaysRollUpIntoWeeksAndMonths() {
+        var bark = card("樹皮", started: noon(1))
+        // Tokyo's calendar starts the week on Sunday: Sept 6 and 12 are one week, 13 the next.
+        bark.answer(.reading, grade: .good, at: noon(6), seconds: 5)
+        bark.answer(.meaning, grade: .again, at: noon(12), seconds: 7)
+        bark.answer(.pitch, grade: .good, at: noon(13), seconds: 9)
+        let days = Progress.tallies(of: [bark], from: noon(1), to: noon(20), calendar: calendar)
+        let weeks = Progress.rollUp(days, by: .weekOfYear, calendar: calendar)
+        XCTAssertEqual(weeks.count, 4)
+        let second = weeks[1]
+        XCTAssertEqual(second.day, calendar.startOfDay(for: noon(6)))
+        XCTAssertEqual(second.answered, [.reading: 1, .meaning: 1])
+        XCTAssertEqual(second.right, [.reading: 1])
+        XCTAssertEqual(second.seconds, 12)
+        XCTAssertEqual(weeks[2].answered, [.pitch: 1])
+        XCTAssertEqual(weeks[0].started, 1)
+        let months = Progress.rollUp(days, by: .month, calendar: calendar)
+        XCTAssertEqual(months.count, 1)
+        XCTAssertEqual(months[0].total, 3)
+        XCTAssertEqual(Progress.rollUp(days, by: .day, calendar: calendar), days)
+        XCTAssertEqual(Progress.earliest(of: [bark]), noon(1))
+        XCTAssertNil(Progress.earliest(of: [card("部屋")]))
+    }
+
+    func testSnapshotsThinToTheFirstOfEachPeriod() {
+        let snapshots = [1, 6, 8, 13, 14].map { day in
+            RankSnapshot(day: calendar.startOfDay(for: noon(day)), counts: [0, day, 0, 0, 0, 0, 0])
+        }
+        let weekly = RankSnapshot.thinned(snapshots.reversed(), by: .weekOfYear, calendar: calendar)
+        XCTAssertEqual(weekly.map { $0.count(of: .egg) }, [1, 6, 13])
+        XCTAssertEqual(RankSnapshot.thinned(snapshots, by: .month, calendar: calendar).count, 1)
+        XCTAssertEqual(RankSnapshot.thinned(snapshots, by: .day, calendar: calendar), snapshots)
+        XCTAssertEqual(snapshots[1].total, 6)
+    }
+
     func testTheStreakCountsDaysInARowAndForgivesToday() {
         var bark = card("樹皮", started: noon(1))
         for day in [3, 4, 5] { bark.answer(.reading, grade: .good, at: noon(day)) }

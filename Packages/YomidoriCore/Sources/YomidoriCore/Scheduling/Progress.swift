@@ -26,6 +26,14 @@ public struct DayTally: Equatable, Sendable {
         let asked = answered[question] ?? 0
         return asked == 0 ? nil : Double(right[question] ?? 0) / Double(asked)
     }
+
+    /// Another tally's numbers added to this one's, as a week is made of its days.
+    public mutating func add(_ other: DayTally) {
+        for (question, count) in other.answered { answered[question, default: 0] += count }
+        for (question, count) in other.right { right[question, default: 0] += count }
+        seconds += other.seconds
+        started += other.started
+    }
 }
 
 /// What the logs say about the reviewing done, by day.
@@ -58,6 +66,30 @@ public enum Progress {
             }
         }
         return byDay.values.sorted { $0.day < $1.day }
+    }
+
+    /// The days summed into weeks or months (`component` is `.weekOfYear` or `.month`), each
+    /// under the start of its period; `.day` gives the days back as they are.
+    public static func rollUp(
+        _ days: [DayTally], by component: Calendar.Component, calendar: Calendar = .current
+    ) -> [DayTally] {
+        guard component != .day else { return days }
+        var periods: [Date: DayTally] = [:]
+        var order: [Date] = []
+        for day in days {
+            let start = calendar.dateInterval(of: component, for: day.day)?.start ?? day.day
+            if periods[start] == nil {
+                periods[start] = DayTally(day: start)
+                order.append(start)
+            }
+            periods[start]?.add(day)
+        }
+        return order.compactMap { periods[$0] }
+    }
+
+    /// The first day anything was answered or started; nil before any.
+    public static func earliest(of cards: [Card]) -> Date? {
+        cards.flatMap { card in card.log.map(\.date) + [card.started].compactMap { $0 } }.min()
     }
 
     /// The days in a row with an answer, counted back from `date`'s day; a day not yet

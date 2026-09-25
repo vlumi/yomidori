@@ -11,6 +11,16 @@
         }
       }
     },
+    "%lld answers · %lld right" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回答%lld · 正答%lld"
+          }
+        }
+      }
+    },
     "%lld cards" : {
       "localizations" : {
         "ja" : {
@@ -91,6 +101,36 @@
         }
       }
     },
+    "%lld words started" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld語を始めた"
+          }
+        }
+      }
+    },
+    "3 months" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3か月"
+          }
+        }
+      }
+    },
+    "4 weeks" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4週間"
+          }
+        }
+      }
+    },
     "About" : {
       "localizations" : {
         "ja" : {
@@ -167,6 +207,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "もう一度"
+          }
+        }
+      }
+    },
+    "All" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべて"
           }
         }
       }
@@ -1344,16 +1394,6 @@
         }
       }
     },
-    "Ranks by day" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "日ごとのランク"
-          }
-        }
-      }
-    },
     "Read" : {
       "localizations" : {
         "ja" : {
@@ -1494,6 +1534,16 @@
         }
       }
     },
+    "Result" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結果"
+          }
+        }
+      }
+    },
     "Retake" : {
       "localizations" : {
         "ja" : {
@@ -1544,32 +1594,12 @@
         }
       }
     },
-    "Reviews by day" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "日ごとの復習"
-          }
-        }
-      }
-    },
     "Right" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "右"
-          }
-        }
-      }
-    },
-    "Right by day" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "日ごとの正答率"
           }
         }
       }
@@ -1700,6 +1730,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "同期するには、設定でiCloudにサインインしてください。"
+          }
+        }
+      }
+    },
+    "Span" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "期間"
           }
         }
       }
@@ -2094,16 +2134,6 @@
         }
       }
     },
-    "Words started by day" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "日ごとに始めた語"
-          }
-        }
-      }
-    },
     "Words that fit" : {
       "localizations" : {
         "ja" : {
@@ -2130,6 +2160,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "調べた言葉がここに集まります。"
+          }
+        }
+      }
+    },
+    "Wrong" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "誤答"
+          }
+        }
+      }
+    },
+    "Year" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1年"
           }
         }
       }

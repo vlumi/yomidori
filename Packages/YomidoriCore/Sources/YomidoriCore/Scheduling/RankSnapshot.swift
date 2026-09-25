@@ -22,6 +22,22 @@ public struct RankSnapshot: Codable, Equatable, Sendable {
     public func count(of rank: Rank) -> Int {
         counts.indices.contains(rank.rawValue) ? counts[rank.rawValue] : 0
     }
+
+    public var total: Int { counts.reduce(0, +) }
+
+    /// One snapshot a period, the first of each, for a chart over months; `.day` keeps all.
+    public static func thinned(
+        _ snapshots: [RankSnapshot], by component: Calendar.Component,
+        calendar: Calendar = .current
+    ) -> [RankSnapshot] {
+        guard component != .day else { return snapshots }
+        var seen: Set<Date> = []
+        return snapshots.sorted { $0.day < $1.day }.filter { snapshot in
+            let start =
+                calendar.dateInterval(of: component, for: snapshot.day)?.start ?? snapshot.day
+            return seen.insert(start).inserted
+        }
+    }
 }
 
 /// The snapshots in one JSON file beside the stores, this device's own: every device sees

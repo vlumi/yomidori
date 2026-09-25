@@ -199,7 +199,10 @@ use for its own input.
   the days in a row with an answer, today forgiven until it ends. The ranks by
   day are the one thing kept apart: `FileRankSnapshots` writes the day's first
   look at the counts to `progress.json`, this device's own, since every device
-  sees the same cards. The screen is reached from the Study tab.
+  sees the same cards. The screen is reached from the Study tab; its span is
+  four weeks by day, three months by week, or a year or everything by month
+  (`Progress.rollUp`, `RankSnapshot.thinned`), and a finger on a chart puts
+  that period's numbers in the caption above it, as the rank chart does.
 - **Sync** (`CloudSync` in `YomidoriSync`, `Sync` in Kit): the cards, the
   collections with their covers and the lookup history kept the same on the
   reader's devices through their own iCloud, CloudKit's private database
