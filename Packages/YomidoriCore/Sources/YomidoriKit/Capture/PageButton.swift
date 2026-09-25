@@ -9,6 +9,7 @@ struct PageButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: symbol)
+                .turnsWithPhone()
                 .font(.title3)
                 .frame(width: 44, height: 44)
                 .background(.black.opacity(0.55), in: Circle())

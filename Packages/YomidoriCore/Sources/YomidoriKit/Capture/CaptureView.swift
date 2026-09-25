@@ -76,8 +76,14 @@ public struct CaptureView: View {
                     }
                 }
             }
-            .onAppear { if still == nil, page.pasted == nil { camera.start() } }
-            .onDisappear { camera.stop() }
+            .onAppear {
+                OrientationLock.portrait(true)
+                if still == nil, page.pasted == nil { camera.start() }
+            }
+            .onDisappear {
+                OrientationLock.portrait(false)
+                camera.stop()
+            }
             .task(id: picked) { await loadPicked() }
             .onChange(of: page.mode) { page.selectedRange = nil }
             .task(id: still?.id) {

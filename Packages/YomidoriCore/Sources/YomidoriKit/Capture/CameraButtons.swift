@@ -16,6 +16,7 @@ struct CameraButtons: View {
                     Text("Choose a photo", bundle: .module)
                 } icon: {
                     Image(systemName: "photo.on.rectangle")
+                        .turnsWithPhone()
                 }
             }
             .labelStyle(.iconOnly)
@@ -23,6 +24,7 @@ struct CameraButtons: View {
             .frame(maxWidth: .infinity)
             Button(action: freeze) {
                 Image(systemName: "text.viewfinder")
+                    .turnsWithPhone()
                     .font(.title.weight(.semibold))
                     .frame(width: 64, height: 64)
             }
@@ -41,6 +43,7 @@ struct CameraButtons: View {
                 .labelStyle(.iconOnly)
                 .buttonBorderShape(.circle)
                 .tint(Palette.nightGreen)
+                .turnsWithPhone()
                 .frame(maxWidth: .infinity)
             } else {
                 Color.clear.frame(maxWidth: .infinity, maxHeight: 1)
