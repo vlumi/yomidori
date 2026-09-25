@@ -40,4 +40,41 @@ public struct RecognizedLine: Equatable, Sendable {
             x: box.minX + start * box.width, y: box.minY, width: length * box.width,
             height: box.height)
     }
+
+    /// The line without its furigana. Vision reads the small kana beside a column (or above a
+    /// row) into the line, 僅わずか for 僅: a kana well under the line's own characters in
+    /// size and off its axis is taken for furigana and dropped. Small kana of the text itself
+    /// (っ, ゃ) sit near the axis and stay. Without character boxes there is nothing to go by.
+    public func droppingRuby() -> RecognizedLine {
+        guard characterBoxes.count >= 3 else { return self }
+        let vertical = isVertical
+        // Across the line: a column's characters are as wide as the column, a row's as tall.
+        let size = { (box: CGRect) in vertical ? box.width : box.height }
+        let center = { (box: CGRect) in vertical ? box.midX : box.midY }
+        // The line's own characters are the larger ones, however much furigana a short
+        // line has; its axis runs through them.
+        let sizes = characterBoxes.map(size).sorted()
+        let usual = sizes[sizes.count * 3 / 4]
+        guard usual > 0 else { return self }
+        let axis = Self.median(characterBoxes.filter { size($0) >= usual * 0.85 }.map(center))
+        var kept = ""
+        var keptBoxes: [CGRect] = []
+        for (character, box) in zip(text, characterBoxes) {
+            let isRuby =
+                Kana.isKana(String(character)) && size(box) < usual * 0.7
+                && abs(center(box) - axis) > usual * 0.4
+            if !isRuby {
+                kept.append(character)
+                keptBoxes.append(box)
+            }
+        }
+        guard kept.count < text.count else { return self }
+        return RecognizedLine(
+            text: kept, box: box, confidence: confidence, characterBoxes: keptBoxes)
+    }
+
+    private static func median(_ values: [CGFloat]) -> CGFloat {
+        let sorted = values.sorted()
+        return sorted.isEmpty ? 0 : sorted[sorted.count / 2]
+    }
 }
