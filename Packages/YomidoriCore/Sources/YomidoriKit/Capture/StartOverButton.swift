@@ -11,8 +11,10 @@ struct StartOverButton: View {
                 Text("Start over", bundle: .module)
             } icon: {
                 Image(systemName: "xmark")
+                    .turnsWithPhone()
             }
             Text(verbatim: "\(pageCount)")
+                .turnsWithPhone()
         }
         .font(.callout.weight(.semibold))
         .padding(.horizontal, 12)

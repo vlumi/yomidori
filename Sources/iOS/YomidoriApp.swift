@@ -24,4 +24,11 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         application.registerForRemoteNotifications()
         return true
     }
+
+    /// Upright only while the Read tab shows, on a phone.
+    func application(
+        _ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?
+    ) -> UIInterfaceOrientationMask {
+        OrientationLock.mask
+    }
 }
