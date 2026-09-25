@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 14 — 2026-09-25
+
 - **A steadier camera after a retake.** A page taken after a retake no longer comes out upside down, darker than the view, or from the wider camera: the camera is no longer turned between shots, and the picture is turned to the way the phone is held instead.
 - **The Read tab stays upright.** Turned sideways, a phone keeps the Read tab's controls along its bottom edge, as the Camera app does, and turns only their icons; a page taken sideways still comes out the right way up. An iPad turns as before.
 - **Verbs with their endings read as the verb.** 頼みたい reads as 頼む instead of 頼み and たい, 認めよう as 認める, 読もう as 読む, 行きましょう as 行く, 勉強したい as 勉強; and where the dictionary spells several words alike, the one read as on the page comes first (本 as ほん, not もと; 彼 as かれ).
