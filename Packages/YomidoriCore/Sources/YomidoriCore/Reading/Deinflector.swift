@@ -67,4 +67,48 @@ public enum Deinflector {
         }
         return forms.reduce(into: []) { if !$0.contains($1) { $0.append($1) } }
     }
+
+    /// Endings a tokenizer leaves on a verb or adjective, or cuts off as a word of their own
+    /// (頼み + たい, where たい reads as 対): longest first.
+    private static let endings = [
+        "たくなかった", "たくない", "たかった", "たければ", "たくて", "たい", "たく",
+        "ましょう", "ました", "ません", "ます", "なかった", "なければ", "なくて", "ない",
+    ]
+
+    /// A godan verb's volitional: the o-row kana and う (読もう → 読む, 行こう → 行く).
+    private static let volitional: [Character: String] = [
+        "こ": "く", "ご": "ぐ", "そ": "す", "と": "つ", "の": "ぬ", "ぼ": "ぶ", "も": "む",
+        "ろ": "る", "お": "う",
+    ]
+
+    /// The dictionary forms of a verb or adjective with an ending on it (頼みたい → 頼む,
+    /// 認めよう → 認める, 読もう → 読む, 勉強したい → 勉強 as a する noun), for when the word
+    /// itself is not in the dictionary. Only a verb or adjective should be taken from these:
+    /// the stem alone may be a noun.
+    public static func conjugated(_ surface: String) -> [String] {
+        var forms: [String] = []
+        for ending in endings where surface.hasSuffix(ending) && surface.count > ending.count {
+            forms += stemForms(String(surface.dropLast(ending.count)))
+            break
+        }
+        // よう follows an ichidan stem, or する's し: 認めよう, 来よう, 勉強しよう.
+        if surface.hasSuffix("よう"), surface.count > 2 {
+            let stem = String(surface.dropLast(2))
+            forms += stem.hasSuffix("し") ? stemForms(stem) : [stem + "る"]
+        } else if surface.hasSuffix("う"), surface.count >= 3 {
+            let before = surface.dropLast()
+            if let last = before.last, let kana = volitional[last] {
+                forms.append(String(before.dropLast()) + kana)
+            }
+        }
+        return forms.reduce(into: []) { if !$0.contains($1) { $0.append($1) } }
+    }
+
+    /// What a stem cut from its ending may be listed as; a stem in し is also a する noun's
+    /// (勉強し → 勉強).
+    private static func stemForms(_ stem: String) -> [String] {
+        var forms = Array(candidates(for: stem).dropFirst())
+        if stem.hasSuffix("し"), stem.count > 1 { forms.append(String(stem.dropLast())) }
+        return forms
+    }
 }

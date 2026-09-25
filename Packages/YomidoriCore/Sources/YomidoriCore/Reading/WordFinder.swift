@@ -65,9 +65,14 @@ public enum WordFinder {
             // expression, かもしれない.
             if Kana.isKana(surface) {
                 entries = entries.filter { $0.senses.first?.partsOfSpeech.contains("exp") == true }
+            } else if entries.isEmpty {
+                // A verb with its ending cut off as a word (頼み + たい): the verb, whole.
+                entries = dictionary.entries(conjugatedFrom: surface)
             }
             if !entries.isEmpty {
-                return FoundWord(tokens: span, entries: entries)
+                return FoundWord(
+                    tokens: span, entries: entries.preferring(reading: span.map(\.reading).joined())
+                )
             }
         }
         // Looked up only when no longer word was found.

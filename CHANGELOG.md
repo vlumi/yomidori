@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Verbs with their endings read as the verb.** 頼みたい reads as 頼む instead of 頼み and たい, 認めよう as 認める, 読もう as 読む, 行きましょう as 行く, 勉強したい as 勉強; and where the dictionary spells several words alike, the one read as on the page comes first (本 as ほん, not もと; 彼 as かれ).
 ### build 13 — 2026-09-24
 
 - **The kanji-by-parts button is back.** The grid button at the end of the search box shows again when the Search tab opens with the keyboard up; it went missing when the tab started taking the keyboard as it is shown.
