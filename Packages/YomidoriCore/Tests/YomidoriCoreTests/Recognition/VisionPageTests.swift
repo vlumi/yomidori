@@ -52,4 +52,47 @@ final class VisionPageTests: XCTestCase {
             RecognizedLine(text: "樹皮", box: .zero, confidence: 1, characterBoxes: [.zero])
                 .characterBoxes, [])
     }
+
+    func testFuriganaBesideAColumnIsDropped() {
+        // 僅(わず)かに in a column at x 0.5…0.6, the furigana half size to its right.
+        let cell = { (index: Int) in
+            CGRect(x: 0.5, y: 0.9 - Double(index + 1) * 0.1, width: 0.1, height: 0.1)
+        }
+        let ruby = { (index: Int) in
+            CGRect(x: 0.61, y: 0.9 - 0.1 - Double(index + 1) * 0.05, width: 0.05, height: 0.05)
+        }
+        let line = RecognizedLine(
+            text: "僅わずかに", box: CGRect(x: 0.5, y: 0.5, width: 0.16, height: 0.4), confidence: 1,
+            characterBoxes: [cell(0), ruby(0), ruby(1), cell(1), cell(2)])
+        let read = line.droppingRuby()
+        XCTAssertEqual(read.text, "僅かに")
+        XCTAssertEqual(read.characterBoxes, [cell(0), cell(1), cell(2)])
+    }
+
+    func testFuriganaOnAShortLineIsDroppedToo() {
+        let cell = { (index: Int) in
+            CGRect(x: 0.5, y: 0.9 - Double(index + 1) * 0.1, width: 0.1, height: 0.1)
+        }
+        let ruby = { (index: Int) in
+            CGRect(x: 0.61, y: 0.8 - Double(index + 1) * 0.05, width: 0.05, height: 0.05)
+        }
+        let line = RecognizedLine(
+            text: "僅わずか", box: CGRect(x: 0.5, y: 0.6, width: 0.16, height: 0.3), confidence: 1,
+            characterBoxes: [cell(0), ruby(0), ruby(1), cell(1)])
+        XCTAssertEqual(line.droppingRuby().text, "僅か")
+    }
+
+    func testSmallKanaOfTheTextStay() {
+        // っ is small and a little off the axis, but within the column.
+        let cell = { (index: Int) in
+            CGRect(x: 0.5, y: 0.9 - Double(index + 1) * 0.1, width: 0.1, height: 0.1)
+        }
+        let small = CGRect(x: 0.53, y: 0.63, width: 0.06, height: 0.06)
+        let line = RecognizedLine(
+            text: "待って", box: CGRect(x: 0.5, y: 0.5, width: 0.1, height: 0.4), confidence: 1,
+            characterBoxes: [cell(0), small, cell(2)])
+        XCTAssertEqual(line.droppingRuby().text, "待って")
+        let bare = RecognizedLine(text: "僅わずか", box: .zero, confidence: 1)
+        XCTAssertEqual(bare.droppingRuby(), bare)
+    }
 }
