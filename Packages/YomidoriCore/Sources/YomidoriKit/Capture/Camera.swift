@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import YomidoriCore
 
 #if os(iOS)
 import AVFoundation
@@ -28,6 +29,8 @@ final class Camera: ObservableObject {
     private var device: AVCaptureDevice?
     private var rotation: AVCaptureDevice.RotationCoordinator?
     private var rotationObservation: NSKeyValueObservation?
+    /// The layer the coordinator was made for; a retake shows a new one.
+    private weak var rotatedLayer: AVCaptureVideoPreviewLayer?
     private var zoomRange: ClosedRange<CGFloat> = 1...1
     private var zoomAtPinchStart: CGFloat = 1
     /// Whether the camera should run, set at once by start and stop; the queue checks it, so a
@@ -67,15 +70,22 @@ final class Camera: ObservableObject {
         #endif
     }
 
+    /// The frame comes as the output delivers it, upright for a phone held upright, and is
+    /// turned after to the way the phone was held. Turning the output itself between shots
+    /// makes the camera rebuild its pipeline, and the frame after that is dark, and may come
+    /// from another of its cameras.
     func takeStill() async -> Still? {
         #if os(iOS)
         let frames = frames
-        output.connection(with: .video)?.videoRotationAngle =
-            rotation?.videoRotationAngleForHorizonLevelCapture ?? 90
+        let angle = rotation?.videoRotationAngleForHorizonLevelCapture ?? Self.outputAngle
         let image: CGImage? = await withCheckedContinuation { continuation in
             queue.async { frames.request(continuation) }
         }
-        return image.map(Still.init(image:))
+        guard let image else { return nil }
+        let turned = await Task.detached(priority: .userInitiated) {
+            QuarterTurn.rotate(image, clockwise: angle - Self.outputAngle) ?? image
+        }.value
+        return Still(image: turned)
         #else
         return nil
         #endif
@@ -98,9 +108,12 @@ final class Camera: ObservableObject {
     /// The preview follows the phone's orientation, and a still is taken the way the phone
     /// is held; the coordinator says by how much to turn each. Called once the layer shows.
     func attach(_ layer: AVCaptureVideoPreviewLayer) {
-        guard rotation == nil, let device else { return }
+        guard rotatedLayer !== layer, let device else { return }
+        // Made again for each layer: one made for a layer that is gone reads the phone's
+        // orientation without the screen's, and a still may come out upside down.
         let coordinator = AVCaptureDevice.RotationCoordinator(device: device, previewLayer: layer)
         rotation = coordinator
+        rotatedLayer = layer
         rotationObservation = coordinator.observe(
             \.videoRotationAngleForHorizonLevelPreview, options: [.initial, .new]
         ) { [weak layer] coordinator, _ in
@@ -134,6 +147,9 @@ final class Camera: ObservableObject {
     }
 
     #if os(iOS)
+    /// The output's turn, set once: a phone held upright.
+    private static let outputAngle: CGFloat = 90
+
     /// One virtual device where the phone has several, so a close page goes to the ultra-wide
     /// (macro) and a pinch past the wide's reach to the telephoto, both optical.
     private func configure() -> Bool {
@@ -160,7 +176,7 @@ final class Camera: ObservableObject {
         guard session.canAddInput(input), session.canAddOutput(output) else { return false }
         session.addInput(input)
         session.addOutput(output)
-        output.connection(with: .video)?.videoRotationAngle = 90
+        output.connection(with: .video)?.videoRotationAngle = Self.outputAngle
         self.device = device
         focusNear(device)
         NotificationCenter.default.addObserver(
