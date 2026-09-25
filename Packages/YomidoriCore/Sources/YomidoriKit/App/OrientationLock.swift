@@ -53,6 +53,7 @@ final class HeldOrientation: ObservableObject {
     }
 
     /// Flat on a table or face down says nothing of which way is up: the last turn stays.
+    /// Before the first reading, the screen's own orientation says how the phone is held.
     private func update() {
         let turn: Angle
         switch UIDevice.current.orientation {
@@ -60,9 +61,25 @@ final class HeldOrientation: ObservableObject {
         case .landscapeLeft: turn = .degrees(90)
         case .landscapeRight: turn = .degrees(-90)
         case .portraitUpsideDown: turn = .degrees(180)
-        default: return
+        default:
+            guard let interface = Self.interfaceTurn() else { return }
+            turn = interface
         }
         withAnimation(.snappy) { iconTurn = turn }
+    }
+
+    /// The turn that stands an icon upright for the interface's orientation, as it is before
+    /// the lock brings the screen back to portrait; nil once the screen is upright, which
+    /// says nothing of the phone.
+    private static func interfaceTurn() -> Angle? {
+        let scene = UIApplication.shared.connectedScenes.lazy
+            .compactMap { $0 as? UIWindowScene }.first { $0.activationState == .foregroundActive }
+        switch scene?.effectiveGeometry.interfaceOrientation {
+        case .landscapeRight: return .degrees(90)
+        case .landscapeLeft: return .degrees(-90)
+        case .portraitUpsideDown: return .degrees(180)
+        default: return nil
+        }
     }
 }
 

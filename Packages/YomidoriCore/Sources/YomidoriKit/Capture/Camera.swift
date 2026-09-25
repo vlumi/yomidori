@@ -109,8 +109,8 @@ final class Camera: ObservableObject {
     /// is held; the coordinator says by how much to turn each. Called once the layer shows.
     func attach(_ layer: AVCaptureVideoPreviewLayer) {
         guard rotatedLayer !== layer, let device else { return }
-        // Made again for each layer: one made for a layer that is gone reads the phone's
-        // orientation without the screen's, and a still may come out upside down.
+        // Made again for each layer, as a retake shows a new one: the preview angle is worked
+        // out for the layer the coordinator was given.
         let coordinator = AVCaptureDevice.RotationCoordinator(device: device, previewLayer: layer)
         rotation = coordinator
         rotatedLayer = layer
