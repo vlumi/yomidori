@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **No furigana in Vision's reading.** The small kana printed beside a word (僅 with わず) no longer end up in the text Vision reads, so 僅かに reads as 僅かに, not 僅わずかに.
+
 ### build 13 — 2026-09-24
 
 - **The kanji-by-parts button is back.** The grid button at the end of the search box shows again when the Search tab opens with the keyboard up; it went missing when the tab started taking the keyboard as it is shown.
