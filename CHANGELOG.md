@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **No freeze after fixing a character.** Picking the right character for a misread word no longer leaves the screen deaf to every tap.
+
 ### build 15 — 2026-09-25
 
 - **Progress.** A new screen off the Study tab shows the reviewing done: today's answers, how many were right, the minutes spent and the days in a row; the same for all time; and over four weeks, three months, a year or all time (by day, week or month), the answers right and wrong for all questions or one, the cards at each rank as they stood each morning, and the words started; a finger on a chart shows that period's numbers. The time spent on each answer is kept from now on.
