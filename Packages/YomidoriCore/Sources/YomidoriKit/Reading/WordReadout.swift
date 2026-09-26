@@ -14,6 +14,10 @@ struct WordReadout: View {
     let keep: () -> Void
     @State private var expanded = false
     @State private var fixing = false
+    /// The character picked in the sheet, applied once the sheet is gone: applying it reads
+    /// the page again and takes this row with it, and a row that goes while its sheet is
+    /// still dismissing leaves the screen deaf to every tap.
+    @State private var pendingFix: (index: Int, replacement: String)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -111,8 +115,13 @@ struct WordReadout: View {
         .padding(.leading, 4)
         .textSelection(.enabled)
         .sheet(isPresented: $fixing) {
+            if let pendingFix {
+                self.pendingFix = nil
+                fix?(pendingFix.index, pendingFix.replacement)
+            }
+        } content: {
             CharacterFixView(surface: word.surface) { index, replacement in
-                fix?(index, replacement)
+                pendingFix = (index, replacement)
             }
         }
     }
