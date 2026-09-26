@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 16 — 2026-09-26
+
 - **No freeze after fixing a character.** Picking the right character for a misread word no longer leaves the screen deaf to every tap.
 
 ### build 15 — 2026-09-25
