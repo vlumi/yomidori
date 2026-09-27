@@ -2,14 +2,14 @@ import SwiftUI
 import YomidoriCore
 import YomidoriDictionary
 
-/// The questions due, one at a time, each answered by typing or, for the pitch, by a pick.
-/// The verdict only suggests the grade; the reader can overrule it, and add a meaning of
-/// their own to the card.
+/// The questions due, shuffled, one at a time, each answered by typing or, for the pitch,
+/// by a pick. A right answer counts as good at once; a wrong one shows the answer and takes
+/// Again, unless the reader overrules it, or adds a meaning of their own to the card. Not
+/// answering is never good.
 struct ReviewView: View {
     @State private var queue: [ReviewItem] = []
     @State private var revealed = false
     @State private var answer = ""
-    @State private var verdict: Bool?
     /// When the question now showing came up, for the time spent on it.
     @State private var shown = Date()
     @FocusState private var typing: Bool
@@ -60,8 +60,7 @@ struct ReviewView: View {
         if item.question == .pitch {
             PitchChoices(reading: item.card.reading) { picked in
                 answer = "[\(picked.downstep)]"
-                verdict = Cards.accents(of: item.card).contains(picked)
-                revealed = true
+                settle(item, Cards.accents(of: item.card).contains(picked))
             }
         } else {
             TextField(text: $answer) {
@@ -78,7 +77,6 @@ struct ReviewView: View {
             .onSubmit { check(item) }
             .onAppear { typing = true }
             Button {
-                verdict = false
                 revealed = true
             } label: {
                 Text("Show the answer", bundle: .module)
@@ -88,23 +86,26 @@ struct ReviewView: View {
         }
     }
 
+    /// The answer shown after a miss: only the part asked, so a reading missed is not also
+    /// the meaning given away.
     @ViewBuilder private func answered(_ item: ReviewItem) -> some View {
-        if let verdict {
-            verdictLine(verdict)
-        }
+        missLine
         switch item.question {
         case .reading: ReadingBack(card: item.card)
         case .meaning: MeaningBack(card: item.card)
         case .pitch: PitchBack(card: item.card, accents: Cards.accents(of: item.card))
         }
-        if verdict == false {
+        if !answer.isEmpty {
             reconcile(item)
         }
-        HStack(spacing: 16) {
-            gradeButton(item, .again, prominent: verdict == false)
-            gradeButton(item, .good, prominent: verdict != false)
+        Button {
+            record(item, .again)
+        } label: {
+            Text("Again", bundle: .module).frame(maxWidth: .infinity)
         }
+        .buttonStyle(.borderedProminent)
         .controlSize(.large)
+        .keyboardShortcut(.defaultAction)
         Button {
             sendToWaiting(item.card)
         } label: {
@@ -115,20 +116,18 @@ struct ReviewView: View {
         .buttonStyle(.borderless)
     }
 
-    private func verdictLine(_ correct: Bool) -> some View {
+    private var missLine: some View {
         HStack(spacing: 8) {
-            Image(systemName: correct ? "checkmark.circle.fill" : "xmark.circle")
+            Image(systemName: "xmark.circle")
                 .accessibilityHidden(true)
-            if correct {
-                Text("Correct", bundle: .module)
-            } else if answer.isEmpty {
+            if answer.isEmpty {
                 Text("Not answered", bundle: .module)
             } else {
                 Text("Not quite. You typed \(answer).", bundle: .module)
             }
         }
         .font(.callout)
-        .foregroundStyle(correct ? Palette.nightGreen : .secondary)
+        .foregroundStyle(.secondary)
         .accessibilityElement(children: .combine)
         .accessibilityFocused($verdictFocused)
     }
@@ -156,45 +155,32 @@ struct ReviewView: View {
         .font(.callout)
     }
 
-    @ViewBuilder private func gradeButton(_ item: ReviewItem, _ grade: Grade, prominent: Bool)
-        -> some View
-    {
-        let label = Text(grade == .again ? "Again" : "Good", bundle: .module).frame(
-            maxWidth: .infinity)
-        let shortcut: KeyboardShortcut = grade == .good ? .defaultAction : KeyboardShortcut("1")
-        if prominent {
-            Button {
-                record(item, grade)
-            } label: {
-                label
-            }
-            .buttonStyle(.borderedProminent)
-            .keyboardShortcut(shortcut)
-        } else {
-            Button {
-                record(item, grade)
-            } label: {
-                label
-            }
-            .buttonStyle(.bordered)
-            .keyboardShortcut(shortcut)
-        }
-    }
-
     private func check(_ item: ReviewItem) {
         switch item.question {
         case .reading:
-            verdict = ReadingCheck.matches(typed: answer, reading: item.card.reading)
+            settle(item, ReadingCheck.matches(typed: answer, reading: item.card.reading))
         case .meaning:
-            let entry = JMdict.bundled?.entry(
-                headword: item.card.headword, reading: item.card.reading)
-            verdict = MeaningCheck.matches(
-                typed: answer, glosses: entry?.senses.flatMap(\.glosses) ?? [],
-                accepted: item.card.acceptedMeanings)
+            settle(
+                item,
+                MeaningCheck.matches(
+                    typed: answer, glosses: item.card.answers(glosses: glosses(of: item))))
         case .pitch:
-            verdict = nil
+            break
         }
-        revealed = true
+    }
+
+    private func glosses(of item: ReviewItem) -> [String] {
+        JMdict.bundled?.entry(headword: item.card.headword, reading: item.card.reading)?.senses
+            .flatMap(\.glosses) ?? []
+    }
+
+    /// Right is good, and the next question comes at once; wrong shows the answer.
+    private func settle(_ item: ReviewItem, _ correct: Bool) {
+        if correct {
+            record(item, .good)
+        } else {
+            revealed = true
+        }
     }
 
     private func record(
@@ -208,10 +194,10 @@ struct ReviewView: View {
         let now = Date()
         let reviewed = try? Cards.store?.answer(
             item, grade: grade, at: now, reconciled: reconciled, accepting: meaning,
+            glosses: meaning == nil ? [] : glosses(of: item),
             seconds: Int(now.timeIntervalSince(shown).rounded()))
         revealed = false
         answer = ""
-        verdict = nil
         queue.removeFirst()
         if let reviewed {
             queue = queue.map {
@@ -228,12 +214,12 @@ struct ReviewView: View {
         try? Cards.store?.update(waiting)
         revealed = false
         answer = ""
-        verdict = nil
         queue.removeAll { $0.card.id == card.id }
     }
 
+    /// Shuffled, so a card's three questions don't follow one another unless chance says so.
     private func reload() {
-        queue = Cards.dueItems(at: Date())
+        queue = Cards.dueItems(at: Date()).shuffled()
         revealed = false
     }
 }
