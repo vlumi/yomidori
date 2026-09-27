@@ -20,7 +20,9 @@ struct CaptureDrawer<Content: View, Buttons: View>: View {
                     toggled: toggled)
                 ScrollViewReader { proxy in
                     ScrollView {
-                        VStack(spacing: 12) {
+                        // Lazy for its pinned section headers: the recognized text's title
+                        // stays at the top while its lines scroll.
+                        LazyVStack(alignment: .leading, spacing: 12, pinnedViews: .sectionHeaders) {
                             content()
                         }
                         .id(TabTop.id)

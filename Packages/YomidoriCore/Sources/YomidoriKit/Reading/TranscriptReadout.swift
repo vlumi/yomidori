@@ -14,13 +14,18 @@ struct TranscriptReadout: View {
     @ObservedObject var selection: LiveTextSelection
     @EnvironmentObject private var page: CaptureState
     @AppStorage(TokenizerChoice.key) private var choice: TokenizerChoice = .system
-    @State private var keptSurfaces: Set<String> = []
+    /// The words with a card, as "headword reading", read with the page and added to by Keep.
+    @State private var keptWords: Set<String> = []
+    /// The card opened from a kept word's mark, over the page.
+    @State private var openedCard: Card?
     /// Where the selection goes once a fix has been read in.
     @State private var afterFix: Range<Int>?
     @AppStorage(SettingsKey.transcriptExpanded) private var expanded = false
 
+    /// Laid straight into the drawer's lazy stack, so the recognized text's title, a section
+    /// header, stays at the top while its lines scroll under it.
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        Group {
             header
             if page.reading == nil {
                 HStack(spacing: 10) {
@@ -40,34 +45,66 @@ struct TranscriptReadout: View {
             if let reading = page.reading {
                 strip(reading)
             }
-        }
-        .task(id: "\(choice)|\(fixed)") { await read() }
-        .onChange(of: selection.range) { selectionOnPage() }
-        .onChange(of: page.selectedRange) { _, range in
-            requestOnPage(range)
-            noteLookups(range)
+            // The page's own work hangs off a view of no size, not off every row.
+            Color.clear.frame(height: 0)
+                .task(id: "\(choice)|\(fixed)") { await read() }
+                .onChange(of: selection.range) { selectionOnPage() }
+                .onChange(of: page.selectedRange) { _, range in
+                    requestOnPage(range)
+                    noteLookups(range)
+                }
+                .sheet(item: $openedCard) { card in
+                    NavigationStack {
+                        CardView(card: card)
+                            .appDestinations()
+                            .toolbar {
+                                ToolbarItem(placement: .confirmationAction) {
+                                    Button {
+                                        openedCard = nil
+                                    } label: {
+                                        Text("Done", bundle: .module)
+                                    }
+                                }
+                            }
+                    }
+                }
         }
     }
 
+    /// The recognized text under its title, which folds it and stays put while it scrolls.
     private func strip(_ reading: PageReading) -> some View {
-        DisclosureGroup(isExpanded: $expanded) {
-            VStack(alignment: .leading, spacing: 6) {
-                ForEach(reading.lines.lines.indices, id: \.self) { line in
-                    ChunkFlow(
-                        chunks: reading.chunks.filter { $0.line == line },
-                        selected: page.selectedRange,
-                        select: { page.selectedRange = $0.range },
-                        extend: extend)
+        Section {
+            if expanded {
+                VStack(alignment: .leading, spacing: 6) {
+                    ForEach(reading.lines.lines.indices, id: \.self) { line in
+                        ChunkFlow(
+                            chunks: reading.chunks.filter { $0.line == line },
+                            selected: page.selectedRange,
+                            select: { page.selectedRange = $0.range },
+                            extend: extend)
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.top, 4)
-        } label: {
-            Text("Recognized text", bundle: .module)
+        } header: {
+            Button {
+                withAnimation(.snappy) { expanded.toggle() }
+            } label: {
+                HStack {
+                    Text("Recognized text", bundle: .module)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .rotationEffect(.degrees(expanded ? 90 : 0))
+                }
                 .font(.caption)
                 .foregroundStyle(.secondary)
+                .padding(.vertical, 6)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .background(Palette.page)
+            .accessibilityAddTraits(expanded ? [.isSelected] : [])
         }
-        .tint(.secondary)
     }
 
     /// The selection stretched to a chunk: from where it starts to the chunk, whichever way.
@@ -90,7 +127,11 @@ struct TranscriptReadout: View {
         let chunks = reading.chunks(in: range)
         let words = chunks.filter(\.isWord)
         if chunks.count > 1 {
-            PhraseRow(reading: reading, chunks: chunks) {
+            PhraseRow(
+                reading: reading, chunks: chunks,
+                kept: { keptWords.contains(Self.wordKey(of: $0)) },
+                open: { openedCard = Self.card(of: $0) }
+            ) {
                 keep($0, onLine: chunks[0].line, in: reading)
             }
             if !words.isEmpty { Divider() }
@@ -105,8 +146,9 @@ struct TranscriptReadout: View {
         WordReadout(
             word: chunk.word,
             accent: chunk.word.entries.first.flatMap { JMdict.bundled?.pitchAccent(of: $0) },
-            kept: keptSurfaces.contains(chunk.surface), canKeep: Cards.store != nil,
-            fix: { index, replacement in fix(chunk, index, replacement) }
+            kept: keptWords.contains(Self.wordKey(of: chunk.word)), canKeep: Cards.store != nil,
+            fix: { index, replacement in fix(chunk, index, replacement) },
+            open: { openedCard = Self.card(of: chunk.word) }
         ) {
             keep(chunk.word, onLine: chunk.line, in: reading)
         }
@@ -175,12 +217,27 @@ struct TranscriptReadout: View {
         selection.looking = true
         let reading = await PageReader.shared.read(text, with: choice)
         guard !Task.isCancelled else { return }
-        keptSurfaces = []
+        keptWords = Cards.keptWords()
         page.reading = reading
         page.readingKey = key
         page.selectedRange = previous.flatMap(reading.whole)
         afterFix = nil
         selection.looking = false
+        // A word selected on the page while it was being read is taken up now.
+        if page.selectedRange == nil { selectionOnPage() }
+    }
+
+    /// The key a word's card is kept under: the dictionary's headword and first reading, as
+    /// `keep` files it.
+    private static func wordKey(of word: FoundWord) -> String {
+        let entry = word.entries.first
+        return WordKey.of(
+            headword: entry?.headword ?? word.dictionaryForm ?? word.surface,
+            reading: Kana.hiragana(entry?.readings.first ?? word.reading))
+    }
+
+    private static func card(of word: FoundWord) -> Card? {
+        Cards.store?.cards().first { $0.wordKey == wordKey(of: word) }
     }
 
     /// Corrects one character of a word and reads the page again, the selection kept on it,
@@ -250,7 +307,7 @@ struct TranscriptReadout: View {
                 sighting, headword: headword, reading: reading, entryID: entry?.id,
                 collection: Cards.currentCollectionID())) != nil
         else { return }
-        keptSurfaces.insert(word.surface)
+        keptWords.insert(Self.wordKey(of: word))
     }
 }
 
@@ -259,6 +316,8 @@ struct TranscriptReadout: View {
 private struct PhraseRow: View {
     let reading: PageReading
     let chunks: [PageReading.Chunk]
+    let kept: (FoundWord) -> Bool
+    let open: (FoundWord) -> Void
     let keep: (FoundWord) -> Void
 
     var body: some View {
@@ -270,7 +329,9 @@ private struct PhraseRow: View {
             WordReadout(
                 word: FoundWord(tokens: tokens, entries: entries),
                 accent: entries.first.flatMap { JMdict.bundled?.pitchAccent(of: $0) },
-                kept: false, canKeep: Cards.store != nil
+                kept: kept(FoundWord(tokens: tokens, entries: entries)),
+                canKeep: Cards.store != nil,
+                open: { open(FoundWord(tokens: tokens, entries: entries)) }
             ) {
                 keep(FoundWord(tokens: tokens, entries: entries))
             }
