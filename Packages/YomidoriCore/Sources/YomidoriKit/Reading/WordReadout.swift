@@ -11,6 +11,8 @@ struct WordReadout: View {
     /// Puts right the character at an index of the word; nil where the word has no place in
     /// the page's text to put it right in.
     var fix: ((Int, String) -> Void)?
+    /// Shows the card the word is kept on.
+    var open: (() -> Void)?
     let keep: () -> Void
     @State private var expanded = false
     @State private var fixing = false
@@ -65,7 +67,7 @@ struct WordReadout: View {
     }
 
     private var keepButton: some View {
-        KeepButton(kept: kept, canKeep: canKeep, keep: keep)
+        KeepButton(kept: kept, canKeep: canKeep, keep: keep, open: open)
     }
 
     private var meaning: some View {

@@ -491,6 +491,16 @@
         }
       }
     },
+    "Done" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了"
+          }
+        }
+      }
+    },
     "Drawer" : {
       "localizations" : {
         "ja" : {
@@ -847,6 +857,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "検索から残した言葉。文はまだありません。"
+          }
+        }
+      }
+    },
+    "Kept; open the card" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済み。カードを開く"
           }
         }
       }

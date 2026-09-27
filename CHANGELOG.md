@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The page's words, closer to their cards.** A word that already has a card shows its kept mark on the page, and the mark opens the card over the page, right after Keep too; while a page is being read into words the picture still zooms and pans, and a word selected meanwhile is taken up once the reading is done; the *Recognized text* title stays at the top of the drawer while its lines scroll, so it can be folded from anywhere.
+
 ### build 16 — 2026-09-26
 
 - **No freeze after fixing a character.** Picking the right character for a misread word no longer leaves the screen deaf to every tap.
