@@ -944,6 +944,16 @@
         }
       }
     },
+    "Meanings that count" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正答とする意味"
+          }
+        }
+      }
+    },
     "MeCab" : {
       "localizations" : {
         "ja" : {
@@ -1960,6 +1970,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "このファイルはヨミドリのコレクションではありません。"
+          }
+        }
+      }
+    },
+    "The dictionary's, until you change them." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "変えるまでは辞書のとおりです。"
           }
         }
       }

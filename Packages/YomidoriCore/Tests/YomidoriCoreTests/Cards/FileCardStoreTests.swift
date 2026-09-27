@@ -291,4 +291,18 @@ final class FileCardStoreTests: XCTestCase {
         XCTAssertTrue(text.contains("\"headword\" : \"樹皮\""))
         XCTAssertTrue(text.contains("1970-01-12T13:46:40Z"))
     }
+
+    func testTheMeaningsThatCountAreTheGlossesUntilEdited() {
+        var card = Card(
+            headword: "切断", reading: "せつだん", entryID: nil, sightings: [], created: Date())
+        let glosses = ["cutting", "severance", "amputation"]
+        XCTAssertEqual(card.answers(glosses: glosses), glosses)
+        card.removeAnswer("amputation", glosses: glosses)
+        XCTAssertEqual(card.answers(glosses: glosses), ["cutting", "severance"])
+        card.addAnswer("cut off", glosses: glosses)
+        card.addAnswer("cut off", glosses: glosses)
+        XCTAssertEqual(card.acceptedMeanings, ["cutting", "severance", "cut off"])
+        // An edited list stands on its own, whatever the dictionary says later.
+        XCTAssertEqual(card.answers(glosses: ["something else"]), card.acceptedMeanings)
+    }
 }

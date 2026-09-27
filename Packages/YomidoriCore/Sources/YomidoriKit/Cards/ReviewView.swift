@@ -160,16 +160,18 @@ struct ReviewView: View {
         case .reading:
             settle(item, ReadingCheck.matches(typed: answer, reading: item.card.reading))
         case .meaning:
-            let entry = JMdict.bundled?.entry(
-                headword: item.card.headword, reading: item.card.reading)
             settle(
                 item,
                 MeaningCheck.matches(
-                    typed: answer, glosses: entry?.senses.flatMap(\.glosses) ?? [],
-                    accepted: item.card.acceptedMeanings))
+                    typed: answer, glosses: item.card.answers(glosses: glosses(of: item))))
         case .pitch:
             break
         }
+    }
+
+    private func glosses(of item: ReviewItem) -> [String] {
+        JMdict.bundled?.entry(headword: item.card.headword, reading: item.card.reading)?.senses
+            .flatMap(\.glosses) ?? []
     }
 
     /// Right is good, and the next question comes at once; wrong shows the answer.
@@ -192,6 +194,7 @@ struct ReviewView: View {
         let now = Date()
         let reviewed = try? Cards.store?.answer(
             item, grade: grade, at: now, reconciled: reconciled, accepting: meaning,
+            glosses: meaning == nil ? [] : glosses(of: item),
             seconds: Int(now.timeIntervalSince(shown).rounded()))
         revealed = false
         answer = ""

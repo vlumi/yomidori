@@ -1,20 +1,50 @@
 import Foundation
 
-/// A typed meaning against the glosses and the card's own accepted answers: case, articles,
-/// "to", parentheticals and punctuation set aside; a whole gloss, a gloss that contains the
-/// answer as a whole phrase, or one typo away from a gloss all count.
+/// A typed meaning against the meanings that count: case, articles, "to", parentheticals
+/// and punctuation set aside; a whole meaning, one that contains the answer as a whole
+/// phrase, one typo away, or the same words in another form (cut for cutting, carries for
+/// carry) all count.
 public enum MeaningCheck {
     public static func matches(typed: String, glosses: [String], accepted: [String] = [])
         -> Bool
     {
         let answer = normalize(typed)
         guard !answer.isEmpty else { return false }
+        let stemmed = stems(answer)
         return (glosses + accepted).contains { gloss in
             let candidate = normalize(gloss)
             guard !candidate.isEmpty else { return false }
             return candidate == answer || containsPhrase(candidate, answer)
                 || (answer.count >= 4 && editDistance(candidate, answer) <= 1)
+                || stems(candidate) == stemmed || containsPhrase(stems(candidate), stemmed)
         }
+    }
+
+    /// Each word cut to a rough stem: -ies to y, -ing, -ed, -es, -s and -ly off, a doubled
+    /// last consonant undoubled (cutting to cut) and a final e dropped (make, making to mak).
+    static func stems(_ text: String) -> String {
+        text.split(separator: " ").map { stem(String($0)) }.joined(separator: " ")
+    }
+
+    private static func stem(_ word: String) -> String {
+        var stem = word
+        if stem.count > 4, stem.hasSuffix("ies") {
+            stem = String(stem.dropLast(3)) + "y"
+        } else {
+            for suffix in ["ing", "ed", "es", "ly", "s"]
+            where stem.count > suffix.count + 2 && stem.hasSuffix(suffix) && !stem.hasSuffix("ss") {
+                stem = String(stem.dropLast(suffix.count))
+                break
+            }
+        }
+        let letters = Array(stem)
+        if letters.count > 3, letters[letters.count - 1] == letters[letters.count - 2],
+            !"aeiou".contains(letters[letters.count - 1])
+        {
+            stem = String(stem.dropLast())
+        }
+        if stem.count > 3, stem.hasSuffix("e") { stem = String(stem.dropLast()) }
+        return stem
     }
 
     static func normalize(_ text: String) -> String {
