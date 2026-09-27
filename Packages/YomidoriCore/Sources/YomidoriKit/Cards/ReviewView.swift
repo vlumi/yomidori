@@ -10,7 +10,6 @@ struct ReviewView: View {
     @State private var queue: [ReviewItem] = []
     @State private var revealed = false
     @State private var answer = ""
-    @State private var verdict: Bool?
     /// When the question now showing came up, for the time spent on it.
     @State private var shown = Date()
     @FocusState private var typing: Bool
@@ -78,7 +77,6 @@ struct ReviewView: View {
             .onSubmit { check(item) }
             .onAppear { typing = true }
             Button {
-                verdict = false
                 revealed = true
             } label: {
                 Text("Show the answer", bundle: .module)
@@ -91,7 +89,7 @@ struct ReviewView: View {
     /// The answer shown after a miss: only the part asked, so a reading missed is not also
     /// the meaning given away.
     @ViewBuilder private func answered(_ item: ReviewItem) -> some View {
-        verdictLine(false)
+        missLine
         switch item.question {
         case .reading: ReadingBack(card: item.card)
         case .meaning: MeaningBack(card: item.card)
@@ -118,20 +116,18 @@ struct ReviewView: View {
         .buttonStyle(.borderless)
     }
 
-    private func verdictLine(_ correct: Bool) -> some View {
+    private var missLine: some View {
         HStack(spacing: 8) {
-            Image(systemName: correct ? "checkmark.circle.fill" : "xmark.circle")
+            Image(systemName: "xmark.circle")
                 .accessibilityHidden(true)
-            if correct {
-                Text("Correct", bundle: .module)
-            } else if answer.isEmpty {
+            if answer.isEmpty {
                 Text("Not answered", bundle: .module)
             } else {
                 Text("Not quite. You typed \(answer).", bundle: .module)
             }
         }
         .font(.callout)
-        .foregroundStyle(correct ? Palette.nightGreen : .secondary)
+        .foregroundStyle(.secondary)
         .accessibilityElement(children: .combine)
         .accessibilityFocused($verdictFocused)
     }
@@ -181,7 +177,6 @@ struct ReviewView: View {
         if correct {
             record(item, .good)
         } else {
-            verdict = false
             revealed = true
         }
     }
@@ -200,7 +195,6 @@ struct ReviewView: View {
             seconds: Int(now.timeIntervalSince(shown).rounded()))
         revealed = false
         answer = ""
-        verdict = nil
         queue.removeFirst()
         if let reviewed {
             queue = queue.map {
@@ -217,7 +211,6 @@ struct ReviewView: View {
         try? Cards.store?.update(waiting)
         revealed = false
         answer = ""
-        verdict = nil
         queue.removeAll { $0.card.id == card.id }
     }
 
