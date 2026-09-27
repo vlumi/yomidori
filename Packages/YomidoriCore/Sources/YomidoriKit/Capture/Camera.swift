@@ -71,13 +71,14 @@ final class Camera: ObservableObject {
     }
 
     /// The frame comes as the output delivers it, upright for a phone held upright, and is
-    /// turned after to the way the phone was held. Turning the output itself between shots
-    /// makes the camera rebuild its pipeline, and the frame after that is dark, and may come
-    /// from another of its cameras.
+    /// turned after to match the preview as it stood on screen: what was seen is what is
+    /// taken, a phone held flat over a page not guessing at the horizon. Turning the output
+    /// itself between shots makes the camera rebuild its pipeline, and the frame after that
+    /// is dark, and may come from another of its cameras.
     func takeStill() async -> Still? {
         #if os(iOS)
         let frames = frames
-        let angle = rotation?.videoRotationAngleForHorizonLevelCapture ?? Self.outputAngle
+        let angle = rotation?.videoRotationAngleForHorizonLevelPreview ?? Self.outputAngle
         let image: CGImage? = await withCheckedContinuation { continuation in
             queue.async { frames.request(continuation) }
         }
@@ -105,8 +106,8 @@ final class Camera: ObservableObject {
     }
 
     #if os(iOS)
-    /// The preview follows the phone's orientation, and a still is taken the way the phone
-    /// is held; the coordinator says by how much to turn each. Called once the layer shows.
+    /// The preview follows the screen's orientation, and a still is taken the same way; the
+    /// coordinator says by how much to turn. Called once the layer shows.
     func attach(_ layer: AVCaptureVideoPreviewLayer) {
         guard rotatedLayer !== layer, let device else { return }
         // Made again for each layer, as a retake shows a new one: the preview angle is worked

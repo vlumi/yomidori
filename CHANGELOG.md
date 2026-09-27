@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The page comes out as it was on screen.** A page taken with the phone held flat, or nearly, no longer comes out sideways: the picture is turned the way the live view stood on the screen, not by a guess at the horizon.
+
 ### build 16 — 2026-09-26
 
 - **No freeze after fixing a character.** Picking the right character for a misread word no longer leaves the screen deaf to every tap.
