@@ -2,23 +2,13 @@ import SwiftUI
 import YomidoriCore
 import YomidoriDictionary
 
+/// The reading alone: the pitch and the meaning are questions of their own.
 struct ReadingBack: View {
     let card: Card
 
     var body: some View {
-        let dictionary = JMdict.bundled
-        let entry = dictionary?.entry(headword: card.headword, reading: card.reading)
-        VStack(alignment: .leading, spacing: 8) {
-            WordTitle(
-                headword: card.headword, reading: card.reading,
-                accent: dictionary?.pitchAccents(for: card.headword, reading: card.reading).first,
-                font: .largeTitle
-            ) {
-                DictionaryButton(term: card.headword)
-            }
-            if let entry {
-                MeaningFold { SensesList(entry: entry) }
-            }
+        WordTitle(headword: card.headword, reading: card.reading, accent: nil, font: .largeTitle) {
+            DictionaryButton(term: card.headword)
         }
     }
 }
