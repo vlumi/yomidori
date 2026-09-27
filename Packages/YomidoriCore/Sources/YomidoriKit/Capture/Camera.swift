@@ -42,6 +42,8 @@ final class Camera: ObservableObject {
     func start() {
         #if os(iOS)
         wanted.withLock { wantsRunning = true }
+        // For `takeStill` to know a flat phone from one held up; paired in `stop`.
+        UIDevice.current.beginGeneratingDeviceOrientationNotifications()
         AVCaptureDevice.requestAccess(for: .video) { [self] granted in
             guard granted else { return set(.denied) }
             queue.async { [self] in
@@ -63,6 +65,7 @@ final class Camera: ObservableObject {
     func stop() {
         #if os(iOS)
         wanted.withLock { wantsRunning = false }
+        UIDevice.current.endGeneratingDeviceOrientationNotifications()
         queue.async { [self] in
             frames.cancel()
             session.stopRunning()
@@ -71,14 +74,18 @@ final class Camera: ObservableObject {
     }
 
     /// The frame comes as the output delivers it, upright for a phone held upright, and is
-    /// turned after to match the preview as it stood on screen: what was seen is what is
-    /// taken, a phone held flat over a page not guessing at the horizon. Turning the output
+    /// turned after the way the phone is held, as the icons show it: by gravity when the
+    /// phone stands or lies on its side, and as the preview stood on the screen when it is
+    /// flat over the page, where gravity says nothing of the horizon. Turning the output
     /// itself between shots makes the camera rebuild its pipeline, and the frame after that
     /// is dark, and may come from another of its cameras.
     func takeStill() async -> Still? {
         #if os(iOS)
         let frames = frames
-        let angle = rotation?.videoRotationAngleForHorizonLevelPreview ?? Self.outputAngle
+        let angle =
+            (UIDevice.current.orientation.isFlat
+                ? rotation?.videoRotationAngleForHorizonLevelPreview
+                : rotation?.videoRotationAngleForHorizonLevelCapture) ?? Self.outputAngle
         let image: CGImage? = await withCheckedContinuation { continuation in
             queue.async { frames.request(continuation) }
         }
@@ -106,8 +113,8 @@ final class Camera: ObservableObject {
     }
 
     #if os(iOS)
-    /// The preview follows the screen's orientation, and a still is taken the same way; the
-    /// coordinator says by how much to turn. Called once the layer shows.
+    /// The preview follows the screen's orientation; the coordinator says by how much to turn
+    /// it, and a still. Called once the layer shows.
     func attach(_ layer: AVCaptureVideoPreviewLayer) {
         guard rotatedLayer !== layer, let device else { return }
         // Made again for each layer, as a retake shows a new one: the preview angle is worked

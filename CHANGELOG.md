@@ -14,7 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
-- **The page comes out as it was on screen.** A page taken with the phone held flat, or nearly, no longer comes out sideways: the picture is turned the way the live view stood on the screen, not by a guess at the horizon.
+- **The page comes out the way the phone was held.** A page taken with the phone held flat, or nearly, no longer comes out sideways: with no horizon to go by, the picture is turned the way the live view stood on the screen; held up or on its side, the phone still takes the page upright, as the turned icons show.
 
 ### build 16 — 2026-09-26
 
