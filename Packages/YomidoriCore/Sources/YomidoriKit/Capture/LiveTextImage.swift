@@ -30,8 +30,13 @@ struct LiveTextImage: UIViewRepresentable {
         if context.coordinator.interaction.analysis !== analysis {
             context.coordinator.interaction.analysis = analysis
         }
-        // While the page is read into words it takes no selection.
-        uiView.imageView.isUserInteractionEnabled = !selection.looking
+        // While the page is read into words it takes no new selection, but it still zooms
+        // and pans; a selection made meanwhile is taken up once the reading is done.
+        let types: ImageAnalysisInteraction.InteractionTypes =
+            selection.looking ? [] : .textSelection
+        if context.coordinator.interaction.preferredInteractionTypes != types {
+            context.coordinator.interaction.preferredInteractionTypes = types
+        }
         if let analysis, let requested = selection.requested,
             let range = CharacterRange.of(requested, in: analysis.transcript),
             context.coordinator.interaction.selectedRanges != [range]

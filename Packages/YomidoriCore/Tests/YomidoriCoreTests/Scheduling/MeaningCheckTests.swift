@@ -42,4 +42,15 @@ final class MeaningCheckTests: XCTestCase {
         XCTAssertEqual(MeaningCheck.editDistance("bark", "dark"), 1)
         XCTAssertEqual(MeaningCheck.editDistance("bark", "barking"), 2)
     }
+
+    func testTheSameWordsInAnotherFormCount() {
+        XCTAssertTrue(MeaningCheck.matches(typed: "cut", glosses: ["cutting"]))
+        XCTAssertTrue(MeaningCheck.matches(typed: "cuts", glosses: ["to cut"]))
+        XCTAssertTrue(MeaningCheck.matches(typed: "carry", glosses: ["carries"]))
+        XCTAssertTrue(MeaningCheck.matches(typed: "making", glosses: ["to make"]))
+        XCTAssertTrue(MeaningCheck.matches(typed: "careful", glosses: ["carefully"]))
+        XCTAssertFalse(MeaningCheck.matches(typed: "restrain", glosses: ["self restraint"]))
+        XCTAssertFalse(MeaningCheck.matches(typed: "moon", glosses: ["money"]))
+        XCTAssertEqual(MeaningCheck.stems("cutting carries makes"), "cut carry mak")
+    }
 }

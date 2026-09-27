@@ -491,6 +491,16 @@
         }
       }
     },
+    "Done" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了"
+          }
+        }
+      }
+    },
     "Drawer" : {
       "localizations" : {
         "ja" : {
@@ -851,6 +861,16 @@
         }
       }
     },
+    "Kept; open the card" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済み。カードを開く"
+          }
+        }
+      }
+    },
     "Kun" : {
       "localizations" : {
         "ja" : {
@@ -940,6 +960,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "意味"
+          }
+        }
+      }
+    },
+    "Meanings that count" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正答とする意味"
           }
         }
       }
@@ -1960,6 +1990,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "このファイルはヨミドリのコレクションではありません。"
+          }
+        }
+      }
+    },
+    "The dictionary's, until you change them." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "変えるまでは辞書のとおりです。"
           }
         }
       }

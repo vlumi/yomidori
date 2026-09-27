@@ -14,6 +14,9 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The meanings that count are yours to edit.** A card's screen lists the meanings a review takes as right, the dictionary's to begin with; take out the ones that make no sense to you and add your own, and only that list counts from then on. A meaning typed in another form of the same words (cut for cutting, carries for carry) counts too.
+- **Reviews that keep you honest.** The questions come shuffled across all the cards, not a card's reading, meaning and pitch in a row; a right answer, typed or picked, counts as good at once, and there is no Good without an answer; a missed reading shows the reading alone, the meaning and the pitch being questions of their own.
+- **The page's words, closer to their cards.** A word that already has a card shows its kept mark on the page, and the mark opens the card over the page, right after Keep too; while a page is being read into words the picture still zooms and pans, and a word selected meanwhile is taken up once the reading is done; the *Recognized text* title stays at the top of the drawer while its lines scroll, so it can be folded from anywhere.
 - **The page comes out the way the phone was held.** A page taken with the phone held flat, or nearly, no longer comes out sideways: with no horizon to go by, the picture is turned the way the live view stood on the screen; held up or on its side, the phone still takes the page upright, as the turned icons show.
 
 ### build 16 — 2026-09-26

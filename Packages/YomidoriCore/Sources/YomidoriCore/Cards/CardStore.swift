@@ -56,12 +56,10 @@ extension CardStore {
     @discardableResult
     public func answer(
         _ item: ReviewItem, grade: Grade, at date: Date, reconciled: Bool = false,
-        accepting meaning: String? = nil, seconds: Int = 0
+        accepting meaning: String? = nil, glosses: [String] = [], seconds: Int = 0
     ) throws -> Card {
         var card = self.card(id: item.card.id) ?? item.card
-        if let meaning, !card.acceptedMeanings.contains(meaning) {
-            card.acceptedMeanings.append(meaning)
-        }
+        if let meaning { card.addAnswer(meaning, glosses: glosses) }
         card.answer(
             item.question, grade: grade, at: date, reconciled: reconciled, seconds: seconds)
         try update(card)

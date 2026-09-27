@@ -16,7 +16,8 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     public var pitchReview: ReviewState?
     /// Every answer given, in order.
     public private(set) var log: [ReviewEntry]
-    /// Meanings the reader accepts beside the dictionary's glosses.
+    /// The meanings a review takes as right, once the reader has edited them; empty, the
+    /// dictionary's glosses stand (`answers(glosses:)`).
     public var acceptedMeanings: [String]
     /// When a lesson put the card into review; nil while it waits.
     public private(set) var started: Date?
@@ -49,6 +50,23 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         self.started = started
         self.shelved = shelved
         self.collectionIDs = collectionIDs
+    }
+
+    /// The meanings that count in a review: the reader's own list, or the dictionary's
+    /// glosses until there is one.
+    public func answers(glosses: [String]) -> [String] {
+        acceptedMeanings.isEmpty ? glosses : acceptedMeanings
+    }
+
+    /// The reader's list starts as the glosses on the first edit, so one can be taken out.
+    public mutating func addAnswer(_ meaning: String, glosses: [String]) {
+        if acceptedMeanings.isEmpty { acceptedMeanings = glosses }
+        if !acceptedMeanings.contains(meaning) { acceptedMeanings.append(meaning) }
+    }
+
+    public mutating func removeAnswer(_ meaning: String, glosses: [String]) {
+        if acceptedMeanings.isEmpty { acceptedMeanings = glosses }
+        acceptedMeanings.removeAll { $0 == meaning }
     }
 
     public mutating func add(to collection: UUID) {
