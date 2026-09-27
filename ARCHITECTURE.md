@@ -265,8 +265,9 @@ use for its own input.
   of collections or by a tag, each row with its rank mark; **`CardView`** shows
   one: the word with its pitch, the dictionary's sections around it
   (`WordSections`), its collections ticked, the moves between the stacks, the
-  reader's own accepted meanings, the dates and the good/again counts per
-  question (`CardFacts`), and every sighting with the word marked and a row to
+  meanings that count in a review (the dictionary's glosses until the reader
+  takes one out or adds one; then the reader's own list, `acceptedMeanings`),
+  the dates and the good/again counts per question (`CardFacts`), and every sighting with the word marked and a row to
   correct the sentence (the word is found again in the corrected text).
 - **`FSRS`**, **`Grade`** and **`ReviewState`** (Core): the free spaced
   repetition scheduler, version 5, with its published default parameters and a
@@ -285,14 +286,15 @@ use for its own input.
   word marked as the front. Every question is answered, not just revealed: the
   reading typed in kana and judged strictly by `ReadingCheck` (Core), katakana
   and half-width folded, long vowels not forgiven; the meaning typed in English
-  and judged leniently by `MeaningCheck` (Core) against every gloss and the
-  card's own accepted meanings, case, articles, parentheticals and punctuation
-  set aside, a whole gloss or a phrase of one, one typo forgiven with a
-  transposition counting as one; the pitch picked from every pattern the reading
-  allows. The verdict shows with the back and only suggests the grade, the
-  prominent of two buttons; on a miss, *Count it right* overrules it and *Add as
-  an answer* also keeps the typed meaning on the card. *Show the answer* gives
-  up. Every answer is logged on the card with its grade and whether it was
+  and judged leniently by `MeaningCheck` (Core) against the card's meanings
+  that count, case, articles, parentheticals and punctuation set aside, a whole
+  meaning or a phrase of one, one typo forgiven with a transposition counting
+  as one, and the same words in another form (cut for cutting); the pitch
+  picked from every pattern the reading allows. A right answer is good at once
+  and the next question comes; a miss shows the part asked and takes Again,
+  unless *Count it right* overrules it or *Add as an answer* also keeps the
+  typed meaning on the card. *Show the answer* gives up, and is never good.
+  The queue is shuffled. Every answer is logged on the card with its grade and whether it was
   overruled (`ReviewEntry`), for the graphs to come. No streak, no count kept
   against anyone. The queue is of questions, not cards.
 - **Lessons, stacks and ranks** (`Lesson`, `Rank` in Core; `LessonView`,

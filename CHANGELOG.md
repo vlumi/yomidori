@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The meanings that count are yours to edit.** A card's screen lists the meanings a review takes as right, the dictionary's to begin with; take out the ones that make no sense to you and add your own, and only that list counts from then on. A meaning typed in another form of the same words (cut for cutting, carries for carry) counts too.
 - **Reviews that keep you honest.** The questions come shuffled across all the cards, not a card's reading, meaning and pitch in a row; a right answer, typed or picked, counts as good at once, and there is no Good without an answer; a missed reading shows the reading alone, the meaning and the pitch being questions of their own.
 
 ### build 16 — 2026-09-26
