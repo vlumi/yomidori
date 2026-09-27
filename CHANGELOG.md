@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Reviews that keep you honest.** The questions come shuffled across all the cards, not a card's reading, meaning and pitch in a row; a right answer, typed or picked, counts as good at once, and there is no Good without an answer; a missed reading shows the reading alone, the meaning and the pitch being questions of their own.
+
 ### build 16 — 2026-09-26
 
 - **No freeze after fixing a character.** Picking the right character for a misread word no longer leaves the screen deaf to every tap.
