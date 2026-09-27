@@ -4,8 +4,8 @@ import SwiftUI
 import UIKit
 
 /// The Read tab stays upright on a phone, as the Camera app does: the controls keep to the
-/// phone's bottom edge and only their icons turn (`turnsWithPhone`). A still is still taken
-/// the way the phone is held. An iPad turns as it likes.
+/// phone's bottom edge and only their icons turn (`turnsWithPhone`). A still comes out the
+/// way the icons stood. An iPad turns as it likes.
 @MainActor
 public enum OrientationLock {
     /// What the app delegate reports to UIKit.
