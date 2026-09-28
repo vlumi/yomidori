@@ -31,6 +31,16 @@
         }
       }
     },
+    "%lld dropped" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "削除 %lld"
+          }
+        }
+      }
+    },
     "%lld good · %lld again" : {
       "localizations" : {
         "ja" : {
@@ -57,6 +67,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld%"
+          }
+        }
+      }
+    },
+    "%lld put back for later" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "後回し %lld"
           }
         }
       }
@@ -257,6 +277,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "認める意味をもう一つ"
+          }
+        }
+      }
+    },
+    "Answered" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回答"
           }
         }
       }
@@ -917,6 +947,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "レッスン"
+          }
+        }
+      }
+    },
+    "Lesson done" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レッスン終了"
           }
         }
       }
@@ -1700,6 +1740,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "待機に戻す"
+          }
+        }
+      }
+    },
+    "Session done" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セッション終了"
           }
         }
       }
