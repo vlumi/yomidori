@@ -171,6 +171,16 @@
         }
       }
     },
+    "Add a sentence" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文を加える"
+          }
+        }
+      }
+    },
     "Add a tag" : {
       "localizations" : {
         "ja" : {
@@ -207,6 +217,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "タグ「%@」を付ける"
+          }
+        }
+      }
+    },
+    "Add this sentence" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この文を加える"
           }
         }
       }
@@ -1040,6 +1060,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "MeCabの辞書を読み込めませんでした。"
+          }
+        }
+      }
+    },
+    "Met the word somewhere else? Type or paste the sentence." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかで出会った言葉なら、その文を入力か貼り付けで。"
           }
         }
       }

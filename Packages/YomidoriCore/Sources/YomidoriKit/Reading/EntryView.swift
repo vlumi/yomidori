@@ -6,6 +6,7 @@ struct EntryView: View {
     let entry: DictionaryEntry
     @State private var kept = false
     @State private var details = WordDetails()
+    @State private var openedCard: Card?
 
     private var reading: String {
         Kana.hiragana(entry.readings.first ?? "")
@@ -26,6 +27,9 @@ struct EntryView: View {
             WordSections(headword: entry.headword, details: details)
         }
         .navigationTitle(Text(verbatim: entry.headword))
+        .sheet(item: $openedCard) { card in
+            CardSheet(card: card)
+        }
         .task(id: entry.id) {
             Cards.noteLookup(of: entry, from: .search)
             details = await WordDetails.load(
@@ -36,7 +40,8 @@ struct EntryView: View {
     private var keepButton: some View {
         KeepButton(
             kept: kept || Cards.store?.card(headword: entry.headword, reading: reading) != nil,
-            canKeep: Cards.store != nil, keep: keep)
+            canKeep: Cards.store != nil, keep: keep,
+            open: { openedCard = Cards.store?.card(headword: entry.headword, reading: reading) })
     }
 
     private func keep() {

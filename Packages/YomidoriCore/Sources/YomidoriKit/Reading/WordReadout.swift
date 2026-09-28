@@ -7,6 +7,8 @@ struct WordReadout: View {
     let word: FoundWord
     let accent: PitchAccent?
     let kept: Bool
+    /// This sentence is on the card already.
+    var added = true
     let canKeep: Bool
     /// Puts right the character at an index of the word; nil where the word has no place in
     /// the page's text to put it right in.
@@ -67,7 +69,7 @@ struct WordReadout: View {
     }
 
     private var keepButton: some View {
-        KeepButton(kept: kept, canKeep: canKeep, keep: keep, open: open)
+        KeepButton(kept: kept, added: added, canKeep: canKeep, keep: keep, open: open)
     }
 
     private var meaning: some View {
