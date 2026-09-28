@@ -135,6 +135,28 @@ public struct CaptureView: View {
             }
         }
         .frame(width: area.width, height: area.height)
+        // The page is being read: said over the whole picture, not only in the drawer, and
+        // the picture still zooms and pans under it.
+        .overlay {
+            if recognizing {
+                ZStack {
+                    Color.black.opacity(0.35)
+                    VStack(spacing: 12) {
+                        ProgressView()
+                            .controlSize(.large)
+                            .tint(.white)
+                        Text("Reading the page…", bundle: .module)
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                    }
+                    .padding(24)
+                    .background(.black.opacity(0.5), in: RoundedRectangle(cornerRadius: 16))
+                }
+                .allowsHitTesting(false)
+                .transition(.opacity)
+            }
+        }
+        .animation(.easeOut(duration: 0.2), value: recognizing)
         .overlay(alignment: controlsSide.alignment) {
             PageControls(
                 side: controlsSide, pageCount: pages.isEmpty ? nil : pages.count + 1,

@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The page says it is being read.** While a page is recognized, a spinner and a word stand over the whole picture, not only in the drawer; the picture still zooms and pans under them.
+
 ### build 17 — 2026-09-27
 
 - **The meanings that count are yours to edit.** A card's screen lists the meanings a review takes as right, the dictionary's to begin with; take out the ones that make no sense to you and add your own, and only that list counts from then on. A meaning typed in another form of the same words (cut for cutting, carries for carry) counts too.
