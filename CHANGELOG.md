@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A review you can read at a glance.** Each question wears its name in its own color at the top, reading, meaning or pitch; the reading gets the kana keyboard and the meaning the letters, each remembered on its own; a Check button sits under the field, so the answer can be checked without the keyboard's return key (which only settles the kana), and *Show the answer* checks what is typed first, so a right answer is right however it is sent; the buttons after a miss are proper buttons with icons.
 - **The page says it is being read.** While a page is recognized, a spinner and a word stand over the whole picture, not only in the drawer; the picture still zooms and pans under them.
 
 ### build 17 — 2026-09-27
