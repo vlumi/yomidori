@@ -29,6 +29,12 @@ struct LiveTextImage: UIViewRepresentable {
         }
         if context.coordinator.interaction.analysis !== analysis {
             context.coordinator.interaction.analysis = analysis
+            let interaction = context.coordinator.interaction
+            let selection = self.selection
+            // Published after the update, not within it.
+            DispatchQueue.main.async {
+                selection.pageText = interaction.analysis == nil ? nil : interaction.text
+            }
         }
         // While the page is read into words it takes no new selection, but it still zooms
         // and pans; a selection made meanwhile is taken up once the reading is done.
@@ -37,8 +43,8 @@ struct LiveTextImage: UIViewRepresentable {
         if context.coordinator.interaction.preferredInteractionTypes != types {
             context.coordinator.interaction.preferredInteractionTypes = types
         }
-        if let analysis, let requested = selection.requested,
-            let range = CharacterRange.of(requested, in: analysis.transcript),
+        if analysis != nil, let requested = selection.requested,
+            let range = CharacterRange.of(requested, in: context.coordinator.interaction.text),
             context.coordinator.interaction.selectedRanges != [range]
         {
             context.coordinator.interaction.selectedRanges = [range]
@@ -69,17 +75,15 @@ struct LiveTextImage: UIViewRepresentable {
 
         private func selectionChanged() {
             let text = interaction.selectedText
-            let range = interaction.selectedRanges.first.flatMap { range in
-                interaction.analysis.flatMap { analysis -> Range<Int>? in
-                    let transcript = analysis.transcript
-                    // A selection outliving the analysis it came from: nothing to report.
-                    guard range.lowerBound >= transcript.startIndex,
-                        range.upperBound <= transcript.endIndex
-                    else { return nil }
-                    let start = transcript.distance(
-                        from: transcript.startIndex, to: range.lowerBound)
-                    return start..<(start + transcript[range].count)
-                }
+            // The ranges index the interaction's own text, not the analysis's transcript.
+            let page = interaction.text
+            let range = interaction.selectedRanges.first.flatMap { range -> Range<Int>? in
+                // A selection outliving the text it came from: nothing to report.
+                guard interaction.analysis != nil, range.lowerBound >= page.startIndex,
+                    range.upperBound <= page.endIndex
+                else { return nil }
+                let start = page.distance(from: page.startIndex, to: range.lowerBound)
+                return start..<(start + page[range].count)
             }
             guard text != selection.text || range != selection.range else { return }
             selection.text = text
