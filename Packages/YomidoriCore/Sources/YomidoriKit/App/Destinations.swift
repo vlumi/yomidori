@@ -26,6 +26,8 @@ struct Destinations: ViewModifier {
                         CollectionsView()
                     case .progress:
                         ProgressScreen()
+                    case .practice(let cards):
+                        ReviewView(practicing: Set(cards))
                     }
                 }
                 .swipeBackSetting()

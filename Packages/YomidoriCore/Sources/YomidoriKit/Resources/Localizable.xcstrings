@@ -1444,6 +1444,26 @@
         }
       }
     },
+    "Practice" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "練習"
+          }
+        }
+      }
+    },
+    "Practice them now" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今すぐ練習する"
+          }
+        }
+      }
+    },
     "Progress" : {
       "localizations" : {
         "ja" : {
@@ -1680,16 +1700,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "復習 %lld"
-          }
-        }
-      }
-    },
-    "Review them now" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今すぐ復習する"
           }
         }
       }
