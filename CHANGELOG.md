@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **More sentences for a word you know.** A word on the page that already has a card offers *Add this sentence* beside its mark again, which puts the page's sentence, in the form it takes there, on the card; the mark opens the card from a search too; and a card's screen has *Add a sentence*, to type or paste one met elsewhere.
+
 ### build 19 — 2026-09-28
 
 - **The whole sentence, and a word on how it went.** A review's sentence shows whole, scrolling if it must, instead of cut short with an ellipsis, and it can be corrected right there with the pencil under it; a sitting of reviews ends in a summary of how many were answered, right and missed, the minutes, and each question's share, and a lesson ends with how many were started, put back and dropped.

@@ -6,6 +6,8 @@ struct CardView: View {
     @State var card: Card
     @State private var details = WordDetails()
     @State private var editing: Sighting?
+    /// A sentence met elsewhere, typed or pasted onto the card.
+    @State private var adding: Sighting?
 
     var body: some View {
         List {
@@ -30,10 +32,31 @@ struct CardView: View {
                     editing = sighting
                 }
             }
+            Section {
+                Button {
+                    adding = Sighting(
+                        sentence: "", surface: card.headword, offset: 0, source: nil, date: Date())
+                } label: {
+                    Label {
+                        Text("Add a sentence", bundle: .module)
+                    } icon: {
+                        Image(systemName: "text.badge.plus")
+                    }
+                }
+            } footer: {
+                Text("Met the word somewhere else? Type or paste the sentence.", bundle: .module)
+            }
         }
         .navigationTitle(Text(verbatim: card.headword))
         .sheet(item: $editing) { sighting in
             SentenceEditor(sighting: sighting, save: replace)
+        }
+        .sheet(item: $adding) { sighting in
+            SentenceEditor(sighting: sighting) { added in
+                guard !added.sentence.isEmpty else { return }
+                card.add(added)
+                try? Cards.store?.update(card)
+            }
         }
         .task(id: card.id) {
             details = await WordDetails.load(headword: card.headword, reading: card.reading)

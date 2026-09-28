@@ -16,6 +16,8 @@ struct TranscriptReadout: View {
     @AppStorage(TokenizerChoice.key) private var choice: TokenizerChoice = .system
     /// The words with a card, as "headword reading", read with the page and added to by Keep.
     @State private var keptWords: Set<String> = []
+    /// The words whose sentence on this page is on their card: kept or added here.
+    @State private var addedHere: Set<String> = []
     /// The card opened from a kept word's mark, over the page.
     @State private var openedCard: Card?
     /// Where the selection goes once a fix has been read in.
@@ -54,19 +56,7 @@ struct TranscriptReadout: View {
                     noteLookups(range)
                 }
                 .sheet(item: $openedCard) { card in
-                    NavigationStack {
-                        CardView(card: card)
-                            .appDestinations()
-                            .toolbar {
-                                ToolbarItem(placement: .confirmationAction) {
-                                    Button {
-                                        openedCard = nil
-                                    } label: {
-                                        Text("Done", bundle: .module)
-                                    }
-                                }
-                            }
-                    }
+                    CardSheet(card: card)
                 }
         }
     }
@@ -130,6 +120,7 @@ struct TranscriptReadout: View {
             PhraseRow(
                 reading: reading, chunks: chunks,
                 kept: { keptWords.contains(Self.wordKey(of: $0)) },
+                added: { addedHere.contains(Self.wordKey(of: $0)) },
                 open: { openedCard = Self.card(of: $0) }
             ) {
                 keep($0, onLine: chunks[0].line, in: reading)
@@ -146,7 +137,8 @@ struct TranscriptReadout: View {
         WordReadout(
             word: chunk.word,
             accent: chunk.word.entries.first.flatMap { JMdict.bundled?.pitchAccent(of: $0) },
-            kept: keptWords.contains(Self.wordKey(of: chunk.word)), canKeep: Cards.store != nil,
+            kept: keptWords.contains(Self.wordKey(of: chunk.word)),
+            added: addedHere.contains(Self.wordKey(of: chunk.word)), canKeep: Cards.store != nil,
             fix: { index, replacement in fix(chunk, index, replacement) },
             open: { openedCard = Self.card(of: chunk.word) }
         ) {
@@ -218,6 +210,7 @@ struct TranscriptReadout: View {
         let reading = await PageReader.shared.read(text, with: choice)
         guard !Task.isCancelled else { return }
         keptWords = Cards.keptWords()
+        addedHere = []
         page.reading = reading
         page.readingKey = key
         page.selectedRange = previous.flatMap(reading.whole)
@@ -308,6 +301,7 @@ struct TranscriptReadout: View {
                 collection: Cards.currentCollectionID())) != nil
         else { return }
         keptWords.insert(Self.wordKey(of: word))
+        addedHere.insert(Self.wordKey(of: word))
     }
 }
 
@@ -317,6 +311,7 @@ private struct PhraseRow: View {
     let reading: PageReading
     let chunks: [PageReading.Chunk]
     let kept: (FoundWord) -> Bool
+    let added: (FoundWord) -> Bool
     let open: (FoundWord) -> Void
     let keep: (FoundWord) -> Void
 
@@ -330,6 +325,7 @@ private struct PhraseRow: View {
                 word: FoundWord(tokens: tokens, entries: entries),
                 accent: entries.first.flatMap { JMdict.bundled?.pitchAccent(of: $0) },
                 kept: kept(FoundWord(tokens: tokens, entries: entries)),
+                added: added(FoundWord(tokens: tokens, entries: entries)),
                 canKeep: Cards.store != nil,
                 open: { open(FoundWord(tokens: tokens, entries: entries)) }
             ) {
