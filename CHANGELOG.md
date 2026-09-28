@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 20 — 2026-09-28
+
 - **Every sentence has its turn.** A review shows one of the card's sentences at random, not always the newest; and where the sentence has the word in another form (頼みたい for 頼む), a reading question shows the dictionary's form under it, the one to type the reading of.
 - **More sentences for a word you know.** A word on the page that already has a card offers *Add this sentence* beside its mark again, which puts the page's sentence, in the form it takes there, on the card; the mark opens the card from a search too; and a card's screen has *Add a sentence*, to type or paste one met elsewhere.
 
