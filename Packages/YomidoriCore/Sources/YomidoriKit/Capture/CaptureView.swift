@@ -264,7 +264,10 @@ public struct CaptureView: View {
     var currentTranscript: String? {
         if let pasted = page.pasted { return pasted }
         if mode == .vision, !lines.isEmpty { return VisionPage(lines: lines).transcript }
-        if let analysis, analysis.hasResults(for: .text) { return analysis.transcript }
+        if let analysis, analysis.hasResults(for: .text) {
+            // The interaction's text once it has it: Live Text's selection counts in that one.
+            return selection.pageText ?? analysis.transcript
+        }
         return page.transcript
     }
 

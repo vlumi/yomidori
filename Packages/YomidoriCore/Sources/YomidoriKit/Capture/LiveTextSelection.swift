@@ -15,12 +15,16 @@ final class LiveTextSelection: ObservableObject {
     /// since indices kept from another text trap. The page reports it back through `text`
     /// and `range`, which then change nothing.
     @Published var requested: Range<Int>?
+    /// Live Text's page as its interaction holds it, the text its selection ranges index:
+    /// not always the analysis's transcript, which may differ in a character or a break.
+    @Published var pageText: String?
 
     /// Nothing selected, nothing asked for: a new page starts clean.
     func clear() {
         text = ""
         range = nil
         requested = nil
+        pageText = nil
         looking = false
     }
 }

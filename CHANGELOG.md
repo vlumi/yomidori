@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A Live Text selection reads what it covers.** A word selected on the picture no longer reads a character off, starting one early or losing one (の朱のドア for 朱色のドアが): the selection is now counted in the very text Live Text selects in.
+
 ### build 20 — 2026-09-28
 
 - **Every sentence has its turn.** A review shows one of the card's sentences at random, not always the newest; and where the sentence has the word in another form (頼みたい for 頼む), a reading question shows the dictionary's form under it, the one to type the reading of.
