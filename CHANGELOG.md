@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 21 — 2026-09-28
+
 - **A Live Text selection reads what it covers.** A word selected on the picture no longer reads a character off, starting one early or losing one (の朱のドア for 朱色のドアが): the selection is now counted in the very text Live Text selects in.
 
 ### build 20 — 2026-09-28
