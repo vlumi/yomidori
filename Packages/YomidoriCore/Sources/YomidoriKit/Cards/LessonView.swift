@@ -9,6 +9,8 @@ struct LessonView: View {
     @AppStorage(SettingsKey.lessonSize) private var size = 5
     @State private var cards: [Card]?
     @State private var started: [Card] = []
+    @State private var later = 0
+    @State private var dropped = 0
     @State private var collections: [Collection] = []
     @State private var chosen: Set<UUID> = []
 
@@ -87,8 +89,18 @@ struct LessonView: View {
 
     private var finished: some View {
         VStack(spacing: 20) {
+            Text("Lesson done", bundle: .module)
+                .font(.largeTitle.weight(.semibold))
             Text("\(started.count) started", bundle: .module)
                 .font(.title2)
+            if later > 0 {
+                Text("\(later) put back for later", bundle: .module)
+                    .foregroundStyle(.secondary)
+            }
+            if dropped > 0 {
+                Text("\(dropped) dropped", bundle: .module)
+                    .foregroundStyle(.secondary)
+            }
             if !started.isEmpty {
                 NavigationLink(value: Screen.review) {
                     Text("Review them now", bundle: .module).frame(maxWidth: .infinity)
@@ -118,9 +130,10 @@ struct LessonView: View {
             try? Cards.store?.update(changed)
             started.append(changed)
         case .later:
-            break
+            later += 1
         case .drop:
             try? Cards.store?.remove(card)
+            dropped += 1
         }
         cards?.removeFirst()
     }

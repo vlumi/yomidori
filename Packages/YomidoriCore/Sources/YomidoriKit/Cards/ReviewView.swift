@@ -12,12 +12,19 @@ struct ReviewView: View {
     @State private var answer = ""
     /// When the question now showing came up, for the time spent on it.
     @State private var shown = Date()
+    /// The sentence being corrected, over the question.
+    @State private var editing: Sighting?
+    /// This sitting's answers, for the summary at its end.
+    @State private var session = DayTally(day: Date())
     @AccessibilityFocusState private var verdictFocused: Bool
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         Group {
             if let item = queue.first {
                 review(item)
+            } else if session.total > 0 {
+                SessionSummary(session: session) { dismiss() }
             } else {
                 Text("Nothing due. Read on.", bundle: .module)
                     .foregroundStyle(.secondary)
@@ -28,16 +35,22 @@ struct ReviewView: View {
         .onChange(of: queue.first) { shown = Date() }
     }
 
+    /// The question scrolls, so a long sentence shows whole; the answer stays put below.
     private func review(_ item: ReviewItem) -> some View {
         VStack(alignment: .leading, spacing: 20) {
-            QuestionTag(question: item.question)
-            ReviewFront(card: item.card)
-            switch item.question {
-            case .reading: EmptyView()
-            case .meaning: MeaningQuestion(card: item.card)
-            case .pitch: PitchQuestion(card: item.card)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    QuestionTag(question: item.question)
+                    ReviewFront(card: item.card) { editing = $0 }
+                    switch item.question {
+                    case .reading: EmptyView()
+                    case .meaning: MeaningQuestion(card: item.card)
+                    case .pitch: PitchQuestion(card: item.card)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            Spacer()
+            .scrollBounceBehavior(.basedOnSize)
             if revealed {
                 answered(item)
             } else {
@@ -53,6 +66,19 @@ struct ReviewView: View {
         .tint(Palette.nightGreen)
         .onChange(of: revealed) { _, shown in
             if shown { verdictFocused = true }
+        }
+        .sheet(item: $editing) { sighting in
+            SentenceEditor(sighting: sighting) { replace($0, on: item.card) }
+        }
+    }
+
+    /// The corrected sentence goes on the card at once, and on to the questions still queued.
+    private func replace(_ sighting: Sighting, on card: Card) {
+        var changed = Cards.store?.card(id: card.id) ?? card
+        changed.replace(sighting)
+        try? Cards.store?.update(changed)
+        queue = queue.map {
+            $0.card.id == changed.id ? ReviewItem(card: changed, question: $0.question) : $0
         }
     }
 
@@ -231,10 +257,13 @@ struct ReviewView: View {
             current.question == item.question
         else { return }
         let now = Date()
+        let seconds = Int(now.timeIntervalSince(shown).rounded())
         let reviewed = try? Cards.store?.answer(
             item, grade: grade, at: now, reconciled: reconciled, accepting: meaning,
-            glosses: meaning == nil ? [] : glosses(of: item),
-            seconds: Int(now.timeIntervalSince(shown).rounded()))
+            glosses: meaning == nil ? [] : glosses(of: item), seconds: seconds)
+        session.answered[item.question, default: 0] += 1
+        if grade == .good { session.right[item.question, default: 0] += 1 }
+        session.seconds += min(max(seconds, 0), ReviewEntry.longestCounted)
         revealed = false
         answer = ""
         queue.removeFirst()
