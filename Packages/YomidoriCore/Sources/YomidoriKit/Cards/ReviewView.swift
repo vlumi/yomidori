@@ -12,6 +12,8 @@ struct ReviewView: View {
     @State private var answer = ""
     /// When the question now showing came up, for the time spent on it.
     @State private var shown = Date()
+    /// The sentence each question shows, by `key`.
+    @State private var picked: [String: UUID] = [:]
     /// The sentence being corrected, over the question.
     @State private var editing: Sighting?
     /// This sitting's answers, for the summary at its end.
@@ -41,7 +43,10 @@ struct ReviewView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     QuestionTag(question: item.question)
-                    ReviewFront(card: item.card) { editing = $0 }
+                    ReviewFront(
+                        card: item.card, sightingID: picked[Self.key(item)],
+                        showsForm: item.question == .reading
+                    ) { editing = $0 }
                     switch item.question {
                     case .reading: EmptyView()
                     case .meaning: MeaningQuestion(card: item.card)
@@ -286,8 +291,18 @@ struct ReviewView: View {
     }
 
     /// Shuffled, so a card's three questions don't follow one another unless chance says so.
+    /// One of each card's sentences, at random, for each question; picked once, so the
+    /// sentence doesn't change while the question is up.
     private func reload() {
         queue = Cards.dueItems(at: Date()).shuffled()
+        picked = Dictionary(
+            queue.compactMap { item in
+                ReviewFront.sentences(of: item.card).randomElement().map { (Self.key(item), $0.id) }
+            }, uniquingKeysWith: { first, _ in first })
         revealed = false
+    }
+
+    private static func key(_ item: ReviewItem) -> String {
+        "\(item.card.id.uuidString) \(item.question.rawValue)"
     }
 }

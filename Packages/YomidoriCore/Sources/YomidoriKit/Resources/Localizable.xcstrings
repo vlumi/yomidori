@@ -2104,6 +2104,16 @@
         }
       }
     },
+    "The word as the dictionary has it" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "辞書の形"
+          }
+        }
+      }
+    },
     "The words and the sentences they were met in, for another reader to start fresh; no photos, no cover, no reviews." : {
       "localizations" : {
         "ja" : {

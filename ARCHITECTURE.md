@@ -294,7 +294,9 @@ use for its own input.
   and the next question comes; a miss shows the part asked and takes Again,
   unless *Count it right* overrules it or *Add as an answer* also keeps the
   typed meaning on the card. *Show the answer* gives up, and is never good.
-  The queue is shuffled. The question scrolls, so a long sentence shows whole,
+  The queue is shuffled, and each question shows one of the card's sentences
+  at random, with the card's own form beside it on a reading question where
+  the sentence has another. The question scrolls, so a long sentence shows whole,
   and its sentence can be corrected there and then; an emptied queue ends in a
   summary of the sitting (`SessionSummary`), as a lesson ends in its counts. Every answer is logged on the card with its grade and whether it was
   overruled (`ReviewEntry`), for the graphs to come. No streak, no count kept
