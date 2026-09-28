@@ -298,7 +298,10 @@ use for its own input.
   at random, with the card's own form beside it on a reading question where
   the sentence has another. The question scrolls, so a long sentence shows whole,
   and its sentence can be corrected there and then; an emptied queue ends in a
-  summary of the sitting (`SessionSummary`), as a lesson ends in its counts. Every answer is logged on the card with its grade and whether it was
+  summary of the sitting (`SessionSummary`), as a lesson ends in its counts.
+  After a lesson, *Practice them now* drills the cards it started: every
+  question, a miss coming back three questions on, until each is answered
+  right; the answers count in the schedule like any others. Every answer is logged on the card with its grade and whether it was
   overruled (`ReviewEntry`), for the graphs to come. No streak, no count kept
   against anyone. The queue is of questions, not cards.
 - **Lessons, stacks and ranks** (`Lesson`, `Rank` in Core; `LessonView`,

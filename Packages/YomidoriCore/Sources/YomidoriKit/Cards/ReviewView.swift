@@ -7,7 +7,12 @@ import YomidoriDictionary
 /// Again, unless the reader overrules it, or adds a meaning of their own to the card. Not
 /// answering is never good.
 struct ReviewView: View {
+    /// A drill over these cards only, as after a lesson: a miss comes back a few questions on,
+    /// and the drill is over when every question has been answered right. Nil for a review.
+    var practicing: Set<UUID>?
     @State private var queue: [ReviewItem] = []
+    /// A drill is loaded once; coming back to it from a card mustn't start it over.
+    @State private var loaded = false
     @State private var revealed = false
     @State private var answer = ""
     /// When the question now showing came up, for the time spent on it.
@@ -32,7 +37,9 @@ struct ReviewView: View {
                     .foregroundStyle(.secondary)
             }
         }
-        .navigationTitle(Text("Review", bundle: .module))
+        .navigationTitle(
+            practicing == nil ? Text("Review", bundle: .module) : Text("Practice", bundle: .module)
+        )
         .onAppear(perform: reload)
         .onChange(of: queue.first) { shown = Date() }
     }
@@ -277,7 +284,14 @@ struct ReviewView: View {
                 $0.card.id == reviewed.id ? ReviewItem(card: reviewed, question: $0.question) : $0
             }
         }
+        // In a drill a miss comes back, a few questions on, until it is right.
+        if practicing != nil, grade == .again {
+            let again = ReviewItem(card: reviewed ?? item.card, question: item.question)
+            queue.insert(again, at: min(Self.missComesBackAfter, queue.count))
+        }
     }
+
+    static let missComesBackAfter = 3
 
     /// The card leaves the queue with every question it had in it, to come back through a
     /// lesson.
@@ -294,7 +308,13 @@ struct ReviewView: View {
     /// One of each card's sentences, at random, for each question; picked once, so the
     /// sentence doesn't change while the question is up.
     private func reload() {
-        queue = Cards.dueItems(at: Date()).shuffled()
+        if let practicing {
+            guard !loaded else { return }
+            loaded = true
+            queue = Cards.dueItems(at: Date()).filter { practicing.contains($0.card.id) }.shuffled()
+        } else {
+            queue = Cards.dueItems(at: Date()).shuffled()
+        }
         picked = Dictionary(
             queue.compactMap { item in
                 ReviewFront.sentences(of: item.card).randomElement().map { (Self.key(item), $0.id) }

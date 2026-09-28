@@ -102,8 +102,8 @@ struct LessonView: View {
                     .foregroundStyle(.secondary)
             }
             if !started.isEmpty {
-                NavigationLink(value: Screen.review) {
-                    Text("Review them now", bundle: .module).frame(maxWidth: .infinity)
+                NavigationLink(value: Screen.practice(started.map(\.id))) {
+                    Text("Practice them now", bundle: .module).frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)

@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Practice right after a lesson.** A lesson ends with *Practice them now*: the words it started, every question, and a miss comes back a few questions later until each is answered right. The answers count in the schedule, so a word that took a few tries comes back sooner.
+
 ### build 21 — 2026-09-28
 
 - **A Live Text selection reads what it covers.** A word selected on the picture no longer reads a character off, starting one early or losing one (の朱のドア for 朱色のドアが): the selection is now counted in the very text Live Text selects in.
