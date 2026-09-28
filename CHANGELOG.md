@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 19 — 2026-09-28
+
 - **The whole sentence, and a word on how it went.** A review's sentence shows whole, scrolling if it must, instead of cut short with an ellipsis, and it can be corrected right there with the pencil under it; a sitting of reviews ends in a summary of how many were answered, right and missed, the minutes, and each question's share, and a lesson ends with how many were started, put back and dropped.
 
 ### build 18 — 2026-09-28
