@@ -331,6 +331,16 @@
         }
       }
     },
+    "Check" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確認"
+          }
+        }
+      }
+    },
     "Chick" : {
       "localizations" : {
         "ja" : {

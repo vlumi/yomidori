@@ -12,7 +12,6 @@ struct ReviewView: View {
     @State private var answer = ""
     /// When the question now showing came up, for the time spent on it.
     @State private var shown = Date()
-    @FocusState private var typing: Bool
     @AccessibilityFocusState private var verdictFocused: Bool
 
     var body: some View {
@@ -31,6 +30,7 @@ struct ReviewView: View {
 
     private func review(_ item: ReviewItem) -> some View {
         VStack(alignment: .leading, spacing: 20) {
+            QuestionTag(question: item.question)
             ReviewFront(card: item.card)
             switch item.question {
             case .reading: EmptyView()
@@ -63,26 +63,46 @@ struct ReviewView: View {
                 settle(item, Cards.accents(of: item.card).contains(picked))
             }
         } else {
-            TextField(text: $answer) {
-                if item.question == .reading {
-                    Text("Type the reading", bundle: .module)
-                } else {
-                    Text("Type the meaning", bundle: .module)
+            AnswerField(
+                text: $answer,
+                placeholder: item.question == .reading
+                    ? String(localized: "Type the reading", bundle: .module)
+                    : String(localized: "Type the meaning", bundle: .module),
+                context: "answer.\(item.question.rawValue)",
+                asciiOnly: item.question == .meaning
+            ) { check(item) }
+            .id(item.question)
+            HStack(spacing: 12) {
+                Button {
+                    check(item)
+                } label: {
+                    Label {
+                        Text("Check", bundle: .module)
+                    } icon: {
+                        Image(systemName: "checkmark.circle")
+                    }
+                    .frame(maxWidth: .infinity)
                 }
+                .buttonStyle(.borderedProminent)
+                .disabled(answer.trimmingCharacters(in: .whitespaces).isEmpty)
+                // What is typed is checked first: a right answer is right, whichever button.
+                Button {
+                    if answer.trimmingCharacters(in: .whitespaces).isEmpty {
+                        revealed = true
+                    } else {
+                        check(item)
+                    }
+                } label: {
+                    Label {
+                        Text("Show the answer", bundle: .module)
+                    } icon: {
+                        Image(systemName: "eye")
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
             }
-            .textFieldStyle(.roundedBorder)
-            .font(.title2)
-            .focused($typing)
-            .submitLabel(.done)
-            .onSubmit { check(item) }
-            .onAppear { typing = true }
-            Button {
-                revealed = true
-            } label: {
-                Text("Show the answer", bundle: .module)
-                    .font(.callout)
-            }
-            .buttonStyle(.borderless)
+            .controlSize(.large)
         }
     }
 
@@ -95,25 +115,35 @@ struct ReviewView: View {
         case .meaning: MeaningBack(card: item.card)
         case .pitch: PitchBack(card: item.card, accents: Cards.accents(of: item.card))
         }
-        if !answer.isEmpty {
-            reconcile(item)
-        }
-        Button {
-            record(item, .again)
-        } label: {
-            Text("Again", bundle: .module).frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.borderedProminent)
-        .controlSize(.large)
-        .keyboardShortcut(.defaultAction)
-        Button {
-            sendToWaiting(item.card)
-        } label: {
-            Text("Forgot it. Back to waiting", bundle: .module)
-                .font(.callout)
+        VStack(spacing: 12) {
+            Button {
+                record(item, .again)
+            } label: {
+                Label {
+                    Text("Again", bundle: .module)
+                } icon: {
+                    Image(systemName: "arrow.counterclockwise")
+                }
                 .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .keyboardShortcut(.defaultAction)
+            if !answer.isEmpty {
+                reconcile(item)
+            }
+            Button {
+                sendToWaiting(item.card)
+            } label: {
+                Label {
+                    Text("Forgot it. Back to waiting", bundle: .module)
+                } icon: {
+                    Image(systemName: "tray.and.arrow.down")
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
         }
-        .buttonStyle(.borderless)
+        .controlSize(.large)
     }
 
     private var missLine: some View {
@@ -139,7 +169,12 @@ struct ReviewView: View {
             Button {
                 record(item, .good, reconciled: true)
             } label: {
-                Text("Count it right", bundle: .module)
+                Label {
+                    Text("Count it right", bundle: .module)
+                } icon: {
+                    Image(systemName: "checkmark")
+                }
+                .frame(maxWidth: .infinity)
             }
             if item.question == .meaning, !answer.trimmingCharacters(in: .whitespaces).isEmpty {
                 Button {
@@ -147,12 +182,16 @@ struct ReviewView: View {
                         item, .good, reconciled: true,
                         accepting: answer.trimmingCharacters(in: .whitespaces))
                 } label: {
-                    Text("Add as an answer", bundle: .module)
+                    Label {
+                        Text("Add as an answer", bundle: .module)
+                    } icon: {
+                        Image(systemName: "plus.circle")
+                    }
+                    .frame(maxWidth: .infinity)
                 }
             }
         }
         .buttonStyle(.bordered)
-        .font(.callout)
     }
 
     private func check(_ item: ReviewItem) {
