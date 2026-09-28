@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A review you can read at a glance.** Each question wears its name in its own color at the top, reading, meaning or pitch; the reading gets the kana keyboard and the meaning the letters, each remembered on its own; a Check button sits under the field, so the answer can be checked without the keyboard's return key (which only settles the kana), and *Show the answer* checks what is typed first, so a right answer is right however it is sent; the buttons after a miss are proper buttons with icons.
+
 ### build 17 — 2026-09-27
 
 - **The meanings that count are yours to edit.** A card's screen lists the meanings a review takes as right, the dictionary's to begin with; take out the ones that make no sense to you and add your own, and only that list counts from then on. A meaning typed in another form of the same words (cut for cutting, carries for carry) counts too.
