@@ -1394,6 +1394,16 @@
         }
       }
     },
+    "Once more, to get it right. This one no longer counts." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正解するまでもう一度。今回は記録されません。"
+          }
+        }
+      }
+    },
     "Or type the right one" : {
       "localizations" : {
         "ja" : {
