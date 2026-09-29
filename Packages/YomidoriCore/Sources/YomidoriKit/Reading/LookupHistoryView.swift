@@ -24,6 +24,7 @@ struct LookupHistoryView: View {
                         HStack(spacing: 12) {
                             EntryRow(
                                 entry: entry, accent: JMdict.bundled?.pitchAccent(of: entry),
+                                estimate: JMdict.bundled?.estimatedPitch(of: entry) ?? [],
                                 kept: kept.contains(lookup.id))
                             Image(systemName: lookup.source == .page ? "camera" : "magnifyingglass")
                                 .font(.caption2)

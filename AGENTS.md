@@ -82,6 +82,15 @@ describing intent as fact otherwise.
   JMdict, KANJIDIC2, KRADFILE and Kanjium are CC BY-SA 4.0 and KanjiVG CC BY-SA 3.0 — the attributions are in
   [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), shown on the About screen,
   and in the database's `meta` table.
+- **Estimated pitch is optional and built into the dictionary.** `make pitch`
+  runs `Scripts/data/estimate-pitch.py` on the built dictionary, in a venv of
+  its own (`.build-data/pitch-venv`, Homebrew's `python@3.13`; `pyopenjtalk`
+  builds from source there), and adds the `accent_estimate` table (~4 MB). Once
+  the venv exists, `make dictionary` runs it again after every rebuild. Without
+  it the app shows no estimates, so CI and a fresh clone are unaffected; a
+  release wants it run. `make pitch-measure` prints the agreement with Kanjium
+  on compounds held out. Open JTalk and its dictionary are Modified BSD; the
+  notice is in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 - **manga-ocr is optional and built, not committed.** `make models` converts
   the model to Core ML into `Sources/Shared/Models/` (~210 MB, gitignored) with
   Homebrew's `python@3.13` and a local venv; the app hides the engine when the
@@ -133,6 +142,7 @@ yomidori/
 │     release-*.sh, distribute.sh   The release lane (RELEASING.md)
 │     assets/make-icon.swift        Renders the app icon PNG (make icon)
 │     data/build-jmdict.py          JMdict, KANJIDIC2, KRADFILE, KanjiVG, Kanjium accents → the bundled SQLite (make dictionary)
+│     data/estimate-pitch.py        Open JTalk and Kanjium's habits → estimated pitch in the SQLite (make pitch; optional)
 │     data/build-mangaocr.py        manga-ocr → Core ML (make models; optional)
 ├── Sources/iOS/                    Thin @main app shell (+ Info.plist, entitlements)
 ├── Sources/Shared/                 The asset catalog (AppIcon), the app-level String Catalogs (InfoPlist too)
@@ -190,6 +200,8 @@ make run-device        # build + install + launch on a paired iPhone/iPad (DEVIC
 make demo-iphone       # build + launch the seeded demo on a simulator (DEVICE=<pattern>); demo-ipad likewise
 make icon              # regenerate the app icon PNG
 make dictionary        # build the bundled JMdict database (downloads JMdict_e once)
+make pitch             # estimate the pitch Kanjium lacks into the dictionary (optional; python3.13 + venv)
+make pitch-measure     # how often the estimate agrees with Kanjium, on compounds held out
 make models            # convert manga-ocr to Core ML into the app (optional; python3.13 + venv; ~210 MB)
 make clean-models      # remove them again, and nothing else
 make generate          # regenerate Yomidori.xcodeproj from project.yml (only if stale)

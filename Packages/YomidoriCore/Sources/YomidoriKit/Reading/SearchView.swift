@@ -3,7 +3,9 @@ import YomidoriCore
 import YomidoriDictionary
 
 struct SearchView: View {
-    @State private var query = ""
+    @State private var query = DemoMode.search ?? ""
+    /// The pitch worked out for the results the dictionary has no accent for.
+    @State private var estimates: [Int: [PitchPhrase]] = [:]
     @State private var results: [DictionaryEntry] = []
     @State private var kept: Set<String> = []
     /// Bumped when the history is cleared, so its view reloads.
@@ -36,6 +38,7 @@ struct SearchView: View {
                 NavigationLink(value: entry) {
                     EntryRow(
                         entry: entry, accent: accents[entry.id],
+                        estimate: estimates[entry.id] ?? [],
                         kept: kept.contains(
                             WordKey.of(
                                 headword: entry.headword,
@@ -77,15 +80,22 @@ struct SearchView: View {
             // Off the main thread: a short English prefix matches thousands of glosses.
             let query = query
             let found = await Task.detached(priority: .userInitiated) {
-                let results = JMdict.bundled?.search(query, limit: 50) ?? []
-                let accents = Dictionary(
-                    results.compactMap { entry in
-                        JMdict.bundled?.pitchAccent(of: entry).map { (entry.id, $0) }
-                    }, uniquingKeysWith: { first, _ in first })
-                return (results, accents)
+                var found = Found(results: JMdict.bundled?.search(query, limit: 50) ?? [])
+                for entry in found.results {
+                    if let accent = JMdict.bundled?.pitchAccent(of: entry) {
+                        found.accents[entry.id] = accent
+                    } else if let estimate = JMdict.bundled?.estimatedPitch(of: entry),
+                        !estimate.isEmpty
+                    {
+                        found.estimates[entry.id] = estimate
+                    }
+                }
+                return found
             }.value
             guard !Task.isCancelled else { return }
-            (results, accents) = found
+            results = found.results
+            accents = found.accents
+            estimates = found.estimates
             kept = Cards.keptWords()
         }
     }
@@ -117,4 +127,11 @@ struct SearchView: View {
         fieldButton = button
         return button
     }
+}
+
+/// What a search finds, with the pitch of each result: the dictionary's, or an estimate.
+private struct Found: Sendable {
+    var results: [DictionaryEntry]
+    var accents: [Int: PitchAccent] = [:]
+    var estimates: [Int: [PitchPhrase]] = [:]
 }

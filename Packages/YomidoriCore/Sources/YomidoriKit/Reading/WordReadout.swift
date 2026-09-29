@@ -6,6 +6,8 @@ import YomidoriCore
 struct WordReadout: View {
     let word: FoundWord
     let accent: PitchAccent?
+    /// The pitch as worked out, for a word without an accent of the dictionary's.
+    var estimate: [PitchPhrase] = []
     let kept: Bool
     /// This sentence is on the card already.
     var added = true
@@ -28,7 +30,7 @@ struct WordReadout: View {
             HStack(alignment: .firstTextBaseline, spacing: 10) {
                 WordTitle(
                     headword: word.surface, reading: reading, accent: accent,
-                    dictionaryForm: word.dictionaryForm
+                    estimate: estimate, dictionaryForm: word.dictionaryForm
                 ) {
                     keepButton
                 }
