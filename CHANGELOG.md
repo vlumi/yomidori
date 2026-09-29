@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Restore a backup.** *Back up cards* now saves the cards, the collections and the lookup history as one file, and *Restore a backup* in Settings brings one back: what the file has is added to what is here, a word's sentences and answers joining its card, and nothing is taken away. The covers are not in the file. A backup made by an earlier build restores too.
 - **Read any screen.** A new action for the Shortcuts app, *Read in Yomidori*, opens an image on the Read tab. Put after *Take Screenshot* in a shortcut and set to Back Tap or the Action button, a double tap on the back of the phone opens whatever is on the screen, a game's text drawn as pictures included, ready to tap, and nothing is saved to Photos. Settings says how to set it up.
 - **Pitch for compounds and expressions.** Words the pitch dictionary lacks, expressions like 見当がつく and 目を覚ます and many long compounds, now show a pitch worked out for them, an expression phrase by phrase (けんとうが [3], つく [1]), marked *estimated*: on cards, in lessons, on the page, in search and in the history. Estimates are never asked in a review. Cards kept before gain it with this build.
 - **A review ends right.** A question missed in a review comes back a few questions later until it is answered right; only the first answer counts for the schedule, the rest are there to finish on a right one. Stopping early is fine: a miss then comes back when its schedule says.

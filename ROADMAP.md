@@ -24,7 +24,6 @@ The whole idea rests on on-device text recognition reading real books: vertical 
 
 ## Cards — *the word keeps working*
 
-- [ ] **Restore a backup.** *Settings shares the cards file as a backup, and a single collection is shared and imported as a .yomidori file.* Wanted: bringing a backup back into a fresh install, merged as sync merges; iCloud covers moving between devices, not keeping a copy of one's own.
 - [ ] **FSRS parameters fitted** to the reader's own answers, much later, when the logs are long enough.
 
 ## Dictionary — *meaning on request*

@@ -31,6 +31,16 @@
         }
       }
     },
+    "%lld cards added, %lld joined with cards already here, %lld collections added." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード%lld枚を追加、%lld枚を既存のカードに統合、コレクション%lld件を追加しました。"
+          }
+        }
+      }
+    },
     "%lld dropped" : {
       "localizations" : {
         "ja" : {
@@ -317,6 +327,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "カードをバックアップ"
+          }
+        }
+      }
+    },
+    "Backup restored" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "復元しました"
           }
         }
       }
@@ -1734,6 +1754,16 @@
         }
       }
     },
+    "Restore a backup" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バックアップから復元"
+          }
+        }
+      }
+    },
     "Result" : {
       "localizations" : {
         "ja" : {
@@ -2164,6 +2194,16 @@
         }
       }
     },
+    "That file is not a Yomidori backup." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このファイルはヨミドリのバックアップではありません。"
+          }
+        }
+      }
+    },
     "That file is not a Yomidori collection." : {
       "localizations" : {
         "ja" : {
@@ -2424,12 +2464,22 @@
         }
       }
     },
-    "Your cards as one small file, to keep a copy wherever you like." : {
+    "Yomidori backup" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カードを小さなファイル1つにまとめます。好きな場所に控えを保存できます。"
+            "value" : "ヨミドリのバックアップ"
+          }
+        }
+      }
+    },
+    "Your cards, collections and lookup history as one file, to keep a copy wherever you like; the covers are not in it. Restoring adds what a backup has to what is here, and takes nothing away." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード、コレクション、検索履歴を一つのファイルにして、好きな場所に保存できます（表紙は含みません）。復元はバックアップの内容をここに加えるだけで、何も消しません。"
           }
         }
       }
