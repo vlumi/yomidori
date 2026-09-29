@@ -23,7 +23,6 @@ The whole idea rests on on-device text recognition reading real books: vertical 
 
 ## Cards — *the word keeps working*
 
-- [ ] **Restore a backup.** *Settings shares the cards file as a backup, and a single collection is shared and imported as a .yomidori file.* Wanted: bringing a backup back into a fresh install, merged as sync merges; iCloud covers moving between devices, not keeping a copy of one's own.
 - [ ] **FSRS parameters fitted** to the reader's own answers, much later, when the logs are long enough.
 
 ## Dictionary — *meaning on request*
@@ -32,7 +31,6 @@ The whole idea rests on on-device text recognition reading real books: vertical 
 
 ## Pitch & sound — *the part dictionaries lack*
 
-- [ ] **Hear the sentence.** The system's own Japanese voices (Kyoko, Otoya, the enhanced downloads) speak any sentence on the device at once; a button on the page and on a card's sentence. Their pitch is fair but not always right, which a pitch learner should know.
 - [ ] **Sentence contour and natural speech**, later and offline: the whole sentence's pitch as spoken, from Open JTalk's accent phrases, and VOICEVOX's more natural voices, generated on a Mac for fixed text or skipped — nothing runs a model on the phone.
 
 ## Mac — *the same cards on a keyboard*

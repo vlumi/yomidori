@@ -156,6 +156,11 @@ use for its own input.
   out, against 58% for Open JTalk's own rule), and none where the last element
   is unfamiliar; a single kanji word from Open JTalk's lexicon. Nothing of it
   runs on the phone.
+- **`Speaker`** (Kit): a sentence read aloud by the system's own Japanese voice,
+  the best one installed, on the device and at a press: on a card's sentence,
+  in a lesson, and the sentence around the selection on the page
+  (`PageReading.sentence(around:)`). Its pitch is fair, not always right; the
+  drawn pitch is the dictionary's word.
 - **`DictionaryEntry`** (Core) and **`JMdict`** (its own target): a word as
   JMdict has it, kanji forms, readings, senses with parts of speech and glosses,
   and its frequency mark; read from a SQLite database through the system's own
@@ -199,7 +204,12 @@ use for its own input.
   The store is one JSON document in Application Support, written whole and
   atomically on every change: a reader's cards number in the hundreds or low
   thousands, which one file reads in a blink, and one file is what a sync or a
-  backup copies; Settings shares that file as it is, which is the export. Every shape the file has had still decodes, and the tests keep
+  backup copies. Settings shares a backup (`Backup` in Core): the cards, the
+  collections and the lookup history as one JSON file, the covers left out;
+  and restores one, merged as sync merges and taking nothing away, a card
+  joining its word's card whatever id the file gave it, each record cleaned as
+  any coming in. The cards file alone, which earlier builds shared, restores
+  too. Every shape the file has had still decodes, and the tests keep
   one of each, the cards that once carried page photos and crops among them,
   whose photo fields are no longer read. The reading, pitch and meaning are not
   stored; they are looked up live.

@@ -114,6 +114,12 @@ struct TranscriptReadout: View {
     {
         let chunks = reading.chunks(in: range)
         let words = chunks.filter(\.isWord)
+        let sentence = reading.sentence(around: range)
+        if !sentence.isEmpty {
+            SpeakButton(text: sentence)
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+        }
         if chunks.count > 1 {
             PhraseRow(
                 reading: reading, chunks: chunks, fix: fixer(for: range, in: reading),

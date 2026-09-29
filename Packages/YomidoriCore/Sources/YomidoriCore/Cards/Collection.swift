@@ -99,6 +99,11 @@ public final class FileCollectionStore: CollectionStore {
         try file.write { $0.removeAll { $0.id == collection.id } }
     }
 
+    /// Many changes in one write, as a restore makes them.
+    public func replaceAll(_ transform: ([Collection]) -> [Collection]) throws {
+        try file.write { $0 = transform($0) }
+    }
+
     public func applyRemote(saving saved: [Collection], deleting deleted: Set<UUID>) throws {
         try file.write(.remote) {
             $0.apply(saving: saved, deleting: Set(deleted.map(\.uuidString)), key: \.id.uuidString)

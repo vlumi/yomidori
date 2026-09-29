@@ -75,6 +75,14 @@ public struct PageReading: Sendable {
         return first.range.lowerBound..<last.range.upperBound
     }
 
+    /// The sentence a range of the page's text starts in, from the full stop before it to the
+    /// next, line breaks dropped; empty for a range outside the text.
+    public func sentence(around range: Range<Int>) -> String {
+        guard range.lowerBound >= 0, range.lowerBound < text.count else { return "" }
+        let index = text.index(text.startIndex, offsetBy: range.lowerBound)
+        return Sentence.around(index, in: text).text
+    }
+
     /// The page's text over `range`, the line breaks dropped, as a phrase to look up.
     public func phrase(_ range: Range<Int>) -> String {
         let characters = Array(text)
