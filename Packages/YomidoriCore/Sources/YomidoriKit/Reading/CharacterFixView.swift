@@ -2,15 +2,16 @@ import SwiftUI
 import YomidoriCore
 import YomidoriDictionary
 
-/// One misread character put right: tap it, then pick from the words spelled like the rest,
-/// or type it.
+/// A misreading put right. One character: tap it, then pick from the words spelled like the
+/// rest, or type it. More than one: retype the whole of it.
 struct CharacterFixView: View {
     let surface: String
-    let apply: (_ index: Int, _ replacement: String) -> Void
+    let apply: (PageFix) -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var index: Int?
     @State private var candidates: [CharacterFix] = []
     @State private var typed = ""
+    @State private var whole = ""
 
     var body: some View {
         NavigationStack {
@@ -37,7 +38,7 @@ struct CharacterFixView: View {
                     Section {
                         ForEach(candidates, id: \.character) { fix in
                             Button {
-                                done(index, fix.character)
+                                done(.character(index: index, replacement: fix.character))
                             } label: {
                                 row(fix)
                             }
@@ -58,12 +59,30 @@ struct CharacterFixView: View {
                         .submitLabel(.done)
                         .onSubmit {
                             let replacement = typed.trimmingCharacters(in: .whitespaces)
-                            if !replacement.isEmpty { done(index, replacement) }
+                            if !replacement.isEmpty {
+                                done(.character(index: index, replacement: replacement))
+                            }
                         }
                     }
                 }
+                Section {
+                    TextField(text: $whole) {
+                        Text("As it should read", bundle: .module)
+                    }
+                    .font(.title2)
+                    .submitLabel(.done)
+                    .onSubmit(replaceWhole)
+                    Button(action: replaceWhole) {
+                        Text("Replace", bundle: .module)
+                    }
+                    .disabled(!canReplaceWhole)
+                } header: {
+                    Text("Or retype it whole", bundle: .module)
+                } footer: {
+                    Text("For a word or a line read wrong in more than one place.", bundle: .module)
+                }
             }
-            .navigationTitle(Text("Fix a character", bundle: .module))
+            .navigationTitle(Text("Fix the text", bundle: .module))
             .navigationBarTitleDisplayModeInline()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -85,6 +104,7 @@ struct CharacterFixView: View {
             }
             .onAppear {
                 if surface.count == 1 { index = 0 }
+                whole = surface
             }
         }
         .presentationDetents([.medium, .large])
@@ -106,8 +126,18 @@ struct CharacterFixView: View {
         }
     }
 
-    private func done(_ index: Int, _ replacement: String) {
-        apply(index, replacement)
+    private var canReplaceWhole: Bool {
+        let text = whole.trimmingCharacters(in: .whitespacesAndNewlines)
+        return !text.isEmpty && text != surface
+    }
+
+    private func replaceWhole() {
+        guard canReplaceWhole else { return }
+        done(.whole(whole.trimmingCharacters(in: .whitespacesAndNewlines)))
+    }
+
+    private func done(_ fix: PageFix) {
+        apply(fix)
         dismiss()
     }
 }

@@ -311,6 +311,16 @@
         }
       }
     },
+    "As it should read" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正しい読み取り"
+          }
+        }
+      }
+    },
     "Back up cards" : {
       "localizations" : {
         "ja" : {
@@ -661,7 +671,7 @@
         }
       }
     },
-    "Fix a character" : {
+    "Fix the text" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -707,6 +717,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "成鳥"
+          }
+        }
+      }
+    },
+    "For a word or a line read wrong in more than one place." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "二か所以上違っているときに。"
           }
         }
       }
@@ -1434,6 +1454,16 @@
         }
       }
     },
+    "Or retype it whole" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まとめて打ち直す"
+          }
+        }
+      }
+    },
     "Or type the right one" : {
       "localizations" : {
         "ja" : {
@@ -1710,6 +1740,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "表紙を消す"
+          }
+        }
+      }
+    },
+    "Replace" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置き換える"
           }
         }
       }

@@ -116,7 +116,7 @@ struct TranscriptReadout: View {
         let words = chunks.filter(\.isWord)
         if chunks.count > 1 {
             PhraseRow(
-                reading: reading, chunks: chunks,
+                reading: reading, chunks: chunks, fix: fixer(for: range, in: reading),
                 kept: { keptWords.contains(Self.wordKey(of: $0)) },
                 added: { addedHere.contains(Self.wordKey(of: $0)) },
                 open: { openedCard = Self.card(of: $0) }
@@ -139,7 +139,7 @@ struct TranscriptReadout: View {
                 ?? [],
             kept: keptWords.contains(Self.wordKey(of: chunk.word)),
             added: addedHere.contains(Self.wordKey(of: chunk.word)), canKeep: Cards.store != nil,
-            fix: { index, replacement in fix(chunk, index, replacement) },
+            fix: fixer(for: chunk.range, in: reading),
             open: { openedCard = Self.card(of: chunk.word) }
         ) {
             keep(chunk.word, onLine: chunk.line, in: reading)
@@ -244,11 +244,27 @@ struct TranscriptReadout: View {
 
     /// Corrects one character of a word and reads the page again, the selection kept on it,
     /// so the readout, Keep's sentence and the copy all read as corrected.
-    private func fix(_ chunk: PageReading.Chunk, _ index: Int, _ replacement: String) {
-        page.fixes.append(
-            TextFix(offset: chunk.range.lowerBound + index, length: 1, replacement: replacement))
-        let range = page.selectedRange ?? chunk.range
-        afterFix = range.lowerBound..<(range.upperBound + replacement.count - 1)
+    private func fix(_ fixed: Range<Int>, _ change: PageFix) {
+        let fix: TextFix
+        switch change {
+        case .character(let index, let replacement):
+            fix = TextFix(offset: fixed.lowerBound + index, length: 1, replacement: replacement)
+        case .whole(let replacement):
+            fix = TextFix(replacing: fixed, with: replacement)
+        }
+        page.fixes.append(fix)
+        let range = page.selectedRange ?? fixed
+        afterFix = range.lowerBound..<(range.upperBound + fix.replacement.count - fix.length)
+    }
+
+    /// The way to put a run of the page right, where it lies on one line: a run over a line
+    /// break is two pieces of text, and is fixed a piece at a time.
+    private func fixer(for range: Range<Int>, in reading: PageReading) -> ((PageFix) -> Void)? {
+        let text = Array(reading.text)
+        guard !range.isEmpty, range.lowerBound >= 0, range.upperBound <= text.count,
+            !text[range].contains(where: \.isNewline)
+        else { return nil }
+        return { fix(range, $0) }
     }
 
     /// A selection made on the page itself (Live Text's, the pasted text's), as whole chunks.
@@ -324,6 +340,8 @@ struct TranscriptReadout: View {
 private struct PhraseRow: View {
     let reading: PageReading
     let chunks: [PageReading.Chunk]
+    /// Puts the phrase right on the page; nil where it runs over a line break.
+    let fix: ((PageFix) -> Void)?
     let kept: (FoundWord) -> Bool
     let added: (FoundWord) -> Bool
     let open: (FoundWord) -> Void
@@ -341,7 +359,7 @@ private struct PhraseRow: View {
                 estimate: entries.first.flatMap { JMdict.bundled?.estimatedPitch(of: $0) } ?? [],
                 kept: kept(FoundWord(tokens: tokens, entries: entries)),
                 added: added(FoundWord(tokens: tokens, entries: entries)),
-                canKeep: Cards.store != nil,
+                canKeep: Cards.store != nil, fix: fix,
                 open: { open(FoundWord(tokens: tokens, entries: entries)) }
             ) {
                 keep(FoundWord(tokens: tokens, entries: entries))
@@ -350,6 +368,9 @@ private struct PhraseRow: View {
             Text(japanese: phrase)
                 .font(.title3)
                 .textSelection(.enabled)
+            if let fix {
+                FixButton(surface: phrase, fix: fix)
+            }
         }
     }
 }
