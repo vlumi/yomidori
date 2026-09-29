@@ -48,6 +48,14 @@ final class PageReadingTests: XCTestCase {
         }
     }
 
+    func testTheSentenceAroundASelection() {
+        let page = read()
+        // 部屋, on the second line, is in the sentence that began on the first.
+        XCTAssertEqual(page.sentence(around: 7..<9), "樹皮の匂いが部屋に漂っていた。")
+        XCTAssertEqual(page.sentence(around: 0..<2), "樹皮の匂いが部屋に漂っていた。")
+        XCTAssertEqual(page.sentence(around: 99..<100), "")
+    }
+
     func testAPlaceFindsItsChunkAndARangeTheChunksItTouches() {
         let page = read()
         XCTAssertEqual(page.chunk(at: 1)?.surface, "樹皮")

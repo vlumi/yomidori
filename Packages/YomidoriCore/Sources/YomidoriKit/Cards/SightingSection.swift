@@ -14,6 +14,7 @@ struct SightingSection: View {
                     .foregroundStyle(.secondary)
             } else {
                 MarkedSentence(sighting: sighting)
+                SpeakButton(text: sighting.sentence)
             }
             Button(action: edit) {
                 Label {
