@@ -10,6 +10,8 @@ import UIKit
 struct LiveTextImage: UIViewRepresentable {
     let still: Still
     let analysis: ImageAnalysis?
+    /// Which page of the spread this is, for the selection it reports.
+    let pageIndex: Int
     @ObservedObject var selection: LiveTextSelection
     let zoomControl: ZoomControl
 
@@ -23,6 +25,7 @@ struct LiveTextImage: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: ZoomingImageView, context: Context) {
+        context.coordinator.pageIndex = pageIndex
         if context.coordinator.stillID != still.id {
             context.coordinator.stillID = still.id
             uiView.imageView.image = UIImage(cgImage: still.image)
@@ -31,9 +34,11 @@ struct LiveTextImage: UIViewRepresentable {
             context.coordinator.interaction.analysis = analysis
             let interaction = context.coordinator.interaction
             let selection = self.selection
+            let pageIndex = self.pageIndex
             // Published after the update, not within it.
             DispatchQueue.main.async {
-                selection.pageText = interaction.analysis == nil ? nil : interaction.text
+                selection.pageTexts[pageIndex] =
+                    interaction.analysis == nil ? nil : interaction.text
             }
         }
         // While the page is read into words it takes no new selection, but it still zooms
@@ -44,6 +49,7 @@ struct LiveTextImage: UIViewRepresentable {
             context.coordinator.interaction.preferredInteractionTypes = types
         }
         if analysis != nil, let requested = selection.requested,
+            selection.requestedPage == pageIndex,
             let range = CharacterRange.of(requested, in: context.coordinator.interaction.text),
             context.coordinator.interaction.selectedRanges != [range]
         {
@@ -58,6 +64,7 @@ struct LiveTextImage: UIViewRepresentable {
     @MainActor final class Coordinator: NSObject, ImageAnalysisInteractionDelegate {
         let interaction = ImageAnalysisInteraction()
         var stillID: UUID?
+        var pageIndex = 0
         private let selection: LiveTextSelection
 
         init(selection: LiveTextSelection) {
@@ -87,6 +94,7 @@ struct LiveTextImage: UIViewRepresentable {
             }
             guard text != selection.text || range != selection.range else { return }
             selection.text = text
+            selection.rangePage = pageIndex
             selection.range = range
         }
     }
@@ -178,6 +186,7 @@ struct LiveTextImage: UIViewRepresentable {
 struct LiveTextImage: View {
     let still: Still
     let analysis: ImageAnalysis?
+    let pageIndex: Int
     let selection: LiveTextSelection
     let zoomControl: ZoomControl
 

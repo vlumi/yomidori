@@ -58,7 +58,6 @@ extension CaptureView {
 
     /// Where the page on screen starts in the text of all the pages together.
     var pageOffset: Int {
-        guard let current = currentTranscript else { return 0 }
-        return Spread.offset(ofPage: pages.count, in: pages.map(\.transcript) + [current])
+        Spread.offset(ofPage: pages.count, in: pageTexts)
     }
 }

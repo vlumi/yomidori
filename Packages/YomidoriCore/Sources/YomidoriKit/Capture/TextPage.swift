@@ -34,7 +34,9 @@ struct TextPage: UIViewRepresentable {
             view.text = text
             context.coordinator.applying = false
         }
-        if let requested = selection.requested, let range = CharacterRange.of(requested, in: text) {
+        if let requested = selection.requested, selection.requestedPage == 0,
+            let range = CharacterRange.of(requested, in: text)
+        {
             let selected = NSRange(range, in: text)
             if view.selectedRange != selected {
                 context.coordinator.applying = true
@@ -64,6 +66,7 @@ struct TextPage: UIViewRepresentable {
             guard !applying else { return }
             let range = Range(view.selectedRange, in: text)
             selection.text = range.map { String(text[$0]) } ?? ""
+            selection.rangePage = 0
             selection.range = range.map { range in
                 let start = text.distance(from: text.startIndex, to: range.lowerBound)
                 return start..<(start + text[range].count)

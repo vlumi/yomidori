@@ -1,5 +1,6 @@
 import PhotosUI
 import SwiftUI
+import VisionKit
 import YomidoriCore
 
 /// How a page comes and goes: the camera, the photo library, a paste; the next page, a start
@@ -18,13 +19,15 @@ extension CaptureView {
     }
 
     func addPage() {
-        guard still != nil, let transcript = currentTranscript else { return }
-        pages.append(Page(transcript: transcript))
+        guard still != nil, currentTranscript != nil, pages.count + 1 < Self.pagesInASpread
+        else { return }
+        pages.append(currentPage)
         retake()
     }
 
     func startOver() {
         pages = []
+        selection.pageTexts = [:]
         page.newPage()
         if still != nil {
             retake()
@@ -66,5 +69,34 @@ extension CaptureView {
         still = loaded
         // Loaded once: a return to the tab must not read the photo again.
         self.picked = nil
+    }
+
+    /// The page being read now, as the earlier ones are kept.
+    var currentPage: Page {
+        Page(still: still, lines: lines, analysis: analysis, transcript: page.transcript)
+    }
+
+    /// The spread's pages in reading order, the one taken last at the end.
+    var spreadPages: [Page] {
+        pages + [currentPage]
+    }
+
+    /// Each page's text in the engine chosen, one a page, in reading order; a paste is one.
+    var pageTexts: [String] {
+        if let pasted = page.pasted { return [pasted] }
+        return spreadPages.enumerated().map { text(of: $1, at: $0) ?? "" }
+    }
+
+    /// A page's text: Vision's lines in Vision mode, Live Text's, or the one the page came
+    /// with.
+    func text(of sheet: Page, at index: Int) -> String? {
+        if mode == .vision, !sheet.lines.isEmpty {
+            return VisionPage(lines: sheet.lines).transcript
+        }
+        if let analysis = sheet.analysis, analysis.hasResults(for: .text) {
+            // The interaction's text once it has it: Live Text's selection counts in that one.
+            return selection.pageTexts[index] ?? analysis.transcript
+        }
+        return sheet.transcript
     }
 }

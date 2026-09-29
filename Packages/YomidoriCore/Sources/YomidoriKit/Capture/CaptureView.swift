@@ -43,7 +43,7 @@ public struct CaptureView: View {
         get { page.lines }
         nonmutating set { page.lines = newValue }
     }
-    private var analysis: ImageAnalysis? {
+    var analysis: ImageAnalysis? {
         get { page.analysis }
         nonmutating set { page.analysis = newValue }
     }
@@ -126,8 +126,8 @@ public struct CaptureView: View {
                     highlights: selectionBoxes, onTap: tapWord, onLongPress: extendWord)
             case .liveText:
                 LiveTextImage(
-                    still: still, analysis: analysis, selection: selection,
-                    zoomControl: zoomControl)
+                    still: still, analysis: analysis, pageIndex: pages.count,
+                    selection: selection, zoomControl: zoomControl)
             case .closeUp:
                 StillView(
                     zoom: $page.zoom, still: still, lines: lines, selected: [],
@@ -160,7 +160,8 @@ public struct CaptureView: View {
         .overlay(alignment: controlsSide.alignment) {
             PageControls(
                 side: controlsSide, pageCount: pages.isEmpty ? nil : pages.count + 1,
-                canAddPage: currentTranscript != nil, addPage: addPage, startOver: startOver,
+                canAddPage: currentTranscript != nil && pages.count + 1 < Self.pagesInASpread,
+                addPage: addPage, startOver: startOver,
                 zoom: zoomFraction(in: area)
             )
             .padding(12)
@@ -259,26 +260,15 @@ public struct CaptureView: View {
         }
     }
 
-    /// The page's text: pasted, Vision's lines in Vision mode, Live Text's, or the one the page
-    /// came with.
+    /// The page on screen's text; nil until it is read.
     var currentTranscript: String? {
         if let pasted = page.pasted { return pasted }
-        if mode == .vision, !lines.isEmpty { return VisionPage(lines: lines).transcript }
-        if let analysis, analysis.hasResults(for: .text) {
-            // The interaction's text once it has it: Live Text's selection counts in that one.
-            return selection.pageText ?? analysis.transcript
-        }
-        return page.transcript
+        return text(of: currentPage, at: pages.count)
     }
 
     @ViewBuilder private var transcript: some View {
-        if let current = currentTranscript {
-            let transcripts = pages.map(\.transcript) + [current]
-            TranscriptReadout(
-                transcript: Spread.join(transcripts),
-                currentTranscript: current,
-                pageOffset: pageOffset,
-                selection: selection)
+        if currentTranscript != nil {
+            TranscriptReadout(pageTexts: pageTexts, selection: selection)
         } else if LiveText.isSupported {
             Text("Nothing was recognized.", bundle: .module)
                 .foregroundStyle(.secondary)
@@ -311,6 +301,7 @@ public struct CaptureView: View {
         page.transcript = nil
         page.newPage(keepingFixes: !pages.isEmpty)
         selection.clear()
+        selection.pageTexts[pages.count] = nil
         closeUp = nil
         closeUpTask?.cancel()
         closeUpTask = nil
