@@ -39,8 +39,8 @@ Two numbers, both in [project.yml](project.yml) (the source of truth — the
 | `MARKETING_VERSION` | `CFBundleShortVersionString` | User-facing version, e.g. `0.1.0` | SemVer. Bump on a meaningful milestone. |
 | `CURRENT_PROJECT_VERSION` | `CFBundleVersion` | Build number, e.g. `3` | **Unique & strictly increasing per upload — globally, regardless of the marketing version.** |
 
-The repo starts at `0.1.0` build `0`: zero means never released, and the first
-`make release` cuts build 1.
+The repo started at `0.1.0` build `0`: zero means never released, and the first
+`make release` cut build 1.
 
 **The build-number rule is load-bearing.** App Store Connect rejects any
 upload whose build number isn't higher than every build already uploaded, and
@@ -93,9 +93,15 @@ make release-build           # alias for UPLOAD=0
 steps re-derive their inputs from git + `project.yml`, so the only state passed
 between them is the merged commit on the base — no state file:
 
-1. **preflight** — refuse unless on a clean release base matching its origin,
-   with `gh`/`xcodegen` available and an **opaque app icon** (ASC silently
-   rejects a transparent icon; `make icon` flattens it).
+1. **preflight** — fetch origin and mirror its tags, then refuse unless on a
+   clean release base matching its origin, with `gh`/`xcodegen` available and an
+   **opaque app icon** (ASC silently rejects a transparent icon; `make icon`
+   flattens it). It says so when the manga-ocr models are absent. **What the
+   release bundles is what this Mac has built:** the dictionary as `make
+   dictionary` last built it (from the downloads cached in `.build-data/`;
+   delete the cached JMdict and run it again for fresh data), with estimated
+   pitch only if `make pitch` has been run here, and the models only if `make
+   models` has.
 2. **publish** — the interactive, stateful step. Prompts to bump
    `MARKETING_VERSION` on **every** release (blank = keep, `p` = patch, `m` =
    minor, or type `X.Y.Z`); always bumps the build number to one past the

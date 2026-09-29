@@ -1,7 +1,7 @@
 import Foundation
 
-/// Live Text tells no one when the selection changes, so the interaction's owner polls it
-/// while showing.
+/// The selection as the page views report it, Live Text's through its delegate, and the one
+/// asked of them from elsewhere.
 @MainActor
 final class LiveTextSelection: ObservableObject {
     @Published var text = ""

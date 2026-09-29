@@ -19,7 +19,7 @@ struct AboutView: View {
                         .padding(.top, 4)
                     Text(
                         // swiftlint:disable:next line_length
-                        "Everything runs on this device: the camera, the text recognition, the dictionaries, your cards. Nothing is sent anywhere.",
+                        "Everything runs on this device: the camera, the text recognition, the dictionaries, your cards. Nothing is sent anywhere but to your own iCloud, while sync is on.",
                         bundle: .module
                     )
                     .font(.callout)

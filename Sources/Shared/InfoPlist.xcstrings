@@ -41,13 +41,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yomidori takes a still of the page you are reading. The image stays on this device."
+            "value" : "Yomidori takes a still of the page you are reading, and reads it on this device."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "読んでいるページを撮影するためにカメラを使います。画像はこの端末の外には出ません。"
+            "value" : "読んでいるページを撮影するためにカメラを使います。読み取りはこの端末の中で行います。"
           }
         }
       }

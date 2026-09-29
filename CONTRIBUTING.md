@@ -21,9 +21,9 @@ Pull requests:
 - Branch off `main`; one concern per PR, and one concern per commit within it.
   Size a PR by the concern: not padded with unrelated changes, not split into
   fragments that only make sense together. Squash fix-up noise before pushing.
-- Match the surrounding code style. CI must stay green — SwiftLint +
-  swift-format, the logic tests (with coverage), and the iOS build all run on
-  CI; run `make test` and `make lint` locally before pushing.
+- Match the surrounding code style. CI must stay green — SwiftLint,
+  swift-format and markdownlint, the logic tests (with coverage), and the iOS
+  build all run on CI; run `make test` and `make lint` locally before pushing.
 - **Changes to the logic need tests.** Readings, tokens, cards and scheduling
   live in `Packages/YomidoriCore` so they can be tested headlessly; add a case
   there for anything you change, with real Japanese strings.
