@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A review ends right.** A question missed in a review comes back a few questions later until it is answered right; only the first answer counts for the schedule, the rest are there to finish on a right one. Stopping early is fine: a miss then comes back when its schedule says.
+
 ### build 23 — 2026-09-29
 
 - **Reviews due on the app icon.** Turned on in Settings, the app icon shows how many questions are due, and keeps counting up as more come due while the app is closed, reviews done on another device included. Only the number: no banners, no sounds.

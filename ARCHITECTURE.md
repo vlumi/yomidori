@@ -305,6 +305,9 @@ use for its own input.
   and the next question comes; a miss shows the part asked and takes Again,
   unless *Count it right* overrules it or *Add as an answer* also keeps the
   typed meaning on the card. *Show the answer* gives up, and is never good.
+  A miss comes back three questions on until it is answered right, but only
+  the first answer counts, in the schedule, the log and the summary; one left
+  unfinished when the reader stops comes back as its schedule has it.
   The queue is shuffled, and each question shows one of the card's sentences
   at random, with the card's own form beside it on a reading question where
   the sentence has another. The question scrolls, so a long sentence shows whole,
