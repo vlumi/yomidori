@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Reviews due on the app icon.** Turned on in Settings, the app icon shows how many questions are due, and keeps counting up as more come due while the app is closed, reviews done on another device included. Only the number: no banners, no sounds.
 - **More room for the question.** The review's title sits small beside the back button, with the question's badge and the count left at the right of the bar, instead of a large title and a badge taking the top of the screen; the pitch choices go two to a row on a small phone, and the buttons under the answer stay on one line.
 
 ### build 22 — 2026-09-29

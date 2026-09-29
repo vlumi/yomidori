@@ -1364,6 +1364,16 @@
         }
       }
     },
+    "Notifications are off for Yomidori. Turn on badges for it in the Settings app, under Notifications, then here again." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ヨミドリの通知がオフです。設定アプリの「通知」でバッジをオンにしてから、もう一度ここで。"
+          }
+        }
+      }
+    },
     "Oldest first" : {
       "localizations" : {
         "ja" : {
@@ -1720,6 +1730,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "復習"
+          }
+        }
+      }
+    },
+    "Reviews due on the app icon" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アプリアイコンに復習の数"
           }
         }
       }
@@ -2120,6 +2140,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "線は高い拍の上を通り、アクセントの位置で下がります。数字は何拍目のあとで下がるかで、0は下がらないことを表します。東京式アクセント、Kanjiumのデータによる。"
+          }
+        }
+      }
+    },
+    "The number of questions due, kept up to date while the app is closed. Only the number: no banners, no sounds." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "期日の来た問題の数を、アプリを閉じていても更新します。数だけで、バナーも音もありません。"
           }
         }
       }
