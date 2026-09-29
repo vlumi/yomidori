@@ -7,6 +7,9 @@ struct SettingsView: View {
     @AppStorage(SettingsKey.appBadge) private var appBadge = false
     /// The reader turned the count on, but notifications are off for the app.
     @State private var badgeRefused = false
+    @State private var choosingBackup = false
+    @State private var restored: BackupRestore?
+    @State private var restoreFailed = false
     @ObservedObject private var sync = Sync.shared
 
     var body: some View {
@@ -98,24 +101,63 @@ struct SettingsView: View {
                     "Your cards, collections with their covers, and lookup history, kept the same on your devices through your own iCloud. Nothing goes anywhere else.",
                     bundle: .module)
             }
-            if let url = Cards.store?.url, FileManager.default.fileExists(atPath: url.path) {
+            if Cards.store != nil {
                 Section {
-                    ShareLink(item: url) {
+                    ShareLink(
+                        item: BackupFile(),
+                        preview: SharePreview(Text("Yomidori backup", bundle: .module))
+                    ) {
                         Label {
                             Text("Back up cards", bundle: .module)
                         } icon: {
                             Image(systemName: "square.and.arrow.up")
                         }
                     }
+                    Button {
+                        choosingBackup = true
+                    } label: {
+                        Label {
+                            Text("Restore a backup", bundle: .module)
+                        } icon: {
+                            Image(systemName: "square.and.arrow.down")
+                        }
+                    }
                 } footer: {
                     Text(
-                        "Your cards as one small file, to keep a copy wherever you like.",
+                        // swiftlint:disable:next line_length
+                        "Your cards, collections and lookup history as one file, to keep a copy wherever you like; the covers are not in it. Restoring adds what a backup has to what is here, and takes nothing away.",
                         bundle: .module)
                 }
             }
         }
         .tint(Palette.nightGreen)
+        .fileImporter(isPresented: $choosingBackup, allowedContentTypes: [.json]) { result in
+            if case .success(let url) = result, let done = try? Cards.restoreBackup(from: url) {
+                restored = done
+            } else if case .success = result {
+                restoreFailed = true
+            }
+        }
+        .alert(
+            Text("Backup restored", bundle: .module), isPresented: restoredShown,
+            presenting: restored
+        ) { _ in
+        } message: { done in
+            Text(
+                // swiftlint:disable:next line_length
+                "\(done.addedCards) cards added, \(done.joinedCards) joined with cards already here, \(done.addedCollections) collections added.",
+                bundle: .module)
+        }
+        .alert(
+            Text("That file is not a Yomidori backup.", bundle: .module),
+            isPresented: $restoreFailed
+        ) {
+        }
         .navigationTitle(Text("Settings", bundle: .module))
+    }
+
+    private var restoredShown: Binding<Bool> {
+        Binding(get: { restored != nil }, set: { if !$0 { restored = nil } })
     }
 
     @ViewBuilder private var syncStatus: some View {
