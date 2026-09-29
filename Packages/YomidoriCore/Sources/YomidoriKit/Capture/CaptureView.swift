@@ -86,6 +86,8 @@ public struct CaptureView: View {
             }
             .task(id: picked) { await loadPicked() }
             .onChange(of: page.mode) { page.selectedRange = nil }
+            // A still from outside, while the camera was up: the camera rests.
+            .onChange(of: still?.id) { if still != nil { camera.stop() } }
             .task(id: still?.id) {
                 guard still?.id != page.recognizedStillID else { return }
                 // The spread as one sheet, filling the width.

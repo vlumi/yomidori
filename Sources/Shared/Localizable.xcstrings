@@ -1,7 +1,46 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-
+    "Image" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像"
+          }
+        }
+      }
+    },
+    "Opens an image, a screenshot for one, on the Read tab, ready for its words to be tapped." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スクリーンショットなどの画像を「読む」タブで開き、言葉をタップできるようにします。"
+          }
+        }
+      }
+    },
+    "Read in Yomidori" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ヨミドリで読む"
+          }
+        }
+      }
+    },
+    "That is not an image Yomidori can read." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ヨミドリで読める画像ではありません。"
+          }
+        }
+      }
+    }
   },
   "version" : "1.0"
 }

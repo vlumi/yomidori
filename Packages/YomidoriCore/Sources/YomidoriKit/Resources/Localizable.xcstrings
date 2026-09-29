@@ -861,6 +861,16 @@
         }
       }
     },
+    "In the Shortcuts app, make a shortcut of two actions, Take Screenshot and then Read in Yomidori, and set it to Back Tap (Settings, Accessibility, Touch) or the Action button. A double tap on the back of the phone then opens whatever is on the screen here, ready to tap. Nothing is saved to Photos." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ショートカットアプリで「スクリーンショットを撮る」と「ヨミドリで読む」の二つのアクションからなるショートカットを作り、背面タップ（設定 › アクセシビリティ › タッチ）かアクションボタンに割り当てます。背面をダブルタップすると、いま画面にあるものがここで開き、すぐにタップできます。写真には何も保存されません。"
+          }
+        }
+      }
+    },
     "JMdict by the Electronic Dictionary Research and Development Group; KANJIDIC2, KRADFILE and KanjiVG for the kanji and their strokes; pitch accents from Kanjium by Uros O.; MeCab and IPADic; Mecab-Swift; manga-ocr. Their terms are inside." : {
       "localizations" : {
         "ja" : {
@@ -1414,6 +1424,16 @@
         }
       }
     },
+    "Open Shortcuts" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ショートカットを開く"
+          }
+        }
+      }
+    },
     "Or type the right one" : {
       "localizations" : {
         "ja" : {
@@ -1570,6 +1590,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "読む"
+          }
+        }
+      }
+    },
+    "Read any screen" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どの画面でも読む"
           }
         }
       }
