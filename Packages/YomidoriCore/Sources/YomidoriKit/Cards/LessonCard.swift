@@ -29,6 +29,7 @@ struct LessonCard: View {
                 if !sighting.sentence.isEmpty {
                     Section {
                         MarkedSentence(sighting: sighting)
+                        SpeakButton(text: sighting.sentence)
                     }
                 }
             }

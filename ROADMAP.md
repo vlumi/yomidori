@@ -32,7 +32,6 @@ The whole idea rests on on-device text recognition reading real books: vertical 
 
 ## Pitch & sound — *the part dictionaries lack*
 
-- [ ] **Hear the sentence.** The system's own Japanese voices (Kyoko, Otoya, the enhanced downloads) speak any sentence on the device at once; a button on the page and on a card's sentence. Their pitch is fair but not always right, which a pitch learner should know.
 - [ ] **Sentence contour and natural speech**, later and offline: the whole sentence's pitch as spoken, from Open JTalk's accent phrases, and VOICEVOX's more natural voices, generated on a Mac for fixed text or skipped — nothing runs a model on the phone.
 
 ## Mac — *the same cards on a keyboard*

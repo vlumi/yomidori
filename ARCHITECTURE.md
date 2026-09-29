@@ -156,6 +156,11 @@ use for its own input.
   out, against 58% for Open JTalk's own rule), and none where the last element
   is unfamiliar; a single kanji word from Open JTalk's lexicon. Nothing of it
   runs on the phone.
+- **`Speaker`** (Kit): a sentence read aloud by the system's own Japanese voice,
+  the best one installed, on the device and at a press: on a card's sentence,
+  in a lesson, and the sentence around the selection on the page
+  (`PageReading.sentence(around:)`). Its pitch is fair, not always right; the
+  drawn pitch is the dictionary's word.
 - **`DictionaryEntry`** (Core) and **`JMdict`** (its own target): a word as
   JMdict has it, kanji forms, readings, senses with parts of speech and glosses,
   and its frequency mark; read from a SQLite database through the system's own
