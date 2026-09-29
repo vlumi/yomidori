@@ -36,6 +36,8 @@ final class CaptureState: ObservableObject {
     }
     @Published var closeUp: CaptureView.CloseUp?
     @Published var zoom = Zoom()
+    /// Where the reader put the second page; nil for where the text's direction puts it.
+    @Published var nextSide: SpreadLayout.Side?
     /// The still the lines and the analysis belong to; a return does not read it again.
     var recognizedStillID: UUID?
 }

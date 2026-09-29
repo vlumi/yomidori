@@ -29,6 +29,11 @@ public enum DemoMode {
         return Screen(demoName: CommandLine.arguments[index + 1])
     }
 
+    /// `-yomidori-spread` opens the Read tab on two pages, for a look at a spread.
+    static var spread: Bool {
+        isRequested && CommandLine.arguments.contains("-yomidori-spread")
+    }
+
     /// The settings suite, emptied at launch; nil outside the demo.
     public static let defaults: UserDefaults? = {
         guard isRequested, let defaults = UserDefaults(suiteName: suite) else { return nil }

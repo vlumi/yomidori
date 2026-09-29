@@ -43,11 +43,11 @@ public struct CaptureView: View {
         get { page.lines }
         nonmutating set { page.lines = newValue }
     }
-    private var analysis: ImageAnalysis? {
+    var analysis: ImageAnalysis? {
         get { page.analysis }
         nonmutating set { page.analysis = newValue }
     }
-    private var closeUp: CloseUp? {
+    var closeUp: CloseUp? {
         get { page.closeUp }
         nonmutating set { page.closeUp = newValue }
     }
@@ -88,9 +88,13 @@ public struct CaptureView: View {
             .onChange(of: page.mode) { page.selectedRange = nil }
             .task(id: still?.id) {
                 guard still?.id != page.recognizedStillID else { return }
+                // The spread as one sheet, filling the width.
+                let sheet = SpreadLayout.arrange(
+                    spreadPages.compactMap(\.still?.size), nextOn: spreadSide
+                ).size
                 zoom =
-                    still.map { Zoom.fillingWidth(of: $0.size, in: pageArea(in: geometry.size)) }
-                    ?? Zoom()
+                    sheet.width > 0
+                    ? Zoom.fillingWidth(of: sheet, in: pageArea(in: geometry.size)) : Zoom()
                 await recognize()
             }
         }
@@ -122,16 +126,17 @@ public struct CaptureView: View {
             switch mode {
             case .vision:
                 StillView(
-                    zoom: $page.zoom, still: still, lines: lines, selected: selectedLines,
-                    highlights: selectionBoxes, onTap: tapWord, onLongPress: extendWord)
+                    zoom: $page.zoom, sheets: visionSheets, side: spreadSide,
+                    onTap: tapWord, onLongPress: extendWord)
             case .liveText:
                 LiveTextImage(
-                    still: still, analysis: analysis, selection: selection,
-                    zoomControl: zoomControl)
+                    sheets: spreadPages.compactMap { sheet in
+                        sheet.still.map { LiveTextImage.Sheet(still: $0, analysis: sheet.analysis) }
+                    }, side: spreadSide, selection: selection, zoomControl: zoomControl)
             case .closeUp:
                 StillView(
-                    zoom: $page.zoom, still: still, lines: lines, selected: [],
-                    highlights: closeUp.map { [$0.box] } ?? [], onTap: readCloseUp)
+                    zoom: $page.zoom, sheets: closeUpSheets, side: spreadSide,
+                    onTap: readCloseUp)
             }
         }
         .frame(width: area.width, height: area.height)
@@ -160,7 +165,9 @@ public struct CaptureView: View {
         .overlay(alignment: controlsSide.alignment) {
             PageControls(
                 side: controlsSide, pageCount: pages.isEmpty ? nil : pages.count + 1,
-                canAddPage: currentTranscript != nil, addPage: addPage, startOver: startOver,
+                canAddPage: currentTranscript != nil && pages.count + 1 < Self.pagesInASpread,
+                addPage: addPage, startOver: startOver,
+                moveNextPage: pages.count + 1 < Self.pagesInASpread ? nil : moveNextPage,
                 zoom: zoomFraction(in: area)
             )
             .padding(12)
@@ -259,26 +266,15 @@ public struct CaptureView: View {
         }
     }
 
-    /// The page's text: pasted, Vision's lines in Vision mode, Live Text's, or the one the page
-    /// came with.
+    /// The page on screen's text; nil until it is read.
     var currentTranscript: String? {
         if let pasted = page.pasted { return pasted }
-        if mode == .vision, !lines.isEmpty { return VisionPage(lines: lines).transcript }
-        if let analysis, analysis.hasResults(for: .text) {
-            // The interaction's text once it has it: Live Text's selection counts in that one.
-            return selection.pageText ?? analysis.transcript
-        }
-        return page.transcript
+        return text(of: currentPage, at: pages.count)
     }
 
     @ViewBuilder private var transcript: some View {
-        if let current = currentTranscript {
-            let transcripts = pages.map(\.transcript) + [current]
-            TranscriptReadout(
-                transcript: Spread.join(transcripts),
-                currentTranscript: current,
-                pageOffset: pageOffset,
-                selection: selection)
+        if currentTranscript != nil {
+            TranscriptReadout(pageTexts: pageTexts, selection: selection)
         } else if LiveText.isSupported {
             Text("Nothing was recognized.", bundle: .module)
                 .foregroundStyle(.secondary)
@@ -290,16 +286,17 @@ public struct CaptureView: View {
 
     /// A tap on a Vision line lands on a character; the word over it is outlined and given to
     /// the drawer as a selection, as Live Text's would be, so it reads, keeps and fixes alike.
-    private func readCloseUp(at point: CGPoint, in frame: CGRect) {
-        guard let still,
+    private func readCloseUp(onPage index: Int, at point: CGPoint, in frame: CGRect) {
+        guard spreadPages.indices.contains(index), let still = spreadPages[index].still,
             let geometry = CloseUpGeometry(
-                tap: point, in: frame, lines: lines, imageSize: still.size)
+                tap: point, in: frame, lines: spreadPages[index].lines, imageSize: still.size)
         else { return }
         readingCloseUp = true
         closeUpTask?.cancel()
         closeUpTask = Task { @MainActor in
-            let read = await CloseUpReader.read(still, at: geometry)
+            var read = await CloseUpReader.read(still, at: geometry)
             guard !Task.isCancelled else { return }
+            read?.page = index
             closeUp = read
             readingCloseUp = false
         }
@@ -311,6 +308,7 @@ public struct CaptureView: View {
         page.transcript = nil
         page.newPage(keepingFixes: !pages.isEmpty)
         selection.clear()
+        selection.pageTexts[pages.count] = nil
         closeUp = nil
         closeUpTask?.cancel()
         closeUpTask = nil

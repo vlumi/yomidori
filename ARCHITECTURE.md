@@ -257,10 +257,15 @@ use for its own input.
   collection. No photo of the page is kept: the text is the card, and photos
   would be what makes the cards heavy to sync (they were kept on request until
   2026-09-23; the first launch after deletes them). The card's key is the dictionary entry's headword and reading
-  when the word was found, else the tokenizer's form. A spread of several pages
-  is read as one text: the + over the picture keeps this page's text and takes
-  the next, and `Spread` joins the pages at the seam with no break, so a word
-  cut by the page turn tokenizes whole and a sentence runs on. **`CardsView`**
+  when the word was found, else the tokenizer's form. A spread of two pages is
+  read as one text: the + over the picture keeps this page whole (its photo,
+  Vision's lines, Live Text's analysis) and takes the next, and `Spread` joins
+  the pages' texts at the seam with no break, so a word cut by the page turn
+  tokenizes whole and a sentence runs on. The picture shows both pages as one
+  sheet (`SpreadLayout`), zoomed and panned as one: the next page left of a page
+  of columns, under a page of rows, and moved round by hand if the guess is
+  wrong. Each page is still its own photo, read and selected in on its own, and
+  a selection carries the page it is on. **`CardsView`**
   lists the cards by stack (in review, waiting, shelved), filtered by any number
   of collections or by a tag, each row with its rank mark; **`CardView`** shows
   one: the word with its pitch, the dictionary's sections around it

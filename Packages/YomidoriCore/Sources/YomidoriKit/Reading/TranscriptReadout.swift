@@ -7,10 +7,8 @@ import YomidoriMeCab
 /// read into words once (`PageReading`), when its text is known or changes, and a selection
 /// is a range of that text, made on the page, in the strip or on the picture alike.
 struct TranscriptReadout: View {
-    let transcript: String
-    let currentTranscript: String
-    /// Where the page on screen starts in the joined transcript, in characters.
-    let pageOffset: Int
+    /// The spread's pages' texts in reading order; read as one, joined at the seams.
+    let pageTexts: [String]
     @ObservedObject var selection: LiveTextSelection
     @EnvironmentObject private var page: CaptureState
     @AppStorage(TokenizerChoice.key) private var choice: TokenizerChoice = .system
@@ -189,6 +187,15 @@ struct TranscriptReadout: View {
         .accessibilityValue(Text(choice == .system ? "System" : "MeCab", bundle: .module))
     }
 
+    private var transcript: String {
+        Spread.join(pageTexts)
+    }
+
+    /// Where a page starts in the joined text, in characters.
+    private func offset(ofPage index: Int) -> Int {
+        Spread.offset(ofPage: index, in: pageTexts)
+    }
+
     /// The transcript as recognized, with the reader's corrections in.
     private var fixed: String {
         TextFix.apply(page.fixes, to: transcript)
@@ -244,11 +251,13 @@ struct TranscriptReadout: View {
 
     /// A selection made on the page itself (Live Text's, the pasted text's), as whole chunks.
     private func selectionOnPage() {
+        let onPage = selection.rangePage
         guard let reading = page.reading, let range = selection.range,
-            range.lowerBound >= 0, range.upperBound <= currentTranscript.count
+            pageTexts.indices.contains(onPage),
+            range.lowerBound >= 0, range.upperBound <= pageTexts[onPage].count
         else { return }
-        let start = pageOffset + range.lowerBound
-        let end = pageOffset + range.upperBound
+        let start = offset(ofPage: onPage) + range.lowerBound
+        let end = offset(ofPage: onPage) + range.upperBound
         let mapped =
             TextFix.map(
                 offset: start, through: page.fixes)..<TextFix.map(offset: end, through: page.fixes)
@@ -258,19 +267,22 @@ struct TranscriptReadout: View {
         page.selectedRange = whole
     }
 
-    /// The selection shown by the page view too, where it falls on the page on screen and the
-    /// text is as recognized.
+    /// The selection shown by the picture too, on the page it starts on, where the text is
+    /// as recognized.
     private func requestOnPage(_ range: Range<Int>?) {
-        guard let range, page.fixes.isEmpty else {
+        guard let range, page.fixes.isEmpty,
+            let onPage = pageTexts.indices.last(where: { offset(ofPage: $0) <= range.lowerBound })
+        else {
             selection.requested = nil
             return
         }
-        let start = range.lowerBound - pageOffset
-        let end = range.upperBound - pageOffset
-        guard start >= 0, end <= currentTranscript.count else {
+        let start = range.lowerBound - offset(ofPage: onPage)
+        let end = range.upperBound - offset(ofPage: onPage)
+        guard start >= 0, end <= pageTexts[onPage].count else {
             selection.requested = nil
             return
         }
+        selection.requestedPage = onPage
         selection.requested = start..<end
     }
 

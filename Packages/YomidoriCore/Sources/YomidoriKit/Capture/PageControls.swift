@@ -18,6 +18,8 @@ struct PageControls: View {
     let canAddPage: Bool
     let addPage: () -> Void
     let startOver: () -> Void
+    /// Moves the second page round the first; nil until there is a second page.
+    var moveNextPage: (() -> Void)?
     @Binding var zoom: Double
 
     var body: some View {
@@ -25,10 +27,16 @@ struct PageControls: View {
             if let pageCount {
                 StartOverButton(pageCount: pageCount, action: startOver)
             }
-            PageButton(
-                symbol: "plus", label: Text("Add next page", bundle: .module), action: addPage
-            )
-            .disabled(!canAddPage)
+            if let moveNextPage {
+                PageButton(
+                    symbol: "rectangle.2.swap",
+                    label: Text("Move the second page", bundle: .module), action: moveNextPage)
+            } else {
+                PageButton(
+                    symbol: "plus", label: Text("Add next page", bundle: .module), action: addPage
+                )
+                .disabled(!canAddPage)
+            }
             ZoomSlider(fraction: $zoom)
         }
     }

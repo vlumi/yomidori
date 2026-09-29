@@ -93,6 +93,23 @@ enum DemoData {
 
     /// The page the Read tab opens on, already read.
     @MainActor static func seed(_ capture: CaptureState) {
+        if DemoMode.spread {
+            // Two pages, the cat's and then Melos's, as a spread.
+            let first = DemoText.cat.lines.joined(separator: "\n")
+            let second = DemoText.melos.lines.joined(separator: "\n")
+            guard let left = DemoRenderer.verticalPage(first),
+                let right = DemoRenderer.verticalPage(second)
+            else { return }
+            capture.pages = [
+                CaptureView.Page(
+                    still: Still(image: left), lines: [], analysis: nil, transcript: first)
+            ]
+            let still = Still(image: right)
+            capture.still = still
+            capture.transcript = second
+            capture.recognizedStillID = still.id
+            return
+        }
         guard let image = DemoRenderer.verticalPage(DemoText.page) else { return }
         let still = Still(image: image)
         capture.still = still
