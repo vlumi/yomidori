@@ -40,6 +40,23 @@ struct ReviewView: View {
         .navigationTitle(
             practicing == nil ? Text("Review", bundle: .module) : Text("Practice", bundle: .module)
         )
+        // A small title beside the back button, and the question's name and what remains at
+        // the right of it: the screen below is the question's.
+        .navigationBarTitleDisplayModeInline()
+        .toolbar {
+            if let item = queue.first {
+                ToolbarItem(placement: .primaryAction) {
+                    HStack(spacing: 8) {
+                        Text(verbatim: "\(queue.count)")
+                            .font(.caption.monospacedDigit())
+                            .foregroundStyle(.secondary)
+                            .accessibilityLabel(Text("\(queue.count) remaining", bundle: .module))
+                        QuestionTag(question: item.question)
+                    }
+                }
+                .sharedBackgroundVisibility(.hidden)
+            }
+        }
         .onAppear(perform: reload)
         .onChange(of: queue.first) { shown = Date() }
     }
@@ -49,7 +66,6 @@ struct ReviewView: View {
         VStack(alignment: .leading, spacing: 20) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    QuestionTag(question: item.question)
                     ReviewFront(
                         card: item.card, sightingID: picked[Self.key(item)],
                         showsForm: item.question == .reading
@@ -68,11 +84,6 @@ struct ReviewView: View {
             } else {
                 prompt(item)
             }
-            Text(verbatim: "\(queue.count)")
-                .font(.caption)
-                .foregroundStyle(.tertiary)
-                .frame(maxWidth: .infinity, alignment: .trailing)
-                .accessibilityLabel(Text("\(queue.count) remaining", bundle: .module))
         }
         .padding(24)
         .tint(Palette.nightGreen)
@@ -114,12 +125,7 @@ struct ReviewView: View {
                 Button {
                     check(item)
                 } label: {
-                    Label {
-                        Text("Check", bundle: .module)
-                    } icon: {
-                        Image(systemName: "checkmark.circle")
-                    }
-                    .frame(maxWidth: .infinity)
+                    FittingLabel(title: Text("Check", bundle: .module), symbol: "checkmark.circle")
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(answer.trimmingCharacters(in: .whitespaces).isEmpty)
@@ -131,12 +137,7 @@ struct ReviewView: View {
                         check(item)
                     }
                 } label: {
-                    Label {
-                        Text("Show the answer", bundle: .module)
-                    } icon: {
-                        Image(systemName: "eye")
-                    }
-                    .frame(maxWidth: .infinity)
+                    FittingLabel(title: Text("Show the answer", bundle: .module), symbol: "eye")
                 }
                 .buttonStyle(.bordered)
             }
@@ -324,5 +325,24 @@ struct ReviewView: View {
 
     private static func key(_ item: ReviewItem) -> String {
         "\(item.card.id.uuidString) \(item.question.rawValue)"
+    }
+}
+
+/// A button's title with its icon, the icon dropped when the two don't fit on one line.
+private struct FittingLabel: View {
+    let title: Text
+    let symbol: String
+
+    var body: some View {
+        ViewThatFits(in: .horizontal) {
+            Label {
+                title
+            } icon: {
+                Image(systemName: symbol)
+            }
+            .lineLimit(1)
+            title.lineLimit(1).minimumScaleFactor(0.8)
+        }
+        .frame(maxWidth: .infinity)
     }
 }

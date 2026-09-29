@@ -14,6 +14,8 @@ struct QuestionTag: View {
         } icon: {
             Image(systemName: symbol)
         }
+        // A toolbar shows a label's icon alone unless told otherwise.
+        .labelStyle(.titleAndIcon)
         .foregroundStyle(.white)
         .padding(.horizontal, 12)
         .padding(.vertical, 6)
