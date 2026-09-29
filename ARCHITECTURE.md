@@ -203,6 +203,12 @@ use for its own input.
   four weeks by day, three months by week, or a year or everything by month
   (`Progress.rollUp`, `RankSnapshot.thinned`), and a finger on a chart puts
   that period's numbers in the caption above it, as the rank chart does.
+- **A still from outside** (`ReadInYomidori` in the app target, `StillInbox` in
+  Kit): an App Intent, an action in Shortcuts, takes an image and opens the Read
+  tab on it as a new page, decoded and limited as any image coming in. After
+  Shortcuts' *Take Screenshot*, on Back Tap or the Action button, it reads what
+  is on the screen of any app, and nothing goes to Photos. The intent lives in
+  the app target, where Shortcuts finds it; the Kit only takes the image.
 - **The icon's count** (`BadgeSchedule` in Core, `AppBadge` in Kit): on when
   the reader turns it on in Settings, which asks for badges alone. The questions
   due now are set at once; the rest come due while the app is closed, so each

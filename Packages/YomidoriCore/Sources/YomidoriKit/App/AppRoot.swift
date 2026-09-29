@@ -85,6 +85,15 @@ public struct AppRoot: View {
             }
         }
         .collectionImportAlerts(imported: $imported, failed: $importFailed)
+        // An image from outside, a shortcut's screenshot: a new page on the Read tab.
+        .onReceive(StillInbox.shared.$arrival.compactMap { $0 }) { still in
+            capture.pasted = nil
+            capture.pages = []
+            capture.nextSide = nil
+            capture.still = still
+            tab = .read
+            StillInbox.shared.clear()
+        }
         .task {
             Sync.shared.start()
             AppBadge.refresh()
