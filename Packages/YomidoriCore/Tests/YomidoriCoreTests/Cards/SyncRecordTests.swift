@@ -46,4 +46,13 @@ final class SyncRecordTests: XCTestCase {
         let back = try SyncPayload.decode(Card.self, from: SyncPayload.encode(card))
         XCTAssertEqual(back, card)
     }
+
+    /// The record types are the schema in iCloud, deployed to production: a name changed
+    /// here would send records no device reads.
+    func testTheRecordTypesAreTheDeployedSchema() {
+        XCTAssertEqual(
+            SyncKind.allCases.map(\.recordType), ["Card", "Collection", "Lookup", "HistoryClear"])
+        XCTAssertEqual(
+            SyncKind.allCases.map(\.rawValue), ["card", "collection", "lookup", "history"])
+    }
 }

@@ -45,4 +45,25 @@ final class ImageIntakeTests: XCTestCase {
         XCTAssertNil(
             ImageIntake.image(from: Data(count: ImageIntake.largestFile + 1), longestSide: 600))
     }
+
+    func testAnImageIsReadFromAFileUnderTheSameLimits() throws {
+        let folder = FileManager.default.temporaryDirectory
+            .appendingPathComponent("intake-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let picture = folder.appendingPathComponent("page.png")
+        try png(width: 1200, height: 800).write(to: picture)
+        let image = try XCTUnwrap(ImageIntake.image(at: picture, longestSide: 600))
+        XCTAssertEqual(image.width, 600)
+        XCTAssertEqual(image.height, 400)
+
+        let text = folder.appendingPathComponent("page.txt")
+        try Data("樹皮の匂い".utf8).write(to: text)
+        XCTAssertNil(ImageIntake.image(at: text, longestSide: 600))
+        XCTAssertNil(
+            ImageIntake.image(at: folder.appendingPathComponent("none.png"), longestSide: 600))
+        let large = folder.appendingPathComponent("large.png")
+        try Data(count: ImageIntake.largestFile + 1).write(to: large)
+        XCTAssertNil(ImageIntake.image(at: large, longestSide: 600))
+    }
 }

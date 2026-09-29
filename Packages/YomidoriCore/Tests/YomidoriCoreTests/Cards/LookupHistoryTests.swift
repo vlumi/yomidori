@@ -56,4 +56,18 @@ final class LookupHistoryTests: XCTestCase {
         XCTAssertTrue(Lookup.isWorthKeeping(entry([["adv"]])))
         XCTAssertTrue(Lookup.isWorthKeeping(entry([[]])))
     }
+
+    func testARestoreChangesManyLinesInOneWrite() throws {
+        let history = FileLookupHistory(url: url)
+        try history.record(lookup("樹皮", day: 1))
+        var writes = 0
+        history.file.onChange = { _, _ in writes += 1 }
+        try history.replaceAll { $0 + [self.lookup("頷く", day: 2), self.lookup("漂う", day: 3)] }
+        XCTAssertEqual(writes, 1)
+        XCTAssertEqual(
+            FileLookupHistory(url: url).lookups().map(\.headword), ["樹皮", "頷く", "漂う"])
+        // Nothing changed: nothing written, nothing reported.
+        try history.replaceAll { $0 }
+        XCTAssertEqual(writes, 1)
+    }
 }
