@@ -69,22 +69,8 @@ jobs:
           restore-keys: |
             spm-${{ runner.os }}-${{ env.XCODE_VERSION }}-
       - name: Run logic tests with coverage
-        working-directory: Packages/YomidoriCore
-        run: swift test --enable-code-coverage
-      - name: Export coverage report
-        working-directory: Packages/YomidoriCore
-        run: |
-          PROF=$(find .build -name '*.profdata' | head -1)
-          BIN=$(find .build -name 'YomidoriCorePackageTests.xctest' -type d | head -1)/Contents/MacOS/YomidoriCorePackageTests
-          # Exclude build artifacts, tests, and the SwiftUI view layer
-          # (YomidoriKit needs UI automation to exercise) so the figure
-          # reflects the unit-tested logic.
-          xcrun llvm-cov export "$BIN" -instr-profile "$PROF" -format=lcov \
-            -ignore-filename-regex='(\.build|Tests)/|YomidoriKit/' \
-            > coverage.lcov
-          # Rewrite absolute SF: paths to repo-relative so Codecov maps files
-          # correctly. The job runs on macOS, so this is BSD sed.
-          sed -i '' -E 's#^SF:.*/(Packages/YomidoriCore/)#SF:\1#' coverage.lcov
+        # The same script as `make coverage`, so what counts as covered is said once.
+        run: Scripts/coverage.sh
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v7
         with:

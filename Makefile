@@ -123,6 +123,10 @@ build-ios: Yomidori.xcodeproj  ## Build the iOS app (simulator, unsigned)
 test:  ## Run the package logic tests (no Xcode project needed)
 	@Scripts/test.sh
 
+.PHONY: coverage
+coverage:  ## The logic tests with coverage: a table by file, and the report CI sends to Codecov
+	@Scripts/coverage.sh
+
 .PHONY: lint
 # markdownlint is pinned like SwiftLint, so CI and a local run agree (npx fetches it).
 MARKDOWNLINT := markdownlint-cli2@0.23.3
