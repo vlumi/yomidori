@@ -6,4 +6,5 @@ enum SettingsKey {
     static let lessonSize = "lessonSize"
     static let iCloudSync = "iCloudSync"
     static let pageControlsSide = "pageControlsSide"
+    static let appBadge = "appBadge"
 }

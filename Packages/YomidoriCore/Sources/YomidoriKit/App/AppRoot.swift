@@ -85,7 +85,10 @@ public struct AppRoot: View {
             }
         }
         .collectionImportAlerts(imported: $imported, failed: $importFailed)
-        .task { Sync.shared.start() }
+        .task {
+            Sync.shared.start()
+            AppBadge.refresh()
+        }
         .onChange(of: tab, initial: true) { _, shown in taps.shown = shown }
         .onChange(of: scenePhase) { _, phase in
             // Started here too, so signing in to iCloud while away starts sync on return.
@@ -94,9 +97,12 @@ public struct AppRoot: View {
                 Sync.shared.fetch()
                 Cards.snapshotRanks()
             }
+            // Leaving, the icon's count is set for the hours the app is away.
+            if phase == .background { AppBadge.refresh() }
         }
         .onReceive(Cards.changes(of: [.card])) { _ in
             dueCount = Cards.dueItems(at: Date()).count
+            AppBadge.refresh()
         }
     }
 

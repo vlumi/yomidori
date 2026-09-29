@@ -203,6 +203,12 @@ use for its own input.
   four weeks by day, three months by week, or a year or everything by month
   (`Progress.rollUp`, `RankSnapshot.thinned`), and a finger on a chart puts
   that period's numbers in the caption above it, as the rank chart does.
+- **The icon's count** (`BadgeSchedule` in Core, `AppBadge` in Kit): on when
+  the reader turns it on in Settings, which asks for badges alone. The questions
+  due now are set at once; the rest come due while the app is closed, so each
+  hour one does, a silent notification carrying only the count is scheduled for
+  that hour's end, the first sixty of them. Redone on every change to the cards,
+  a sync's included, and as the app goes to the background.
 - **Sync** (`CloudSync` in `YomidoriSync`, `Sync` in Kit): the cards, the
   collections with their covers and the lookup history kept the same on the
   reader's devices through their own iCloud, CloudKit's private database

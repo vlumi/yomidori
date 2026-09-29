@@ -4,6 +4,9 @@ struct SettingsView: View {
     @AppStorage(SwipeBack.key) private var swipeBack = true
     @AppStorage(SettingsKey.iCloudSync) private var iCloudSync = true
     @AppStorage(SettingsKey.pageControlsSide) private var controlsSide: PageControlsSide = .right
+    @AppStorage(SettingsKey.appBadge) private var appBadge = false
+    /// The reader turned the count on, but notifications are off for the app.
+    @State private var badgeRefused = false
     @ObservedObject private var sync = Sync.shared
 
     var body: some View {
@@ -30,6 +33,34 @@ struct SettingsView: View {
                     // swiftlint:disable:next line_length
                     "The zoom and the page buttons stand in one column on this side of the picture, the zoom nearest your thumb: the side of the hand that holds the phone.",
                     bundle: .module)
+            }
+            Section {
+                Toggle(isOn: $appBadge) {
+                    Text("Reviews due on the app icon", bundle: .module)
+                }
+                .onChange(of: appBadge) { _, on in
+                    Task { @MainActor in
+                        if on, !(await AppBadge.requestPermission()) {
+                            appBadge = false
+                            badgeRefused = true
+                        } else {
+                            badgeRefused = false
+                        }
+                        AppBadge.refresh()
+                    }
+                }
+            } footer: {
+                if badgeRefused {
+                    Text(
+                        // swiftlint:disable:next line_length
+                        "Notifications are off for Yomidori. Turn on badges for it in the Settings app, under Notifications, then here again.",
+                        bundle: .module)
+                } else {
+                    Text(
+                        // swiftlint:disable:next line_length
+                        "The number of questions due, kept up to date while the app is closed. Only the number: no banners, no sounds.",
+                        bundle: .module)
+                }
             }
             Section {
                 Toggle(isOn: $iCloudSync) {
