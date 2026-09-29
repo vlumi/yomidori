@@ -12,18 +12,13 @@ struct WordReadout: View {
     /// This sentence is on the card already.
     var added = true
     let canKeep: Bool
-    /// Puts right the character at an index of the word; nil where the word has no place in
-    /// the page's text to put it right in.
-    var fix: ((Int, String) -> Void)?
+    /// Puts the word right on the page; nil where the word has no place in the page's text
+    /// to put it right in.
+    var fix: ((PageFix) -> Void)?
     /// Shows the card the word is kept on.
     var open: (() -> Void)?
     let keep: () -> Void
     @State private var expanded = false
-    @State private var fixing = false
-    /// The character picked in the sheet, applied once the sheet is gone: applying it reads
-    /// the page again and takes this row with it, and a row that goes while its sheet is
-    /// still dismissing leaves the screen deaf to every tap.
-    @State private var pendingFix: (index: Int, replacement: String)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -90,18 +85,8 @@ struct WordReadout: View {
                 }
             }
             HStack(spacing: 12) {
-                if fix != nil {
-                    Button {
-                        fixing = true
-                    } label: {
-                        Label {
-                            Text("Fix a character", bundle: .module)
-                        } icon: {
-                            Image(systemName: "character.cursor.ibeam")
-                        }
-                    }
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
+                if let fix {
+                    FixButton(surface: word.surface, fix: fix)
                 }
                 DictionaryButton(term: word.entries.first?.headword ?? headword)
                 if let entry = word.entries.first {
@@ -120,15 +105,5 @@ struct WordReadout: View {
         }
         .padding(.leading, 4)
         .textSelection(.enabled)
-        .sheet(isPresented: $fixing) {
-            if let pendingFix {
-                self.pendingFix = nil
-                fix?(pendingFix.index, pendingFix.replacement)
-            }
-        } content: {
-            CharacterFixView(surface: word.surface) { index, replacement in
-                pendingFix = (index, replacement)
-            }
-        }
     }
 }

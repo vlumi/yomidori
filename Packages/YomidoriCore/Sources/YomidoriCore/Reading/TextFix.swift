@@ -11,6 +11,16 @@ public struct TextFix: Equatable, Sendable {
         self.replacement = replacement
     }
 
+    /// A run of the text retyped whole, a word or a line read wrong in more than one place.
+    public init(replacing range: Range<Int>, with replacement: String) {
+        self.init(offset: range.lowerBound, length: range.count, replacement: replacement)
+    }
+
+    /// Where the replacement stands once the fix is in.
+    public var replaced: Range<Int> {
+        offset..<(offset + replacement.count)
+    }
+
     public static func apply(_ fixes: [TextFix], to text: String) -> String {
         fixes.reduce(text) { text, fix in
             guard fix.offset >= 0, fix.offset + fix.length <= text.count else { return text }
