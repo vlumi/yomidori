@@ -96,4 +96,33 @@ final class CollectionTests: XCTestCase {
         edited.remove(from: wood)
         XCTAssertEqual(edited.collectionIDs, [])
     }
+
+    func testARestoreIsOneWriteAndAnotherDevicesChangesAreNotSentBack() throws {
+        let store = FileCollectionStore(url: url)
+        let sheep = Collection(name: "羊をめぐる冒険")
+        let forest = Collection(name: "ノルウェイの森")
+        try store.save(sheep)
+        var reports: [(RecordChange, ChangeOrigin)] = []
+        store.file.onChange = { reports.append(($0, $1)) }
+
+        try store.replaceAll { $0 + [forest, Collection(name: "海辺のカフカ")] }
+        XCTAssertEqual(store.collections().map(\.name), ["羊をめぐる冒険", "ノルウェイの森", "海辺のカフカ"])
+        XCTAssertEqual(reports.count, 1)
+        XCTAssertEqual(reports[0].0.saved.count, 2)
+        XCTAssertEqual(reports[0].1, .local)
+
+        // From another device: one renamed, one gone, one new.
+        var renamed = sheep
+        renamed.name = "羊"
+        let kafka = try XCTUnwrap(store.collections().last)
+        let dance = Collection(name: "ダンス・ダンス・ダンス")
+        try store.applyRemote(saving: [renamed, dance], deleting: [kafka.id])
+        XCTAssertEqual(
+            FileCollectionStore(url: url).collections().map(\.name),
+            ["羊", "ノルウェイの森", "ダンス・ダンス・ダンス"])
+        XCTAssertEqual(reports.count, 2)
+        XCTAssertEqual(reports[1].1, .remote)
+        XCTAssertEqual(reports[1].0.deleted, [kafka.id.uuidString])
+        XCTAssertEqual(Set(reports[1].0.saved), [sheep.id.uuidString, dance.id.uuidString])
+    }
 }

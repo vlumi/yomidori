@@ -128,4 +128,10 @@ final class ProgressTests: XCTestCase {
                     seconds: 12)))
         XCTAssertEqual(back.seconds, 12)
     }
+
+    func testTheTotalsShareIsNoneBeforeTheFirstAnswer() {
+        XCTAssertNil(Progress.Total().accuracy)
+        XCTAssertNil(Progress.total(of: [card("樹皮", started: noon(1))]).accuracy)
+        XCTAssertEqual(Progress.Total(answered: 4, right: 3, seconds: 42).accuracy, 0.75)
+    }
 }

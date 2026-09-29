@@ -45,4 +45,15 @@ final class RankSnapshotTests: XCTestCase {
         XCTAssertEqual(snapshots[0].count(of: .migrating), 0)
         XCTAssertLessThan(snapshots[0].day, snapshots[1].day)
     }
+
+    func testAWholeHistoryIsSetAtOnceAndReadInOrder() throws {
+        let store = FileRankSnapshots(url: url)
+        let day = Date(timeIntervalSince1970: 1_790_000_000)
+        let later = RankSnapshot.of(cards(), day: day.addingTimeInterval(86_400))
+        let earlier = RankSnapshot.of(Array(cards().prefix(1)), day: day)
+        try store.replaceAll([later, earlier])
+        XCTAssertEqual(FileRankSnapshots(url: url).snapshots(), [earlier, later])
+        try store.replaceAll([])
+        XCTAssertEqual(FileRankSnapshots(url: url).snapshots(), [])
+    }
 }
