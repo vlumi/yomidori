@@ -95,4 +95,17 @@ final class VisionPageTests: XCTestCase {
         let bare = RecognizedLine(text: "僅わずか", box: .zero, confidence: 1)
         XCTAssertEqual(bare.droppingRuby(), bare)
     }
+
+    func testInARowWithoutBoxesACharacterIsPlacedByItsShareOfTheWidth() {
+        let row = RecognizedLine(
+            text: "樹皮の匂い", box: CGRect(x: 0.1, y: 0.5, width: 0.5, height: 0.05), confidence: 1)
+        XCTAssertFalse(row.isVertical)
+        let box = row.box(ofCharacters: 1..<3)
+        XCTAssertEqual(box.minX, 0.2, accuracy: 0.0001)
+        XCTAssertEqual(box.width, 0.2, accuracy: 0.0001)
+        XCTAssertEqual(box.minY, 0.5, accuracy: 0.0001)
+        XCTAssertEqual(box.height, 0.05, accuracy: 0.0001)
+        // Past the line's end, the range is held to the line.
+        XCTAssertEqual(row.box(ofCharacters: 3..<9).maxX, 0.6, accuracy: 0.0001)
+    }
 }
