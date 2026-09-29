@@ -7,6 +7,8 @@ import YomidoriDictionary
 struct WordDetails {
     var entry: DictionaryEntry?
     var accents: [String: [PitchAccent]] = [:]
+    /// The pitch worked out for the word, where the dictionary has no accent for it.
+    var estimate: [PitchPhrase] = []
     var kanji: [KanjiEntry] = []
     var homophones: [DictionaryEntry] = []
     var containing: [DictionaryEntry] = []
@@ -21,6 +23,10 @@ struct WordDetails {
             for reading in details.entry?.readings ?? [reading] {
                 let kana = Kana.hiragana(reading)
                 details.accents[kana] = dictionary.pitchAccents(for: headword, reading: kana)
+            }
+            if details.accents.values.allSatisfy(\.isEmpty) {
+                details.estimate = dictionary.estimatedPitch(
+                    for: headword, reading: details.entry?.readings.first ?? reading)
             }
             details.kanji = KanjiEntry.literals(in: headword).compactMap(dictionary.kanji)
             details.homophones = details.entry.map(dictionary.homophones) ?? []

@@ -1,0 +1,3 @@
+# For Scripts/data/estimate-pitch.py, on the build Mac only. Built from source against a
+# CMake from PyPI; see the Makefile's pitch target.
+pyopenjtalk==0.3.4

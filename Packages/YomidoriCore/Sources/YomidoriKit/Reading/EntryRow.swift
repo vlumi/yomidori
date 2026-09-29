@@ -7,6 +7,8 @@ import YomidoriCore
 struct EntryRow: View {
     let entry: DictionaryEntry
     var accent: PitchAccent?
+    /// The pitch as worked out, for a word without an accent of the dictionary's.
+    var estimate: [PitchPhrase] = []
     /// The word has a card already.
     var kept = false
 
@@ -19,6 +21,8 @@ struct EntryRow: View {
                 let reading = Kana.hiragana(entry.readings.first ?? "")
                 if let accent {
                     PitchReading(reading: reading, accent: accent)
+                } else if !estimate.isEmpty {
+                    EstimatedPitch(phrases: estimate)
                 } else {
                     Text(japanese: reading)
                         .font(.title3)

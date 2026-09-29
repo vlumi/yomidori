@@ -19,7 +19,8 @@ struct LessonCard: View {
             Section {
                 WordTitle(
                     headword: card.headword, reading: card.reading,
-                    accent: details.accent(of: card.reading), font: .largeTitle
+                    accent: details.accent(of: card.reading), estimate: details.estimate,
+                    font: .largeTitle
                 ) {
                     DictionaryButton(term: card.headword).labelStyle(.iconOnly)
                 }

@@ -29,6 +29,14 @@ public enum DemoMode {
         return Screen(demoName: CommandLine.arguments[index + 1])
     }
 
+    /// `-yomidori-search 見当` fills the search field, for a look at its results.
+    static var search: String? {
+        guard isRequested, let index = CommandLine.arguments.firstIndex(of: "-yomidori-search"),
+            index + 1 < CommandLine.arguments.count
+        else { return nil }
+        return CommandLine.arguments[index + 1]
+    }
+
     /// `-yomidori-spread` opens the Read tab on two pages, for a look at a spread.
     static var spread: Bool {
         isRequested && CommandLine.arguments.contains("-yomidori-spread")

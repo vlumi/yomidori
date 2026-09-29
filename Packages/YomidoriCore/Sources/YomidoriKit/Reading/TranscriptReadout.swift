@@ -141,6 +141,8 @@ struct TranscriptReadout: View {
         WordReadout(
             word: chunk.word,
             accent: chunk.word.entries.first.flatMap { JMdict.bundled?.pitchAccent(of: $0) },
+            estimate: chunk.word.entries.first.flatMap { JMdict.bundled?.estimatedPitch(of: $0) }
+                ?? [],
             kept: keptWords.contains(Self.wordKey(of: chunk.word)),
             added: addedHere.contains(Self.wordKey(of: chunk.word)), canKeep: Cards.store != nil,
             fix: { index, replacement in fix(chunk, index, replacement) },
@@ -342,6 +344,7 @@ private struct PhraseRow: View {
             WordReadout(
                 word: FoundWord(tokens: tokens, entries: entries),
                 accent: entries.first.flatMap { JMdict.bundled?.pitchAccent(of: $0) },
+                estimate: entries.first.flatMap { JMdict.bundled?.estimatedPitch(of: $0) } ?? [],
                 kept: kept(FoundWord(tokens: tokens, entries: entries)),
                 added: added(FoundWord(tokens: tokens, entries: entries)),
                 canKeep: Cards.store != nil,

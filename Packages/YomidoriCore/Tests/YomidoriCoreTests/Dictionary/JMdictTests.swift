@@ -1,3 +1,4 @@
+import SQLite3
 import XCTest
 import YomidoriCore
 
@@ -127,5 +128,29 @@ final class JMdictTests: XCTestCase {
         XCTAssertTrue(dictionary.meta["license"]?.contains("CC BY-SA 4.0") == true)
         XCTAssertTrue(dictionary.meta["accents_attribution"]?.contains("Uros O.") == true)
         XCTAssertTrue(dictionary.meta["kanji_attribution"]?.contains("KANJIDIC") == true)
+    }
+
+    func testAnEstimateComesFromItsOwnTableAndIsNoneWithoutIt() throws {
+        // The fixture is built without estimates.
+        XCTAssertEqual(dictionary.estimatedPitch(for: "樹皮", reading: "じゅひ"), [])
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("estimate-\(UUID().uuidString).sqlite")
+        var db: OpaquePointer?
+        XCTAssertEqual(sqlite3_open(url.path, &db), SQLITE_OK)
+        XCTAssertEqual(
+            sqlite3_exec(
+                db,
+                """
+                CREATE TABLE accent_estimate (
+                    headword TEXT NOT NULL, reading TEXT NOT NULL, phrases TEXT NOT NULL,
+                    kind TEXT NOT NULL, PRIMARY KEY (headword, reading)) WITHOUT ROWID;
+                INSERT INTO accent_estimate VALUES ('見当がつく', 'けんとうがつく', 'けんとうが:3|つく:1', 'phrase');
+                """, nil, nil, nil), SQLITE_OK)
+        sqlite3_close(db)
+        let estimated = try JMdict(url: url)
+        XCTAssertEqual(
+            estimated.estimatedPitch(for: "見当がつく", reading: "けんとうがつく"),
+            [PitchPhrase(reading: "けんとうが", downstep: 3), PitchPhrase(reading: "つく", downstep: 1)])
+        XCTAssertEqual(estimated.estimatedPitch(for: "見当", reading: "けんとう"), [])
     }
 }

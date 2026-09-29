@@ -106,6 +106,17 @@ public final class JMdict: WordDictionary {
         }
     }
 
+    /// From the table `Scripts/data/estimate-pitch.py` adds; none in a database without it.
+    public func estimatedPitch(for headword: String, reading: String) -> [PitchPhrase] {
+        queue.sync {
+            PitchPhrase.parse(
+                rows(
+                    "SELECT phrases FROM accent_estimate WHERE headword = ?1 AND reading = ?2",
+                    binds: [headword, Kana.hiragana(reading)]
+                ).first?[0] ?? "")
+        }
+    }
+
     public func search(_ query: String, limit: Int) -> [DictionaryEntry] {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         switch SearchQuery.kind(of: trimmed) {

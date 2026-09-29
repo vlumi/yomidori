@@ -30,9 +30,33 @@ DICTIONARY := Sources/Shared/Dictionaries/jmdict.sqlite
 
 $(DICTIONARY): Scripts/data/build-jmdict.py
 	@Scripts/data/build-jmdict.py --output $(DICTIONARY)
+	@if [ -x $(PITCH_VENV)/bin/python ]; then \
+		$(PITCH_VENV)/bin/python Scripts/data/estimate-pitch.py --database $(DICTIONARY); fi
 
 .PHONY: dictionary
 dictionary: $(DICTIONARY)  ## Build the bundled JMdict database (downloads JMdict_e once into .build-data/)
+
+# The pitch of the words Kanjium has none for, estimated into the dictionary by Open JTalk
+# and the habits of Kanjium's own compounds. Optional: the app shows no estimates without
+# it. pyopenjtalk builds from source, with a CMake from PyPI and the policy floor its old
+# CMake files need; once the venv is there, a rebuilt dictionary gets its estimates again.
+PITCH_VENV := .build-data/pitch-venv
+PITCH_VENV_READY := $(PITCH_VENV)/.ready
+
+$(PITCH_VENV_READY): Scripts/data/pitch-requirements.txt
+	@python3.13 -m venv $(PITCH_VENV) \
+		&& $(PITCH_VENV)/bin/pip install -q --upgrade pip setuptools wheel cmake cython numpy \
+		&& PATH="$(CURDIR)/$(PITCH_VENV)/bin:$$PATH" CMAKE_POLICY_VERSION_MINIMUM=3.5 \
+			$(PITCH_VENV)/bin/pip install -q --no-build-isolation -r Scripts/data/pitch-requirements.txt \
+		&& touch $@
+
+.PHONY: pitch
+pitch: $(DICTIONARY) $(PITCH_VENV_READY)  ## Estimate the pitch Kanjium lacks into the dictionary (python3.13 + a local venv; optional)
+	@$(PITCH_VENV)/bin/python Scripts/data/estimate-pitch.py --database $(DICTIONARY)
+
+.PHONY: pitch-measure
+pitch-measure: $(DICTIONARY) $(PITCH_VENV_READY)  ## How often the estimate agrees with Kanjium, on compounds held out
+	@$(PITCH_VENV)/bin/python Scripts/data/estimate-pitch.py --database $(DICTIONARY) --measure
 
 # The manga-ocr models, converted to Core ML into the app target and not committed
 # (~210 MB). Optional: the app hides the engine when they are absent, so CI and a
