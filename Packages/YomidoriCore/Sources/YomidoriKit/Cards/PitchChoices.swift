@@ -8,14 +8,18 @@ struct PitchChoices: View {
 
     var body: some View {
         let patterns = PitchAccent.patterns(forMoraCount: PitchAccent.morae(of: reading).count)
-        FlowLayout(spacing: 10) {
+        // Columns as wide as the screen allows: two on the smallest phone, where a flow of
+        // chips put one to a row and pushed the question off the screen.
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 10)], spacing: 10) {
             ForEach(patterns, id: \.downstep) { pattern in
                 Button {
                     pick(pattern)
                 } label: {
                     PitchReading(reading: reading, accent: pattern)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 8)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                        .padding(.vertical, 6)
+                        .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
                 .accessibilityLabel(

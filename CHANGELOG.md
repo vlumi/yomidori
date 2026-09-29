@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **More room for the question.** The review's title sits small beside the back button, with the question's badge and the count left at the right of the bar, instead of a large title and a badge taking the top of the screen; the pitch choices go two to a row on a small phone, and the buttons under the answer stay on one line.
+
 ### build 22 — 2026-09-29
 
 - **Two pages as one picture.** A spread's pages now stay side by side in one picture that zooms and pans across both, the second page on the left of a page of columns and below a page of rows (a button moves it if the guess is wrong), so a word on the first page can still be tapped after the second is taken; each page is still read on its own, and a spread is two pages at most.
