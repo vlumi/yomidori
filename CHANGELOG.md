@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 22 — 2026-09-29
+
 - **Two pages as one picture.** A spread's pages now stay side by side in one picture that zooms and pans across both, the second page on the left of a page of columns and below a page of rows (a button moves it if the guess is wrong), so a word on the first page can still be tapped after the second is taken; each page is still read on its own, and a spread is two pages at most.
 - **Practice right after a lesson.** A lesson ends with *Practice them now*: the words it started, every question, and a miss comes back a few questions later until each is answered right. The answers count in the schedule, so a word that took a few tries comes back sooner.
 
