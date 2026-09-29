@@ -130,8 +130,9 @@ public struct CaptureView: View {
                     onTap: tapWord, onLongPress: extendWord)
             case .liveText:
                 LiveTextImage(
-                    still: still, analysis: analysis, pageIndex: pages.count,
-                    selection: selection, zoomControl: zoomControl)
+                    sheets: spreadPages.compactMap { sheet in
+                        sheet.still.map { LiveTextImage.Sheet(still: $0, analysis: sheet.analysis) }
+                    }, side: spreadSide, selection: selection, zoomControl: zoomControl)
             case .closeUp:
                 StillView(
                     zoom: $page.zoom, sheets: closeUpSheets, side: spreadSide,

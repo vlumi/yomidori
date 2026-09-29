@@ -95,8 +95,11 @@ extension CaptureView {
         offset(ofPage: pages.count)
     }
 
-    /// Which side the next page lies on: left of columns, under rows, by the first page.
+    /// Which side the next page lies on: left of columns, under rows, by the first page; left
+    /// when Vision found no lines to tell by, as a paperback's is.
     var spreadSide: SpreadLayout.Side {
-        SpreadLayout.side(forVertical: SpreadLayout.isVertical(spreadPages.first?.lines ?? []))
+        let lines = spreadPages.first?.lines ?? []
+        return lines.isEmpty
+            ? .left : SpreadLayout.side(forVertical: SpreadLayout.isVertical(lines))
     }
 }

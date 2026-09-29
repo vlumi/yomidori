@@ -7,53 +7,60 @@ import UIKit
 #endif
 
 #if os(iOS)
+/// Live Text over the spread's pages, laid out as one sheet and zoomed as one; each page its
+/// own photo with its own interaction, so each is selected in and read on its own. A selection
+/// is reported with the page it is on; one made on a page clears the other's.
 struct LiveTextImage: UIViewRepresentable {
-    let still: Still
-    let analysis: ImageAnalysis?
-    /// Which page of the spread this is, for the selection it reports.
-    let pageIndex: Int
+    struct Sheet {
+        let still: Still
+        let analysis: ImageAnalysis?
+    }
+
+    let sheets: [Sheet]
+    let side: SpreadLayout.Side
     @ObservedObject var selection: LiveTextSelection
     let zoomControl: ZoomControl
 
     func makeUIView(context: Context) -> ZoomingImageView {
-        let view = ZoomingImageView(image: UIImage(cgImage: still.image))
-        view.imageView.addInteraction(context.coordinator.interaction)
-        view.interaction = context.coordinator.interaction
+        let view = ZoomingImageView()
         zoomControl.apply = { [weak view] fraction in view?.zoom(toFraction: fraction) }
         view.reportZoom = { [weak zoomControl] fraction in zoomControl?.report(fraction) }
         return view
     }
 
     func updateUIView(_ uiView: ZoomingImageView, context: Context) {
-        context.coordinator.pageIndex = pageIndex
-        if context.coordinator.stillID != still.id {
-            context.coordinator.stillID = still.id
-            uiView.imageView.image = UIImage(cgImage: still.image)
+        let coordinator = context.coordinator
+        let key = sheets.map(\.still.id.uuidString).joined(separator: " ") + " \(side)"
+        if coordinator.layoutKey != key {
+            coordinator.layoutKey = key
+            uiView.show(sheets.map { UIImage(cgImage: $0.still.image) }, nextOn: side)
+            coordinator.attach(to: uiView.imageViews)
         }
-        if context.coordinator.interaction.analysis !== analysis {
-            context.coordinator.interaction.analysis = analysis
-            let interaction = context.coordinator.interaction
-            let selection = self.selection
-            let pageIndex = self.pageIndex
-            // Published after the update, not within it.
-            DispatchQueue.main.async {
-                selection.pageTexts[pageIndex] =
-                    interaction.analysis == nil ? nil : interaction.text
+        for (index, sheet) in sheets.enumerated() where index < coordinator.links.count {
+            let interaction = coordinator.links[index].interaction
+            if interaction.analysis !== sheet.analysis {
+                interaction.analysis = sheet.analysis
+                let selection = self.selection
+                // Published after the update, not within it.
+                DispatchQueue.main.async {
+                    selection.pageTexts[index] =
+                        interaction.analysis == nil ? nil : interaction.text
+                }
             }
-        }
-        // While the page is read into words it takes no new selection, but it still zooms
-        // and pans; a selection made meanwhile is taken up once the reading is done.
-        let types: ImageAnalysisInteraction.InteractionTypes =
-            selection.looking ? [] : .textSelection
-        if context.coordinator.interaction.preferredInteractionTypes != types {
-            context.coordinator.interaction.preferredInteractionTypes = types
-        }
-        if analysis != nil, let requested = selection.requested,
-            selection.requestedPage == pageIndex,
-            let range = CharacterRange.of(requested, in: context.coordinator.interaction.text),
-            context.coordinator.interaction.selectedRanges != [range]
-        {
-            context.coordinator.interaction.selectedRanges = [range]
+            // While the page is read into words it takes no new selection, but it still zooms
+            // and pans; a selection made meanwhile is taken up once the reading is done.
+            let types: ImageAnalysisInteraction.InteractionTypes =
+                selection.looking ? [] : .textSelection
+            if interaction.preferredInteractionTypes != types {
+                interaction.preferredInteractionTypes = types
+            }
+            if sheet.analysis != nil, let requested = selection.requested,
+                selection.requestedPage == index,
+                let range = CharacterRange.of(requested, in: interaction.text),
+                interaction.selectedRanges != [range]
+            {
+                interaction.selectedRanges = [range]
+            }
         }
     }
 
@@ -61,14 +68,14 @@ struct LiveTextImage: UIViewRepresentable {
         Coordinator(selection: selection)
     }
 
-    @MainActor final class Coordinator: NSObject, ImageAnalysisInteractionDelegate {
+    /// One page's interaction, telling the coordinator which page a selection is on.
+    @MainActor final class PageLink: NSObject, ImageAnalysisInteractionDelegate {
         let interaction = ImageAnalysisInteraction()
-        var stillID: UUID?
-        var pageIndex = 0
-        private let selection: LiveTextSelection
+        let index: Int
+        weak var coordinator: Coordinator?
 
-        init(selection: LiveTextSelection) {
-            self.selection = selection
+        init(index: Int) {
+            self.index = index
             super.init()
             interaction.preferredInteractionTypes = .textSelection
             interaction.delegate = self
@@ -77,11 +84,36 @@ struct LiveTextImage: UIViewRepresentable {
         func textSelectionDidChange(_ interaction: ImageAnalysisInteraction) {
             // Told during an update of the view (a selection set from elsewhere): recorded
             // after it, not within.
-            DispatchQueue.main.async { [weak self] in self?.selectionChanged() }
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                self.coordinator?.selectionChanged(on: self.index)
+            }
+        }
+    }
+
+    @MainActor final class Coordinator {
+        private(set) var links: [PageLink] = []
+        var layoutKey: String?
+        private let selection: LiveTextSelection
+
+        init(selection: LiveTextSelection) {
+            self.selection = selection
         }
 
-        private func selectionChanged() {
-            let text = interaction.selectedText
+        /// One interaction per page's image view, made anew when the pages change.
+        func attach(to imageViews: [UIImageView]) {
+            for link in links { link.interaction.view?.removeInteraction(link.interaction) }
+            links = imageViews.indices.map { index in
+                let link = PageLink(index: index)
+                link.coordinator = self
+                imageViews[index].addInteraction(link.interaction)
+                return link
+            }
+        }
+
+        func selectionChanged(on index: Int) {
+            guard links.indices.contains(index) else { return }
+            let interaction = links[index].interaction
             // The ranges index the interaction's own text, not the analysis's transcript.
             let page = interaction.text
             let range = interaction.selectedRanges.first.flatMap { range -> Range<Int>? in
@@ -92,9 +124,23 @@ struct LiveTextImage: UIViewRepresentable {
                 let start = page.distance(from: page.startIndex, to: range.lowerBound)
                 return start..<(start + page[range].count)
             }
-            guard text != selection.text || range != selection.range else { return }
+            // A page with nothing selected says nothing of the other page's selection.
+            guard range != nil || selection.rangePage == index else { return }
+            if range != nil {
+                // One selection at a time: the other page's goes.
+                for other in links where other.index != index {
+                    if !other.interaction.selectedRanges.isEmpty {
+                        other.interaction.selectedRanges = []
+                    }
+                }
+            }
+            let text = interaction.selectedText
+            guard
+                text != selection.text || range != selection.range
+                    || index != selection.rangePage
+            else { return }
             selection.text = text
-            selection.rangePage = pageIndex
+            selection.rangePage = index
             selection.range = range
         }
     }
@@ -107,20 +153,18 @@ struct LiveTextImage: UIViewRepresentable {
         }
     }
 
-    /// The image view is exactly the fitted image, centered by insets, so Live Text's
-    /// highlights have no letterbox to drift into; the highlights are told to re-measure
-    /// whenever the layout or the zoom changes.
+    /// The pages in one container, each image view exactly its fitted page, the container
+    /// centered by insets, so Live Text's highlights have no letterbox to drift into; they
+    /// are told to re-measure whenever the layout or the zoom changes.
     final class ZoomingImageView: UIScrollView, UIScrollViewDelegate {
-        let imageView: FittedImageView
-        var interaction: ImageAnalysisInteraction?
-        private var fittedImage: CGSize = .zero
+        private let container = UIView()
+        private(set) var imageViews: [FittedImageView] = []
+        private var side: SpreadLayout.Side = .left
+        private var fittedFor: [CGSize] = []
 
-        init(image: UIImage) {
-            imageView = FittedImageView(image: image)
+        init() {
             super.init(frame: .zero)
-            imageView.contentMode = .scaleAspectFit
-            imageView.isUserInteractionEnabled = true
-            addSubview(imageView)
+            addSubview(container)
             delegate = self
             maximumZoomScale = Zoom.range.upperBound
             showsHorizontalScrollIndicator = false
@@ -133,23 +177,46 @@ struct LiveTextImage: UIViewRepresentable {
             fatalError("not used")
         }
 
-        /// Fitted once per image; a later change of bounds, the drawer moving, keeps the
-        /// zoom and the place on the page.
+        func show(_ images: [UIImage], nextOn side: SpreadLayout.Side) {
+            imageViews.forEach { $0.removeFromSuperview() }
+            imageViews = images.map { image in
+                let view = FittedImageView(image: image)
+                view.contentMode = .scaleAspectFit
+                view.isUserInteractionEnabled = true
+                container.addSubview(view)
+                return view
+            }
+            self.side = side
+            fittedFor = []
+            setNeedsLayout()
+        }
+
+        /// Fitted once per set of pages; a later change of bounds, the drawer moving, keeps
+        /// the zoom and the place on the page.
         override func layoutSubviews() {
             super.layoutSubviews()
-            if let image = imageView.image, image.size != fittedImage, bounds.width > 0 {
-                fittedImage = image.size
-                fit(image.size)
+            let sizes = imageViews.compactMap(\.image?.size)
+            if !sizes.isEmpty, sizes != fittedFor, bounds.width > 0 {
+                fittedFor = sizes
+                fit(sizes)
             }
             center()
-            interaction?.setContentsRectNeedsUpdate()
+            updateHighlights()
         }
 
         /// Opens filling the width, the top of the page at the top, where reading starts.
-        private func fit(_ imageSize: CGSize) {
-            let fitted = TextGeometry.fittedFrame(of: imageSize, in: bounds.size)
+        private func fit(_ sizes: [CGSize]) {
+            let (sheet, frames) = SpreadLayout.arrange(sizes, nextOn: side)
+            let fitted = TextGeometry.fittedFrame(of: sheet, in: bounds.size)
+            guard sheet.width > 0 else { return }
+            let scale = fitted.width / sheet.width
             zoomScale = 1
-            imageView.frame = CGRect(origin: .zero, size: fitted.size)
+            container.frame = CGRect(origin: .zero, size: fitted.size)
+            for (view, frame) in zip(imageViews, frames) {
+                view.frame = CGRect(
+                    x: frame.minX * scale, y: frame.minY * scale, width: frame.width * scale,
+                    height: frame.height * scale)
+            }
             contentSize = fitted.size
             minimumZoomScale = 1
             zoomScale = fitted.width > 0 ? max(1, bounds.width / fitted.width) : 1
@@ -162,6 +229,14 @@ struct LiveTextImage: UIViewRepresentable {
             contentInset = UIEdgeInsets(top: dy, left: dx, bottom: dy, right: dx)
         }
 
+        private func updateHighlights() {
+            for view in imageViews {
+                for case let interaction as ImageAnalysisInteraction in view.interactions {
+                    interaction.setContentsRectNeedsUpdate()
+                }
+            }
+        }
+
         var reportZoom: ((Double) -> Void)?
 
         func zoom(toFraction fraction: Double) {
@@ -170,12 +245,12 @@ struct LiveTextImage: UIViewRepresentable {
         }
 
         func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-            imageView
+            container
         }
 
         func scrollViewDidZoom(_ scrollView: UIScrollView) {
             center()
-            interaction?.setContentsRectNeedsUpdate()
+            updateHighlights()
             // Reported after the layout pass it may come from, not within it.
             let fraction = Zoom.fraction(of: zoomScale, in: minimumZoomScale...maximumZoomScale)
             DispatchQueue.main.async { [weak self] in self?.reportZoom?(fraction) }
@@ -184,14 +259,20 @@ struct LiveTextImage: UIViewRepresentable {
 }
 #else
 struct LiveTextImage: View {
-    let still: Still
-    let analysis: ImageAnalysis?
-    let pageIndex: Int
+    struct Sheet {
+        let still: Still
+        let analysis: ImageAnalysis?
+    }
+
+    let sheets: [Sheet]
+    let side: SpreadLayout.Side
     let selection: LiveTextSelection
     let zoomControl: ZoomControl
 
     var body: some View {
-        Image(decorative: still.image, scale: 1).resizable().scaledToFit()
+        if let last = sheets.last {
+            Image(decorative: last.still.image, scale: 1).resizable().scaledToFit()
+        }
     }
 }
 #endif
