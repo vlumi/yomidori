@@ -11,8 +11,13 @@ struct ReviewView: View {
     /// and the drill is over when every question has been answered right. Nil for a review.
     var practicing: Set<UUID>?
     @State private var queue: [ReviewItem] = []
-    /// A drill is loaded once; coming back to it from a card mustn't start it over.
+    /// Loaded once; coming back to the screen mustn't start it over and lose the misses
+    /// still to be put right.
     @State private var loaded = false
+    /// The questions asked once already this sitting, by `key`: in a review, their first
+    /// answer is the one that counts, and a miss comes back until it is right, for practice
+    /// alone.
+    @State private var asked: Set<String> = []
     @State private var revealed = false
     @State private var answer = ""
     /// When the question now showing came up, for the time spent on it.
@@ -66,6 +71,17 @@ struct ReviewView: View {
         VStack(alignment: .leading, spacing: 20) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
+                    if practicing == nil, asked.contains(Self.key(item)) {
+                        Label {
+                            Text(
+                                "Once more, to get it right. This one no longer counts.",
+                                bundle: .module)
+                        } icon: {
+                            Image(systemName: "arrow.counterclockwise")
+                        }
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                    }
                     ReviewFront(
                         card: item.card, sightingID: picked[Self.key(item)],
                         showsForm: item.question == .reading
@@ -242,15 +258,10 @@ struct ReviewView: View {
             settle(
                 item,
                 MeaningCheck.matches(
-                    typed: answer, glosses: item.card.answers(glosses: glosses(of: item))))
+                    typed: answer, glosses: item.card.answers(glosses: Self.glosses(of: item))))
         case .pitch:
             break
         }
-    }
-
-    private func glosses(of item: ReviewItem) -> [String] {
-        JMdict.bundled?.entry(headword: item.card.headword, reading: item.card.reading)?.senses
-            .flatMap(\.glosses) ?? []
     }
 
     /// Right is good, and the next question comes at once; wrong shows the answer.
@@ -272,12 +283,21 @@ struct ReviewView: View {
         else { return }
         let now = Date()
         let seconds = Int(now.timeIntervalSince(shown).rounded())
-        let reviewed = try? Cards.store?.answer(
-            item, grade: grade, at: now, reconciled: reconciled, accepting: meaning,
-            glosses: meaning == nil ? [] : glosses(of: item), seconds: seconds)
-        session.answered[item.question, default: 0] += 1
-        if grade == .good { session.right[item.question, default: 0] += 1 }
-        session.seconds += min(max(seconds, 0), ReviewEntry.longestCounted)
+        let isRepeat = asked.contains(Self.key(item))
+        asked.insert(Self.key(item))
+        let reviewed: Card?
+        if isRepeat, practicing == nil {
+            // Once more, to finish right: nothing on the schedule, the log or the summary;
+            // a meaning of the reader's own is still kept.
+            reviewed = meaning.flatMap { Self.keep($0, on: item) }
+        } else {
+            reviewed = try? Cards.store?.answer(
+                item, grade: grade, at: now, reconciled: reconciled, accepting: meaning,
+                glosses: meaning == nil ? [] : Self.glosses(of: item), seconds: seconds)
+            session.answered[item.question, default: 0] += 1
+            if grade == .good { session.right[item.question, default: 0] += 1 }
+            session.seconds += min(max(seconds, 0), ReviewEntry.longestCounted)
+        }
         revealed = false
         answer = ""
         queue.removeFirst()
@@ -286,8 +306,8 @@ struct ReviewView: View {
                 $0.card.id == reviewed.id ? ReviewItem(card: reviewed, question: $0.question) : $0
             }
         }
-        // In a drill a miss comes back, a few questions on, until it is right.
-        if practicing != nil, grade == .again {
+        // A miss comes back, a few questions on, until it is right.
+        if grade == .again {
             let again = ReviewItem(card: reviewed ?? item.card, question: item.question)
             queue.insert(again, at: min(Self.missComesBackAfter, queue.count))
         }
@@ -310,9 +330,9 @@ struct ReviewView: View {
     /// One of each card's sentences, at random, for each question; picked once, so the
     /// sentence doesn't change while the question is up.
     private func reload() {
+        guard !loaded else { return }
+        loaded = true
         if let practicing {
-            guard !loaded else { return }
-            loaded = true
             queue = Cards.dueItems(at: Date()).filter { practicing.contains($0.card.id) }.shuffled()
         } else {
             queue = Cards.dueItems(at: Date()).shuffled()

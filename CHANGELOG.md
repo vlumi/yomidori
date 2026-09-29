@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A review ends right.** A question missed in a review comes back a few questions later until it is answered right; only the first answer counts for the schedule, the rest are there to finish on a right one. Stopping early is fine: a miss then comes back when its schedule says.
 - **Check on the right.** Under a review's answer, *Check* now stands on the right and *Show the answer* on the left, the confirming button where iOS and the Mac put it.
 
 ### build 23 — 2026-09-29
