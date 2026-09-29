@@ -68,8 +68,8 @@ extension CardStore {
 
     /// A card contributes an item per due question, the reading before the meaning before
     /// the pitch; `asksPitch` says which cards have a pitch to ask. The most recently
-    /// answered come first, a just-started card counting from its start, so a short session
-    /// churns the fresh cards and the backlog trails.
+    /// answered come first, a just-started card counting from its start; a review shuffles
+    /// them, so the order is only the count's and the tests'.
     public func dueItems(at date: Date, asksPitch: (Card) -> Bool = { _ in false }) -> [ReviewItem]
     {
         cards().flatMap { card in

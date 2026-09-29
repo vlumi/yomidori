@@ -8,7 +8,7 @@ The implementation plan, as **named milestones in rough order** — and *only op
 
 Guiding order: **the tap is the app**, and **what comes early is whatever answers a question that changes the plan**.
 
-Done so far (builds 1–23 on TestFlight, 2026-09-17 to 29): the whole first form of the app, described in [ARCHITECTURE.md](ARCHITECTURE.md) under *What exists*: the camera and the frozen page read by Live Text and Vision (furigana dropped, a tap on either picture, two pages as one sheet), every word of a selection read against JMdict with pitch, a character fixed on the spot, kanji screens with stroke order, cards with sentences and forms added as they are met, lessons with a drill after, three typed questions per card under FSRS repeated until right, bird ranks, a Progress screen with day tallies and rank history, the due count on the app icon, collections with scanned covers shared as files, a lookup history, iCloud sync, and a seeded demo mode. Field rounds on real paperbacks shaped it throughout.
+Done so far (builds 1–23 on TestFlight, 2026-09-17 to 29): the whole first form of the app, described in [ARCHITECTURE.md](ARCHITECTURE.md) under *What exists*: the camera and the frozen page read by Live Text and Vision (furigana dropped, a tap on either picture, two pages as one sheet), a screen of any app read through a Shortcuts action, every word of a selection read against JMdict with pitch (estimated where the dictionary has none), a misreading fixed on the spot, a sentence read aloud, kanji screens with stroke order, cards with sentences and forms added as they are met, lessons with a drill after, three typed questions per card under FSRS repeated until right, bird ranks, a Progress screen with day tallies and rank history, the due count on the app icon, collections with scanned covers shared as files, a lookup history, iCloud sync, a backup that restores, and a seeded demo mode. Field rounds on real paperbacks shaped it throughout.
 
 ## The spike — *does the camera read a paperback?*
 
@@ -39,7 +39,7 @@ Decided 2026-09-18: a Mac app is wanted, after the phone's recognizer question i
 
 - [ ] **Sync on two real devices.** *iCloud sync of the cards, collections, covers and lookup history is built and in production since 2026-09-23.* Left: tried between two real devices, and live refresh on the screens that load only on appear.
 - [ ] **A Mac target.** No camera: a pasted sentence goes straight to the tokenizer (on the phone since 2026-09-23, as a page of text), a pasted or dropped screenshot goes through Live Text as on the phone, with the Mac's own selection overlay on the image. Same bundle id under the same App Store record. The release lane's macOS scope, inherited from the siblings, comes back into use.
-- [ ] **Review on a keyboard.** Space to reveal, two keys to grade. *Typing is how every review is answered already, on every platform: the reading strictly, the meaning leniently with the reader's own accepted meanings, the pitch by a pick. What remains is the Mac's own keys.* A typing tutor proper, with drills and speed, is a different product and stays out.
+- [ ] **Review on a keyboard.** *Typing is how every review is answered already, on every platform: the reading strictly, the meaning leniently with the reader's own accepted meanings, the pitch by a pick, Return to check.* What remains is the Mac's own keys: one to show the answer, the digits to pick a pitch, one to go on. A typing tutor proper, with drills and speed, is a different product and stays out.
 
 ## Store — *out the door*
 

@@ -16,8 +16,9 @@ the official "Yomidori", or that it is endorsed by or affiliated with it.
 **A fork distributed to the public must use a different name and its own icon /
 branding.** Internal/personal builds and non-public experimentation are fine.
 
-Dictionary and corpus data bundled with the app (JMdict, the tokenizer's
-dictionary, pitch-accent data) belong to their publishers under their own
+Dictionary and corpus data bundled with the app (the dictionaries, the
+tokenizer's dictionary, the kanji and stroke data, the pitch-accent data, the
+recognition models) belong to their publishers under their own
 licenses, listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and
 credited in the app.
 

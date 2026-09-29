@@ -47,8 +47,9 @@ targets:
         # the export-compliance prompt.
         ITSAppUsesNonExemptEncryption: false
         LSApplicationCategoryType: public.app-category.education
-        # The one permission the app asks for. Localized in Sources/Shared/InfoPlist.xcstrings.
-        NSCameraUsageDescription: Yomidori takes a still of the page you are reading. The image stays on this device.
+        # Asked at the first page; the icon count's badge permission is asked from Settings.
+        # Localized in Sources/Shared/InfoPlist.xcstrings.
+        NSCameraUsageDescription: Yomidori takes a still of the page you are reading, and reads it on this device.
         # System-default launch screen (plain background).
         UILaunchScreen: {}
         # A shared collection is a .yomidori file (JSON) the app owns and opens, from AirDrop,
@@ -69,7 +70,7 @@ targets:
         UIBackgroundModes: [remote-notification]
         # All four orientations: a universal (iPhone + iPad) app must support
         # them for iPad multitasking, or App Store validation rejects the build.
-        # A book is read in either orientation anyway.
+        # The Read tab itself stays upright on a phone (OrientationLock).
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationPortraitUpsideDown

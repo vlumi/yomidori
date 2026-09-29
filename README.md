@@ -12,7 +12,8 @@ were reading becomes a card, and the cards are what you study.
 > page, select a word, every word in the selection with its reading, pitch and
 > meaning, the kanji behind them with stroke order, cards with the sentences you
 > met the word in, lessons and typed reviews with bird ranks, collections by book,
-> and a history of what you looked up. How it's built: [ARCHITECTURE.md](ARCHITECTURE.md).
+> a history of what you looked up, your progress in graphs, and the same cards on
+> all your devices through iCloud. How it's built: [ARCHITECTURE.md](ARCHITECTURE.md).
 > How to work on it: [AGENTS.md](AGENTS.md). What's next: [ROADMAP.md](ROADMAP.md).
 
 ## The idea
@@ -32,9 +33,11 @@ you ask.
 Then the word keeps working for you. The sentence you met it in, as it stood on
 the page, becomes a card; a lesson starts it when you have time for it, and it
 asks three things: the reading and the meaning by typing, and which pitch by a
-pick. Meet the
+pick. A question you miss comes back until you get it right, and only your
+first answer counts. Meet the
 same word in another book and the card gains a second sentence. Reviews happen
-when you open the app, on the train or not at all; there is no streak to keep,
+when you open the app, on the train or not at all; nothing reminds you unless
+you ask for the count on the app's icon,
 and a card you truly forgot goes back to waiting instead of haunting you.
 
 ## Principles
@@ -44,8 +47,9 @@ and a card you truly forgot goes back to waiting instead of haunting you.
   reading; the app speaks when you say you don't.
 - **Everything on the device.** Text recognition, tokenizing, readings, pitch,
   cards: all local, offline, from dictionaries bundled with the app. No account,
-  no server, no model in the cloud. A word you look up never leaves the phone;
-  your cards sync between your devices through your own iCloud, if you like.
+  no server, no model in the cloud. A word is never sent anywhere to be looked
+  up; your cards, collections and lookup history sync between your devices
+  through your own iCloud, unless you turn that off.
 - **The book is the corpus.** Example sentences are the ones you actually read,
   as they stood on your page, not a corpus written for someone else.
 - **iPhone and iPad, iOS 26 up.** A Mac app is planned,
@@ -61,7 +65,7 @@ sparrow, whose Japanese name 文鳥 happens to mean "text bird".
 
 ## Version history
 
-Builds 1 to 7 went to TestFlight between 2026-09-17 and 22; nothing on the App
+On TestFlight since 2026-09-17; nothing on the App
 Store yet. See [CHANGELOG.md](CHANGELOG.md) for what each build carried and
 [ROADMAP.md](ROADMAP.md) for what's next.
 

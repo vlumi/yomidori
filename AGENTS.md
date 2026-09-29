@@ -4,12 +4,10 @@ A reading companion for Japanese paperbacks on iPhone and iPad: freeze the page,
 tap a word, get its reading and pitch, keep the sentence as a card. This file is
 how to *work on* the repo, for humans and AI agents alike.
 
-**Alpha on TestFlight** (builds 1–7, 2026-09-17 to 22), nothing on the App
-Store yet. The first form of the whole app exists and has been read with on a
-real paperback; ARCHITECTURE.md's *What exists* is the inventory, ROADMAP.md
-what remains; the spike is answered (Vision's document request reads a
-vertical page with boxes, 2026-09-22) and the tap built on those boxes heads
-the roadmap. Work goes in PR-sized chunks, one concern each, with a
+**Alpha on TestFlight**, nothing on the App
+Store yet. The first form of the whole app exists and has been read with on
+real paperbacks; ARCHITECTURE.md's *What exists* is the inventory, ROADMAP.md
+what remains and how far the builds have come. Work goes in PR-sized chunks, one concern each, with a
 CHANGELOG bullet under *Unreleased* for anything a reader would notice.
 
 Separate project from its siblings [Donpa Squad](https://github.com/vlumi/donpa)
@@ -98,7 +96,8 @@ describing intent as fact otherwise.
   cut without them ships without the engine (the preflight says so). Apache
   2.0; the notice is in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 - **Third-party code at runtime: none by default.** Everything ships with the OS
-  (Foundation, SwiftUI, UIKit, Vision, AVFoundation). The one exception is
+  (Foundation, SwiftUI, UIKit, Vision and VisionKit, AVFoundation, CloudKit,
+  Core ML, Charts, App Intents, UserNotifications). The one exception is
   MeCab with IPADic (the Mecab-Swift package, pinned to a commit), which is in
   the app as the *alternative* tokenizer while the choice against the OS's own
   analyzer is compared in the field; it lives in its own target,
@@ -144,28 +143,28 @@ yomidori/
 │     data/build-jmdict.py          JMdict, KANJIDIC2, KRADFILE, KanjiVG, Kanjium accents → the bundled SQLite (make dictionary)
 │     data/estimate-pitch.py        Open JTalk and Kanjium's habits → estimated pitch in the SQLite (make pitch; optional)
 │     data/build-mangaocr.py        manga-ocr → Core ML (make models; optional)
-├── Sources/iOS/                    Thin @main app shell (+ Info.plist, entitlements)
+├── Sources/iOS/                    Thin @main app shell, the orientation hook and the Shortcuts action (+ Info.plist, entitlements)
 ├── Sources/Shared/                 The asset catalog (AppIcon), the app-level String Catalogs (InfoPlist too)
 │     Dictionaries/jmdict.sqlite    Built by make dictionary; gitignored
 │     Models/                       manga-ocr's Core ML packages, by make models; gitignored, optional
 └── Packages/YomidoriCore/          Swift package — all the code
     ├── Sources/YomidoriCore/       Pure logic — tested, coverage-gated; grouped by domain as it grows:
     │   ├── Kana.swift              katakana ↔ hiragana, the first of the reading helpers
-    │   ├── Cards/                  Card, Sighting, CardStore, Collection, Lesson, LookupHistory, WordKey; RecordFile (the one JSON store under all three) and the sync merges
-    │   ├── Dictionary/             DictionaryEntry, the WordDictionary protocol and its lookups, KanjiEntry, SVGPath
-    │   ├── Reading/                Token, Tokenizer, SystemTokenizer, Deinflector, WordFinder, PitchAccent, Sentence, Spread, TranscriptLines
-    │   ├── Recognition/            RecognizedLine, TextGeometry, CloseUpGeometry (the Vision-box ↔ view seam), Zoom, DrawerDetents, CoverLines
-    │   ├── Scheduling/             FSRS, Rank, ReadingCheck, MeaningCheck
-    │   └── Text/                   MarkdownBlocks
+    │   ├── Cards/                  Card, Sighting, CardStore, Collection, Lesson, LookupHistory, WordKey; RecordFile (the one JSON store under all three); the sync side (SyncRecord, CardMerge, UnsentChanges); what comes in and goes out (Intake, SharedCollection, Backup)
+    │   ├── Dictionary/             DictionaryEntry, the WordDictionary protocol and its lookups, KanjiEntry, KanjiPart, CharacterFix, SVGPath
+    │   ├── Reading/                Token, Tokenizer, SystemTokenizer, Deinflector, WordFinder, PageReading, TextFix, PitchAccent, PitchPhrase, Sentence, Spread, TranscriptLines
+    │   ├── Recognition/            RecognizedLine, VisionPage, TextGeometry, CloseUpGeometry (the Vision-box ↔ view seam), SpreadLayout, QuarterTurn, ImageIntake, Zoom, DrawerDetents, CoverLines
+    │   ├── Scheduling/             FSRS, Rank, ReadingCheck, MeaningCheck, Progress, RankSnapshot, BadgeSchedule
+    │   └── Text/                   MarkdownBlocks, Sanitize, Insertion
     ├── Sources/YomidoriDictionary/ JMdict, the SQLite reader over the bundled database (system SQLite)
     ├── Sources/YomidoriMeCab/      MeCab + IPADic behind Tokenizer — the one third-party dependency, quarantined
     ├── Sources/YomidoriSync/       CloudSync: iCloud sync through CKSyncEngine, the only CloudKit code; coverage-ignored
     ├── Sources/YomidoriMangaOCR/   manga-ocr through Core ML: a CGImage in, a String out; coverage-ignored
-    ├── Sources/YomidoriKit/        SwiftUI + UIKit + Vision, depends on Core, Dictionary, MeCab and MangaOCR; coverage-ignored
-    │   ├── App/                    AppRoot (the tabs, TabStack), HomeView, Screen, Destinations, TabTaps, SettingsView, SwipeBack, AboutView, NoticesView, AppInfo, Palette, Compat, FlowLayout, FitsOrStacks, JapaneseText (`Text(japanese:)`), SettingsKey — one type per file
-    │   ├── Capture/                Camera, CameraPreview, FrameSink, Still, TextRecognizer, LiveText*, CaptureState, CaptureView (+Pages) and its drawer, the camera buttons, PageControls with the ZoomSlider, TextPage, readouts and reader
-    │   ├── Cards/                  CardsView, CardView and its sections, StudyView, LessonView/LessonCard, ReviewView with front, back and PitchChoices, RankName/RankChart, Collection* screens, CoverScanView, TagsEditor, CoverArchive, Cards (the store roots), MeaningFold
-    │   ├── Reading/                TranscriptReadout, WordReadout, WordDetails/WordSections, EntryView/EntryRow, KanjiView/KanjiRow, StrokeOrderView, SearchView, LookupHistoryView, TokenFlow, WordTitle, PitchReading, DictionaryButton, KeepButton, SentenceKeeper, TokenizerChoice
+    ├── Sources/YomidoriKit/        SwiftUI + UIKit + Vision, depends on Core, Dictionary, MeCab, MangaOCR and Sync; coverage-ignored
+    │   ├── App/                    AppRoot (the tabs, TabStack), HomeView, Screen, Destinations, TabTaps, SettingsView, SettingsKey, Sync (the sync engine's owner), AppBadge, StillInbox, OrientationLock, SwipeBack, AboutView, NoticesView, AppInfo, Palette, Compat, FlowLayout, FitsOrStacks, JapaneseText (`Text(japanese:)`) — a file per main type, its small helpers with it
+    │   ├── Capture/                Camera, CameraPreview, FrameSink, Still, TextRecognizer, LiveText*, CaptureState, CaptureView (+Pages, +Vision) and its drawer, StillView with Zoomable, the camera buttons, PageControls with the ZoomSlider and ZoomControl, SpreadNotice, TextPage, readouts and reader
+    │   ├── Cards/                  CardsView, CardView and its sections (AcceptedMeanings, SentenceEditor), StudyView, ProgressScreen, LessonView/LessonCard, ReviewView with front, back, AnswerField, QuestionTag, PitchChoices and SessionSummary, RankName/RankChart, Collection* screens and CollectionFile, BackupFile, CoverScanView, TagsEditor, CoverArchive, Cards (the store roots), MeaningFold
+    │   ├── Reading/                TranscriptReadout, ChunkFlow, PageReader, WordReadout, PageFix with CharacterFixView, WordDetails/WordSections, EntryView/EntryRow, KanjiView/KanjiRow, KanjiByPartsView, StrokeOrderView, SearchView with SearchFieldButton, LookupHistoryView, WordTitle, PitchReading, EstimatedPitch, Speaker, DictionaryButton, KeepButton, SentenceKeeper, TokenizerChoice
     │   ├── Demo/                   DemoMode, DemoData, DemoText, DemoRenderer — the seeded demo (see Demo mode)
     │   └── Resources/              Localizable.xcstrings (the Kit's strings, en + ja)
     └── Tests/YomidoriCoreTests/    Grouped by domain, mirroring Core
@@ -197,7 +196,7 @@ make build-ios         # generate the project if stale, build the app for the si
 make run-iphone        # build + install + launch on an iPhone simulator (DEVICE="SE" to pick)
 make run-ipad          # same, iPad (DEVICE="Air")
 make run-device        # build + install + launch on a paired iPhone/iPad (DEVICE="<name>" to pick)
-make demo-iphone       # build + launch the seeded demo on a simulator (DEVICE=<pattern>); demo-ipad likewise
+make demo-iphone       # build + launch the seeded demo on a simulator (DEVICE=, TAB=, SCREEN=, SEARCH=, SPREAD=1); demo-ipad likewise
 make icon              # regenerate the app icon PNG
 make dictionary        # build the bundled JMdict database (downloads JMdict_e once)
 make pitch             # estimate the pitch Kanjium lacks into the dictionary (optional; python3.13 + venv)
@@ -222,9 +221,10 @@ swiftlint lint --strict                 # style + light correctness (config: .sw
 swift format lint --strict --recursive --configuration .swift-format \
   Packages/YomidoriCore/Sources Packages/YomidoriCore/Tests Sources
 swift format --in-place --recursive --configuration .swift-format <paths>   # auto-format
+npx --yes markdownlint-cli2@0.23.3 '*.md'   # the docs at the repo's root (config: .markdownlint-cli2.jsonc)
 ```
 
-CI runs both with `--strict` (warnings fail). **swift-format is the authority
+CI runs all three, the Swift ones with `--strict` (warnings fail). **swift-format is the authority
 on whitespace/punctuation**; where SwiftLint conflicts (trailing commas, brace
 placement) those SwiftLint rules are disabled rather than fought. Run the
 formatter before committing.
@@ -240,7 +240,9 @@ an unpinned `brew install` follows the rolling latest, so a new release can
 turn CI red on untouched code. Match it locally where possible (a patch release
 ahead is usually fine; a minor one isn't). Bump the CI version deliberately and
 update this line. swift-format needs no pin — it ships with the Xcode toolchain,
-which CI pins via `XCODE_VERSION`.
+which CI pins via `XCODE_VERSION`. **markdownlint is pinned in two places**
+that move together: the `Makefile`'s lint target and
+`.github/workflows/ci.yml`; it runs through `npx`, so Node is a dev tool here.
 
 ## Pull requests & CI
 
@@ -262,8 +264,8 @@ Agent-specific mechanics on top of that:
   required check, so `--auto` merge can land a PR *before* coverage posts —
   merge only once it's green (target 80% on new, non-ignored code).
 - **The whole `YomidoriKit` target is coverage-ignored** (the SwiftUI/Vision
-  layer), and `YomidoriMangaOCR` with it, so pure logic goes in `YomidoriCore`
-  to be tracked. If a Kit file
+  layer), and `YomidoriMangaOCR` and `YomidoriSync` with it, so pure logic goes
+  in `YomidoriCore` to be tracked. If a Kit file
   grows testable logic, move the logic, don't widen the ignore list.
 - **BEHIND blocks merge** (branch protection). Merge `origin/main` into the
   branch to catch it up; auto-merge needs required checks, so a base without
@@ -272,14 +274,19 @@ Agent-specific mechanics on top of that:
 ## Demo mode
 
 `make demo-iphone` launches the simulator build with `-yomidori-demo`
-(`Scripts/demo.sh`, like the siblings' launchers). `YomidoriKit/Demo`: `DemoMode`
+(`Scripts/demo.sh`, like the siblings' launchers). More arguments open it
+where a screenshot or a look is wanted, each with its variable for `make`:
+`-yomidori-tab` (`TAB=home|read|study|cards|search`), `-yomidori-screen`
+pushed on that tab (`SCREEN=review|lesson|progress|settings|about|collections`),
+`-yomidori-search` filling the search field (`SEARCH=見当`), and
+`-yomidori-spread` opening Read on two pages (`SPREAD=1`). `YomidoriKit/Demo`: `DemoMode`
 routes every store (cards, collections, lookups, covers) to a temp folder wiped
 and reseeded at each launch and the settings to their own defaults suite;
-`DemoData` seeds some hundred cards from four public-domain openings (漱石's
+`DemoData` seeds a hundred cards from four public-domain openings (漱石's
 吾輩は猫である, 太宰's 走れメロス, 芥川's 羅生門, 賢治's 銀河鉄道の夜) and a shop sign, at
 every rank with sightings, shelved names, search-kept words, collections with
-rendered covers and a lookup history, dates relative to now so
-the queue is always in the same state; `DemoRenderer` draws the page and the
+rendered covers, a lookup history and six weeks of rank snapshots, dates
+relative to now so the queue is always in the same state; `DemoRenderer` draws the page and the
 covers from text with CoreText, vertical Mincho on cream, so Read opens on a
 page with its transcript already known (`CaptureState.transcript`). The camera
 is untouched; the data can be changed in the session and is gone at the next
@@ -295,9 +302,21 @@ launch. Nothing of this runs without the argument.
   messages and the docs.
 - **Pitch is drawn one way**: a line over the high morae with a drop where the
   accent falls, and the downstep number in brackets beside it (`PitchReading`).
-  Tokyo accent, from Kanjium, keyed by headword and reading.
-- **Readings are hiragana when shown, katakana when stored** — dictionaries
-  give katakana, readers expect hiragana; `Kana` converts at the edge, once.
+  Tokyo accent, from Kanjium, keyed by headword and reading; an estimate where
+  Kanjium has none is drawn the same, marked as one, and never asked.
+- **Readings are hiragana, shown and stored**: a card's and a lookup's key is
+  the headword and its hiragana reading (`WordKey`). `Kana` converts what a
+  tokenizer or the dictionary gives in katakana.
+- **`WordKey` never changes what it gives.** A card's id is made from it
+  (`WordKey.cardID`, a name-based UUID in a namespace fixed for good), and the
+  card's record in iCloud is named by that id: change either and every card
+  kept stops matching its own record.
+- **A new record type or field in sync needs its schema deployed.** CloudKit's
+  production schema is deployed by hand in its console before a release that
+  writes it ([RELEASING.md](RELEASING.md) has the step); say so in the PR.
+- **Every write to a store goes through `RecordFile`**, which says what
+  changed and whether it was made here or came from sync; screens refresh from
+  `Cards.changes(of:)`, by the kind of record they show.
 - **Unicode-scalar work stays in Core**, tested against real Japanese strings
   (kanji, both kana, the length mark, punctuation); never assume one scalar per
   character in the Kit.

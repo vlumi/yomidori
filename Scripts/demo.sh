@@ -6,6 +6,9 @@
 #   PLATFORM=iphone|ipad   (default iphone)
 #   DEVICE=<name pattern>  override the simulator pick
 #   TAB=home|read|study|cards|search   open on that tab (default: where it was left)
+#   SCREEN=review|lesson|progress|settings|about|collections   pushed on that tab
+#   SEARCH=<text>                      the search field filled
+#   SPREAD=1                           Read opened on two pages
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -36,5 +39,6 @@ app="$(find .build-xcode/Build/Products/Debug-iphonesimulator \
 
 xcrun simctl terminate "$udid" "$BUNDLE" >/dev/null 2>&1 || true
 xcrun simctl install "$udid" "$app"
-xcrun simctl launch "$udid" "$BUNDLE" -yomidori-demo ${TAB:+-yomidori-tab "$TAB"} ${SCREEN:+-yomidori-screen "$SCREEN"} >/dev/null
+xcrun simctl launch "$udid" "$BUNDLE" -yomidori-demo ${TAB:+-yomidori-tab "$TAB"} ${SCREEN:+-yomidori-screen "$SCREEN"} \
+  ${SEARCH:+-yomidori-search "$SEARCH"} ${SPREAD:+-yomidori-spread} >/dev/null
 echo "Demo launched on $udid — seeded cards, collections and a page; nothing persists."
