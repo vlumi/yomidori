@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 24 — 2026-09-29
+
 - **What the app says of itself is current.** About no longer says that nothing leaves the device, which stopped being the whole truth with iCloud sync: everything is read on the device, and nothing is sent anywhere but to your own iCloud, while sync is on. The camera permission's wording says the page is read on the device. The privacy policy names the badge permission, the images and text handed in, and what a backup holds.
 - **Hear the sentence.** A speaker button reads a sentence aloud in the system's Japanese voice: on a card's sentences, in a lesson, and for the sentence around the word selected on the page. It plays with the ring switch off too, and a second press stops it. The better voices are a download in the Settings app, under Accessibility, Spoken Content, Voices.
 - **Restore a backup.** *Back up cards* now saves the cards, the collections and the lookup history as one file, and *Restore a backup* in Settings brings one back: what the file has is added to what is here, a word's sentences and answers joining its card, and nothing is taken away. The covers are not in the file. A backup made by an earlier build restores too.
