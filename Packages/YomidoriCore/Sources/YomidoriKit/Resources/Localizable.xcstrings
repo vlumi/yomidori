@@ -1114,6 +1114,16 @@
         }
       }
     },
+    "Move the second page" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2ページ目の位置を変える"
+          }
+        }
+      }
+    },
     "Name" : {
       "localizations" : {
         "ja" : {

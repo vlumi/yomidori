@@ -167,6 +167,7 @@ public struct CaptureView: View {
                 side: controlsSide, pageCount: pages.isEmpty ? nil : pages.count + 1,
                 canAddPage: currentTranscript != nil && pages.count + 1 < Self.pagesInASpread,
                 addPage: addPage, startOver: startOver,
+                moveNextPage: pages.count + 1 < Self.pagesInASpread ? nil : moveNextPage,
                 zoom: zoomFraction(in: area)
             )
             .padding(12)

@@ -27,6 +27,7 @@ extension CaptureView {
 
     func startOver() {
         pages = []
+        page.nextSide = nil
         selection.pageTexts = [:]
         page.newPage()
         if still != nil {

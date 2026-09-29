@@ -98,8 +98,16 @@ extension CaptureView {
     /// Which side the next page lies on: left of columns, under rows, by the first page; left
     /// when Vision found no lines to tell by, as a paperback's is.
     var spreadSide: SpreadLayout.Side {
+        if let chosen = page.nextSide { return chosen }
         let lines = spreadPages.first?.lines ?? []
         return lines.isEmpty
             ? .left : SpreadLayout.side(forVertical: SpreadLayout.isVertical(lines))
+    }
+
+    /// The second page round the first: left, right, below, and left again.
+    func moveNextPage() {
+        let sides = SpreadLayout.Side.allCases
+        let current = sides.firstIndex(of: spreadSide) ?? 0
+        page.nextSide = sides[(current + 1) % sides.count]
     }
 }
