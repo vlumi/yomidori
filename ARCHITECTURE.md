@@ -146,6 +146,11 @@ use for its own input.
   learners know. **`PitchReading`** (Kit) draws that: a line over the high morae
   dropping where the accent falls, the number in brackets beside it. This is the
   app's one notation, decided here.
+- **`Speaker`** (Kit): a sentence read aloud by the system's own Japanese voice,
+  the best one installed, on the device and at a press: on a card's sentence,
+  in a lesson, and the sentence around the selection on the page
+  (`PageReading.sentence(around:)`). Its pitch is fair, not always right; the
+  drawn pitch is the dictionary's word.
 - **`DictionaryEntry`** (Core) and **`JMdict`** (its own target): a word as
   JMdict has it, kanji forms, readings, senses with parts of speech and glosses,
   and its frequency mark; read from a SQLite database through the system's own

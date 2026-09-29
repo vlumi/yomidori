@@ -781,6 +781,16 @@
         }
       }
     },
+    "Hear the sentence" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文を聞く"
+          }
+        }
+      }
+    },
     "Hide the meaning" : {
       "localizations" : {
         "ja" : {
@@ -1980,6 +1990,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "開始中…"
+          }
+        }
+      }
+    },
+    "Stop" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "止める"
           }
         }
       }
