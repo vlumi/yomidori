@@ -190,6 +190,7 @@ Everything is a `make` target so Xcode never has to be opened
 
 ```sh
 make test              # package logic tests (swift test; no Xcode project needed)
+make coverage          # the same tests with coverage: a table by file, least covered first
 make lint              # SwiftLint + swift-format --strict, and markdownlint on the docs, as CI runs them
 make format            # rewrite sources with swift-format
 make build-ios         # generate the project if stale, build the app for the simulator (unsigned)
@@ -260,9 +261,10 @@ Agent-specific mechanics on top of that:
 - **A user-facing PR writes its own CHANGELOG bullet** under the newest
   version's `### Unreleased (next build)` heading — the release lane only
   stamps the build number, it never writes entries. See CHANGELOG.md's preamble.
-- **Wait for Codecov before merging.** `codecov/patch` is reported but is NOT a
-  required check, so `--auto` merge can land a PR *before* coverage posts —
-  merge only once it's green (target 80% on new, non-ignored code).
+- **Codecov is a required check.** `codecov/patch` (80% on new, non-ignored
+  code) must be green for a PR to merge, and `--auto` waits for it with the
+  rest. A failed upload fails the test job, so a missing report is red, never
+  silently absent. New logic comes with its tests in the same PR.
 - **The whole `YomidoriKit` target is coverage-ignored** (the SwiftUI/Vision
   layer), and `YomidoriMangaOCR` and `YomidoriSync` with it, so pure logic goes
   in `YomidoriCore` to be tracked. If a Kit file
