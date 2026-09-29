@@ -26,4 +26,13 @@ final class TextFixTests: XCTestCase {
         XCTAssertEqual(TextFix.map(offset: 4, through: fixes), 3)
         XCTAssertEqual(TextFix.map(offset: 5, through: []), 5)
     }
+
+    func testARunIsRetypedWhole() {
+        let page = "彼は言舌し大。窓の外。"
+        let fix = TextFix(replacing: 2..<6, with: "話した")
+        XCTAssertEqual(TextFix.apply([fix], to: page), "彼は話した。窓の外。")
+        XCTAssertEqual(fix.replaced, 2..<5)
+        // What came after the run follows it.
+        XCTAssertEqual(TextFix.map(offset: 7, through: [fix]), 6)
+    }
 }

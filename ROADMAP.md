@@ -19,7 +19,6 @@ The whole idea rests on on-device text recognition reading real books: vertical 
 
 ## Freeze & tap — *the reading, one-handed*
 
-- [ ] **Edit more than a character on the page.** A character is fixed on the spot from the words it could be; a longer misreading (a word, a line) still needs the sentence editor on the card.
 - [ ] **Share a screenshot to Yomidori.** *The shortcut way is built: the* Read in Yomidori *action takes an image, and after* Take Screenshot *on Back Tap or the Action button it reads any screen with nothing saved to Photos; Settings says how.* Left: a ready-made shortcut link to hand out, and a share extension, so Share → Yomidori from a screenshot's preview lands on the Read tab too; the extension is a second signed target with an app group to pass the image through, so it touches provisioning and the release lane. Heavier and later if ever: a ReplayKit broadcast extension keeping the latest frame while a game plays, at the cost of the recording pill and a 50 MB extension. Protected video (FairPlay) comes out black either way.
 
 ## Cards — *the word keeps working*
