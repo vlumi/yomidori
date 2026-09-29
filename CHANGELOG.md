@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Read any screen.** A new action for the Shortcuts app, *Read in Yomidori*, opens an image on the Read tab. Put after *Take Screenshot* in a shortcut and set to Back Tap or the Action button, a double tap on the back of the phone opens whatever is on the screen, a game's text drawn as pictures included, ready to tap, and nothing is saved to Photos. Settings says how to set it up.
 - **A review ends right.** A question missed in a review comes back a few questions later until it is answered right; only the first answer counts for the schedule, the rest are there to finish on a right one. Stopping early is fine: a miss then comes back when its schedule says.
 - **Check on the right.** Under a review's answer, *Check* now stands on the right and *Show the answer* on the left, the confirming button where iOS and the Mac put it.
 

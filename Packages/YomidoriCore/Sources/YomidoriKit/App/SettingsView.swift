@@ -63,6 +63,24 @@ struct SettingsView: View {
                 }
             }
             Section {
+                if let shortcuts = URL(string: "shortcuts://") {
+                    Link(destination: shortcuts) {
+                        Label {
+                            Text("Open Shortcuts", bundle: .module)
+                        } icon: {
+                            Image(systemName: "square.2.layers.3d")
+                        }
+                    }
+                }
+            } header: {
+                Text("Read any screen", bundle: .module)
+            } footer: {
+                Text(
+                    // swiftlint:disable:next line_length
+                    "In the Shortcuts app, make a shortcut of two actions, Take Screenshot and then Read in Yomidori, and set it to Back Tap (Settings, Accessibility, Touch) or the Action button. A double tap on the back of the phone then opens whatever is on the screen here, ready to tap. Nothing is saved to Photos.",
+                    bundle: .module)
+            }
+            Section {
                 Toggle(isOn: $iCloudSync) {
                     Text("Sync with iCloud", bundle: .module)
                 }
