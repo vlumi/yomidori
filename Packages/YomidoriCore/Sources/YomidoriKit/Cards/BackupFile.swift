@@ -26,9 +26,8 @@ extension Cards {
         let backup = Backup(
             created: Date(), cards: store?.cards() ?? [],
             collections: collections?.collections() ?? [], lookups: lookups?.lookups() ?? [])
-        let day = Date().formatted(.iso8601.year().month().day())
         let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("Yomidori backup \(day)")
+            .appendingPathComponent(Backup.fileName(at: Date()))
             .appendingPathExtension("json")
         try backup.encoded().write(to: url, options: .atomic)
         return url
@@ -42,14 +41,8 @@ extension Cards {
         guard size <= Backup.largestFile else { throw CocoaError(.fileReadTooLarge) }
         let backup = try Backup.decoded(from: Data(contentsOf: url))
         guard let store, let collections, let lookups else { throw CocoaError(.fileReadUnknown) }
-        let restored = backup.restored(
-            onto: store.cards(), collections: collections.collections(),
-            lookups: lookups.lookups(), clearedAt: lookups.clearedAt,
-            lookupLimit: FileLookupHistory.limit)
-        // The collections first, so no card points at one that is not there yet.
-        try collections.replaceAll { _ in restored.collections }
-        try store.replaceAll { _ in restored.cards }
-        try lookups.replaceAll { _ in restored.lookups }
+        let restored = try backup.restore(
+            cards: store, collections: collections, lookups: lookups)
         return BackupRestore(
             addedCards: restored.addedCards, joinedCards: restored.joinedCards,
             addedCollections: restored.addedCollections)
