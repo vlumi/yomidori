@@ -30,5 +30,7 @@ extension CaptureView {
         let liveText: String
         /// manga-ocr's reading of a window around the tap; nil where the models are not bundled.
         let mangaOCR: String?
+        /// The page of the spread it was read on.
+        var page = 0
     }
 }
