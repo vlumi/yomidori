@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Pitch for compounds and expressions.** Words the pitch dictionary lacks, expressions like 見当がつく and 目を覚ます and many long compounds, now show a pitch worked out for them, an expression phrase by phrase (けんとうが [3], つく [1]), marked *estimated*: on cards, in lessons, on the page, in search and in the history. Estimates are never asked in a review. Cards kept before gain it with this build.
 - **A review ends right.** A question missed in a review comes back a few questions later until it is answered right; only the first answer counts for the schedule, the rest are there to finish on a right one. Stopping early is fine: a miss then comes back when its schedule says.
 - **Check on the right.** Under a review's answer, *Check* now stands on the right and *Show the answer* on the left, the confirming button where iOS and the Mac put it.
 

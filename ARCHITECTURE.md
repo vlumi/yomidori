@@ -145,13 +145,24 @@ use for its own input.
   joins the one before it) and says which morae are high, the three shapes
   learners know. **`PitchReading`** (Kit) draws that: a line over the high morae
   dropping where the accent falls, the number in brackets beside it. This is the
-  app's one notation, decided here.
+  app's one notation, decided here. Where the accent dictionary has no pitch,
+  an estimate is shown in the same notation, phrase by phrase for an expression
+  (`PitchPhrase`: けんとうが [3] and つく [1] for 見当がつく), marked *estimated*
+  (`EstimatedPitch`) and never asked in a review, which asks only what the
+  dictionary gives. The estimates are made at build time
+  (`Scripts/data/estimate-pitch.py`, `make pitch`): an expression's accent
+  phrases from Open JTalk; a compound's drop by the habit of its last element,
+  learned from the compounds Kanjium does have (88% agreement on compounds held
+  out, against 58% for Open JTalk's own rule), and none where the last element
+  is unfamiliar; a single kanji word from Open JTalk's lexicon. Nothing of it
+  runs on the phone.
 - **`DictionaryEntry`** (Core) and **`JMdict`** (its own target): a word as
   JMdict has it, kanji forms, readings, senses with parts of speech and glosses,
   and its frequency mark; read from a SQLite database through the system's own
   SQLite, by exact kanji form or reading, common words first. The same database
   holds Kanjium's accent table, keyed by headword and reading, and the reader
-  answers pitch questions from it; and KANJIDIC2's kanji with KRADFILE's
+  answers pitch questions from it; the estimates in a table of their own
+  (`accent_estimate`), absent from a database built without them; and KANJIDIC2's kanji with KRADFILE's
   components (`KanjiEntry`: readings, meanings, strokes, grade, JLPT level,
   frequency rank) and KanjiVG's strokes in order, SVG paths read by a small
   parser in Core and drawn one after another on the kanji screen. Around a word the reader also finds the

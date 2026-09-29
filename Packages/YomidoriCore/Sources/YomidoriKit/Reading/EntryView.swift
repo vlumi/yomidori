@@ -17,7 +17,7 @@ struct EntryView: View {
             Section {
                 WordTitle(
                     headword: entry.headword, reading: reading, accent: details.accent(of: reading),
-                    font: .largeTitle
+                    estimate: details.estimate, font: .largeTitle
                 ) {
                     DictionaryButton(term: entry.headword)
                         .labelStyle(.iconOnly)

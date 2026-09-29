@@ -60,6 +60,9 @@ public protocol WordDictionary {
     /// Exact kanji form or reading, common words first.
     func entries(matching text: String) -> [DictionaryEntry]
     func pitchAccents(for headword: String, reading: String) -> [PitchAccent]
+    /// The pitch worked out for a word the accent dictionary lacks, an expression's phrase by
+    /// phrase; to show as an estimate, never to ask. None where there is no estimate.
+    func estimatedPitch(for headword: String, reading: String) -> [PitchPhrase]
     /// Kana or kanji as a prefix of headwords and readings; anything else searches the glosses.
     func search(_ query: String, limit: Int) -> [DictionaryEntry]
     func kanji(_ literal: String) -> KanjiEntry?
@@ -126,6 +129,14 @@ extension WordDictionary {
     /// The first candidate with entries wins.
     public func entries(forAny candidates: [String]) -> [DictionaryEntry] {
         candidates.lazy.map(entries(matching:)).first { !$0.isEmpty } ?? []
+    }
+
+    public func estimatedPitch(for headword: String, reading: String) -> [PitchPhrase] { [] }
+
+    /// The entry's estimate, for where it has no accent of the dictionary's.
+    public func estimatedPitch(of entry: DictionaryEntry) -> [PitchPhrase] {
+        guard let reading = entry.readings.first else { return [] }
+        return estimatedPitch(for: entry.headword, reading: reading)
     }
 
     public func pitchAccent(of entry: DictionaryEntry) -> PitchAccent? {
