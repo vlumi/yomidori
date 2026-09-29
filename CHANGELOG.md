@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Check on the right.** Under a review's answer, *Check* now stands on the right and *Show the answer* on the left, the confirming button where iOS and the Mac put it.
+
 ### build 23 — 2026-09-29
 
 - **Reviews due on the app icon.** Turned on in Settings, the app icon shows how many questions are due, and keeps counting up as more come due while the app is closed, reviews done on another device included. Only the number: no banners, no sounds.

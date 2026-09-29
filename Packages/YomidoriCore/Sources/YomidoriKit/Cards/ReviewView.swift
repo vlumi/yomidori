@@ -121,14 +121,8 @@ struct ReviewView: View {
                 asciiOnly: item.question == .meaning
             ) { check(item) }
             .id(item.question)
+            // The confirming action on the right, as everywhere on iOS and the Mac.
             HStack(spacing: 12) {
-                Button {
-                    check(item)
-                } label: {
-                    FittingLabel(title: Text("Check", bundle: .module), symbol: "checkmark.circle")
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(answer.trimmingCharacters(in: .whitespaces).isEmpty)
                 // What is typed is checked first: a right answer is right, whichever button.
                 Button {
                     if answer.trimmingCharacters(in: .whitespaces).isEmpty {
@@ -140,6 +134,13 @@ struct ReviewView: View {
                     FittingLabel(title: Text("Show the answer", bundle: .module), symbol: "eye")
                 }
                 .buttonStyle(.bordered)
+                Button {
+                    check(item)
+                } label: {
+                    FittingLabel(title: Text("Check", bundle: .module), symbol: "checkmark.circle")
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(answer.trimmingCharacters(in: .whitespaces).isEmpty)
             }
             .controlSize(.large)
         }
