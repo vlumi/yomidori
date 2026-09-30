@@ -36,6 +36,18 @@ extension View {
     }
 }
 
+extension View {
+    /// A settings form as the Mac lays one out, grouped and scrolling; the phone's list is
+    /// its own.
+    func settingsFormStyle() -> some View {
+        #if os(macOS)
+        formStyle(.grouped)
+        #else
+        self
+        #endif
+    }
+}
+
 /// The system's pasteboard, whichever the platform has, so views stay free of `#if`.
 enum Clipboard {
     static func copy(_ text: String) {

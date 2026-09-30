@@ -11,12 +11,19 @@ public struct AboutView: View {
         List {
             Section {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(verbatim: "ヨミドリ")
-                        .font(.system(size: wordmark, weight: .semibold, design: .rounded))
-                        .foregroundStyle(Palette.nightGreen)
-                    Text(verbatim: AppInfo.versionLine)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    HStack(spacing: 14) {
+                        AppIconImage(side: wordmark * 1.6)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(verbatim: "ヨミドリ")
+                                .font(
+                                    .system(size: wordmark, weight: .semibold, design: .rounded)
+                                )
+                                .foregroundStyle(Palette.nightGreen)
+                            Text(verbatim: AppInfo.versionLine)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
                     Text("Point at a word, get its reading.", bundle: .module)
                         .padding(.top, 4)
                     Text(
