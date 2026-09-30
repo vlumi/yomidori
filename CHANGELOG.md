@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 26 — 2026-09-30
+
 - **The answer field takes the keys on the Mac** as each reading or meaning question comes, so typing starts at once.
 - **The search tab is the Dictionary**, on every screen, since that is what it is; the sidebar and the View menu say so. On the Mac the field stands in the Dictionary column over the results it fills, ⌘F puts the cursor in it, and the Read window is titled Read.
 - **Search on the Mac in three columns.** History, which folds away; the results under the field; and the entry picked from either, opening on the right. The collection filter's button reads what is chosen.
