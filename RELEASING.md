@@ -1,8 +1,8 @@
 # Releasing
 
 How Yomidori versions, builds, and ships. Mechanical steps only. The lane mirrors
-its sibling projects' — iOS today; the `macos`/`all` scope in the scripts is
-inherited machinery, kept for the Mac target the roadmap plans.
+its sibling projects': one cut is both apps, the iPhone's and the Mac's, under
+one build number, each with its own tag.
 
 ## Branching
 
@@ -82,10 +82,10 @@ One command from a clean, up-to-date release base — `main`, or a version-line
 `release/<minor>.x` branch when patching a shipped version:
 
 ```sh
-make release                 # iOS → App Store Connect (PLATFORM defaults to ios)
+make release                 # both apps → App Store Connect (PLATFORM defaults to all)
+make release PLATFORM=ios    # the iPhone app alone; PLATFORM=macos the Mac's
 make release UPLOAD=0        # everything through export, no ASC upload
 make release-build           # alias for UPLOAD=0
-# (PLATFORM=macos / all exist in the scripts but there is no Mac target)
 ```
 
 `make release` runs a four-step chain (each step its own
@@ -129,8 +129,8 @@ ios/v0.1.0-1    # iOS, version 0.1.0, build 1
 
 This format is **load-bearing**:
 
-- **Platform prefix required** — inherited from the sibling lane, where a Mac
-  target shares the bundle id; kept so the tooling stays a copy.
+- **Platform prefix required** — the Mac app shares the bundle id and the
+  build number, so each platform's build has a tag of its own.
 - **The suffix is a plain integer build number.** No `-beta.N` / `-rc.N`: the
   lane orders tags with `--sort=-v:refname` and parses `(version, build)` to
   pick the previous release for a changelog (`previous_tag` in

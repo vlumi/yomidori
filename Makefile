@@ -173,11 +173,11 @@ clean:  ## Remove the generated project + local build output
 # prompts + auto-merging PR + CI-wait) is the one stateful script; state crosses
 # to the later steps via the merged commit on main, not through Make.
 #
-# PLATFORM is ios, the one target today; the scripts' macos/all scope is
-# inherited machinery, kept for the planned Mac target. UPLOAD=0 stops after export (no ASC upload). The
+# PLATFORM is all: one cut is both apps, one build number, the tags ios/N and
+# mac/N; ios or macos cuts one. UPLOAD=0 stops after export (no ASC upload). The
 # steps are a linear dependency chain so they stay ordered even under
 # `make -j`. Run from a clean, up-to-date main.
-PLATFORM ?= ios
+PLATFORM ?= all
 UPLOAD ?= 1
 DIST_FLAGS := $(if $(filter 0,$(UPLOAD)),--no-upload,)
 
