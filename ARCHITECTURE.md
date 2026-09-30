@@ -52,9 +52,11 @@ recognizers as on the phone and shown with Live Text's own selection over it
 a magnifying scroll view); *Reading* shows its transcript as the page instead,
 *Clear* (⌘⌫) puts it away. The words of the selection stand beside. The
 sections are a sidebar with ⌘1 … ⌘4 (`SectionCommands`), and switching to
-Read or Search puts the focus in the box or the field. Search with room is
-three columns: the history, which folds away; the results under the field;
-and the entry picked from either, with what it opens (a plain split under the
+Read or Search puts the focus in the box or the field. The dictionary (the
+search tab, named for what it is) with room is three columns: the history,
+which folds away; the results under the field, which is the column's own (⌘F)
+and not the window toolbar's; and the entry picked from either, with what it
+opens (a plain split under the
 sections' sidebar, its buttons in the columns' title bars: a second navigation
 sidebar, or items of the split's own beside an entry's, puts two of a kind in
 one toolbar, which AppKit refuses), the kanji parts a sized sheet; Cards likewise, the

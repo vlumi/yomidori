@@ -82,14 +82,20 @@ public struct AppRoot: View {
                 }
             }
             Tab(value: .search, role: .search) {
-                // On the Mac the search is a split of its own, with a stack in its detail;
-                // one stack over another puts two toolbars in one window, which AppKit
-                // will not have.
+                // On the Mac the dictionary is a split of its own, with a stack in its
+                // entry column; one stack over another puts two toolbars in one window,
+                // which AppKit will not have.
                 #if os(macOS)
                 SearchView()
                 #else
                 TabStack(tab: .search) { SearchView() }
                 #endif
+            } label: {
+                Label {
+                    Text("Dictionary", bundle: .module)
+                } icon: {
+                    Image(systemName: "magnifyingglass")
+                }
             }
         }
         .minimizingTabBarOnScroll()

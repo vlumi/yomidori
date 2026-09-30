@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The search tab is the Dictionary**, on every screen, since that is what it is; the sidebar and the View menu say so. On the Mac the field stands in the Dictionary column over the results it fills, ⌘F puts the cursor in it, and the Read window is titled Read.
 - **Search on the Mac in three columns.** History, which folds away; the results under the field; and the entry picked from either, opening on the right. The collection filter's button reads what is chosen.
 - **Cards on the Mac are a split, and reviews have keys.** The list on the left and the card on the right, ↑ and ↓ moving through it, ⌫ forgetting a card after asking. In a review ⌘↩ shows the answer, the digits pick a pitch, ⌘Y counts a miss right, ⌘⇧A adds the typed meaning, ⌘⌫ sends the card back to waiting; in a lesson ↩ starts, ⌘→ puts back, ⌘⌫ drops. The keys work on an iPad with a keyboard too, and the review reads at a page's width there and on the Mac.
 - **Search on the Mac is a split.** The words you looked up stay in view on the left, a click opening one; the results and the entries on the right; kanji by parts from the toolbar, in a sheet sized for a Mac, as are the fix and card sheets.

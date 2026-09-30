@@ -501,6 +501,16 @@
         }
       }
     },
+    "Clear the search (⌘F to type again)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "検索を消す（⌘F でまた入力）"
+          }
+        }
+      }
+    },
     "Close-up" : {
       "localizations" : {
         "ja" : {
