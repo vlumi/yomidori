@@ -175,11 +175,14 @@ Both targets and the tests group **by domain, not by type**.
 
 ### Art assets
 
-The icon is the one PNG in the repo, and it is *generated*: `make icon` runs
-`Scripts/assets/make-icon.swift` (pure CoreGraphics) into
-`Sources/Shared/Assets.xcassets/AppIcon.appiconset/icon-1024.png`, flattened to
-opaque because App Store Connect silently rejects a transparent icon. To change
-the icon, change the script and re-run — never hand-edit the PNG. The icon is
+The icons are the only PNGs in the repo, and they are *generated*: `make icon`
+runs `Scripts/assets/make-icon.swift` (pure CoreGraphics) into
+`Sources/Shared/Assets.xcassets/AppIcon.appiconset/`: `icon-1024.png` for the
+phone, flattened to opaque because App Store Connect silently rejects a
+transparent icon, and `mac-*.png`, the same picture on the Mac's rounded plate
+with its margins and shadow, every size the Dock asks for, transparent as
+macOS expects. To change the icon, change the script and re-run — never
+hand-edit a PNG. The icon is
 the mascot, the family's silver Java sparrow, drawn head-on and mochi-round on
 a perch; every proportion is a named constant at the top of the script, so a
 tweak is a number, not a redraw.
