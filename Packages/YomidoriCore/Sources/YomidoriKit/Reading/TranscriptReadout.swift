@@ -26,7 +26,19 @@ struct TranscriptReadout: View {
     /// header, stays at the top while its lines scroll under it.
     var body: some View {
         Group {
+            // The page's own work hangs off the header, which is always in the lazy stack's
+            // view; a view of no size at the end is not made while the drawer is short, and
+            // the page would never be read.
             header
+                .task(id: "\(choice)|\(fixed)") { await read() }
+                .onChange(of: selection.range) { selectionOnPage() }
+                .onChange(of: page.selectedRange) { _, range in
+                    requestOnPage(range)
+                    noteLookups(range)
+                }
+                .sheet(item: $openedCard) { card in
+                    CardSheet(card: card)
+                }
             if page.reading == nil {
                 HStack(spacing: 10) {
                     ProgressView()
@@ -45,17 +57,6 @@ struct TranscriptReadout: View {
             if let reading = page.reading {
                 strip(reading)
             }
-            // The page's own work hangs off a view of no size, not off every row.
-            Color.clear.frame(height: 0)
-                .task(id: "\(choice)|\(fixed)") { await read() }
-                .onChange(of: selection.range) { selectionOnPage() }
-                .onChange(of: page.selectedRange) { _, range in
-                    requestOnPage(range)
-                    noteLookups(range)
-                }
-                .sheet(item: $openedCard) { card in
-                    CardSheet(card: card)
-                }
         }
     }
 
