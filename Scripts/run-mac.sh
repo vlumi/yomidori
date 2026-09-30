@@ -42,8 +42,10 @@ fi
 osascript -e 'tell application id "fi.misaki.yomidori" to quit' >/dev/null 2>&1 || true
 sleep 1
 pkill -x Yomidori >/dev/null 2>&1 || true
+# In the background (-g): a build opened every few minutes must not take the screen from
+# whoever is working on it; the keys and the pasteboard reach it by pid all the same.
 if [ ${#args[@]} -gt 0 ]; then
-    open -n "$app" --args "${args[@]}"
+    open -g -n "$app" --args "${args[@]}"
 else
-    open -n "$app"
+    open -g -n "$app"
 fi

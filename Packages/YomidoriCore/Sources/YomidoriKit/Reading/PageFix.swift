@@ -35,6 +35,7 @@ struct FixButton: View {
             }
         } content: {
             CharacterFixView(surface: surface) { pending = $0 }
+                .sheetSize(width: 480, height: 560)
         }
     }
 }

@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Search on the Mac is a split.** The words you looked up stay in view on the left, a click opening one; the results and the entries on the right; kanji by parts from the toolbar, in a sheet sized for a Mac, as are the fix and card sheets.
 - **A picture on the Mac.** Drop a picture of a page on the Read pane, paste one (⌘V) or open one (File › Open a Picture…, ⌘O): it is read as on the phone, with Live Text's own selection over it; *Reading* shows its text as the page instead, and *Clear* puts it away.
 - **The Mac's page is one pane.** Paste the text and it shows as its reading, the readings over the words, once read; click a word, shift-click to stretch, ← and → to move (⇧ to stretch), Escape to clear; *Edit* (⌘E) goes back to the text, *Read* (⌘↩) forward again. The recognized text under the box is gone, being the page itself now.
 - **A sidebar, and the keys to it.** On a Mac and on an iPad on its side the sections are a sidebar; the View menu has them as ⌘1 to ⌘4. Switching to Read puts the cursor in the text box and switching to Search in the search field, so a switch from another app lands where the paste goes. Icon buttons show what they do on hover, a word in the recognized text has a right-click menu, and shift-click stretches the selection.
