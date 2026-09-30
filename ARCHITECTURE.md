@@ -52,11 +52,12 @@ recognizers as on the phone and shown with Live Text's own selection over it
 a magnifying scroll view); *Reading* shows its transcript as the page instead,
 *Clear* (⌘⌫) puts it away. The words of the selection stand beside. The
 sections are a sidebar with ⌘1 … ⌘4 (`SectionCommands`), and switching to
-Read or Search puts the focus in the box or the field. Search with room is a
-split of its own, the words looked up always in view on the left and the
-results and entries on the right (a plain split under the sections' sidebar:
-a second navigation sidebar would put two toggles in one toolbar, which AppKit
-refuses), the kanji parts a sized sheet from the toolbar; Cards likewise, the
+Read or Search puts the focus in the box or the field. Search with room is
+three columns: the history, which folds away; the results under the field;
+and the entry picked from either, with what it opens (a plain split under the
+sections' sidebar, its buttons in the columns' title bars: a second navigation
+sidebar, or items of the split's own beside an entry's, puts two of a kind in
+one toolbar, which AppKit refuses), the kanji parts a sized sheet; Cards likewise, the
 list on the left and the card on the right, ↑ and ↓ moving through it and ⌫
 forgetting after asking. The review and the lesson have their keys wherever
 there is a keyboard (⌘↩ shows the answer, the digits pick a pitch, ⌘Y counts a

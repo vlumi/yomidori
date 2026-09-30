@@ -50,8 +50,17 @@ struct CollectionFilter: View {
                 }
             }
         } label: {
+            // What is chosen, as the label: all cards, the one collection, or how many.
             Label {
-                Text("Collection", bundle: .module)
+                if chosen.isEmpty {
+                    Text("All cards", bundle: .module)
+                } else if chosen.count == 1,
+                    let one = collections.first(where: { chosen.contains($0.id) })
+                {
+                    Text(verbatim: one.name)
+                } else {
+                    Text("\(chosen.count) collections", bundle: .module)
+                }
             } icon: {
                 Image(
                     systemName: chosen.isEmpty
@@ -59,6 +68,7 @@ struct CollectionFilter: View {
                         : "line.3.horizontal.decrease.circle.fill")
             }
         }
+        .accessibilityLabel(Text("Collection", bundle: .module))
     }
 
     private func toggle(_ id: UUID) {

@@ -41,6 +41,16 @@
         }
       }
     },
+    "%lld collections" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld のコレクション"
+          }
+        }
+      }
+    },
     "%lld dropped" : {
       "localizations" : {
         "ja" : {
@@ -157,6 +167,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "4週間"
+          }
+        }
+      }
+    },
+    "A result or a word looked up opens here." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "検索結果か調べた言葉がここに開きます。"
           }
         }
       }
@@ -951,12 +971,42 @@
         }
       }
     },
+    "Hide" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隠す"
+          }
+        }
+      }
+    },
     "Hide the meaning" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "意味を閉じる"
+          }
+        }
+      }
+    },
+    "Hide the words looked up" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "調べた言葉を隠す"
+          }
+        }
+      }
+    },
+    "History" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "履歴"
           }
         }
       }
@@ -2224,6 +2274,16 @@
         }
       }
     },
+    "Show or hide the words looked up" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "調べた言葉を表示・非表示"
+          }
+        }
+      }
+    },
     "Show the answer" : {
       "localizations" : {
         "ja" : {
@@ -2260,6 +2320,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "読み取った本文を表示（⌘↩）"
+          }
+        }
+      }
+    },
+    "Show the words looked up" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "調べた言葉を表示"
           }
         }
       }
