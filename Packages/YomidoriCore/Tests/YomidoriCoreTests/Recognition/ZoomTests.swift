@@ -39,4 +39,14 @@ final class ZoomTests: XCTestCase {
         XCTAssertEqual(Zoom.fraction(of: 2, in: 3...3), 0)
         XCTAssertEqual(Zoom(scale: 2).scaled(to: 3, in: bounds).scale, 3, accuracy: 0.0001)
     }
+
+    func testAPanIsHeldInsideTheSlack() {
+        let bounds = CGSize(width: 100, height: 200)
+        let zoomed = Zoom(scale: 2, offset: CGSize(width: 10, height: 0))
+        let panned = zoomed.panned(by: CGSize(width: 30, height: -250), in: bounds)
+        XCTAssertEqual(panned.scale, 2)
+        XCTAssertEqual(panned.offset, CGSize(width: 40, height: -100))
+        // At 1x there is no slack to pan in.
+        XCTAssertEqual(Zoom().panned(by: CGSize(width: 5, height: 5), in: bounds), Zoom())
+    }
 }
