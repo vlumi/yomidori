@@ -43,9 +43,10 @@ Everything happens on your device:
 
 Yomidori is open source under the MIT license. Every claim on this page can be
 checked in the code at <https://github.com/vlumi/yomidori> — the entitlements
-file shows exactly which capabilities the app requests (iCloud with CloudKit,
-and the silent pushes CloudKit sends when another of your devices syncs), and
-the Info.plist which permissions it asks for.
+files show exactly which capabilities the app requests (iCloud with CloudKit,
+the silent pushes CloudKit sends when another of your devices syncs, and on
+the Mac the sandbox, the network for iCloud alone, and the files you pick
+yourself), and the Info.plist which permissions it asks for.
 
 ## Contact
 
