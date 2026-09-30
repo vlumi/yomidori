@@ -74,24 +74,32 @@ final class Camera: ObservableObject {
     }
 
     /// The frame comes as the output delivers it, upright for a phone held upright, and is
-    /// turned after the way the phone is held, as the icons show it: by gravity when the
-    /// phone stands or lies on its side, and as the preview stood on the screen when it is
-    /// flat over the page, where gravity says nothing of the horizon. Turning the output
-    /// itself between shots makes the camera rebuild its pipeline, and the frame after that
-    /// is dark, and may come from another of its cameras.
+    /// turned after the way the phone is held: on a phone, whose screen is locked upright, as
+    /// the icons stood when the button was pressed, which is what the reader saw, and on an
+    /// iPad, whose screen turns, as the preview stood. The camera's own reading of gravity
+    /// is not asked: on a train, braking and curves lean it away from what the icons show,
+    /// and the still came out sideways under an upright screen. Turning the output itself
+    /// between shots makes the camera rebuild its pipeline, and the frame after that is
+    /// dark, and may come from another of its cameras.
+    @MainActor
     func takeStill() async -> Still? {
         #if os(iOS)
         let frames = frames
-        let angle =
-            (UIDevice.current.orientation.isFlat
-                ? rotation?.videoRotationAngleForHorizonLevelPreview
-                : rotation?.videoRotationAngleForHorizonLevelCapture) ?? Self.outputAngle
+        let turn: CGFloat
+        if OrientationLock.isLocked {
+            // The icons turn one way to stand upright; the frame turns the other.
+            turn = -HeldOrientation.shared.iconTurn.degrees
+        } else {
+            turn =
+                (rotation?.videoRotationAngleForHorizonLevelPreview ?? Self.outputAngle)
+                - Self.outputAngle
+        }
         let image: CGImage? = await withCheckedContinuation { continuation in
             queue.async { frames.request(continuation) }
         }
         guard let image else { return nil }
         let turned = await Task.detached(priority: .userInitiated) {
-            QuarterTurn.rotate(image, clockwise: angle - Self.outputAngle) ?? image
+            QuarterTurn.rotate(image, clockwise: turn) ?? image
         }.value
         return Still(image: turned)
         #else
