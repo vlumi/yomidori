@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A fix stays with its text.** A character or a word fixed on the page belongs to the page's text as it was read: switching to another recognizer, or taking the page again in a spread, no longer lands the fix on whatever character stands at the same place in the other text. The fix comes back with the text it was made on, and the other page of a spread keeps its own throughout.
+
 ### build 25 — 2026-09-30
 
 - **A still comes out the way the icons stood.** On a phone the page is now turned the way the buttons' icons pointed when Read was pressed, which is what you saw, and no longer by the camera's own reading of gravity, which on a train leans with the braking and the curves and turned a page sideways under an upright screen. On an iPad the still follows the screen.
