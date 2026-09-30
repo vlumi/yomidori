@@ -31,71 +31,148 @@ struct SearchView: View {
 
     #if os(macOS)
     @State private var detailPath = NavigationPath()
+    /// The entry shown in the third column: a result picked, or a line of the history.
+    @State private var picked: DictionaryEntry?
+    /// The result the arrow keys and a click choose, by id.
+    @State private var pickedResult: Int?
+    @AppStorage(SettingsKey.historyShown) private var historyShown = true
 
-    /// With room: the words looked up stay in view in the list column, a click opening one;
-    /// the results and the entries in the detail. A plain split, not a navigation one: the
-    /// sidebar of the sections is the window's, and a second would put two sidebar toggles
-    /// in the toolbar, which AppKit refuses.
+    /// With room, three columns: the history, folded away or not; the results under the
+    /// field; and the entry picked from either, with what it opens. A plain split, not a
+    /// navigation one: the sidebar of the sections is the window's, and a second would put
+    /// two sidebar toggles in the toolbar, which AppKit refuses.
     private var split: some View {
+        searching(splitColumns)
+    }
+
+    private var splitColumns: some View {
         HSplitView {
-            historyColumn
-                .frame(minWidth: 240, idealWidth: 300, maxWidth: 400, maxHeight: .infinity)
-            NavigationStack(path: $detailPath) {
-                searching(resultsList)
-                    .appDestinations()
-                    .toolbar {
-                        // The parts beside the field, a popover that types into it.
-                        ToolbarItem(placement: .automatic) {
-                            Button {
-                                selectionAtParts = selection
-                                buildingKanji = true
-                            } label: {
-                                Label {
-                                    Text("Kanji by parts", bundle: .module)
-                                } icon: {
-                                    Image(systemName: "square.grid.3x3.square")
-                                }
+            if historyShown {
+                historyColumn
+                    .frame(minWidth: 220, idealWidth: 280, maxWidth: 380, maxHeight: .infinity)
+            }
+            column(
+                Text("Search", bundle: .module),
+                buttons: {
+                    if !historyShown {
+                        Button {
+                            withAnimation(.snappy) { historyShown = true }
+                        } label: {
+                            Label {
+                                Text("History", bundle: .module)
+                            } icon: {
+                                Image(systemName: "clock.arrow.circlepath")
                             }
-                            .help(Text("Find a kanji by its parts", bundle: .module))
+                        }
+                        .help(Text("Show the words looked up", bundle: .module))
+                    }
+                    // The parts: a sheet that types into the field.
+                    Button {
+                        selectionAtParts = selection
+                        buildingKanji = true
+                    } label: {
+                        Label {
+                            Text("Kanji by parts", bundle: .module)
+                        } icon: {
+                            Image(systemName: "square.grid.3x3.square")
                         }
                     }
+                    .help(Text("Find a kanji by its parts", bundle: .module))
+                }
+            ) {
+                resultsList
             }
-            .frame(minWidth: 400, maxWidth: .infinity, maxHeight: .infinity)
+            .frame(minWidth: 280, idealWidth: 340, maxWidth: 480, maxHeight: .infinity)
+            NavigationStack(path: $detailPath) {
+                Group {
+                    if let picked {
+                        EntryView(entry: picked).id(picked.id)
+                    } else {
+                        Text("A result or a word looked up opens here.", bundle: .module)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
+                }
+                .appDestinations()
+            }
+            .frame(minWidth: 360, maxWidth: .infinity, maxHeight: .infinity)
+        }
+        // A result picked: the entry column shows it, over whatever it had opened.
+        .onChange(of: pickedResult) { _, id in
+            guard let entry = results.first(where: { $0.id == id }) else { return }
+            picked = entry
+            detailPath = NavigationPath()
+        }
+    }
+
+    /// A column under its title, with its buttons at the right of the title. The window's
+    /// toolbar is left to the field: items of its own beside an entry's is what AppKit
+    /// refuses.
+    private func column<Buttons: View, Content: View>(
+        _ title: Text, @ViewBuilder buttons: () -> Buttons = { EmptyView() },
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(spacing: 0) {
+            HStack {
+                title.font(.headline)
+                Spacer()
+                buttons()
+                    .controlSize(.small)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            Divider()
+            content()
         }
     }
 
     private var historyColumn: some View {
-        List {
-            Section {
-                LookupHistoryView(generation: historyGeneration) { entry in
-                    detailPath = NavigationPath()
-                    detailPath.append(entry)
-                }
-            } header: {
-                Text("Looked up", bundle: .module)
-            }
-        }
-        .safeAreaInset(edge: .bottom) {
-            if Cards.lookups?.lookups().isEmpty == false {
-                HStack {
-                    Spacer()
-                    Button(role: .destructive) {
-                        try? Cards.lookups?.clear()
-                        historyGeneration += 1
-                    } label: {
-                        Text("Clear", bundle: .module)
+        column(
+            Text("History", bundle: .module),
+            buttons: {
+                Button {
+                    withAnimation(.snappy) { historyShown = false }
+                } label: {
+                    Label {
+                        Text("Hide", bundle: .module)
+                    } icon: {
+                        Image(systemName: "sidebar.leading")
                     }
-                    .controlSize(.small)
-                    .help(Text("Forget every word looked up", bundle: .module))
                 }
-                .padding(8)
-                .background(.bar)
+                .labelStyle(.iconOnly)
+                .help(Text("Hide the words looked up", bundle: .module))
+            }
+        ) {
+            List {
+                LookupHistoryView(generation: historyGeneration) { entry in
+                    pickedResult = nil
+                    picked = entry
+                    detailPath = NavigationPath()
+                }
+            }
+            .safeAreaInset(edge: .bottom) {
+                if Cards.lookups?.lookups().isEmpty == false {
+                    HStack {
+                        Spacer()
+                        Button(role: .destructive) {
+                            try? Cards.lookups?.clear()
+                            historyGeneration += 1
+                        } label: {
+                            Text("Clear", bundle: .module)
+                        }
+                        .controlSize(.small)
+                        .help(Text("Forget every word looked up", bundle: .module))
+                    }
+                    .padding(8)
+                    .background(.bar)
+                }
             }
         }
     }
 
+    /// The results, one chosen at a time by a click or the arrow keys.
     private var resultsList: some View {
-        List {
+        List(selection: $pickedResult) {
             if SearchQuery.kind(of: query) == .empty {
                 Text(
                     "Kana or kanji finds words that start so; anything else searches the English meanings.",
@@ -106,7 +183,17 @@ struct SearchView: View {
                 Text("No matches.", bundle: .module)
                     .foregroundStyle(.secondary)
             }
-            resultRows
+            ForEach(results) { entry in
+                EntryRow(
+                    entry: entry, accent: accents[entry.id],
+                    estimate: estimates[entry.id] ?? [],
+                    kept: kept.contains(
+                        WordKey.of(
+                            headword: entry.headword,
+                            reading: Kana.hiragana(entry.readings.first ?? "")))
+                )
+                .tag(entry.id)
+            }
         }
     }
     #endif

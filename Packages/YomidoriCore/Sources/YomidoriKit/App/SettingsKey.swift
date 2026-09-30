@@ -7,4 +7,6 @@ enum SettingsKey {
     static let iCloudSync = "iCloudSync"
     static let pageControlsSide = "pageControlsSide"
     static let appBadge = "appBadge"
+    /// The Mac's search: the history column shown.
+    static let historyShown = "historyShown"
 }
