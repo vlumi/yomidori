@@ -54,9 +54,16 @@ struct SearchView: View {
         .task(id: searching) {
             if searching { await partsButton().install() }
         }
-        // Switched to, the tab is for typing: the field takes the keyboard at once.
+        // Switched to, the tab is for typing: the field takes the keyboard at once; and
+        // once more a moment later, for the Mac, where the toolbar's field is not there yet
+        // when the switch happens.
         .onChange(of: taps.shown, initial: true) { _, shown in
-            if shown == .search { searching = true }
+            guard shown == .search else { return }
+            searching = true
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(150))
+                if taps.shown == .search { searching = true }
+            }
         }
         .navigationTitle(Text("Search", bundle: .module))
         .toolbar {

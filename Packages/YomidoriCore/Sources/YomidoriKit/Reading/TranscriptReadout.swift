@@ -127,6 +127,7 @@ struct TranscriptReadout: View {
             .labelStyle(.iconOnly)
             .buttonStyle(.bordered)
             .controlSize(.small)
+            .help(Text("Copy the recognized text", bundle: .module))
             #endif
         }
     }

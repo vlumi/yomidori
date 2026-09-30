@@ -2,7 +2,7 @@ import Combine
 import SwiftUI
 import YomidoriCore
 
-enum AppTab: String {
+public enum AppTab: String, Sendable {
     case home
     case read
     case study
@@ -82,9 +82,16 @@ public struct AppRoot: View {
             }
         }
         .minimizingTabBarOnScroll()
+        // A sidebar where there is room, an iPad on its side or a Mac window; the phone's
+        // bar in a compact width. The system gives the sidebar its ⌘1 … keys.
+        .tabViewStyle(.sidebarAdaptable)
         .tint(Palette.nightGreen)
         .environmentObject(capture)
         .environmentObject(taps)
+        .onReceive(AppCommands.shared.$requestedTab.compactMap { $0 }) { asked in
+            tab = asked
+            AppCommands.shared.requestedTab = nil
+        }
         .onAppear {
             if DemoMode.isRequested { DemoData.seed(capture) }
             if let shown = DemoMode.tab { tab = shown }

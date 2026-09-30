@@ -1,6 +1,10 @@
 import SwiftUI
 import YomidoriCore
 
+#if os(macOS)
+import AppKit
+#endif
+
 /// One line of the page as its chunks, the readings over the words; the selected ones lit.
 /// A tap selects a word, a long press stretches the selection to it.
 struct ChunkFlow: View {
@@ -33,8 +37,35 @@ struct ChunkFlow: View {
                         .stroke(Palette.nightGreen, lineWidth: isSelected && differentiate ? 2 : 0)
                 )
                 .contentShape(Rectangle())
+                #if os(macOS)
+                // Shift-click stretches the selection, as in any text; the long press stays
+                // for a finger.
+                .gesture(TapGesture().modifiers(.shift).onEnded { extend(chunk) })
+                .onHover { over in
+                    if over { NSCursor.pointingHand.push() } else { NSCursor.pop() }
+                }
+                #endif
                 .onTapGesture { if chunk.isWord { select(chunk) } }
                 .onLongPressGesture { extend(chunk) }
+                .contextMenu {
+                    if chunk.isWord {
+                        Button {
+                            select(chunk)
+                        } label: {
+                            Text("Select", bundle: .module)
+                        }
+                    }
+                    Button {
+                        extend(chunk)
+                    } label: {
+                        Text("Extend the selection to here", bundle: .module)
+                    }
+                    Button {
+                        Clipboard.copy(chunk.surface)
+                    } label: {
+                        Text("Copy", bundle: .module)
+                    }
+                }
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(
                     Text(
