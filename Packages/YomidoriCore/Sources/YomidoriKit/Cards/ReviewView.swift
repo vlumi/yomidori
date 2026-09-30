@@ -140,7 +140,8 @@ struct ReviewView: View {
                     ? String(localized: "Type the reading", bundle: .module)
                     : String(localized: "Type the meaning", bundle: .module),
                 context: "answer.\(item.question.rawValue)",
-                asciiOnly: item.question == .meaning
+                asciiOnly: item.question == .meaning,
+                question: AnyHashable("\(item.card.id) \(item.question.rawValue)")
             ) { check(item) }
             .id(item.question)
             // The confirming action on the right, as everywhere on iOS and the Mac.
