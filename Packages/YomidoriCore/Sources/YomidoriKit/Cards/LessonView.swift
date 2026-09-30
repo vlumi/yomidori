@@ -19,6 +19,7 @@ struct LessonView: View {
             if let cards {
                 if let card = cards.first {
                     LessonCard(card: card) { verdict in advance(card, verdict) }
+                        .readingWidth()
                 } else {
                     finished
                 }

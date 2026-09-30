@@ -37,6 +37,12 @@ extension View {
 }
 
 extension View {
+    /// A reading width: at most 640 points, centered, so a sentence in a wide window reads
+    /// as on a page; no narrower than the phone.
+    func readingWidth() -> some View {
+        frame(maxWidth: 640).frame(maxWidth: .infinity)
+    }
+
     /// A sheet's size on the Mac, where detents mean nothing and a sheet is as big as its
     /// content; nothing on the phone, whose sheets have their detents.
     func sheetSize(width: CGFloat, height: CGFloat) -> some View {

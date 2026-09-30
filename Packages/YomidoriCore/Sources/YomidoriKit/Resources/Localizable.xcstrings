@@ -211,6 +211,16 @@
         }
       }
     },
+    "Add as an answer (⌘⇧A)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "答えとして追加（⌘⇧A）"
+          }
+        }
+      }
+    },
     "Add next page" : {
       "localizations" : {
         "ja" : {
@@ -327,6 +337,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正しい読み取り"
+          }
+        }
+      }
+    },
+    "Back to waiting (⌘⌫)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "待機に戻す（⌘⌫）"
           }
         }
       }
@@ -561,6 +581,16 @@
         }
       }
     },
+    "Count it right (⌘Y)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正解にする（⌘Y）"
+          }
+        }
+      }
+    },
     "Cover" : {
       "localizations" : {
         "ja" : {
@@ -637,6 +667,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "捨てる"
+          }
+        }
+      }
+    },
+    "Drop the card (⌘⌫)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードを捨てる（⌘⌫）"
           }
         }
       }
@@ -721,6 +761,16 @@
         }
       }
     },
+    "Find a kanji by its parts" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "部首から漢字を探す"
+          }
+        }
+      }
+    },
     "Fix the text" : {
       "localizations" : {
         "ja" : {
@@ -777,6 +827,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "二か所以上違っているときに。"
+          }
+        }
+      }
+    },
+    "Forget %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ を忘れる"
+          }
+        }
+      }
+    },
+    "Forget every word looked up" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "調べた言葉をすべて忘れる"
+          }
+        }
+      }
+    },
+    "Forget this card?" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このカードを忘れますか？"
           }
         }
       }
@@ -951,6 +1031,16 @@
         }
       }
     },
+    "Its sentences and its answers go with it." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文と回答も一緒になくなります。"
+          }
+        }
+      }
+    },
     "JMdict by the Electronic Dictionary Research and Development Group; KANJIDIC2, KRADFILE and KanjiVG for the kanji and their strokes; pitch accents from Kanjium by Uros O.; MeCab and IPADic; Mecab-Swift; manga-ocr. Their terms are inside." : {
       "localizations" : {
         "ja" : {
@@ -1117,6 +1207,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "この端末ではテキスト認識表示を使えません。"
+          }
+        }
+      }
+    },
+    "Looked up" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "調べた言葉"
           }
         }
       }
@@ -1290,6 +1390,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "カメラがありません。写真を選んでください。"
+          }
+        }
+      }
+    },
+    "No cards yet. Select a word under a page and keep it." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードはまだありません。ページの下で言葉を選んで、取っておきましょう。"
           }
         }
       }
@@ -1664,6 +1774,16 @@
         }
       }
     },
+    "Put it back for later (⌘→)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "後回しにする（⌘→）"
+          }
+        }
+      }
+    },
     "Put the picture away (⌘⌫)" : {
       "localizations" : {
         "ja" : {
@@ -2024,6 +2144,16 @@
         }
       }
     },
+    "Select a card." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードを選んでください。"
+          }
+        }
+      }
+    },
     "Select a word in the text, and it reads out here." : {
       "localizations" : {
         "ja" : {
@@ -2104,6 +2234,16 @@
         }
       }
     },
+    "Show the answer (⌘↩)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "答えを見る（⌘↩）"
+          }
+        }
+      }
+    },
     "Show the meaning" : {
       "localizations" : {
         "ja" : {
@@ -2170,6 +2310,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "最初から"
+          }
+        }
+      }
+    },
+    "Start the card (↩)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードを始める（↩）"
           }
         }
       }

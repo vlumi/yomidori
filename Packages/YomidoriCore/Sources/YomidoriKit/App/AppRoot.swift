@@ -69,7 +69,11 @@ public struct AppRoot: View {
             }
             .badge(dueCount)
             Tab(value: .cards) {
+                #if os(macOS)
+                CardsView()
+                #else
                 TabStack(tab: .cards) { CardsView() }
+                #endif
             } label: {
                 Label {
                     Text("Cards", bundle: .module)

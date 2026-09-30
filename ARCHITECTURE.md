@@ -56,7 +56,12 @@ Read or Search puts the focus in the box or the field. Search with room is a
 split of its own, the words looked up always in view on the left and the
 results and entries on the right (a plain split under the sections' sidebar:
 a second navigation sidebar would put two toggles in one toolbar, which AppKit
-refuses), the kanji parts a sized sheet from the toolbar. The app is opened
+refuses), the kanji parts a sized sheet from the toolbar; Cards likewise, the
+list on the left and the card on the right, ↑ and ↓ moving through it and ⌫
+forgetting after asking. The review and the lesson have their keys wherever
+there is a keyboard (⌘↩ shows the answer, the digits pick a pitch, ⌘Y counts a
+miss right, ⌘⇧A adds the typed meaning, ⌘⌫ sends the card back; ↩, ⌘→ and ⌘⌫
+in a lesson) and read at most 640 points wide. The app is opened
 in the background by `make run-mac`, so a build every few minutes takes no
 screen from anyone. Settings is ⌘, and About is the app menu's. [docs/big-screen-plan.md](docs/big-screen-plan.md)
 has what remains.
