@@ -13,6 +13,8 @@ struct AnswerField: UIViewRepresentable {
     /// Which keyboard iOS remembers for this field; one per question.
     let context: String
     let asciiOnly: Bool
+    /// The question shown; the field takes the keyboard as it appears, whatever the question.
+    var question: AnyHashable = 0
     let submit: () -> Void
 
     func makeUIView(context: Context) -> UITextField {
@@ -82,6 +84,8 @@ struct AnswerField: View {
     let placeholder: String
     let context: String
     let asciiOnly: Bool
+    /// Changed as each question comes: the field takes the keys again.
+    var question: AnyHashable = 0
     let submit: () -> Void
     @FocusState private var focused: Bool
 
@@ -92,7 +96,9 @@ struct AnswerField: View {
             .font(.title2)
             .autocorrectionDisabled()
             .focused($focused)
-            .onAppear { focused = true }
+            // Asked once the field is in the window, not as it appears, or AppKit lets it go.
+            .onAppear { DispatchQueue.main.async { focused = true } }
+            .onChange(of: question) { _, _ in DispatchQueue.main.async { focused = true } }
     }
 }
 #endif
