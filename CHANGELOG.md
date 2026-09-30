@@ -15,6 +15,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 ### Unreleased (next build)
 
 - **The page is read under a short drawer.** With the drawer at its lowest, the page could stay at *Reading the words…* until the drawer was dragged up, on a small screen in particular; it reads at once now.
+- **A fix stays with its text.** A character or a word fixed on the page belongs to the page's text as it was read: switching to another recognizer, or taking the page again in a spread, no longer lands the fix on whatever character stands at the same place in the other text. The fix comes back with the text it was made on, and the other page of a spread keeps its own throughout.
 
 ### build 25 — 2026-09-30
 
