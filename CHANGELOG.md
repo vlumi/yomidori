@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A pinch starts from where the page stands.** After a double tap back, the zoom slider or a page opening at its fitted size, the next pinch or drag no longer jumps to where the last gesture left off.
+
 ### build 25 — 2026-09-30
 
 - **A still comes out the way the icons stood.** On a phone the page is now turned the way the buttons' icons pointed when Read was pressed, which is what you saw, and no longer by the camera's own reading of gravity, which on a train leans with the braking and the curves and turned a page sideways under an upright screen. On an iPad the still follows the screen.
