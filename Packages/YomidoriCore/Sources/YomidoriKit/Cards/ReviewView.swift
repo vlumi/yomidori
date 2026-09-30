@@ -20,6 +20,11 @@ struct ReviewView: View {
     @State private var asked: Set<String> = []
     @State private var revealed = false
     @State private var answer = ""
+    /// What was typed, or nil for nothing but spaces: one rule for every button and line.
+    private var typed: String? {
+        let trimmed = answer.trimmingCharacters(in: .whitespaces)
+        return trimmed.isEmpty ? nil : trimmed
+    }
     /// When the question now showing came up, for the time spent on it.
     @State private var shown = Date()
     /// The sentence each question shows, by `key`.
@@ -141,7 +146,7 @@ struct ReviewView: View {
             HStack(spacing: 12) {
                 // What is typed is checked first: a right answer is right, whichever button.
                 Button {
-                    if answer.trimmingCharacters(in: .whitespaces).isEmpty {
+                    if typed == nil {
                         revealed = true
                     } else {
                         check(item)
@@ -156,7 +161,7 @@ struct ReviewView: View {
                     FittingLabel(title: Text("Check", bundle: .module), symbol: "checkmark.circle")
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(answer.trimmingCharacters(in: .whitespaces).isEmpty)
+                .disabled(typed == nil)
             }
             .controlSize(.large)
         }
@@ -184,7 +189,7 @@ struct ReviewView: View {
             }
             .buttonStyle(.borderedProminent)
             .keyboardShortcut(.defaultAction)
-            if !answer.isEmpty {
+            if typed != nil {
                 reconcile(item)
             }
             Button {
@@ -206,10 +211,10 @@ struct ReviewView: View {
         HStack(spacing: 8) {
             Image(systemName: "xmark.circle")
                 .accessibilityHidden(true)
-            if answer.isEmpty {
-                Text("Not answered", bundle: .module)
+            if let typed {
+                Text("Not quite. You typed \(typed).", bundle: .module)
             } else {
-                Text("Not quite. You typed \(answer).", bundle: .module)
+                Text("Not answered", bundle: .module)
             }
         }
         .font(.callout)
@@ -232,11 +237,11 @@ struct ReviewView: View {
                 }
                 .frame(maxWidth: .infinity)
             }
-            if item.question == .meaning, !answer.trimmingCharacters(in: .whitespaces).isEmpty {
+            if item.question == .meaning, let typed {
                 Button {
                     record(
                         item, .good, reconciled: true,
-                        accepting: answer.trimmingCharacters(in: .whitespaces))
+                        accepting: typed)
                 } label: {
                     Label {
                         Text("Add as an answer", bundle: .module)

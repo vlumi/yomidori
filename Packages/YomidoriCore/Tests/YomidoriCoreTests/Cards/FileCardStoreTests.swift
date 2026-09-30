@@ -304,5 +304,15 @@ final class FileCardStoreTests: XCTestCase {
         XCTAssertEqual(card.acceptedMeanings, ["cutting", "severance", "cut off"])
         // An edited list stands on its own, whatever the dictionary says later.
         XCTAssertEqual(card.answers(glosses: ["something else"]), card.acceptedMeanings)
+        // The last one stays, or the glosses would come back.
+        card.removeAnswer("cutting", glosses: glosses)
+        card.removeAnswer("severance", glosses: glosses)
+        card.removeAnswer("cut off", glosses: glosses)
+        XCTAssertEqual(card.answers(glosses: glosses), ["cut off"])
+        var one = Card(
+            headword: "切断", reading: "せつだん", entryID: nil, sightings: [], created: Date())
+        one.removeAnswer("only", glosses: ["only"])
+        XCTAssertEqual(one.answers(glosses: ["only"]), ["only"])
+        XCTAssertTrue(one.acceptedMeanings.isEmpty)
     }
 }
