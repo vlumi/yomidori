@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Spaces are not an answer.** Nothing but spaces typed in a review, then *Show the answer*, no longer offers *Count it right* or *Add as an answer*; it is not answered.
 - **Pasted text follows every selection.** After a word was chosen in the recognized-text strip, choosing the earlier word in the pasted text again left the drawer on the strip's word; it follows now.
 
 ### build 25 — 2026-09-30
