@@ -26,7 +26,19 @@ struct TranscriptReadout: View {
     /// header, stays at the top while its lines scroll under it.
     var body: some View {
         Group {
+            // The page's own work hangs off the header, which is always in the lazy stack's
+            // view; a view of no size at the end is not made while the drawer is short, and
+            // the page would never be read.
             header
+                .task(id: "\(choice)|\(fixed)") { await read() }
+                .onChange(of: selection.range) { selectionOnPage() }
+                .onChange(of: page.selectedRange) { _, range in
+                    requestOnPage(range)
+                    noteLookups(range)
+                }
+                .sheet(item: $openedCard) { card in
+                    CardSheet(card: card)
+                }
             if page.reading == nil {
                 HStack(spacing: 10) {
                     ProgressView()
@@ -45,17 +57,6 @@ struct TranscriptReadout: View {
             if let reading = page.reading {
                 strip(reading)
             }
-            // The page's own work hangs off a view of no size, not off every row.
-            Color.clear.frame(height: 0)
-                .task(id: "\(choice)|\(fixed)") { await read() }
-                .onChange(of: selection.range) { selectionOnPage() }
-                .onChange(of: page.selectedRange) { _, range in
-                    requestOnPage(range)
-                    noteLookups(range)
-                }
-                .sheet(item: $openedCard) { card in
-                    CardSheet(card: card)
-                }
         }
     }
 
@@ -204,16 +205,20 @@ struct TranscriptReadout: View {
         Spread.offset(ofPage: index, in: pageTexts)
     }
 
-    /// The transcript as recognized, with the reader's corrections in.
+    /// The transcript as recognized, with the reader's corrections in: those made on the
+    /// pages as they read now, since a fix is an offset into one text and means nothing in
+    /// another (the same page by another recognizer, a page taken again).
     private var fixed: String {
-        TextFix.apply(page.fixes, to: transcript)
+        page.fixes.matching(pageTexts).fixedText
     }
 
     /// The page read into words, off the main thread; taps wait until it is done.
     /// Not again for a page already read this way: a return to the tab keeps the reading
     /// and the selection.
     private func read() async {
-        let text = fixed
+        let current = page.fixes.matching(pageTexts)
+        if current != page.fixes { page.fixes = current }
+        let text = current.fixedText
         let key = "\(choice)|\(text)"
         guard page.reading == nil || page.readingKey != key else {
             selection.looking = false
@@ -258,9 +263,12 @@ struct TranscriptReadout: View {
         case .whole(let replacement):
             fix = TextFix(replacing: fixed, with: replacement)
         }
-        page.fixes.append(fix)
+        guard page.fixes.add(fix) else { return }
         let range = page.selectedRange ?? fixed
-        afterFix = range.lowerBound..<(range.upperBound + fix.replacement.count - fix.length)
+        afterFix =
+            range
+            .lowerBound..<max(
+                range.lowerBound, range.upperBound + fix.replacement.count - fix.length)
     }
 
     /// The way to put a run of the page right, where it lies on one line: a run over a line
@@ -280,11 +288,8 @@ struct TranscriptReadout: View {
             pageTexts.indices.contains(onPage),
             range.lowerBound >= 0, range.upperBound <= pageTexts[onPage].count
         else { return }
-        let start = offset(ofPage: onPage) + range.lowerBound
-        let end = offset(ofPage: onPage) + range.upperBound
-        let mapped =
-            TextFix.map(
-                offset: start, through: page.fixes)..<TextFix.map(offset: end, through: page.fixes)
+        let start = offset(ofPage: onPage)
+        let mapped = page.fixes.map((start + range.lowerBound)..<(start + range.upperBound))
         guard !mapped.isEmpty, let whole = reading.whole(mapped), whole != page.selectedRange else {
             return
         }
@@ -292,16 +297,18 @@ struct TranscriptReadout: View {
     }
 
     /// The selection shown by the picture too, on the page it starts on, where the text is
-    /// as recognized.
+    /// as recognized: not on a page with a fix in it, whose offsets are another text's.
     private func requestOnPage(_ range: Range<Int>?) {
-        guard let range, page.fixes.isEmpty,
-            let onPage = pageTexts.indices.last(where: { offset(ofPage: $0) <= range.lowerBound })
+        guard let range,
+            let onPage = pageTexts.indices.last(where: {
+                page.fixes.fixedOffset(ofPage: $0) <= range.lowerBound
+            }), !page.fixes.hasFixes(onPage: onPage)
         else {
             selection.requested = nil
             return
         }
-        let start = range.lowerBound - offset(ofPage: onPage)
-        let end = range.upperBound - offset(ofPage: onPage)
+        let start = range.lowerBound - page.fixes.fixedOffset(ofPage: onPage)
+        let end = range.upperBound - page.fixes.fixedOffset(ofPage: onPage)
         guard start >= 0, end <= pageTexts[onPage].count else {
             selection.requested = nil
             return
