@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
-# Build the iOS app for the simulator, unsigned. Usage: build.sh [ios]
+# Build the app unsigned: iOS for the simulator, or the Mac app. Usage: build.sh [ios|macos]
 # Assumes the Xcode project is already generated (the Makefile handles that).
-# iOS is the one platform today; the argument exists so the call shape matches
-# the sibling projects' scripts and a Mac target can join.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
 platform="${1:-ios}"
 case "$platform" in
     ios) scheme="Yomidori-iOS"; destination="generic/platform=iOS Simulator" ;;
-    *) echo "usage: build.sh [ios]" >&2; exit 2 ;;
+    macos) scheme="Yomidori-macOS"; destination="generic/platform=macOS" ;;
+    *) echo "usage: build.sh [ios|macos]" >&2; exit 2 ;;
 esac
 
 build() {
