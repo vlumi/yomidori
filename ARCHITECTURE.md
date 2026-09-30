@@ -38,11 +38,23 @@ thing its own way there is an AppKit branch (appearance-aware colors, the
 pasteboard, the Dictionary app opened on a word), and where it does not (the
 camera, the orientation lock, swipe-back, the phone's Shortcuts section) the
 fallback does nothing and the view is hidden. On the Mac there is no camera
-and no drawer: Read is the home tab, a box the reader pastes the text into
-(`MacReadView`, `TextBox` over an `NSTextView`) with the recognized-text strip
-under it and the words of the selection beside it; Settings is ⌘, and About is
-the app menu's. Reading a dropped or pasted picture through Live Text's Mac
-overlay is the next step.
+and no drawer: Read is the home tab, and the page is one pane with two
+states (`MacReadView`): *Text*, a box the reader pastes into (`TextBox` over an
+`NSTextView`, which says when something was pasted), and *Reading*, the same
+text laid out as its reading, the readings over the words (`ReadingPage`),
+selected by click, shift-click, ← and → (⇧ stretches, Escape clears; the keys
+are watched at the window, `KeyCatcher`, since the page is no text view). A
+paste goes to reading by itself once read; *Edit* (⌘E) and *Read* (⌘↩) go
+between. A picture is a page too: dropped on the pane, pasted (⌘V, in the box
+or on the page) or opened (File › Open a Picture…, ⌘O), it is read by both
+recognizers as on the phone and shown with Live Text's own selection over it
+(`PictureView`, the Mac's `ImageAnalysisOverlayView` tracking an image view in
+a magnifying scroll view); *Reading* shows its transcript as the page instead,
+*Clear* (⌘⌫) puts it away. The words of the selection stand beside. The
+sections are a sidebar with ⌘1 … ⌘4 (`SectionCommands`), and switching to
+Read or Search puts the focus in the box or the field. Settings is ⌘, and
+About is the app menu's. [docs/big-screen-plan.md](docs/big-screen-plan.md)
+has what remains.
 
 ## What exists
 

@@ -106,10 +106,50 @@ struct TextBox: NSViewRepresentable {
     @ObservedObject var selection: LiveTextSelection
     /// Bumped to take the keyboard's focus.
     var focusAsked = 0
+    /// Told of a paste, which is a page arriving whole.
+    var onPaste: () -> Void = {}
+    /// Given a picture pasted instead of text, which is a page too.
+    var onPasteImage: (Still) -> Void = { _ in }
+
+    /// A text view that says when something was pasted into it, and hands over a picture.
+    final class PastingTextView: NSTextView {
+        var onPaste: () -> Void = {}
+        var onPasteImage: (Still) -> Void = { _ in }
+
+        override func paste(_ sender: Any?) {
+            let pasteboard = NSPasteboard.general
+            if let data = pasteboard.data(forType: .png) ?? pasteboard.data(forType: .tiff),
+                let still = Still(data: data)
+            {
+                onPasteImage(still)
+                return
+            }
+            if let urls = pasteboard.readObjects(forClasses: [NSURL.self]) as? [URL],
+                let url = urls.first, let data = try? Data(contentsOf: url),
+                let still = Still(data: data)
+            {
+                onPasteImage(still)
+                return
+            }
+            super.paste(sender)
+            onPaste()
+        }
+    }
 
     func makeNSView(context: Context) -> NSScrollView {
-        let scroll = NSTextView.scrollableTextView()
-        guard let view = scroll.documentView as? NSTextView else { return scroll }
+        let view = PastingTextView(frame: .zero)
+        let scroll = NSScrollView()
+        scroll.hasVerticalScroller = true
+        scroll.autohidesScrollers = true
+        scroll.documentView = view
+        view.autoresizingMask = [.width]
+        view.isVerticallyResizable = true
+        view.isHorizontallyResizable = false
+        view.textContainer?.widthTracksTextView = true
+        view.textContainer?.containerSize = NSSize(
+            width: 0, height: CGFloat.greatestFiniteMagnitude)
+        view.onPaste = onPaste
+        view.onPasteImage = onPasteImage
         view.isEditable = true
         view.isSelectable = true
         view.isRichText = false
@@ -131,6 +171,8 @@ struct TextBox: NSViewRepresentable {
 
     func updateNSView(_ scroll: NSScrollView, context: Context) {
         guard let view = scroll.documentView as? NSTextView else { return }
+        (view as? PastingTextView)?.onPaste = onPaste
+        (view as? PastingTextView)?.onPasteImage = onPasteImage
         if context.coordinator.focusAsked != focusAsked {
             context.coordinator.focusAsked = focusAsked
             DispatchQueue.main.async { view.window?.makeFirstResponder(view) }

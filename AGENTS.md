@@ -199,7 +199,7 @@ make lint              # SwiftLint + swift-format --strict, and markdownlint on 
 make format            # rewrite sources with swift-format
 make build-ios         # generate the project if stale, build the app for the simulator (unsigned)
 make build-mac         # the Mac app, unsigned (as CI builds it)
-make run-mac           # the Mac app signed for this Mac (iCloud needs it) and opened; demo-mac for the seeded demo
+make run-mac           # the Mac app signed for this Mac (iCloud needs it) and opened; demo-mac for the seeded demo; SHOTS=<s> saves pictures of the window to the app's container
 make run-iphone        # build + install + launch on an iPhone simulator (DEVICE="SE" to pick)
 make run-ipad          # same, iPad (DEVICE="Air")
 make run-device        # build + install + launch on a paired iPhone/iPad (DEVICE="<name>" to pick)
