@@ -7,8 +7,32 @@ options:
   # wrappers in YomidoriKit/App/Compat.swift so the Kit compiles for the tests.
   deploymentTarget:
     iOS: "26.0"
+    macOS: "26.0"
   createIntermediateGroups: true
   developmentLanguage: en
+
+# What both targets share: one app under one bundle id, one version, one team.
+settings:
+  base:
+    # Matches the App Store Connect record. Don't change it — an ASC bundle
+    # id can't be edited or reused once the record exists. The Mac app is the
+    # same id, the same record, one purchase.
+    PRODUCT_BUNDLE_IDENTIFIER: fi.misaki.yomidori
+    # User-visible app/bundle name; without this it'd be the target name.
+    PRODUCT_NAME: Yomidori
+    MARKETING_VERSION: "0.1.0"
+    # The release lane bumps this at each cut (RELEASING.md); 0 means never released.
+    CURRENT_PROJECT_VERSION: "25"
+    GENERATE_INFOPLIST_FILE: NO
+    # The Core ML models are loaded by URL; no generated classes, and no warning
+    # about which language to generate them in.
+    COREML_CODEGEN_LANGUAGE: None
+    ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    # Team committed on purpose (it's not a secret): the release lane
+    # archives headlessly with automatic signing, and the generated
+    # project must carry the team for that to work.
+    DEVELOPMENT_TEAM: U84DT7P75P
+    CODE_SIGN_STYLE: Automatic
 
 packages:
   YomidoriCore:
@@ -76,27 +100,6 @@ targets:
           - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
-    settings:
-      base:
-        # Matches the App Store Connect record. Don't change it — an ASC bundle
-        # id can't be edited or reused once the record exists.
-        PRODUCT_BUNDLE_IDENTIFIER: fi.misaki.yomidori
-        # User-visible app/bundle name; without this it'd be the target name
-        # "Yomidori-iOS".
-        PRODUCT_NAME: Yomidori
-        MARKETING_VERSION: "0.1.0"
-        # The release lane bumps this at each cut (RELEASING.md); 0 means never released.
-        CURRENT_PROJECT_VERSION: "25"
-        GENERATE_INFOPLIST_FILE: NO
-        # The Core ML models are loaded by URL; no generated classes, and no warning
-        # about which language to generate them in.
-        COREML_CODEGEN_LANGUAGE: None
-        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        # Team committed on purpose (it's not a secret): the release lane
-        # archives headlessly with automatic signing, and the generated
-        # project must carry the team for that to work.
-        DEVELOPMENT_TEAM: U84DT7P75P
-        CODE_SIGN_STYLE: Automatic
     dependencies:
       - package: YomidoriCore
         product: YomidoriKit
@@ -109,5 +112,58 @@ targets:
         basedOnDependencyAnalysis: false
     # Explicit scheme so XcodeGen writes a SHARED scheme file — without it,
     # `xcodebuild -scheme Yomidori-iOS` fails on a fresh checkout.
+    scheme:
+      configVariants: []
+
+  Yomidori-macOS:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources/macOS
+      - path: Sources/Shared
+      - path: THIRD_PARTY_NOTICES.md
+        buildPhase: resources
+    entitlements:
+      path: Sources/macOS/Yomidori.entitlements
+      properties:
+        # The Mac App Store's sandbox; the network for CloudKit, and the files the reader
+        # picks or drops (a backup, a collection, a picture of a page).
+        com.apple.security.app-sandbox: true
+        com.apple.security.network.client: true
+        com.apple.security.files.user-selected.read-write: true
+        # The same iCloud container as the phone: the same cards on both.
+        com.apple.developer.aps-environment: development
+        com.apple.developer.icloud-container-identifiers:
+          - iCloud.fi.misaki.yomidori
+        com.apple.developer.icloud-services:
+          - CloudKit
+    info:
+      path: Sources/macOS/Info.plist
+      properties:
+        CFBundleDisplayName: Yomidori
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        ITSAppUsesNonExemptEncryption: false
+        LSApplicationCategoryType: public.app-category.education
+        LSMinimumSystemVersion: $(MACOSX_DEPLOYMENT_TARGET)
+        NSHumanReadableCopyright: © Ville Misaki
+        UTExportedTypeDeclarations:
+          - UTTypeIdentifier: fi.misaki.yomidori.collection
+            UTTypeDescription: Yomidori collection
+            UTTypeConformsTo: [public.json, public.data]
+            UTTypeTagSpecification:
+              public.filename-extension: [yomidori]
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: Yomidori collection
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Owner
+            LSItemContentTypes: [fi.misaki.yomidori.collection]
+    dependencies:
+      - package: YomidoriCore
+        product: YomidoriKit
+    postBuildScripts:
+      - script: "\"$SRCROOT/Scripts/embed-commit-sha.sh\""
+        name: Embed git commit SHA
+        basedOnDependencyAnalysis: false
     scheme:
       configVariants: []

@@ -52,8 +52,9 @@ and a card you truly forgot goes back to waiting instead of haunting you.
   through your own iCloud, unless you turn that off.
 - **The book is the corpus.** Example sentences are the ones you actually read,
   as they stood on your page, not a corpus written for someone else.
-- **iPhone and iPad, iOS 26 up.** A Mac app is planned,
-  for reading on the screen and reviewing on a keyboard.
+- **iPhone and iPad, iOS 26 up, and the Mac, macOS 26 up.** One app under one
+  purchase, the same cards on all of them; the Mac reads what is pasted or
+  dropped on it and reviews on a keyboard.
 - **English and Japanese** interfaces from day one, on a String Catalog.
 - Free, open source, no ads, no tracking.
 

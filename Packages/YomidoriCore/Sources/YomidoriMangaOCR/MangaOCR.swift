@@ -105,6 +105,31 @@ public final class MangaOCR {
     /// A model whose outputs aren't the ones this code was written for.
     static let unexpectedModel = CocoaError(.featureUnsupported)
 
+    /// An IEEE half float's bits as a Float, for a CPU without the type.
+    static func widened(_ bits: UInt16) -> Float {
+        let sign = UInt32(bits >> 15) << 31
+        let exponent = Int((bits >> 10) & 0x1F)
+        let fraction = UInt32(bits & 0x3FF)
+        let widenedBits: UInt32
+        switch exponent {
+        case 0:
+            guard fraction != 0 else { return Float(bitPattern: sign) }
+            // Subnormal: normalized by hand.
+            var mantissa = fraction
+            var shift: UInt32 = 0
+            while mantissa & 0x400 == 0 {
+                mantissa <<= 1
+                shift += 1
+            }
+            widenedBits = sign | (UInt32(113 - shift) << 23) | ((mantissa & 0x3FF) << 13)
+        case 0x1F:
+            widenedBits = sign | 0x7F80_0000 | (fraction << 13)
+        default:
+            widenedBits = sign | (UInt32(exponent + 112) << 23) | (fraction << 13)
+        }
+        return Float(bitPattern: widenedBits)
+    }
+
     /// The likeliest token at `row` of logits shaped [1, rows, vocabulary], following the
     /// array's strides; nil for any other shape.
     private static func argmax(_ logits: MLMultiArray, row: Int) -> Int? {
@@ -116,11 +141,24 @@ public final class MangaOCR {
         var bestValue = -Float.infinity
         switch logits.dataType {
         case .float16:
+            // Read as the half floats they are where the CPU has them (every arm64 chip);
+            // an Intel Mac has no Float16, and there the value is widened by hand.
+            #if arch(arm64)
             let pointer = logits.dataPointer.assumingMemoryBound(to: Float16.self)
             for i in 0..<vocabulary where Float(pointer[base + i * step]) > bestValue {
                 bestValue = Float(pointer[base + i * step])
                 best = i
             }
+            #else
+            let pointer = logits.dataPointer.assumingMemoryBound(to: UInt16.self)
+            for i in 0..<vocabulary {
+                let value = Self.widened(pointer[base + i * step])
+                if value > bestValue {
+                    bestValue = value
+                    best = i
+                }
+            }
+            #endif
         default:
             let pointer = logits.dataPointer.assumingMemoryBound(to: Float32.self)
             for i in 0..<vocabulary where pointer[base + i * step] > bestValue {

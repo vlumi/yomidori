@@ -118,6 +118,18 @@ demo-ipad: build-ios  ## Launch the seeded demo on an iPad simulator
 build-ios: Yomidori.xcodeproj  ## Build the iOS app (simulator, unsigned)
 	@Scripts/build.sh ios
 
+.PHONY: build-mac
+build-mac: Yomidori.xcodeproj  ## Build the Mac app (unsigned)
+	@Scripts/build.sh macos
+
+.PHONY: run-mac
+run-mac: Yomidori.xcodeproj  ## Build the Mac app signed for this Mac and open it
+	@Scripts/run-mac.sh
+
+.PHONY: demo-mac
+demo-mac: Yomidori.xcodeproj  ## Open the seeded demo on this Mac (TAB=, SCREEN=, SEARCH=)
+	@DEMO=1 Scripts/run-mac.sh
+
 # Logic tests run straight from the Swift package — no Xcode project involved.
 .PHONY: test
 test:  ## Run the package logic tests (no Xcode project needed)

@@ -26,14 +26,20 @@ is asking.
 | | `YomidoriCore` | `YomidoriDictionary` | `YomidoriMeCab` | `YomidoriMangaOCR` | `YomidoriSync` | `YomidoriKit` |
 | --- | --- | --- | --- | --- | --- | --- |
 | holds | kana and reading helpers, the token model and the OS's tokenizer, the dictionary entry model, the cards and the scheduler | `JMdict`, the reader over the bundled SQLite database, behind Core's `WordDictionary` | MeCab with IPADic behind Core's `Tokenizer`, the one third-party dependency, kept apart so it can be cut | manga-ocr through Core ML, a `CGImage` in and a `String` out, present only when the models are bundled | `CloudSync`, iCloud sync through CloudKit's sync engine, the one code that talks off the device | SwiftUI screens, the camera, Vision text recognition, the palette |
-| imports | Foundation | YomidoriCore, the system's SQLite3 | YomidoriCore, Mecab-Swift | YomidoriCore, CoreML | YomidoriCore, CloudKit | SwiftUI, UIKit and Vision (iOS only), YomidoriCore, YomidoriDictionary, YomidoriMeCab, YomidoriMangaOCR, YomidoriSync |
+| imports | Foundation | YomidoriCore, the system's SQLite3 | YomidoriCore, Mecab-Swift | YomidoriCore, CoreML | YomidoriCore, CloudKit | SwiftUI, UIKit and Vision (iOS only), AppKit (macOS only), YomidoriCore, YomidoriDictionary, YomidoriMeCab, YomidoriMangaOCR, YomidoriSync |
 | tested | headless, coverage-gated | headless, on a fixture built by the same script | headless, on the same fixture | coverage-ignored (the models are not in the tests) | coverage-ignored (CloudKit needs an account; the naming, payload and merges it uses are Core's, tested) | coverage-ignored |
 
-The rule: **testable logic goes in YomidoriCore.** The Kit compiles on macOS
-too, today because `swift test` runs on the Mac and later for the Mac app the
-roadmap plans; UIKit-, camera- and Vision-only code sits behind `#if os(iOS)` /
-`#if canImport(UIKit)` with a fallback, which is the same seam a Mac target will
-use for its own input.
+The rule: **testable logic goes in YomidoriCore.** The Kit is one for the
+phone and the Mac: `swift test` runs it on the Mac, and the Mac app
+(`Yomidori-macOS`, the same bundle id under the same App Store record) is the
+same Kit under an AppKit shell. UIKit-, camera- and Vision-only code sits
+behind `#if os(iOS)` / `#if canImport(UIKit)`; where the Mac needs the same
+thing its own way there is an AppKit branch (appearance-aware colors, the
+pasteboard, the Dictionary app opened on a word), and where it does not (the
+camera, the orientation lock, swipe-back, the phone's Shortcuts section) the
+fallback does nothing and the view is hidden. On the Mac a page is a pasted
+text or a picture chosen from Photos; reading a dropped or pasted picture
+through Live Text's Mac overlay is the next step.
 
 ## What exists
 

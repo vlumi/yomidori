@@ -39,15 +39,15 @@ describing intent as fact otherwise.
 
 ## Project facts
 
-- **Platforms:** iOS 26+ / iPadOS 26+ — iPhone and iPad. **The floor is iOS 26**
+- **Platforms:** iOS 26+ / iPadOS 26+ — iPhone and iPad — and macOS 26+, one
+  bundle id, one App Store record. **The floor is iOS 26 and macOS 26**
   (decided 2026-09-22, up from 16): the tab bar's search pill and Liquid Glass,
   and no `#available` anywhere. Platform-only APIs go behind a wrapper (see
-  *Platform wrappers*). **No watch, no TV.** A Mac app is
-  planned (ROADMAP's *Mac* section): no camera, a pasted text or screenshot as
-  the still, the same cards over iCloud, reviews on a keyboard. Until it has a
-  target, `YomidoriKit` compiles on macOS 26 because `swift test` runs on the
-  Mac — UIKit- and camera-only code sits behind `#if os(iOS)` /
-  `#if canImport(UIKit)`, and keeping it that way is what keeps the Mac cheap.
+  *Platform wrappers*). **No watch, no TV.** The Mac target (`Yomidori-macOS`,
+  since 2026-09-30) is the same Kit with no camera: UIKit- and camera-only code
+  sits behind `#if os(iOS)` / `#if canImport(UIKit)`, with an AppKit branch
+  where the Mac needs one of its own (colors, the pasteboard, the Dictionary
+  app) and nothing where it does not. CI builds both.
 - **Toolchain:** Xcode 26 / Swift 6 toolchain (Swift 5 language mode),
   **XcodeGen** (`.xcodeproj` generated, gitignored, never committed). The team
   ID IS committed in `project.yml` (it's not a secret, and the release lane's
@@ -143,8 +143,9 @@ yomidori/
 │     data/build-jmdict.py          JMdict, KANJIDIC2, KRADFILE, KanjiVG, Kanjium accents → the bundled SQLite (make dictionary)
 │     data/estimate-pitch.py        Open JTalk and Kanjium's habits → estimated pitch in the SQLite (make pitch; optional)
 │     data/build-mangaocr.py        manga-ocr → Core ML (make models; optional)
-├── Sources/iOS/                    Thin @main app shell, the orientation hook and the Shortcuts action (+ Info.plist, entitlements)
-├── Sources/Shared/                 The asset catalog (AppIcon), the app-level String Catalogs (InfoPlist too)
+├── Sources/iOS/                    Thin @main app shell and the orientation hook (+ Info.plist, entitlements)
+├── Sources/macOS/                  The Mac's @main shell, registering for CloudKit's pushes (+ Info.plist, entitlements: sandbox, iCloud)
+├── Sources/Shared/                 The Shortcuts action (ReadInYomidori), the asset catalog (AppIcon), the app-level String Catalogs (InfoPlist too)
 │     Dictionaries/jmdict.sqlite    Built by make dictionary; gitignored
 │     Models/                       manga-ocr's Core ML packages, by make models; gitignored, optional
 └── Packages/YomidoriCore/          Swift package — all the code
@@ -194,6 +195,8 @@ make coverage          # the same tests with coverage: a table by file, least co
 make lint              # SwiftLint + swift-format --strict, and markdownlint on the docs, as CI runs them
 make format            # rewrite sources with swift-format
 make build-ios         # generate the project if stale, build the app for the simulator (unsigned)
+make build-mac         # the Mac app, unsigned (as CI builds it)
+make run-mac           # the Mac app signed for this Mac (iCloud needs it) and opened; demo-mac for the seeded demo
 make run-iphone        # build + install + launch on an iPhone simulator (DEVICE="SE" to pick)
 make run-ipad          # same, iPad (DEVICE="Air")
 make run-device        # build + install + launch on a paired iPhone/iPad (DEVICE="<name>" to pick)
@@ -339,14 +342,16 @@ launch. Nothing of this runs without the argument.
 
 ### Platform wrappers
 
-The floor is iOS 26 and the Kit also compiles for macOS 26 (tests), so there
-are no version fallbacks; what remains is the platform split, in
-`YomidoriKit/App/Compat.swift`:
+The floor is iOS 26 and macOS 26, so there are no version fallbacks; what
+remains is the platform split, in `YomidoriKit/App/Compat.swift`:
 
 - **Platform-only wrappers** — no-ops off iOS, so views stay free of `#if`.
-  UIKit-, camera- and Vision-only *code* sits in an `#if os(iOS)` block with a
-  fallback that keeps the macOS test build compiling. `Palette` already does
-  this for appearance-aware colors.
+  UIKit-, camera- and Vision-only *code* sits in an `#if os(iOS)` block; where
+  the Mac app needs the same thing its own way, an `#elseif canImport(AppKit)`
+  branch follows (`Palette`'s colors, `Clipboard`, `ReferenceLibrary`), and
+  where it does not (the camera, the orientation lock, swipe-back) the
+  fallback does nothing. The Mac app is the same Kit, so a view that would be
+  wrong on a Mac is hidden with `#if os(iOS)` rather than duplicated.
 
 ### String catalogs (`.xcstrings`)
 

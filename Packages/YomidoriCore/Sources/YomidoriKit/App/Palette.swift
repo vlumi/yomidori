@@ -1,5 +1,9 @@
 import SwiftUI
 
+#if canImport(AppKit)
+import AppKit
+#endif
+
 public enum Palette {
     public static let nightGreen = Color(
         light: Color(red: 0.13, green: 0.42, blue: 0.32),
@@ -19,6 +23,12 @@ extension Color {
         self.init(
             uiColor: UIColor { traits in
                 UIColor(traits.userInterfaceStyle == .dark ? dark : light)
+            })
+        #elseif canImport(AppKit)
+        self.init(
+            nsColor: NSColor(name: nil) { appearance in
+                let isDark = appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+                return NSColor(isDark ? dark : light)
             })
         #else
         self = light

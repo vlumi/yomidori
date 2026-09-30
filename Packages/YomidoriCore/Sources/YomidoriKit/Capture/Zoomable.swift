@@ -11,14 +11,10 @@ struct Zoomable: ViewModifier {
     @State private var dragStart: Zoom?
 
     func body(content: Content) -> some View {
-        #if os(iOS)
         content
             .scaleEffect(zoom.scale)
             .offset(zoom.offset)
             .gesture(pinch.simultaneously(with: drag))
-        #else
-        content
-        #endif
     }
 
     private var pinch: some Gesture {

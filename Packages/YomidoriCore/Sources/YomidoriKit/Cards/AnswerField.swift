@@ -75,15 +75,24 @@ struct AnswerField: UIViewRepresentable {
     }
 }
 #else
+/// On a Mac the keyboard is the reader's own to switch; the field takes the focus as each
+/// question comes, so typing starts at once.
 struct AnswerField: View {
     @Binding var text: String
     let placeholder: String
     let context: String
     let asciiOnly: Bool
     let submit: () -> Void
+    @FocusState private var focused: Bool
 
     var body: some View {
-        TextField(placeholder, text: $text).onSubmit(submit).textFieldStyle(.roundedBorder)
+        TextField(placeholder, text: $text)
+            .onSubmit(submit)
+            .textFieldStyle(.roundedBorder)
+            .font(.title2)
+            .autocorrectionDisabled()
+            .focused($focused)
+            .onAppear { focused = true }
     }
 }
 #endif

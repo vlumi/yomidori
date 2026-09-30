@@ -60,6 +60,21 @@ struct SearchView: View {
         }
         .navigationTitle(Text("Search", bundle: .module))
         .toolbar {
+            #if os(macOS)
+            // The search field takes no accessory here: the parts open from the toolbar.
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    selectionAtParts = selection
+                    buildingKanji = true
+                } label: {
+                    Label {
+                        Text("Kanji by parts", bundle: .module)
+                    } icon: {
+                        Image(systemName: "square.grid.3x3.square")
+                    }
+                }
+            }
+            #endif
             if SearchQuery.kind(of: query) == .empty, Cards.lookups?.lookups().isEmpty == false {
                 ToolbarItem(placement: .primaryAction) {
                     Button(role: .destructive) {
