@@ -47,6 +47,15 @@ public struct Zoom: Equatable, Sendable {
         stepped(by: scale / self.scale, in: bounds)
     }
 
+    /// Dragged by a finger's travel, held inside the slack.
+    public func panned(by translation: CGSize, in bounds: CGSize) -> Zoom {
+        Zoom(
+            scale: scale,
+            offset: CGSize(
+                width: offset.width + translation.width, height: offset.height + translation.height)
+        ).clamped(in: bounds)
+    }
+
     public func clamped(in bounds: CGSize) -> Zoom {
         let slackX = bounds.width * (scale - 1) / 2
         let slackY = bounds.height * (scale - 1) / 2
