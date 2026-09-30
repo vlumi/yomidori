@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A still comes out the way the icons stood.** On a phone the page is now turned the way the buttons' icons pointed when Read was pressed, which is what you saw, and no longer by the camera's own reading of gravity, which on a train leans with the braking and the curves and turned a page sideways under an upright screen. On an iPad the still follows the screen.
+
 ### build 24 — 2026-09-29
 
 - **What the app says of itself is current.** About no longer says that nothing leaves the device, which stopped being the whole truth with iCloud sync: everything is read on the device, and nothing is sent anywhere but to your own iCloud, while sync is on. The camera permission's wording says the page is read on the device. The privacy policy names the badge permission, the images and text handed in, and what a backup holds.

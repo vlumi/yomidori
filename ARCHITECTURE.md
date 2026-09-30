@@ -77,9 +77,11 @@ use for its own input.
   as it likes. The video output's angle is set once and never touched between
   shots, since turning it makes the camera rebuild its pipeline and the frame
   after comes dark, or from another of its cameras; the frame is turned in
-  software instead (`QuarterTurn` in Core), to the way gravity says the phone
-  was held, or, held flat over the page where gravity says nothing, to the way
-  the preview stood.
+  software instead (`QuarterTurn` in Core), the way the icons stood when the
+  button was pressed, which is what the reader saw, and on an iPad the way the
+  preview stood. The camera's own reading of gravity is not asked: on a train it
+  leans with the braking and the curves, and a still came out sideways under an
+  upright screen.
   Text can stand in for a page: the paste button beside the photo library
   (the system's, so iOS asks nothing) puts cleaned text, up to twenty thousand
   characters, where the still would be (`TextPage`, a selectable text view that
