@@ -37,6 +37,21 @@ extension View {
 }
 
 extension View {
+    /// The phone's search field, the system's in the navigation bar; the Mac's is the
+    /// dictionary column's own, so nothing here.
+    func phoneSearchField(
+        text: Binding<String>, focused: FocusState<Bool>.Binding,
+        selection: Binding<TextSelection?>
+    ) -> some View {
+        #if os(iOS)
+        searchable(text: text, prompt: Text("Kana, kanji, or English", bundle: .module))
+            .searchFocused(focused)
+            .searchSelection(selection)
+        #else
+        self
+        #endif
+    }
+
     /// A reading width: at most 640 points, centered, so a sentence in a wide window reads
     /// as on a page; no narrower than the phone.
     func readingWidth() -> some View {

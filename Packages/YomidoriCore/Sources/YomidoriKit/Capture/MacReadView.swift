@@ -48,6 +48,7 @@ public struct MacReadView: View {
                 .frame(minWidth: 320, idealWidth: 400, maxWidth: 560, maxHeight: .infinity)
         }
         .background(Palette.page)
+        .navigationTitle(Text("Read", bundle: .module))
         .onAppear {
             draft = page.pasted ?? ""
             editing = page.reading == nil

@@ -32,7 +32,7 @@ public struct SectionCommands: Commands {
             section(Text("Read", bundle: .module), .read, "1")
             section(Text("Study", bundle: .module), .study, "2")
             section(Text("Cards", bundle: .module), .cards, "3")
-            section(Text("Search", bundle: .module), .search, "4")
+            section(Text("Dictionary", bundle: .module), .search, "4")
             Divider()
         }
     }

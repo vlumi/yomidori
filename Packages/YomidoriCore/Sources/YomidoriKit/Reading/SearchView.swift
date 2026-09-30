@@ -41,8 +41,52 @@ struct SearchView: View {
     /// field; and the entry picked from either, with what it opens. A plain split, not a
     /// navigation one: the sidebar of the sections is the window's, and a second would put
     /// two sidebar toggles in the toolbar, which AppKit refuses.
+    @FocusState private var fieldFocused: Bool
+
     private var split: some View {
         searching(splitColumns)
+            // ⌘F: the field, from anywhere in the dictionary.
+            .background {
+                Button {
+                    fieldFocused = true
+                } label: {
+                    EmptyView()
+                }
+                .keyboardShortcut("f", modifiers: .command)
+                .frame(width: 0, height: 0)
+                .opacity(0)
+            }
+    }
+
+    private var field: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(.secondary)
+            TextField(
+                text: $query, selection: $selection,
+                prompt: Text("Kana, kanji, or English", bundle: .module)
+            ) {
+                Text("Dictionary", bundle: .module)
+            }
+            .labelsHidden()
+            .textFieldStyle(.plain)
+            .focused($fieldFocused)
+            if !query.isEmpty {
+                Button {
+                    query = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .help(Text("Clear the search (⌘F to type again)", bundle: .module))
+            }
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 5)
+        .background(.quaternary, in: RoundedRectangle(cornerRadius: 7))
+        .padding(.horizontal, 12)
+        .padding(.bottom, 8)
     }
 
     private var splitColumns: some View {
@@ -52,7 +96,7 @@ struct SearchView: View {
                     .frame(minWidth: 220, idealWidth: 280, maxWidth: 380, maxHeight: .infinity)
             }
             column(
-                Text("Search", bundle: .module),
+                Text("Dictionary", bundle: .module),
                 buttons: {
                     if !historyShown {
                         Button {
@@ -80,6 +124,7 @@ struct SearchView: View {
                     .help(Text("Find a kanji by its parts", bundle: .module))
                 }
             ) {
+                field
                 resultsList
             }
             .frame(minWidth: 280, idealWidth: 340, maxWidth: 480, maxHeight: .infinity)
@@ -105,6 +150,156 @@ struct SearchView: View {
         }
     }
 
+    #endif
+
+    private var resultRows: some View {
+        ForEach(results) { entry in
+            NavigationLink(value: entry) {
+                EntryRow(
+                    entry: entry, accent: accents[entry.id],
+                    estimate: estimates[entry.id] ?? [],
+                    kept: kept.contains(
+                        WordKey.of(
+                            headword: entry.headword,
+                            reading: Kana.hiragana(entry.readings.first ?? ""))))
+            }
+        }
+    }
+
+    private var list: some View {
+        searching(
+            List {
+                if SearchQuery.kind(of: query) == .empty {
+                    LookupHistoryView(generation: historyGeneration)
+                        .id(TabTop.id)
+                } else if results.isEmpty {
+                    Text("No matches.", bundle: .module)
+                        .foregroundStyle(.secondary)
+                }
+                resultRows
+            })
+    }
+
+    /// What both layouts share: the field, its focus and cursor, the parts button in the
+    /// field on the phone, and the search itself.
+    private func searching<Content: View>(_ content: Content) -> some View {
+        content
+            .phoneSearchField(text: $query, focused: $searching, selection: $selection)
+            // The parts sheet opens from a button at the end of the search box, put there once
+            // the field has the keyboard.
+            .task(id: searching) {
+                if searching { await partsButton().install() }
+            }
+            // Switched to, the tab is for typing: the field takes the keyboard at once; and
+            // once more a moment later, for the Mac, where the field is not there yet when
+            // the switch happens.
+            .onChange(of: taps.shown, initial: true) { _, shown in
+                guard shown == .search else { return }
+                focusField()
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(150))
+                    if taps.shown == .search { focusField() }
+                }
+            }
+            .navigationTitle(Text("Dictionary", bundle: .module))
+            .toolbar {
+                // The phone's Clear; the Mac's stands under its history column.
+                #if os(iOS)
+                if SearchQuery.kind(of: query) == .empty,
+                    Cards.lookups?.lookups().isEmpty == false
+                {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button(role: .destructive) {
+                            try? Cards.lookups?.clear()
+                            historyGeneration += 1
+                        } label: {
+                            Text("Clear", bundle: .module)
+                        }
+                    }
+                }
+                #endif
+            }
+            .sheet(isPresented: $buildingKanji, onDismiss: { searching = true }) {
+                KanjiByPartsView(pick: insert)
+                    .sheetSize(width: 560, height: 640)
+            }
+            .task(id: query) { await search() }
+    }
+
+    private func focusField() {
+        #if os(macOS)
+        fieldFocused = true
+        #else
+        searching = true
+        #endif
+    }
+
+    /// A moment after the typing, off the main thread.
+    private func search() async {
+        try? await Task.sleep(for: .milliseconds(150))
+        guard !Task.isCancelled else { return }
+        // Off the main thread: a short English prefix matches thousands of glosses.
+        let query = query
+        let found = await Task.detached(priority: .userInitiated) {
+            var found = Found(results: JMdict.bundled?.search(query, limit: 50) ?? [])
+            for entry in found.results {
+                if let accent = JMdict.bundled?.pitchAccent(of: entry) {
+                    found.accents[entry.id] = accent
+                } else if let estimate = JMdict.bundled?.estimatedPitch(of: entry),
+                    !estimate.isEmpty
+                {
+                    found.estimates[entry.id] = estimate
+                }
+            }
+            return found
+        }.value
+        guard !Task.isCancelled else { return }
+        results = found.results
+        accents = found.accents
+        estimates = found.estimates
+        kept = Cards.keptWords()
+    }
+
+    /// The kanji at the cursor, or over the selection, as the field stood when the sheet
+    /// opened; the cursor then right after it.
+    private func insert(_ kanji: String) {
+        let result = Insertion.insert(kanji, into: query, replacing: utf16Range(selectionAtParts))
+        query = result.text
+        let cursor = String.Index(utf16Offset: result.cursor, in: result.text)
+        Task { @MainActor in selection = TextSelection(insertionPoint: cursor) }
+    }
+
+    private func utf16Range(_ selection: TextSelection?) -> Range<Int>? {
+        guard case .selection(let range) = selection?.indices, range.upperBound <= query.endIndex
+        else { return nil }
+        return range.lowerBound.utf16Offset(in: query)..<range.upperBound.utf16Offset(in: query)
+    }
+
+    private func partsButton() -> SearchFieldButton {
+        if let fieldButton { return fieldButton }
+        let button = SearchFieldButton(
+            symbol: "square.grid.3x3.square",
+            label: String(localized: "Kanji by parts", bundle: .module)
+        ) {
+            selectionAtParts = selection
+            buildingKanji = true
+        }
+        fieldButton = button
+        return button
+    }
+}
+
+/// What a search finds, with the pitch of each result: the dictionary's, or an estimate.
+private struct Found: Sendable {
+    var results: [DictionaryEntry]
+    var accents: [Int: PitchAccent] = [:]
+    var estimates: [Int: [PitchPhrase]] = [:]
+}
+
+#if os(macOS)
+extension SearchView {
+    /// The field, over the results it fills: a Mac's search field, in the column and not
+    /// the window's toolbar, so it stands over what it searches.
     /// A column under its title, with its buttons at the right of the title. The window's
     /// toolbar is left to the field: items of its own beside an entry's is what AppKit
     /// refuses.
@@ -196,142 +391,5 @@ struct SearchView: View {
             }
         }
     }
-    #endif
-
-    private var resultRows: some View {
-        ForEach(results) { entry in
-            NavigationLink(value: entry) {
-                EntryRow(
-                    entry: entry, accent: accents[entry.id],
-                    estimate: estimates[entry.id] ?? [],
-                    kept: kept.contains(
-                        WordKey.of(
-                            headword: entry.headword,
-                            reading: Kana.hiragana(entry.readings.first ?? ""))))
-            }
-        }
-    }
-
-    private var list: some View {
-        searching(
-            List {
-                if SearchQuery.kind(of: query) == .empty {
-                    LookupHistoryView(generation: historyGeneration)
-                        .id(TabTop.id)
-                } else if results.isEmpty {
-                    Text("No matches.", bundle: .module)
-                        .foregroundStyle(.secondary)
-                }
-                resultRows
-            })
-    }
-
-    /// What both layouts share: the field, its focus and cursor, the parts button in the
-    /// field on the phone, and the search itself.
-    private func searching<Content: View>(_ content: Content) -> some View {
-        content
-            .searchable(text: $query, prompt: Text("Kana, kanji, or English", bundle: .module))
-            .searchFocused($searching)
-            .searchSelection($selection)
-            // The parts sheet opens from a button at the end of the search box, put there once
-            // the field has the keyboard.
-            .task(id: searching) {
-                if searching { await partsButton().install() }
-            }
-            // Switched to, the tab is for typing: the field takes the keyboard at once; and
-            // once more a moment later, for the Mac, where the toolbar's field is not there yet
-            // when the switch happens.
-            .onChange(of: taps.shown, initial: true) { _, shown in
-                guard shown == .search else { return }
-                searching = true
-                Task { @MainActor in
-                    try? await Task.sleep(for: .milliseconds(150))
-                    if taps.shown == .search { searching = true }
-                }
-            }
-            .navigationTitle(Text("Search", bundle: .module))
-            .toolbar {
-                // The phone's Clear; the Mac's stands under its history column.
-                #if os(iOS)
-                if SearchQuery.kind(of: query) == .empty,
-                    Cards.lookups?.lookups().isEmpty == false
-                {
-                    ToolbarItem(placement: .primaryAction) {
-                        Button(role: .destructive) {
-                            try? Cards.lookups?.clear()
-                            historyGeneration += 1
-                        } label: {
-                            Text("Clear", bundle: .module)
-                        }
-                    }
-                }
-                #endif
-            }
-            .sheet(isPresented: $buildingKanji, onDismiss: { searching = true }) {
-                KanjiByPartsView(pick: insert)
-                    .sheetSize(width: 560, height: 640)
-            }
-            .task(id: query) { await search() }
-    }
-
-    /// A moment after the typing, off the main thread.
-    private func search() async {
-        try? await Task.sleep(for: .milliseconds(150))
-        guard !Task.isCancelled else { return }
-        // Off the main thread: a short English prefix matches thousands of glosses.
-        let query = query
-        let found = await Task.detached(priority: .userInitiated) {
-            var found = Found(results: JMdict.bundled?.search(query, limit: 50) ?? [])
-            for entry in found.results {
-                if let accent = JMdict.bundled?.pitchAccent(of: entry) {
-                    found.accents[entry.id] = accent
-                } else if let estimate = JMdict.bundled?.estimatedPitch(of: entry),
-                    !estimate.isEmpty
-                {
-                    found.estimates[entry.id] = estimate
-                }
-            }
-            return found
-        }.value
-        guard !Task.isCancelled else { return }
-        results = found.results
-        accents = found.accents
-        estimates = found.estimates
-        kept = Cards.keptWords()
-    }
-
-    /// The kanji at the cursor, or over the selection, as the field stood when the sheet
-    /// opened; the cursor then right after it.
-    private func insert(_ kanji: String) {
-        let result = Insertion.insert(kanji, into: query, replacing: utf16Range(selectionAtParts))
-        query = result.text
-        let cursor = String.Index(utf16Offset: result.cursor, in: result.text)
-        Task { @MainActor in selection = TextSelection(insertionPoint: cursor) }
-    }
-
-    private func utf16Range(_ selection: TextSelection?) -> Range<Int>? {
-        guard case .selection(let range) = selection?.indices, range.upperBound <= query.endIndex
-        else { return nil }
-        return range.lowerBound.utf16Offset(in: query)..<range.upperBound.utf16Offset(in: query)
-    }
-
-    private func partsButton() -> SearchFieldButton {
-        if let fieldButton { return fieldButton }
-        let button = SearchFieldButton(
-            symbol: "square.grid.3x3.square",
-            label: String(localized: "Kanji by parts", bundle: .module)
-        ) {
-            selectionAtParts = selection
-            buildingKanji = true
-        }
-        fieldButton = button
-        return button
-    }
 }
-
-/// What a search finds, with the pitch of each result: the dictionary's, or an estimate.
-private struct Found: Sendable {
-    var results: [DictionaryEntry]
-    var accents: [Int: PitchAccent] = [:]
-    var estimates: [Int: [PitchPhrase]] = [:]
-}
+#endif
