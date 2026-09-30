@@ -161,11 +161,17 @@ overlay is the next step.
   頷ぐ, 漂っ → 漂う, 漂つ and 漂る, 点け → 点ける, 存在し → 存在する, 古く → 古い), the
   word itself comes first for nouns and dictionary forms, and the dictionary
   decides which exist, so 降り is both 降る and 降りる until a lookup says
-  otherwise. A word that comes with its ending still on and is in no
-  dictionary as it stands is taken by the ending to the forms it may be of
-  (`conjugated`: 頼みたい → 頼む, 認めよう → 認める, 読もう → 読む), and only a
-  verb or an adjective is taken from those, since the stem alone may be a noun.
-  Tested on the stems the tokenizer fixture actually produces.
+  otherwise. A stem with its ending cut off after it (吹き出し + た, 揺すり +
+  ながら, 見 + て) is a verb or an adjective whatever noun the dictionary spells
+  the same way (`attachedEndings`, `isEnding`): its deinflections' conjugable
+  entries come first, the common one before an old one (見せ → 見せる, not 見す),
+  and the endings that follow the first (て + い + た) are the inflection, not
+  words. A word that comes with its ending still on and is in no dictionary as
+  it stands is taken by the ending to the forms it may be of (`conjugated`:
+  頼みたい → 頼む, 認めよう → 認める, 読もう → 読む), and only a verb or an
+  adjective is taken from those, since the stem alone may be a noun. Tested on
+  the stems the tokenizer fixture actually produces, and probed against the
+  built dictionary on real sentences when the rows change.
 - **`MeCabTokenizer`** (its own target): MeCab with IPADic behind the same
   `Tokenizer` protocol, so the two can be switched under the Live Text
   transcript and compared on real pages; it also knows dictionary forms. It is

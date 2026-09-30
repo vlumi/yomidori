@@ -175,4 +175,55 @@ final class WordFinderTests: XCTestCase {
             in: tokens("本", [Cut(surface: "本", reading: "ほん")]), dictionary: dictionary)
         XCTAssertEqual(book.first?.entries.first?.readings, ["ほん"])
     }
+
+    /// A stem with its ending after it is the verb, whatever noun is spelled the same.
+    func testAStemBeforeItsEndingIsTheVerbNotTheNounSpelledAlike() {
+        struct Tagged: WordDictionary {
+            let pos: [String: [String]] = [
+                "吹き出し": ["n"], "吹き出す": ["v5s", "vi"], "揺すり": ["n"], "揺する": ["v5r", "vt"],
+                "感じ": ["n"], "感じる": ["v1", "vt"], "急ぎ足": ["n"],
+            ]
+            func entries(matching text: String) -> [DictionaryEntry] {
+                guard let tags = pos[text] else { return [] }
+                return [
+                    DictionaryEntry(
+                        id: text.hashValue, kanji: [text], readings: [],
+                        senses: [DictionaryEntry.Sense(partsOfSpeech: tags, glosses: ["g"])],
+                        common: true)
+                ]
+            }
+            func pitchAccents(for headword: String, reading: String) -> [PitchAccent] { [] }
+            func search(_ query: String, limit: Int) -> [DictionaryEntry] { [] }
+        }
+        let dictionary = Tagged()
+        let burst = WordFinder.words(
+            in: tokens(
+                "吹き出した",
+                [Cut(surface: "吹き出し", reading: "ふきだし"), Cut(surface: "た", reading: "た")]),
+            dictionary: dictionary)
+        XCTAssertEqual(burst.first?.entries.first?.headword, "吹き出す")
+        let shake = WordFinder.words(
+            in: tokens(
+                "揺すりながら",
+                [Cut(surface: "揺すり", reading: "ゆすり"), Cut(surface: "ながら", reading: "ながら")]),
+            dictionary: dictionary)
+        XCTAssertEqual(shake.first?.entries.first?.headword, "揺する")
+        let felt = WordFinder.words(
+            in: tokens(
+                "感じた", [Cut(surface: "感じ", reading: "かんじ"), Cut(surface: "た", reading: "た")]),
+            dictionary: dictionary)
+        XCTAssertEqual(felt.first?.entries.first?.headword, "感じる")
+        // The noun stands where nothing follows it, or a particle does.
+        let balloon = WordFinder.words(
+            in: tokens(
+                "吹き出しが",
+                [Cut(surface: "吹き出し", reading: "ふきだし"), Cut(surface: "が", reading: "が")]),
+            dictionary: dictionary)
+        XCTAssertEqual(balloon.first?.entries.first?.headword, "吹き出し")
+        let hurry = WordFinder.words(
+            in: tokens(
+                "急ぎ足で", [Cut(surface: "急ぎ足", reading: "いそぎあし"), Cut(surface: "で", reading: "で")]),
+            dictionary: dictionary)
+        XCTAssertEqual(hurry.first?.entries.first?.headword, "急ぎ足")
+    }
 }
