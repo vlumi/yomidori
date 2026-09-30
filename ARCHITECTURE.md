@@ -45,11 +45,16 @@ text laid out as its reading, the readings over the words (`ReadingPage`),
 selected by click, shift-click, ← and → (⇧ stretches, Escape clears; the keys
 are watched at the window, `KeyCatcher`, since the page is no text view). A
 paste goes to reading by itself once read; *Edit* (⌘E) and *Read* (⌘↩) go
-between. The words of the selection stand beside. The sections are a sidebar
-with ⌘1 … ⌘4 (`SectionCommands`), and switching to Read or Search puts the
-focus in the box or the field. Settings is ⌘, and About is the app menu's.
-Reading a dropped or pasted picture through Live Text's Mac overlay is the
-next step; [docs/big-screen-plan.md](docs/big-screen-plan.md) has the rest.
+between. A picture is a page too: dropped on the pane, pasted (⌘V, in the box
+or on the page) or opened (File › Open a Picture…, ⌘O), it is read by both
+recognizers as on the phone and shown with Live Text's own selection over it
+(`PictureView`, the Mac's `ImageAnalysisOverlayView` tracking an image view in
+a magnifying scroll view); *Reading* shows its transcript as the page instead,
+*Clear* (⌘⌫) puts it away. The words of the selection stand beside. The
+sections are a sidebar with ⌘1 … ⌘4 (`SectionCommands`), and switching to
+Read or Search puts the focus in the box or the field. Settings is ⌘, and
+About is the app menu's. [docs/big-screen-plan.md](docs/big-screen-plan.md)
+has what remains.
 
 ## What exists
 

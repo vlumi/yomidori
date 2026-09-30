@@ -1504,6 +1504,16 @@
         }
       }
     },
+    "Open a Picture…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "写真を開く…"
+          }
+        }
+      }
+    },
     "Open Shortcuts" : {
       "localizations" : {
         "ja" : {
@@ -1574,12 +1584,32 @@
         }
       }
     },
+    "Paste the text you are reading here, or drop a picture of the page." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読んでいる文章をここに貼り付けるか、ページの写真をドロップしてください。"
+          }
+        }
+      }
+    },
     "Paste the text you are reading here." : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "読んでいる文章をここに貼り付けてください。"
+          }
+        }
+      }
+    },
+    "Picture" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "写真"
           }
         }
       }
@@ -1630,6 +1660,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "進捗"
+          }
+        }
+      }
+    },
+    "Put the picture away (⌘⌫)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "写真を片付ける（⌘⌫）"
           }
         }
       }
@@ -2380,6 +2420,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "期日の来た問題の数を、アプリを閉じていても更新します。数だけで、バナーも音もありません。"
+          }
+        }
+      }
+    },
+    "The picture, or its text as read (⌘↩)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "写真か、読み取った本文か（⌘↩）"
           }
         }
       }
