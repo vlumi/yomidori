@@ -33,6 +33,10 @@ if [ -n "${DEMO:-}" ]; then
     [ -n "${SCREEN:-}" ] && args+=(-yomidori-screen "$SCREEN")
     [ -n "${SEARCH:-}" ] && args+=(-yomidori-search "$SEARCH")
 fi
+# Quit the running one properly, so it leaves no half-written window state behind: a
+# window restored from that never appears.
+osascript -e 'tell application id "fi.misaki.yomidori" to quit' >/dev/null 2>&1 || true
+sleep 1
 pkill -x Yomidori >/dev/null 2>&1 || true
 if [ ${#args[@]} -gt 0 ]; then
     open -n "$app" --args "${args[@]}"

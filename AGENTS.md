@@ -144,7 +144,7 @@ yomidori/
 │     data/estimate-pitch.py        Open JTalk and Kanjium's habits → estimated pitch in the SQLite (make pitch; optional)
 │     data/build-mangaocr.py        manga-ocr → Core ML (make models; optional)
 ├── Sources/iOS/                    Thin @main app shell and the orientation hook (+ Info.plist, entitlements)
-├── Sources/macOS/                  The Mac's @main shell, registering for CloudKit's pushes (+ Info.plist, entitlements: sandbox, iCloud)
+├── Sources/macOS/                  The Mac's @main shell: the window, Settings (⌘,), About in the app menu, CloudKit's pushes (+ Info.plist, entitlements: sandbox, iCloud)
 ├── Sources/Shared/                 The Shortcuts action (ReadInYomidori), the asset catalog (AppIcon), the app-level String Catalogs (InfoPlist too)
 │     Dictionaries/jmdict.sqlite    Built by make dictionary; gitignored
 │     Models/                       manga-ocr's Core ML packages, by make models; gitignored, optional
@@ -163,9 +163,9 @@ yomidori/
     ├── Sources/YomidoriMangaOCR/   manga-ocr through Core ML: a CGImage in, a String out; coverage-ignored
     ├── Sources/YomidoriKit/        SwiftUI + UIKit + Vision, depends on Core, Dictionary, MeCab, MangaOCR and Sync; coverage-ignored
     │   ├── App/                    AppRoot (the tabs, TabStack), HomeView, Screen, Destinations, TabTaps, SettingsView, SettingsKey, Sync (the sync engine's owner), AppBadge, StillInbox, OrientationLock, SwipeBack, AboutView, NoticesView, AppInfo, Palette, Compat, FlowLayout, FitsOrStacks, JapaneseText (`Text(japanese:)`) — a file per main type, its small helpers with it
-    │   ├── Capture/                Camera, CameraPreview, FrameSink, Still, TextRecognizer, LiveText*, CaptureState, CaptureView (+Pages, +Vision) and its drawer, StillView with Zoomable, the camera buttons, PageControls with the ZoomSlider and ZoomControl, SpreadNotice, TextPage, readouts and reader
+    │   ├── Capture/                Camera, CameraPreview, FrameSink, Still, TextRecognizer, LiveText*, CaptureState, CaptureView (+Pages, +Vision) and its drawer, StillView with Zoomable, the camera buttons, PageControls with the ZoomSlider and ZoomControl, SpreadNotice, TextPage, readouts and reader; on the Mac MacReadView (the text box, TextBox, and the words beside it)
     │   ├── Cards/                  CardsView, CardView and its sections (AcceptedMeanings, SentenceEditor), StudyView, ProgressScreen, LessonView/LessonCard, ReviewView with front, back, AnswerField, QuestionTag, PitchChoices and SessionSummary, RankName/RankChart, Collection* screens and CollectionFile, BackupFile, CoverScanView, TagsEditor, CoverArchive, Cards (the store roots), MeaningFold
-    │   ├── Reading/                TranscriptReadout, ChunkFlow, PageReader, WordReadout, PageFix with CharacterFixView, WordDetails/WordSections, EntryView/EntryRow, KanjiView/KanjiRow, KanjiByPartsView, StrokeOrderView, SearchView with SearchFieldButton, LookupHistoryView, WordTitle, PitchReading, EstimatedPitch, Speaker, DictionaryButton, KeepButton, SentenceKeeper, TokenizerChoice
+    │   ├── Reading/                TranscriptReadout, RecognizedTextStrip, ChunkFlow, PageReader, WordReadout, PageFix with CharacterFixView, WordDetails/WordSections, EntryView/EntryRow, KanjiView/KanjiRow, KanjiByPartsView, StrokeOrderView, SearchView with SearchFieldButton, LookupHistoryView, WordTitle, PitchReading, EstimatedPitch, Speaker, DictionaryButton, KeepButton, SentenceKeeper, TokenizerChoice
     │   ├── Demo/                   DemoMode, DemoData, DemoText, DemoRenderer — the seeded demo (see Demo mode)
     │   └── Resources/              Localizable.xcstrings (the Kit's strings, en + ja)
     └── Tests/YomidoriCoreTests/    Grouped by domain, mirroring Core

@@ -26,6 +26,9 @@ public struct AppRoot: View {
 
     public var body: some View {
         TabView(selection: selection) {
+            // On a Mac, Read is the home: the text box, with Settings and About in the
+            // app's own menus.
+            #if os(iOS)
             Tab(value: .home) {
                 TabStack(tab: .home, stored: true) { HomeView(read: { tab = .read }) }
             } label: {
@@ -44,6 +47,17 @@ public struct AppRoot: View {
                     Image(systemName: "camera.viewfinder")
                 }
             }
+            #else
+            Tab(value: .read) {
+                TabStack(tab: .read, stored: true) { MacReadView() }
+            } label: {
+                Label {
+                    Text("Read", bundle: .module)
+                } icon: {
+                    Image(systemName: "text.page")
+                }
+            }
+            #endif
             Tab(value: .study) {
                 TabStack(tab: .study) { StudyView() }
             } label: {
@@ -74,6 +88,9 @@ public struct AppRoot: View {
         .onAppear {
             if DemoMode.isRequested { DemoData.seed(capture) }
             if let shown = DemoMode.tab { tab = shown }
+            #if os(macOS)
+            if tab == .home { tab = .read }
+            #endif
         }
         .task(id: tab) { dueCount = Cards.dueItems(at: Date()).count }
         .onOpenURL { url in

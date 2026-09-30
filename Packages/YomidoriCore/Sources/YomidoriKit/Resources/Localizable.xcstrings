@@ -1544,6 +1544,16 @@
         }
       }
     },
+    "Paste the text you are reading here." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読んでいる文章をここに貼り付けてください。"
+          }
+        }
+      }
+    },
     "Pitch" : {
       "localizations" : {
         "ja" : {
@@ -1930,6 +1940,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "中学"
+          }
+        }
+      }
+    },
+    "Select a word in the text, and it reads out here." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文章の中の言葉を選ぶと、ここに読みが出ます。"
           }
         }
       }

@@ -95,3 +95,100 @@ struct TextPage: View {
     }
 }
 #endif
+
+#if os(macOS)
+import AppKit
+
+/// The Mac's page: a box the reader pastes or types the text into, and selects in, the
+/// selection reported as Live Text's is on the phone, so the words under it read out.
+struct TextBox: NSViewRepresentable {
+    @Binding var text: String
+    @ObservedObject var selection: LiveTextSelection
+
+    func makeNSView(context: Context) -> NSScrollView {
+        let scroll = NSTextView.scrollableTextView()
+        guard let view = scroll.documentView as? NSTextView else { return scroll }
+        view.isEditable = true
+        view.isSelectable = true
+        view.isRichText = false
+        view.allowsUndo = true
+        view.usesFindBar = true
+        view.font = .systemFont(ofSize: NSFont.systemFontSize * 1.5)
+        view.textContainerInset = NSSize(width: 20, height: 24)
+        view.backgroundColor = NSColor(Palette.page)
+        view.textColor = .labelColor
+        view.isAutomaticQuoteSubstitutionEnabled = false
+        view.isAutomaticDashSubstitutionEnabled = false
+        view.isAutomaticTextReplacementEnabled = false
+        view.delegate = context.coordinator
+        view.string = text
+        scroll.drawsBackground = true
+        scroll.backgroundColor = NSColor(Palette.page)
+        return scroll
+    }
+
+    func updateNSView(_ scroll: NSScrollView, context: Context) {
+        guard let view = scroll.documentView as? NSTextView else { return }
+        context.coordinator.text = text
+        if view.string != text {
+            context.coordinator.applying = true
+            view.string = text
+            context.coordinator.applying = false
+        }
+        if let requested = selection.requested, selection.requestedPage == 0,
+            let range = CharacterRange.of(requested, in: text)
+        {
+            let selected = NSRange(range, in: text)
+            if view.selectedRange() != selected {
+                context.coordinator.applying = true
+                view.setSelectedRange(selected)
+                view.scrollRangeToVisible(selected)
+                context.coordinator.applying = false
+                let coordinator = context.coordinator
+                DispatchQueue.main.async { coordinator.report(view) }
+            }
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(text: $text, selection: selection)
+    }
+
+    @MainActor final class Coordinator: NSObject, NSTextViewDelegate {
+        var text: String
+        private let bound: Binding<String>
+        private let selection: LiveTextSelection
+        /// A text or selection being set from here, already known: not reported back.
+        var applying = false
+
+        init(text: Binding<String>, selection: LiveTextSelection) {
+            self.text = text.wrappedValue
+            bound = text
+            self.selection = selection
+        }
+
+        func textDidChange(_ notification: Notification) {
+            guard !applying, let view = notification.object as? NSTextView else { return }
+            text = view.string
+            bound.wrappedValue = view.string
+        }
+
+        func textViewDidChangeSelection(_ notification: Notification) {
+            guard !applying, let view = notification.object as? NSTextView else { return }
+            report(view)
+        }
+
+        func report(_ view: NSTextView) {
+            let text = view.string
+            let range = Range(view.selectedRange(), in: text)
+            selection.text = range.map { String(text[$0]) } ?? ""
+            selection.rangePage = 0
+            selection.range = range.flatMap { range in
+                guard !range.isEmpty else { return nil }
+                let start = text.distance(from: text.startIndex, to: range.lowerBound)
+                return start..<(start + text[range].count)
+            }
+        }
+    }
+}
+#endif

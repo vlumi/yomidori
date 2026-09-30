@@ -1,6 +1,8 @@
 import SwiftUI
 
-struct SettingsView: View {
+public struct SettingsView: View {
+    public init() {}
+
     @AppStorage(SwipeBack.key) private var swipeBack = true
     @AppStorage(SettingsKey.iCloudSync) private var iCloudSync = true
     @AppStorage(SettingsKey.pageControlsSide) private var controlsSide: PageControlsSide = .right
@@ -12,7 +14,7 @@ struct SettingsView: View {
     @State private var restoreFailed = false
     @ObservedObject private var sync = Sync.shared
 
-    var body: some View {
+    public var body: some View {
         Form {
             #if os(iOS)
             Section {

@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "About Yomidori" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ヨミドリについて"
+          }
+        }
+      }
+    },
     "Image" : {
       "localizations" : {
         "ja" : {

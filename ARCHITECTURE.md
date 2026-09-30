@@ -37,9 +37,12 @@ behind `#if os(iOS)` / `#if canImport(UIKit)`; where the Mac needs the same
 thing its own way there is an AppKit branch (appearance-aware colors, the
 pasteboard, the Dictionary app opened on a word), and where it does not (the
 camera, the orientation lock, swipe-back, the phone's Shortcuts section) the
-fallback does nothing and the view is hidden. On the Mac a page is a pasted
-text or a picture chosen from Photos; reading a dropped or pasted picture
-through Live Text's Mac overlay is the next step.
+fallback does nothing and the view is hidden. On the Mac there is no camera
+and no drawer: Read is the home tab, a box the reader pastes the text into
+(`MacReadView`, `TextBox` over an `NSTextView`) with the recognized-text strip
+under it and the words of the selection beside it; Settings is ⌘, and About is
+the app menu's. Reading a dropped or pasted picture through Live Text's Mac
+overlay is the next step.
 
 ## What exists
 
