@@ -157,7 +157,17 @@ private struct TabStack<Root: View>: View {
     var stored = false
     @ViewBuilder let root: () -> Root
     @State private var path = NavigationPath()
-    @SceneStorage("navigationPath") private var storedPath: Data?
+    @SceneStorage private var storedPath: Data?
+
+    init(tab: AppTab, stored: Bool = false, @ViewBuilder root: @escaping () -> Root) {
+        self.tab = tab
+        self.stored = stored
+        self.root = root
+        // The home tab's path under the key it has always had; any other tab's under its own,
+        // so two tabs never restore each other's screens.
+        _storedPath = SceneStorage(
+            tab == .home ? "navigationPath" : "navigationPath.\(tab.rawValue)")
+    }
 
     var body: some View {
         NavigationStack(path: $path) {

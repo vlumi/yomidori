@@ -106,10 +106,32 @@ struct TextBox: NSViewRepresentable {
     @ObservedObject var selection: LiveTextSelection
     /// Bumped to take the keyboard's focus.
     var focusAsked = 0
+    /// Told of a paste, which is a page arriving whole.
+    var onPaste: () -> Void = {}
+
+    /// A text view that says when something was pasted into it.
+    final class PastingTextView: NSTextView {
+        var onPaste: () -> Void = {}
+
+        override func paste(_ sender: Any?) {
+            super.paste(sender)
+            onPaste()
+        }
+    }
 
     func makeNSView(context: Context) -> NSScrollView {
-        let scroll = NSTextView.scrollableTextView()
-        guard let view = scroll.documentView as? NSTextView else { return scroll }
+        let view = PastingTextView(frame: .zero)
+        let scroll = NSScrollView()
+        scroll.hasVerticalScroller = true
+        scroll.autohidesScrollers = true
+        scroll.documentView = view
+        view.autoresizingMask = [.width]
+        view.isVerticallyResizable = true
+        view.isHorizontallyResizable = false
+        view.textContainer?.widthTracksTextView = true
+        view.textContainer?.containerSize = NSSize(
+            width: 0, height: CGFloat.greatestFiniteMagnitude)
+        view.onPaste = onPaste
         view.isEditable = true
         view.isSelectable = true
         view.isRichText = false
@@ -131,6 +153,7 @@ struct TextBox: NSViewRepresentable {
 
     func updateNSView(_ scroll: NSScrollView, context: Context) {
         guard let view = scroll.documentView as? NSTextView else { return }
+        (view as? PastingTextView)?.onPaste = onPaste
         if context.coordinator.focusAsked != focusAsked {
             context.coordinator.focusAsked = focusAsked
             DispatchQueue.main.async { view.window?.makeFirstResponder(view) }

@@ -411,6 +411,16 @@
         }
       }
     },
+    "Change the text (⌘E)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本文を編集（⌘E）"
+          }
+        }
+      }
+    },
     "Check" : {
       "localizations" : {
         "ja" : {
@@ -637,6 +647,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld拍目の後で下がる"
+          }
+        }
+      }
+    },
+    "Edit" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "編集"
           }
         }
       }
@@ -2054,6 +2074,16 @@
         }
       }
     },
+    "Show the text as read (⌘↩)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み取った本文を表示（⌘↩）"
+          }
+        }
+      }
+    },
     "Sign in to iCloud in Settings to sync." : {
       "localizations" : {
         "ja" : {
@@ -2290,6 +2320,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "漢字に見える部品をタップしてください。"
+          }
+        }
+      }
+    },
+    "Text" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本文"
           }
         }
       }
