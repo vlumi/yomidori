@@ -30,16 +30,10 @@ public struct MacReadView: View {
                         }
                     }
                 // The text as it was read, with the readings over the words: the left
-                // side's, under the box it is the reading of.
+                // side's, under the box it is the reading of. A bar when folded; open, a
+                // pane the divider drags.
                 if let reading = page.reading {
-                    ScrollView {
-                        LazyVStack(alignment: .leading, spacing: 12, pinnedViews: .sectionHeaders) {
-                            RecognizedTextStrip(reading: reading)
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 8)
-                    }
-                    .frame(minHeight: 44, idealHeight: 220)
+                    strip(reading)
                 }
             }
             words
@@ -50,7 +44,30 @@ public struct MacReadView: View {
         .onChange(of: draft) { _, typed in settle(typed) }
     }
 
-    /// The words on the right: the selection's, and the recognized-text strip under them.
+    @AppStorage(SettingsKey.transcriptExpanded) private var stripExpanded = false
+
+    private func strip(_ reading: PageReading) -> some View {
+        VStack(spacing: 0) {
+            Divider()
+            RecognizedTextStrip.Header(expanded: $stripExpanded)
+                .padding(.horizontal, 20)
+            if stripExpanded {
+                ScrollView {
+                    RecognizedTextStrip.Lines(reading: reading)
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 12)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .frame(
+            minHeight: stripExpanded ? 120 : nil, idealHeight: stripExpanded ? 240 : nil,
+            maxHeight: stripExpanded ? .infinity : nil
+        )
+        .fixedSize(horizontal: false, vertical: !stripExpanded)
+    }
+
+    /// The words on the right: the selection's.
     private var words: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 12, pinnedViews: .sectionHeaders) {
