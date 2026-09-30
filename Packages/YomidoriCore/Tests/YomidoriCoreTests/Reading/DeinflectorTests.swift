@@ -79,4 +79,37 @@ final class DeinflectorTests: XCTestCase {
         XCTAssertEqual(Deinflector.conjugated("樹皮"), [])
         XCTAssertEqual(Deinflector.conjugated("たい"), [])
     }
+
+    func testTheStemsTheProbeFoundMissing() {
+        assertCandidates("感じ", include: "感じる")
+        assertCandidates("信じ", include: "信じる")
+        assertCandidates("美しかっ", include: "美しい")
+        assertCandidates("寒けれ", include: "寒い")
+        assertCandidates("冷た", include: "冷たい")
+        assertCandidates("嬉し", include: "嬉しい")
+        assertCandidates("大き", include: "大きい")
+        XCTAssertEqual(Deinflector.candidates(for: "来"), ["来", "来る"])
+        XCTAssertEqual(Deinflector.candidates(for: "見"), ["見", "見る"])
+        XCTAssertEqual(Deinflector.candidates(for: "た"), ["た"])
+        // An e-row stem is the ichidan verb first, the godan one after.
+        XCTAssertEqual(Deinflector.candidates(for: "見せ"), ["見せ", "見せる", "見す"])
+        assertCandidates("笑い", include: "笑う")
+        XCTAssertEqual(Deinflector.candidates(for: "かっ"), ["かっ", "かう", "かつ", "かる", "かく"])
+    }
+
+    func testAStemIsKnownAndSoIsItsEnding() {
+        XCTAssertTrue(Deinflector.isStem("吹き出し"))
+        XCTAssertTrue(Deinflector.isStem("揺すり"))
+        XCTAssertTrue(Deinflector.isStem("来"))
+        XCTAssertFalse(Deinflector.isStem("樹皮"))
+        XCTAssertFalse(Deinflector.isStem("急ぎ足"))
+        XCTAssertTrue(Deinflector.isEnding("た", after: "吹き出し"))
+        XCTAssertTrue(Deinflector.isEnding("ながら", after: "揺すり"))
+        XCTAssertTrue(Deinflector.isEnding("で", after: "読ん"))
+        XCTAssertTrue(Deinflector.isEnding("で", after: "泳い"))
+        // で after anything else is the particle.
+        XCTAssertFalse(Deinflector.isEnding("で", after: "急ぎ足"))
+        XCTAssertFalse(Deinflector.isEnding("が", after: "揺すり"))
+        XCTAssertFalse(Deinflector.isEnding("。", after: "吹き出し"))
+    }
 }

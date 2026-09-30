@@ -105,11 +105,17 @@ extension WordDictionary {
     }
 
     /// The tokenizer's dictionary form, then the word and its deinflections, then its reading;
-    /// the first candidate with entries wins.
-    public func entries(for token: Token) -> [DictionaryEntry] {
-        let found = entries(
-            forAny: [token.dictionaryForm].compactMap { $0 }
-                + Deinflector.candidates(for: token.surface))
+    /// the first candidate with entries wins. A stem with an ending after it is a verb or an
+    /// adjective, and its deinflections' conjugable entries come before the word as it
+    /// stands, which may spell a noun (吹き出し).
+    public func entries(for token: Token, inflected: Bool = false) -> [DictionaryEntry] {
+        let candidates =
+            [token.dictionaryForm].compactMap { $0 } + Deinflector.candidates(for: token.surface)
+        if inflected, !Kana.isKana(token.surface) {
+            let verbal = entries(conjugableAmong: candidates)
+            if !verbal.isEmpty { return verbal.preferring(reading: token.reading) }
+        }
+        let found = entries(forAny: candidates)
         if !found.isEmpty { return found.preferring(reading: token.reading) }
         if !Kana.isKana(token.surface) {
             let conjugated = entries(conjugatedFrom: token.surface)
@@ -124,6 +130,15 @@ extension WordDictionary {
         Deinflector.conjugated(surface).lazy
             .map { self.entries(matching: $0).filter(\.isConjugable) }
             .first { !$0.isEmpty } ?? []
+    }
+
+    /// The first candidate with a common conjugable entry, else the first with any; the
+    /// conjugable entries alone. Common first, since the rows also spell verbs no one
+    /// uses (見せ → 見す beside 見せる).
+    public func entries(conjugableAmong candidates: [String]) -> [DictionaryEntry] {
+        let found = candidates.map { self.entries(matching: $0).filter(\.isConjugable) }
+            .filter { !$0.isEmpty }
+        return found.first { $0.contains(where: \.common) } ?? found.first ?? []
     }
 
     /// The first candidate with entries wins.
