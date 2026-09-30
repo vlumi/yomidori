@@ -1,11 +1,13 @@
 import SwiftUI
 import YomidoriCore
 
-struct AboutView: View {
+public struct AboutView: View {
+    public init() {}
+
     @ScaledMetric(relativeTo: .largeTitle) private var wordmark: CGFloat = 34
     @ScaledMetric(relativeTo: .title3) private var legendWidth: CGFloat = 130
 
-    var body: some View {
+    public var body: some View {
         List {
             Section {
                 VStack(alignment: .leading, spacing: 6) {

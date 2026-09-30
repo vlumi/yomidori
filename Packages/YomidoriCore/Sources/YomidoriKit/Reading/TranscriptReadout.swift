@@ -10,6 +10,9 @@ struct TranscriptReadout: View {
     /// The spread's pages' texts in reading order; read as one, joined at the seams.
     let pageTexts: [String]
     @ObservedObject var selection: LiveTextSelection
+    /// The recognized-text strip under the words; off where it stands elsewhere, as on
+    /// the Mac, beside the text it is the reading of.
+    var showsStrip = true
     @EnvironmentObject private var page: CaptureState
     @AppStorage(TokenizerChoice.key) private var choice: TokenizerChoice = .system
     /// The words with a card, as "headword reading", read with the page and added to by Keep.
@@ -20,7 +23,6 @@ struct TranscriptReadout: View {
     @State private var openedCard: Card?
     /// Where the selection goes once a fix has been read in.
     @State private var afterFix: Range<Int>?
-    @AppStorage(SettingsKey.transcriptExpanded) private var expanded = false
 
     /// Laid straight into the drawer's lazy stack, so the recognized text's title, a section
     /// header, stays at the top while its lines scroll under it.
@@ -54,58 +56,10 @@ struct TranscriptReadout: View {
                 Text("MeCab could not load its dictionary.", bundle: .module)
                     .foregroundStyle(.secondary)
             }
-            if let reading = page.reading {
-                strip(reading)
+            if showsStrip, let reading = page.reading {
+                RecognizedTextStrip(reading: reading)
             }
         }
-    }
-
-    /// The recognized text under its title, which folds it and stays put while it scrolls.
-    private func strip(_ reading: PageReading) -> some View {
-        Section {
-            if expanded {
-                VStack(alignment: .leading, spacing: 6) {
-                    ForEach(reading.lines.lines.indices, id: \.self) { line in
-                        ChunkFlow(
-                            chunks: reading.chunks.filter { $0.line == line },
-                            selected: page.selectedRange,
-                            select: { page.selectedRange = $0.range },
-                            extend: extend)
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-        } header: {
-            Button {
-                withAnimation(.snappy) { expanded.toggle() }
-            } label: {
-                HStack {
-                    Text("Recognized text", bundle: .module)
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .rotationEffect(.degrees(expanded ? 90 : 0))
-                }
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .padding(.vertical, 6)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .background(Palette.page)
-            .accessibilityAddTraits(expanded ? [.isSelected] : [])
-        }
-    }
-
-    /// The selection stretched to a chunk: from where it starts to the chunk, whichever way.
-    private func extend(_ chunk: PageReading.Chunk) {
-        guard let range = page.selectedRange else {
-            if chunk.isWord { page.selectedRange = chunk.range }
-            return
-        }
-        page.selectedRange =
-            min(
-                range.lowerBound, chunk.range.lowerBound)..<max(
-                range.upperBound, chunk.range.upperBound)
     }
 
     /// Several chunks: the phrase first, looked up whole when the dictionary knows it, then

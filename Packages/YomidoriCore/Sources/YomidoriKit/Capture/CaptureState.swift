@@ -27,6 +27,19 @@ final class CaptureState: ObservableObject {
     /// does not read it again.
     var readingKey: String?
 
+    /// The selection stretched to a chunk: from where it starts to the chunk, whichever way;
+    /// with nothing selected, the chunk itself if it is a word.
+    func extendSelection(to chunk: PageReading.Chunk) {
+        guard let range = selectedRange else {
+            if chunk.isWord { selectedRange = chunk.range }
+            return
+        }
+        selectedRange =
+            min(
+                range.lowerBound, chunk.range.lowerBound)..<max(
+                range.upperBound, chunk.range.upperBound)
+    }
+
     /// A new page, or a new spread: the reading and the selection go, and so do the fixes
     /// unless earlier pages of the same spread still carry them.
     func newPage(keepingFixes: Bool = false) {
