@@ -20,106 +20,197 @@ struct SearchView: View {
     @EnvironmentObject private var taps: TabTaps
 
     var body: some View {
+        #if os(macOS)
+        split
+        #else
         ScrollViewReader { proxy in
             list.scrollsToTopOnReselect(of: .search, with: proxy)
         }
+        #endif
     }
 
-    private var list: some View {
-        List {
-            if SearchQuery.kind(of: query) == .empty {
-                LookupHistoryView(generation: historyGeneration)
-                    .id(TabTop.id)
-            } else if results.isEmpty {
-                Text("No matches.", bundle: .module)
-                    .foregroundStyle(.secondary)
-            }
-            ForEach(results) { entry in
-                NavigationLink(value: entry) {
-                    EntryRow(
-                        entry: entry, accent: accents[entry.id],
-                        estimate: estimates[entry.id] ?? [],
-                        kept: kept.contains(
-                            WordKey.of(
-                                headword: entry.headword,
-                                reading: Kana.hiragana(entry.readings.first ?? ""))))
-                }
-            }
-        }
-        .searchable(text: $query, prompt: Text("Kana, kanji, or English", bundle: .module))
-        .searchFocused($searching)
-        .searchSelection($selection)
-        // The parts sheet opens from a button at the end of the search box, put there once
-        // the field has the keyboard.
-        .task(id: searching) {
-            if searching { await partsButton().install() }
-        }
-        // Switched to, the tab is for typing: the field takes the keyboard at once; and
-        // once more a moment later, for the Mac, where the toolbar's field is not there yet
-        // when the switch happens.
-        .onChange(of: taps.shown, initial: true) { _, shown in
-            guard shown == .search else { return }
-            searching = true
-            Task { @MainActor in
-                try? await Task.sleep(for: .milliseconds(150))
-                if taps.shown == .search { searching = true }
-            }
-        }
-        .navigationTitle(Text("Search", bundle: .module))
-        .toolbar {
-            #if os(macOS)
-            // The search field takes no accessory here: the parts open from the toolbar.
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    selectionAtParts = selection
-                    buildingKanji = true
-                } label: {
-                    Label {
-                        Text("Kanji by parts", bundle: .module)
-                    } icon: {
-                        Image(systemName: "square.grid.3x3.square")
+    #if os(macOS)
+    @State private var detailPath = NavigationPath()
+
+    /// With room: the words looked up stay in view in the list column, a click opening one;
+    /// the results and the entries in the detail. A plain split, not a navigation one: the
+    /// sidebar of the sections is the window's, and a second would put two sidebar toggles
+    /// in the toolbar, which AppKit refuses.
+    private var split: some View {
+        HSplitView {
+            historyColumn
+                .frame(minWidth: 240, idealWidth: 300, maxWidth: 400, maxHeight: .infinity)
+            NavigationStack(path: $detailPath) {
+                searching(resultsList)
+                    .appDestinations()
+                    .toolbar {
+                        // The parts beside the field, a popover that types into it.
+                        ToolbarItem(placement: .automatic) {
+                            Button {
+                                selectionAtParts = selection
+                                buildingKanji = true
+                            } label: {
+                                Label {
+                                    Text("Kanji by parts", bundle: .module)
+                                } icon: {
+                                    Image(systemName: "square.grid.3x3.square")
+                                }
+                            }
+                            .help(Text("Find a kanji by its parts", bundle: .module))
+                        }
                     }
-                }
             }
-            #endif
-            if SearchQuery.kind(of: query) == .empty, Cards.lookups?.lookups().isEmpty == false {
-                ToolbarItem(placement: .primaryAction) {
+            .frame(minWidth: 400, maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
+
+    private var historyColumn: some View {
+        List {
+            Section {
+                LookupHistoryView(generation: historyGeneration) { entry in
+                    detailPath = NavigationPath()
+                    detailPath.append(entry)
+                }
+            } header: {
+                Text("Looked up", bundle: .module)
+            }
+        }
+        .safeAreaInset(edge: .bottom) {
+            if Cards.lookups?.lookups().isEmpty == false {
+                HStack {
+                    Spacer()
                     Button(role: .destructive) {
                         try? Cards.lookups?.clear()
                         historyGeneration += 1
                     } label: {
                         Text("Clear", bundle: .module)
                     }
+                    .controlSize(.small)
+                    .help(Text("Forget every word looked up", bundle: .module))
                 }
+                .padding(8)
+                .background(.bar)
             }
         }
-        .sheet(isPresented: $buildingKanji, onDismiss: { searching = true }) {
-            KanjiByPartsView(pick: insert)
+    }
+
+    private var resultsList: some View {
+        List {
+            if SearchQuery.kind(of: query) == .empty {
+                Text(
+                    "Kana or kanji finds words that start so; anything else searches the English meanings.",
+                    bundle: .module
+                )
+                .foregroundStyle(.secondary)
+            } else if results.isEmpty {
+                Text("No matches.", bundle: .module)
+                    .foregroundStyle(.secondary)
+            }
+            resultRows
         }
-        .task(id: query) {
-            try? await Task.sleep(for: .milliseconds(150))
-            guard !Task.isCancelled else { return }
-            // Off the main thread: a short English prefix matches thousands of glosses.
-            let query = query
-            let found = await Task.detached(priority: .userInitiated) {
-                var found = Found(results: JMdict.bundled?.search(query, limit: 50) ?? [])
-                for entry in found.results {
-                    if let accent = JMdict.bundled?.pitchAccent(of: entry) {
-                        found.accents[entry.id] = accent
-                    } else if let estimate = JMdict.bundled?.estimatedPitch(of: entry),
-                        !estimate.isEmpty
-                    {
-                        found.estimates[entry.id] = estimate
+    }
+    #endif
+
+    private var resultRows: some View {
+        ForEach(results) { entry in
+            NavigationLink(value: entry) {
+                EntryRow(
+                    entry: entry, accent: accents[entry.id],
+                    estimate: estimates[entry.id] ?? [],
+                    kept: kept.contains(
+                        WordKey.of(
+                            headword: entry.headword,
+                            reading: Kana.hiragana(entry.readings.first ?? ""))))
+            }
+        }
+    }
+
+    private var list: some View {
+        searching(
+            List {
+                if SearchQuery.kind(of: query) == .empty {
+                    LookupHistoryView(generation: historyGeneration)
+                        .id(TabTop.id)
+                } else if results.isEmpty {
+                    Text("No matches.", bundle: .module)
+                        .foregroundStyle(.secondary)
+                }
+                resultRows
+            })
+    }
+
+    /// What both layouts share: the field, its focus and cursor, the parts button in the
+    /// field on the phone, and the search itself.
+    private func searching<Content: View>(_ content: Content) -> some View {
+        content
+            .searchable(text: $query, prompt: Text("Kana, kanji, or English", bundle: .module))
+            .searchFocused($searching)
+            .searchSelection($selection)
+            // The parts sheet opens from a button at the end of the search box, put there once
+            // the field has the keyboard.
+            .task(id: searching) {
+                if searching { await partsButton().install() }
+            }
+            // Switched to, the tab is for typing: the field takes the keyboard at once; and
+            // once more a moment later, for the Mac, where the toolbar's field is not there yet
+            // when the switch happens.
+            .onChange(of: taps.shown, initial: true) { _, shown in
+                guard shown == .search else { return }
+                searching = true
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(150))
+                    if taps.shown == .search { searching = true }
+                }
+            }
+            .navigationTitle(Text("Search", bundle: .module))
+            .toolbar {
+                // The phone's Clear; the Mac's stands under its history column.
+                #if os(iOS)
+                if SearchQuery.kind(of: query) == .empty,
+                    Cards.lookups?.lookups().isEmpty == false
+                {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button(role: .destructive) {
+                            try? Cards.lookups?.clear()
+                            historyGeneration += 1
+                        } label: {
+                            Text("Clear", bundle: .module)
+                        }
                     }
                 }
-                return found
-            }.value
-            guard !Task.isCancelled else { return }
-            results = found.results
-            accents = found.accents
-            estimates = found.estimates
-            kept = Cards.keptWords()
-        }
+                #endif
+            }
+            .sheet(isPresented: $buildingKanji, onDismiss: { searching = true }) {
+                KanjiByPartsView(pick: insert)
+                    .sheetSize(width: 560, height: 640)
+            }
+            .task(id: query) { await search() }
+    }
+
+    /// A moment after the typing, off the main thread.
+    private func search() async {
+        try? await Task.sleep(for: .milliseconds(150))
+        guard !Task.isCancelled else { return }
+        // Off the main thread: a short English prefix matches thousands of glosses.
+        let query = query
+        let found = await Task.detached(priority: .userInitiated) {
+            var found = Found(results: JMdict.bundled?.search(query, limit: 50) ?? [])
+            for entry in found.results {
+                if let accent = JMdict.bundled?.pitchAccent(of: entry) {
+                    found.accents[entry.id] = accent
+                } else if let estimate = JMdict.bundled?.estimatedPitch(of: entry),
+                    !estimate.isEmpty
+                {
+                    found.estimates[entry.id] = estimate
+                }
+            }
+            return found
+        }.value
+        guard !Task.isCancelled else { return }
+        results = found.results
+        accents = found.accents
+        estimates = found.estimates
+        kept = Cards.keptWords()
     }
 
     /// The kanji at the cursor, or over the selection, as the field stood when the sheet

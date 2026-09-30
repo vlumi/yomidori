@@ -37,6 +37,16 @@ extension View {
 }
 
 extension View {
+    /// A sheet's size on the Mac, where detents mean nothing and a sheet is as big as its
+    /// content; nothing on the phone, whose sheets have their detents.
+    func sheetSize(width: CGFloat, height: CGFloat) -> some View {
+        #if os(macOS)
+        frame(width: width, height: height)
+        #else
+        self
+        #endif
+    }
+
     /// A settings form as the Mac lays one out, grouped and scrolling; the phone's list is
     /// its own.
     func settingsFormStyle() -> some View {

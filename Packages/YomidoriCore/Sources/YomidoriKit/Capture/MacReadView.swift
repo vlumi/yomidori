@@ -366,8 +366,11 @@ extension MacReadView {
     /// text once it has it, since its selection counts characters of that one.
     private var pageText: String? {
         if page.still != nil {
-            guard let analysis = page.analysis, analysis.hasResults(for: .text) else { return nil }
-            return selection.pageTexts[0] ?? analysis.transcript
+            if let analysis = page.analysis, analysis.hasResults(for: .text) {
+                return selection.pageTexts[0] ?? analysis.transcript
+            }
+            // The page's own text, where it came with one (the demo's rendered page).
+            return page.transcript
         }
         return page.pasted
     }

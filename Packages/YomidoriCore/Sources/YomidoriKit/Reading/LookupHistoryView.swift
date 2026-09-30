@@ -7,6 +7,8 @@ import YomidoriDictionary
 struct LookupHistoryView: View {
     /// Bumped by the owner when the history was cleared, so the list reloads.
     var generation = 0
+    /// Where a line opens its entry, given; else it pushes as a link does.
+    var open: ((DictionaryEntry) -> Void)?
     @State private var lookups: [Lookup] = []
     @State private var kept: Set<String> = []
 
@@ -20,19 +22,16 @@ struct LookupHistoryView: View {
             }
             ForEach(lookups) { lookup in
                 if let entry = JMdict.bundled?.entry(withID: lookup.entryID) {
-                    NavigationLink(value: entry) {
-                        HStack(spacing: 12) {
-                            EntryRow(
-                                entry: entry, accent: JMdict.bundled?.pitchAccent(of: entry),
-                                estimate: JMdict.bundled?.estimatedPitch(of: entry) ?? [],
-                                kept: kept.contains(lookup.id))
-                            Image(systemName: lookup.source == .page ? "camera" : "magnifyingglass")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                                .accessibilityLabel(
-                                    Text(
-                                        lookup.source == .page ? "From a page" : "From a search",
-                                        bundle: .module))
+                    if let open {
+                        Button {
+                            open(entry)
+                        } label: {
+                            line(entry, lookup)
+                        }
+                        .buttonStyle(.plain)
+                    } else {
+                        NavigationLink(value: entry) {
+                            line(entry, lookup)
                         }
                     }
                 }
@@ -46,6 +45,21 @@ struct LookupHistoryView: View {
         }
         .task(id: generation) { reload() }
         .onReceive(Cards.changes(of: [.lookup, .card])) { _ in reload() }
+    }
+
+    private func line(_ entry: DictionaryEntry, _ lookup: Lookup) -> some View {
+        HStack(spacing: 12) {
+            EntryRow(
+                entry: entry, accent: JMdict.bundled?.pitchAccent(of: entry),
+                estimate: JMdict.bundled?.estimatedPitch(of: entry) ?? [],
+                kept: kept.contains(lookup.id))
+            Image(systemName: lookup.source == .page ? "camera" : "magnifyingglass")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .accessibilityLabel(
+                    Text(lookup.source == .page ? "From a page" : "From a search", bundle: .module))
+        }
+        .contentShape(Rectangle())
     }
 
     private func reload() {

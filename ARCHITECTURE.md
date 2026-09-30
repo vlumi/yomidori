@@ -52,8 +52,13 @@ recognizers as on the phone and shown with Live Text's own selection over it
 a magnifying scroll view); *Reading* shows its transcript as the page instead,
 *Clear* (⌘⌫) puts it away. The words of the selection stand beside. The
 sections are a sidebar with ⌘1 … ⌘4 (`SectionCommands`), and switching to
-Read or Search puts the focus in the box or the field. Settings is ⌘, and
-About is the app menu's. [docs/big-screen-plan.md](docs/big-screen-plan.md)
+Read or Search puts the focus in the box or the field. Search with room is a
+split of its own, the words looked up always in view on the left and the
+results and entries on the right (a plain split under the sections' sidebar:
+a second navigation sidebar would put two toggles in one toolbar, which AppKit
+refuses), the kanji parts a sized sheet from the toolbar. The app is opened
+in the background by `make run-mac`, so a build every few minutes takes no
+screen from anyone. Settings is ⌘, and About is the app menu's. [docs/big-screen-plan.md](docs/big-screen-plan.md)
 has what remains.
 
 ## What exists

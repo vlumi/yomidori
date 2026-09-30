@@ -40,6 +40,7 @@ struct TranscriptReadout: View {
                 }
                 .sheet(item: $openedCard) { card in
                     CardSheet(card: card)
+                        .sheetSize(width: 560, height: 700)
                 }
             if page.reading == nil {
                 HStack(spacing: 10) {
