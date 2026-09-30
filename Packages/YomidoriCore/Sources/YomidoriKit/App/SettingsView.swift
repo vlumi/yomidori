@@ -14,6 +14,7 @@ struct SettingsView: View {
 
     var body: some View {
         Form {
+            #if os(iOS)
             Section {
                 Toggle(isOn: $swipeBack) {
                     Text("Swipe back", bundle: .module)
@@ -24,6 +25,7 @@ struct SettingsView: View {
                     "Swiping in from the left edge goes back a screen, as everywhere on iOS. Off, only the back button does, so a swipe meant for a word never leaves the page.",
                     bundle: .module)
             }
+            #endif
             Section {
                 Picker(selection: $controlsSide) {
                     Text("Left", bundle: .module).tag(PageControlsSide.left)
@@ -65,6 +67,7 @@ struct SettingsView: View {
                         bundle: .module)
                 }
             }
+            #if os(iOS)
             Section {
                 if let shortcuts = URL(string: "shortcuts://") {
                     Link(destination: shortcuts) {
@@ -83,6 +86,7 @@ struct SettingsView: View {
                     "In the Shortcuts app, make a shortcut of two actions, Take Screenshot and then Read in Yomidori, and set it to Back Tap (Settings, Accessibility, Touch) or the Action button. A double tap on the back of the phone then opens whatever is on the screen here, ready to tap. Nothing is saved to Photos.",
                     bundle: .module)
             }
+            #endif
             Section {
                 Toggle(isOn: $iCloudSync) {
                     Text("Sync with iCloud", bundle: .module)

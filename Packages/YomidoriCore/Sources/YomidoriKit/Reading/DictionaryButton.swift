@@ -7,7 +7,11 @@ struct DictionaryButton: View {
     var body: some View {
         if ReferenceLibrary.hasDefinition(for: term) {
             Button {
+                #if os(macOS)
+                ReferenceLibrary.open(term)
+                #else
                 shown = true
+                #endif
             } label: {
                 Label {
                     Text("Dictionary", bundle: .module)
@@ -17,10 +21,12 @@ struct DictionaryButton: View {
             }
             .buttonStyle(.bordered)
             .controlSize(.small)
+            #if os(iOS)
             .sheet(isPresented: $shown) {
                 ReferenceLibraryView(term: term)
-                    .ignoresSafeArea()
+                .ignoresSafeArea()
             }
+            #endif
         }
     }
 }

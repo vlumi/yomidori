@@ -2,17 +2,33 @@ import SwiftUI
 
 #if os(iOS)
 import UIKit
+#elseif os(macOS)
+import AppKit
+import CoreServices
 #endif
 
-/// The system's own dictionaries, shown as a view and never quoted; none off iOS.
+/// The system's own dictionaries, shown as a view on iOS and never quoted; on a Mac the
+/// Dictionary app, opened on the term.
 enum ReferenceLibrary {
     static func hasDefinition(for term: String) -> Bool {
         #if os(iOS)
         UIReferenceLibraryViewController.dictionaryHasDefinition(forTerm: term)
+        #elseif os(macOS)
+        let range = CFRange(location: 0, length: (term as NSString).length)
+        return DCSCopyTextDefinition(nil, term as CFString, range)?.takeRetainedValue() != nil
         #else
         false
         #endif
     }
+
+    #if os(macOS)
+    static func open(_ term: String) {
+        guard let escaped = term.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed),
+            let url = URL(string: "dict://\(escaped)")
+        else { return }
+        NSWorkspace.shared.open(url)
+    }
+    #endif
 }
 
 #if os(iOS)
@@ -24,13 +40,5 @@ struct ReferenceLibraryView: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ controller: UIReferenceLibraryViewController, context: Context) {}
-}
-#else
-struct ReferenceLibraryView: View {
-    let term: String
-
-    var body: some View {
-        Text(verbatim: term)
-    }
 }
 #endif

@@ -3,6 +3,8 @@ import SwiftUI
 
 #if canImport(UIKit)
 import UIKit
+#elseif canImport(AppKit)
+import AppKit
 #endif
 
 extension View {
@@ -34,11 +36,14 @@ extension View {
     }
 }
 
-/// No-ops where there is no UIKit, so views stay free of `#if`.
+/// The system's pasteboard, whichever the platform has, so views stay free of `#if`.
 enum Clipboard {
     static func copy(_ text: String) {
         #if canImport(UIKit)
         UIPasteboard.general.string = text
+        #elseif canImport(AppKit)
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(text, forType: .string)
         #endif
     }
 }
