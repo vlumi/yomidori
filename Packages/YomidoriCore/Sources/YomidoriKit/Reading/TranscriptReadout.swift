@@ -113,6 +113,8 @@ struct TranscriptReadout: View {
                 .controlSize(.small)
             Spacer()
             tokenizerMenu
+            // Not on the Mac, whose page is a text box already.
+            #if os(iOS)
             Button {
                 Clipboard.copy(fixed)
             } label: {
@@ -125,11 +127,25 @@ struct TranscriptReadout: View {
             .labelStyle(.iconOnly)
             .buttonStyle(.bordered)
             .controlSize(.small)
+            #endif
         }
     }
 
     /// The analyzer, switched right here so the same page can be cut both ways.
-    private var tokenizerMenu: some View {
+    @ViewBuilder private var tokenizerMenu: some View {
+        #if os(macOS)
+        // A pop-up button: a menu holding a picker would be a submenu here.
+        Picker(selection: $choice) {
+            Text("System", bundle: .module).tag(TokenizerChoice.system)
+            Text(verbatim: "MeCab").tag(TokenizerChoice.mecab)
+        } label: {
+            Text("Tokenizer", bundle: .module)
+        }
+        .labelsHidden()
+        .pickerStyle(.menu)
+        .controlSize(.small)
+        .accessibilityLabel(Text("Tokenizer", bundle: .module))
+        #else
         Menu {
             Picker(selection: $choice) {
                 Text("System", bundle: .module).tag(TokenizerChoice.system)
@@ -148,6 +164,7 @@ struct TranscriptReadout: View {
         .controlSize(.small)
         .accessibilityLabel(Text("Tokenizer", bundle: .module))
         .accessibilityValue(Text(choice == .system ? "System" : "MeCab", bundle: .module))
+        #endif
     }
 
     private var transcript: String {

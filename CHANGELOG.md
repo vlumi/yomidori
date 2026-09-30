@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **About shows the icon**, beside the name. On the Mac the tokenizer is a plain pop-up, Copy is gone from beside it since the box is the text, and Settings is laid out as a Mac's.
 - **The Mac has its icon, and its recognized text folds into a bar.** The sparrow on the Mac's rounded plate, in the Dock and the Finder; and under the text box the recognized text is a bar when folded and a pane you drag when open.
 - **A Mac app.** The same app builds for the Mac: the same cards through iCloud, lessons and reviews on a keyboard, search, the kanji screens, Settings (⌘,) and a backup. Read is the Mac's home: paste the text you are reading into the box, select a word or a phrase in it, and it reads out beside, with the recognized text under the box. Dropping a picture on it comes next. Not on TestFlight yet.
 - **The page is read under a short drawer.** With the drawer at its lowest, the page could stay at *Reading the words…* until the drawer was dragged up, on a small screen in particular; it reads at once now.
