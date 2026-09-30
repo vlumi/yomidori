@@ -96,7 +96,7 @@ struct SearchView: View {
                     .frame(minWidth: 220, idealWidth: 280, maxWidth: 380, maxHeight: .infinity)
             }
             column(
-                Text("Dictionary", bundle: .module),
+                Text("Search", bundle: .module),
                 buttons: {
                     if !historyShown {
                         Button {
