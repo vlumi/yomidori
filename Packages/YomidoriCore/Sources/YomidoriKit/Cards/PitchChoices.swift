@@ -22,6 +22,10 @@ struct PitchChoices: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
+                // The digits pick, 0 for flat, on a keyboard.
+                .keyboardShortcut(
+                    KeyEquivalent(Character(String(pattern.downstep % 10))), modifiers: []
+                )
                 .accessibilityLabel(
                     pattern.downstep == 0
                         ? Text("Flat", bundle: .module)

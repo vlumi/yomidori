@@ -44,18 +44,24 @@ struct LessonCard: View {
                     Text("Drop", bundle: .module).frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
+                .keyboardShortcut(.delete, modifiers: .command)
+                .help(Text("Drop the card (⌘⌫)", bundle: .module))
                 Button {
                     decide(.later)
                 } label: {
                     Text("Later", bundle: .module).frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
+                .keyboardShortcut(.rightArrow, modifiers: .command)
+                .help(Text("Put it back for later (⌘→)", bundle: .module))
                 Button {
                     decide(.start)
                 } label: {
                     Text("Start", bundle: .module).frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.defaultAction)
+                .help(Text("Start the card (↩)", bundle: .module))
             }
             .controlSize(.large)
             .padding(16)

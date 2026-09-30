@@ -114,6 +114,7 @@ struct ReviewView: View {
         .sheet(item: $editing) { sighting in
             SentenceEditor(sighting: sighting) { replace($0, on: item.card) }
         }
+        .readingWidth()
     }
 
     /// The corrected sentence goes on the card at once, and on to the questions still queued.
@@ -155,6 +156,8 @@ struct ReviewView: View {
                     FittingLabel(title: Text("Show the answer", bundle: .module), symbol: "eye")
                 }
                 .buttonStyle(.bordered)
+                .keyboardShortcut(.return, modifiers: .command)
+                .help(Text("Show the answer (⌘↩)", bundle: .module))
                 Button {
                     check(item)
                 } label: {
@@ -203,6 +206,8 @@ struct ReviewView: View {
                 .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)
+            .keyboardShortcut(.delete, modifiers: .command)
+            .help(Text("Back to waiting (⌘⌫)", bundle: .module))
         }
         .controlSize(.large)
     }
@@ -221,38 +226,6 @@ struct ReviewView: View {
         .foregroundStyle(.secondary)
         .accessibilityElement(children: .combine)
         .accessibilityFocused($verdictFocused)
-    }
-
-    /// Overrule a wrong verdict: a typo too broken to forgive counts as right; a meaning of
-    /// the reader's own is kept on the card and counts from now on.
-    private func reconcile(_ item: ReviewItem) -> some View {
-        HStack(spacing: 12) {
-            Button {
-                record(item, .good, reconciled: true)
-            } label: {
-                Label {
-                    Text("Count it right", bundle: .module)
-                } icon: {
-                    Image(systemName: "checkmark")
-                }
-                .frame(maxWidth: .infinity)
-            }
-            if item.question == .meaning, let typed {
-                Button {
-                    record(
-                        item, .good, reconciled: true,
-                        accepting: typed)
-                } label: {
-                    Label {
-                        Text("Add as an answer", bundle: .module)
-                    } icon: {
-                        Image(systemName: "plus.circle")
-                    }
-                    .frame(maxWidth: .infinity)
-                }
-            }
-        }
-        .buttonStyle(.bordered)
     }
 
     private func check(_ item: ReviewItem) {
@@ -370,5 +343,43 @@ private struct FittingLabel: View {
             title.lineLimit(1).minimumScaleFactor(0.8)
         }
         .frame(maxWidth: .infinity)
+    }
+}
+
+extension ReviewView {
+    /// Overrule a wrong verdict: a typo too broken to forgive counts as right; a meaning of
+    /// the reader's own is kept on the card and counts from now on.
+    private func reconcile(_ item: ReviewItem) -> some View {
+        HStack(spacing: 12) {
+            Button {
+                record(item, .good, reconciled: true)
+            } label: {
+                Label {
+                    Text("Count it right", bundle: .module)
+                } icon: {
+                    Image(systemName: "checkmark")
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .keyboardShortcut("y", modifiers: .command)
+            .help(Text("Count it right (⌘Y)", bundle: .module))
+            if item.question == .meaning, let typed {
+                Button {
+                    record(
+                        item, .good, reconciled: true,
+                        accepting: typed)
+                } label: {
+                    Label {
+                        Text("Add as an answer", bundle: .module)
+                    } icon: {
+                        Image(systemName: "plus.circle")
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .keyboardShortcut("a", modifiers: [.command, .shift])
+                .help(Text("Add as an answer (⌘⇧A)", bundle: .module))
+            }
+        }
+        .buttonStyle(.bordered)
     }
 }
