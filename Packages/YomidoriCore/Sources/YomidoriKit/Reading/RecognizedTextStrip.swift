@@ -5,24 +5,24 @@ import YomidoriCore
 /// put while it scrolls; a tap selects a word, a long press stretches the selection.
 struct RecognizedTextStrip: View {
     let reading: PageReading
-    @EnvironmentObject private var page: CaptureState
     @AppStorage(SettingsKey.transcriptExpanded) private var expanded = false
 
     var body: some View {
         Section {
             if expanded {
-                VStack(alignment: .leading, spacing: 6) {
-                    ForEach(reading.lines.lines.indices, id: \.self) { line in
-                        ChunkFlow(
-                            chunks: reading.chunks.filter { $0.line == line },
-                            selected: page.selectedRange,
-                            select: { page.selectedRange = $0.range },
-                            extend: page.extendSelection)
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                Lines(reading: reading)
             }
         } header: {
+            Header(expanded: $expanded)
+                .background(Palette.page)
+        }
+    }
+
+    /// The title, and the chevron that says whether the lines are shown.
+    struct Header: View {
+        @Binding var expanded: Bool
+
+        var body: some View {
             Button {
                 withAnimation(.snappy) { expanded.toggle() }
             } label: {
@@ -38,8 +38,26 @@ struct RecognizedTextStrip: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .background(Palette.page)
             .accessibilityAddTraits(expanded ? [.isSelected] : [])
+        }
+    }
+
+    /// The lines as their chunks.
+    struct Lines: View {
+        let reading: PageReading
+        @EnvironmentObject private var page: CaptureState
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 6) {
+                ForEach(reading.lines.lines.indices, id: \.self) { line in
+                    ChunkFlow(
+                        chunks: reading.chunks.filter { $0.line == line },
+                        selected: page.selectedRange,
+                        select: { page.selectedRange = $0.range },
+                        extend: page.extendSelection)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }

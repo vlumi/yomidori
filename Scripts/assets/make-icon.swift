@@ -242,8 +242,49 @@ for side in [-1.0, 1.0] as [CGFloat] {
 }
 
 let image = ctx.makeImage()!
-let url = URL(fileURLWithPath: outDir).appendingPathComponent("icon-1024.png")
-let dest = CGImageDestinationCreateWithURL(url as CFURL, UTType.png.identifier as CFString, 1, nil)!
-CGImageDestinationAddImage(dest, image, nil)
-guard CGImageDestinationFinalize(dest) else { fatalError("could not write \(url.path)") }
-print("wrote \(url.path)")
+
+func write(_ image: CGImage, _ name: String) {
+    let url = URL(fileURLWithPath: outDir).appendingPathComponent(name)
+    let dest = CGImageDestinationCreateWithURL(url as CFURL, UTType.png.identifier as CFString, 1, nil)!
+    CGImageDestinationAddImage(dest, image, nil)
+    guard CGImageDestinationFinalize(dest) else { fatalError("could not write \(url.path)") }
+    print("wrote \(url.path)")
+}
+write(image, "icon-1024.png")
+
+// MARK: The Mac's icon
+
+// A Mac icon is the same picture on the Mac's own plate: a rounded square inset in a
+// transparent canvas, the grid every Mac app shares (824 of 1024, corners at 185), with a
+// soft shadow under it. Every size the Dock, the Finder and the App Store ask for is drawn
+// from the 1024, and a transparent PNG is what macOS expects here.
+let macPlate = CGRect(x: 100, y: 100, width: 824, height: 824)
+let macCorner: CGFloat = 185.4
+
+func macIcon(_ pixels: Int) -> CGImage {
+    let scale = CGFloat(pixels) / size
+    let ctx = CGContext(
+        data: nil, width: pixels, height: pixels, bitsPerComponent: 8, bytesPerRow: 0,
+        space: CGColorSpace(name: CGColorSpace.sRGB)!,
+        bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+    ctx.scaleBy(x: scale, y: scale)
+    ctx.setShouldAntialias(true)
+    ctx.interpolationQuality = .high
+    let plate = CGPath(roundedRect: macPlate, cornerWidth: macCorner, cornerHeight: macCorner, transform: nil)
+    ctx.saveGState()
+    ctx.setShadow(offset: CGSize(width: 0, height: -12), blur: 30, color: rgb(0, 0, 0, 0.35))
+    ctx.setFillColor(nightGreenBottom)
+    ctx.addPath(plate)
+    ctx.fillPath()
+    ctx.restoreGState()
+    ctx.saveGState()
+    ctx.addPath(plate)
+    ctx.clip()
+    ctx.draw(image, in: macPlate)
+    ctx.restoreGState()
+    return ctx.makeImage()!
+}
+
+for pixels in [16, 32, 64, 128, 256, 512, 1024] {
+    write(macIcon(pixels), "mac-\(pixels).png")
+}
