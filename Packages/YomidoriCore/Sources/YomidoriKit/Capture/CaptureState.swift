@@ -20,8 +20,9 @@ final class CaptureState: ObservableObject {
     /// The selection everything shows: the strip, the picture and the drawer. Characters of
     /// the reading's text, whole chunks.
     @Published var selectedRange: Range<Int>?
-    /// The reader's corrections to the page's text, cleared with a new page.
-    @Published var fixes: [TextFix] = []
+    /// The reader's corrections, each page's own over the text it was made on, cleared with
+    /// a new spread.
+    @Published var fixes = SpreadFixes()
     /// What `reading` was read from, the tokenizer and the text, so a return to the page
     /// does not read it again.
     var readingKey: String?
@@ -32,7 +33,7 @@ final class CaptureState: ObservableObject {
         reading = nil
         readingKey = nil
         selectedRange = nil
-        if !keepingFixes { fixes = [] }
+        if !keepingFixes { fixes = SpreadFixes() }
     }
     @Published var closeUp: CaptureView.CloseUp?
     @Published var zoom = Zoom()

@@ -14,6 +14,11 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The page is read under a short drawer.** With the drawer at its lowest, the page could stay at *Reading the words…* until the drawer was dragged up, on a small screen in particular; it reads at once now.
+- **A fix stays with its text.** A character or a word fixed on the page belongs to the page's text as it was read: switching to another recognizer, or taking the page again in a spread, no longer lands the fix on whatever character stands at the same place in the other text. The fix comes back with the text it was made on, and the other page of a spread keeps its own throughout.
+- **A pinch starts from where the page stands.** After a double tap back, the zoom slider or a page opening at its fitted size, the next pinch or drag no longer jumps to where the last gesture left off.
+- **Spaces are not an answer.** Nothing but spaces typed in a review, then *Show the answer*, no longer offers *Count it right* or *Add as an answer*; it is not answered.
+- **Pasted text follows every selection.** After a word was chosen in the recognized-text strip, choosing the earlier word in the pasted text again left the drawer on the strip's word; it follows now.
 - **The last meaning stays.** A card's last meaning that counts can no longer be swiped away, which brought the whole dictionary list back in its place.
 
 ### build 25 — 2026-09-30

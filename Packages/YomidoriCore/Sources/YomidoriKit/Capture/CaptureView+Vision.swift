@@ -32,7 +32,7 @@ extension CaptureView {
         let vision = VisionPage(lines: spreadPages[index].lines)
         guard let hit = vision.character(at: point, in: frame) else { return nil }
         let offset = offset(ofPage: index) + vision.starts[hit.line] + hit.character
-        return reading.chunk(at: TextFix.map(offset: offset, through: page.fixes))
+        return reading.chunk(at: page.fixes.map(offset: offset))
     }
 
     /// The spread's pages as Vision mode draws them: each page's lines, the ones the
@@ -59,12 +59,14 @@ extension CaptureView {
     }
 
     /// The selection over a page's Vision lines, one box per line it touches, normalized
-    /// like them.
+    /// like them. Not on a page with a fix in it, whose characters are no longer the
+    /// lines'; there the lines light whole.
     private func selectionBoxes(onPage index: Int) -> [CGRect] {
-        guard mode == .vision, let range = page.selectedRange, page.fixes.isEmpty else { return [] }
+        guard mode == .vision, let range = page.selectedRange, !page.fixes.hasFixes(onPage: index)
+        else { return [] }
         let vision = VisionPage(lines: spreadPages[index].lines)
         return vision.lines.indices.compactMap { line in
-            let start = offset(ofPage: index) + vision.starts[line]
+            let start = page.fixes.fixedOffset(ofPage: index) + vision.starts[line]
             let span = start..<(start + vision.lines[line].text.count)
             let overlap = span.clamped(to: range)
             guard !overlap.isEmpty else { return nil }
@@ -81,7 +83,8 @@ extension CaptureView {
         return Set(
             vision.lines.indices.filter { line in
                 let start = offset(ofPage: index) + vision.starts[line]
-                return (start..<(start + vision.lines[line].text.count)).overlaps(range)
+                let span = page.fixes.map(start..<(start + vision.lines[line].text.count))
+                return span.overlaps(range)
             }.compactMap { lines.firstIndex(of: vision.lines[$0]) })
     }
 

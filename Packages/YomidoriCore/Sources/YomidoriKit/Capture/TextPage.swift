@@ -42,6 +42,11 @@ struct TextPage: UIViewRepresentable {
                 context.coordinator.applying = true
                 view.selectedRange = selected
                 context.coordinator.applying = false
+                // Reported back all the same, once this update is over: otherwise the
+                // selection kept is the older one, and choosing that word again in the
+                // text would look like no change and go unreported.
+                let coordinator = context.coordinator
+                DispatchQueue.main.async { coordinator.report(view) }
             }
         }
     }
@@ -64,6 +69,10 @@ struct TextPage: UIViewRepresentable {
 
         func textViewDidChangeSelection(_ view: UITextView) {
             guard !applying else { return }
+            report(view)
+        }
+
+        func report(_ view: UITextView) {
             let range = Range(view.selectedRange, in: text)
             selection.text = range.map { String(text[$0]) } ?? ""
             selection.rangePage = 0
