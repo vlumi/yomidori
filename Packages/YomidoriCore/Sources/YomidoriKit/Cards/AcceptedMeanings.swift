@@ -16,6 +16,8 @@ struct AcceptedMeanings: View {
             // By place: meanings merged from another device may repeat one.
             ForEach(Array(answers.enumerated()), id: \.offset) { _, meaning in
                 Text(verbatim: meaning)
+                    // The last one stays: a meaning question needs an answer.
+                    .deleteDisabled(answers.count == 1)
             }
             .onDelete { offsets in
                 for meaning in offsets.map({ answers[$0] }) {

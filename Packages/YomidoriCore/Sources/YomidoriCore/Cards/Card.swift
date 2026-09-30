@@ -64,9 +64,12 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         if !acceptedMeanings.contains(meaning) { acceptedMeanings.append(meaning) }
     }
 
+    /// The last meaning stays: a meaning question needs one answer, and an emptied list
+    /// would bring the dictionary's glosses back, which is not what taking one out means.
     public mutating func removeAnswer(_ meaning: String, glosses: [String]) {
-        if acceptedMeanings.isEmpty { acceptedMeanings = glosses }
-        acceptedMeanings.removeAll { $0 == meaning }
+        let kept = answers(glosses: glosses).filter { $0 != meaning }
+        guard !kept.isEmpty else { return }
+        acceptedMeanings = kept
     }
 
     public mutating func add(to collection: UUID) {
