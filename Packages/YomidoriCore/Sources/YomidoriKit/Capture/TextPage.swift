@@ -104,6 +104,8 @@ import AppKit
 struct TextBox: NSViewRepresentable {
     @Binding var text: String
     @ObservedObject var selection: LiveTextSelection
+    /// Bumped to take the keyboard's focus.
+    var focusAsked = 0
 
     func makeNSView(context: Context) -> NSScrollView {
         let scroll = NSTextView.scrollableTextView()
@@ -129,6 +131,10 @@ struct TextBox: NSViewRepresentable {
 
     func updateNSView(_ scroll: NSScrollView, context: Context) {
         guard let view = scroll.documentView as? NSTextView else { return }
+        if context.coordinator.focusAsked != focusAsked {
+            context.coordinator.focusAsked = focusAsked
+            DispatchQueue.main.async { view.window?.makeFirstResponder(view) }
+        }
         context.coordinator.text = text
         if view.string != text {
             context.coordinator.applying = true
@@ -160,6 +166,7 @@ struct TextBox: NSViewRepresentable {
         private let selection: LiveTextSelection
         /// A text or selection being set from here, already known: not reported back.
         var applying = false
+        var focusAsked = 0
 
         init(text: Binding<String>, selection: LiveTextSelection) {
             self.text = text.wrappedValue

@@ -19,6 +19,7 @@ struct CardView: View {
                 ) {
                     DictionaryButton(term: card.headword)
                         .labelStyle(.iconOnly)
+                        .help(Text("Dictionary", bundle: .module))
                 }
             }
             WordSections(headword: card.headword, details: details)

@@ -26,6 +26,7 @@ struct KeepButton: View {
                     .labelStyle(.iconOnly)
                     .buttonStyle(.bordered)
                     .controlSize(.small)
+                    .help(Text("Add this sentence", bundle: .module))
                 }
                 Button {
                     open?()
@@ -35,6 +36,7 @@ struct KeepButton: View {
                 .buttonStyle(.borderless)
                 .foregroundStyle(.secondary)
                 .accessibilityLabel(Text("Kept; open the card", bundle: .module))
+                .help(Text("Kept; open the card", bundle: .module))
                 .disabled(open == nil)
             }
         } else if canKeep {
@@ -48,6 +50,7 @@ struct KeepButton: View {
             .labelStyle(.iconOnly)
             .buttonStyle(.bordered)
             .controlSize(.small)
+            .help(Text("Keep", bundle: .module))
         }
     }
 }

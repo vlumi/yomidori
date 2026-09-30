@@ -21,6 +21,7 @@ struct EntryView: View {
                 ) {
                     DictionaryButton(term: entry.headword)
                         .labelStyle(.iconOnly)
+                        .help(Text("Dictionary", bundle: .module))
                     keepButton
                 }
             }

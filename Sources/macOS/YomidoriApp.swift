@@ -22,6 +22,8 @@ struct YomidoriApp: App {
                     Text("About Yomidori")
                 }
             }
+            // The sections, ⌘1 … ⌘4, in the View menu.
+            SectionCommands()
         }
         // Settings is ⌘, as on every Mac.
         Settings {

@@ -23,6 +23,7 @@ struct LessonCard: View {
                     font: .largeTitle
                 ) {
                     DictionaryButton(term: card.headword).labelStyle(.iconOnly)
+                        .help(Text("Dictionary", bundle: .module))
                 }
             }
             ForEach(card.sightings.sorted { $0.date > $1.date }) { sighting in

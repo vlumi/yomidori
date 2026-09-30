@@ -21,6 +21,7 @@ struct KanjiView: View {
                     Spacer()
                     DictionaryButton(term: kanji.literal)
                         .labelStyle(.iconOnly)
+                        .help(Text("Dictionary", bundle: .module))
                 }
                 .textSelection(.enabled)
             }

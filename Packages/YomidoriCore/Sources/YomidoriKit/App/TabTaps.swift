@@ -10,6 +10,9 @@ final class TabTaps: ObservableObject {
     @Published private(set) var rootCounts: [AppTab: Int] = [:]
     /// The tab showing, for a screen that acts on being switched to.
     @Published var shown: AppTab?
+    /// A switch asked for from outside the tab bar, the View menu's ⌘1 … ⌘4; taken by the
+    /// root, which then clears it.
+    @Published var requested: AppTab?
 
     func tapped(_ tab: AppTab) {
         counts[tab, default: 0] += 1

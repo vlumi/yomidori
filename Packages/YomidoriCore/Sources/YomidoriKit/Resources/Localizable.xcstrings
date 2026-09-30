@@ -511,6 +511,16 @@
         }
       }
     },
+    "Copy the recognized text" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "認識した文章をコピー"
+          }
+        }
+      }
+    },
     "Correct" : {
       "localizations" : {
         "ja" : {
@@ -1940,6 +1950,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "中学"
+          }
+        }
+      }
+    },
+    "Select" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選択"
           }
         }
       }

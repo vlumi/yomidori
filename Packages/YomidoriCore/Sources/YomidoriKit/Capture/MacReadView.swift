@@ -10,13 +10,17 @@ public struct MacReadView: View {
     /// The box's text as typed; the page takes it once the typing pauses, cleaned.
     @State private var draft = ""
     @State private var settling: Task<Void, Never>?
+    @EnvironmentObject private var taps: TabTaps
+    /// Bumped when Read is switched to: the box takes the focus, so what is pasted next
+    /// lands in it without a click.
+    @State private var focusAsked = 0
 
     public init() {}
 
     public var body: some View {
         HSplitView {
             VSplitView {
-                TextBox(text: $draft, selection: selection)
+                TextBox(text: $draft, selection: selection, focusAsked: focusAsked)
                     .frame(minWidth: 360, idealWidth: 560, maxWidth: .infinity)
                     .frame(minHeight: 200, maxHeight: .infinity)
                     .overlay(alignment: .topLeading) {
@@ -42,6 +46,9 @@ public struct MacReadView: View {
         .background(Palette.page)
         .onAppear { draft = page.pasted ?? "" }
         .onChange(of: draft) { _, typed in settle(typed) }
+        .onChange(of: taps.shown, initial: true) { _, shown in
+            if shown == .read { focusAsked += 1 }
+        }
     }
 
     @AppStorage(SettingsKey.transcriptExpanded) private var stripExpanded = false
