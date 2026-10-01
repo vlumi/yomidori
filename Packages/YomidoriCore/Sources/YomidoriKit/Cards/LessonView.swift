@@ -18,8 +18,10 @@ struct LessonView: View {
         Group {
             if let cards {
                 if let card = cards.first {
-                    LessonCard(card: card) { verdict in advance(card, verdict) }
-                        .readingWidth()
+                    LessonCard(card: card, correct: { correct($0, on: card) }) { verdict in
+                        advance(card, verdict)
+                    }
+                    .readingWidth()
                 } else {
                     finished
                 }
@@ -118,6 +120,14 @@ struct LessonView: View {
         cards = Lesson.pick(from: candidates, order: order, size: size) { card in
             dictionary?.entry(headword: card.headword, reading: card.reading)?.common ?? false
         }
+    }
+
+    /// A sentence corrected in the lesson: on the stored card, and on the one shown.
+    private func correct(_ sighting: Sighting, on card: Card) {
+        var changed = Cards.store?.card(id: card.id) ?? card
+        changed.replace(sighting)
+        try? Cards.store?.update(changed)
+        cards = cards?.map { $0.id == changed.id ? changed : $0 }
     }
 
     private func advance(_ card: Card, _ verdict: LessonCard.Verdict) {

@@ -113,6 +113,7 @@ struct ReviewView: View {
         }
         .sheet(item: $editing) { sighting in
             SentenceEditor(sighting: sighting) { replace($0, on: item.card) }
+                .sheetSize(width: 520, height: 360)
         }
         .readingWidth()
     }

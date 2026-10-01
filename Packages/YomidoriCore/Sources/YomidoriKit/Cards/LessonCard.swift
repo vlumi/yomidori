@@ -11,8 +11,11 @@ struct LessonCard: View {
     }
 
     let card: Card
+    /// A sentence put right, here where the word is first learned.
+    let correct: (Sighting) -> Void
     let decide: (Verdict) -> Void
     @State private var details = WordDetails()
+    @State private var editing: Sighting?
 
     var body: some View {
         List {
@@ -31,10 +34,23 @@ struct LessonCard: View {
                     Section {
                         MarkedSentence(sighting: sighting)
                         SpeakButton(text: sighting.sentence)
+                        Button {
+                            editing = sighting
+                        } label: {
+                            Label {
+                                Text("Correct the sentence", bundle: .module)
+                            } icon: {
+                                Image(systemName: "pencil")
+                            }
+                        }
                     }
                 }
             }
             WordSections(headword: card.headword, details: details)
+        }
+        .sheet(item: $editing) { sighting in
+            SentenceEditor(sighting: sighting, save: correct)
+                .sheetSize(width: 520, height: 360)
         }
         .safeAreaInset(edge: .bottom) {
             FitsOrStacks {

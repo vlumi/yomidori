@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Correct a sentence in the lesson.** Each sentence on a lesson's card has *Correct the sentence* under it, as on the card itself and in a review, so a misread line is put right where the word is first learned.
+
 ### build 26 — 2026-09-30
 
 - **The answer field takes the keys on the Mac** as each reading or meaning question comes, so typing starts at once.
