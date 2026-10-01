@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Room round the page.** The page scrolls half a screen's width beyond its own edge on every side, in every mode, so a word at the edge comes out from under the zoom and page buttons.
+
 ### build 26 — 2026-09-30
 
 - **The answer field takes the keys on the Mac** as each reading or meaning question comes, so typing starts at once.

@@ -220,13 +220,31 @@ struct LiveTextImage: UIViewRepresentable {
             contentSize = fitted.size
             minimumZoomScale = 1
             zoomScale = fitted.width > 0 ? max(1, bounds.width / fitted.width) : 1
+            // At rest: the page's corner at the view's, or centered where it is smaller.
+            centering = .zero
             contentOffset = .zero
+            center()
         }
 
+        /// How far the content is pushed in to stand centered, when smaller than the view.
+        private var centering = CGSize.zero
+
+        /// Centered when smaller than the view, and a margin beyond every edge either way, so
+        /// a word at the page's edge scrolls out from under the controls that stand there.
+        /// The page keeps its place on the screen as the centering changes with the zoom.
         private func center() {
+            let margin = Zoom.margin(in: bounds.size)
             let dx = max(0, (bounds.width - contentSize.width) / 2)
             let dy = max(0, (bounds.height - contentSize.height) / 2)
-            contentInset = UIEdgeInsets(top: dy, left: dx, bottom: dy, right: dx)
+            let wanted = UIEdgeInsets(
+                top: dy + margin, left: dx + margin, bottom: dy + margin, right: dx + margin)
+            guard contentInset != wanted else { return }
+            let offset = CGPoint(
+                x: contentOffset.x - (dx - centering.width),
+                y: contentOffset.y - (dy - centering.height))
+            centering = CGSize(width: dx, height: dy)
+            contentInset = wanted
+            contentOffset = offset
         }
 
         private func updateHighlights() {
