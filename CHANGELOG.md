@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **No red circles while selecting.** Choosing *Select* in the card list no longer flashes the delete circles beside the tick boxes; a card is still forgotten by a swipe.
+
 ### build 27 — 2026-10-01
 
 - **Cards in no collection.** The card list's filter offers *In no collection*, with their number, while there are any: the ones to tidy, ready for *Select* and *Add to…*. It goes from the menu once every card has a collection.
