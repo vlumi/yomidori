@@ -56,16 +56,25 @@ struct CardsView: View {
                     #if os(macOS)
                     CardRow(card: card).tag(card.id)
                     #else
-                    // While selecting, a row is ticked, not swiped away.
+                    // Forgotten by a swipe, a swipe action and not the list's own delete:
+                    // that one puts its red circles on every row the moment selecting
+                    // starts, before they can be told to stay away.
                     NavigationLink(value: card) { CardRow(card: card) }
-                        .deleteDisabled(selecting)
+                        .swipeActions(edge: .trailing) {
+                            if !selecting {
+                                Button(role: .destructive) {
+                                    try? Cards.store?.remove(card)
+                                    reload()
+                                } label: {
+                                    Label {
+                                        Text("Forget", bundle: .module)
+                                    } icon: {
+                                        Image(systemName: "trash")
+                                    }
+                                }
+                            }
+                        }
                     #endif
-                }
-                .onDelete { offsets in
-                    for index in offsets {
-                        try? Cards.store?.remove(cards[index])
-                    }
-                    reload()
                 }
             } header: {
                 header
