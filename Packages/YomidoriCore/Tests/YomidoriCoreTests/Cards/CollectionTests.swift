@@ -30,6 +30,12 @@ final class CollectionTests: XCTestCase {
         XCTAssertFalse(card.isIn(anyOf: [book]))
         card.add(to: book)
         XCTAssertTrue(card.isIn(anyOf: [book, UUID()]))
+        // In no collection: none on the card, or only ones that are no more.
+        XCTAssertFalse(card.isInNone(of: [book]))
+        XCTAssertTrue(card.isInNone(of: [UUID()]))
+        XCTAssertTrue(card.isInNone(of: []))
+        card.remove(from: book)
+        XCTAssertTrue(card.isInNone(of: [book]))
     }
 
     func testCollectionsAreMadeRenamedRemovedAndReopened() throws {

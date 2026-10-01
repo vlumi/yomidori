@@ -1121,6 +1121,26 @@
         }
       }
     },
+    "In no collection" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コレクションなし"
+          }
+        }
+      }
+    },
+    "In no collection (%lld)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コレクションなし（%lld）"
+          }
+        }
+      }
+    },
     "In review" : {
       "localizations" : {
         "ja" : {

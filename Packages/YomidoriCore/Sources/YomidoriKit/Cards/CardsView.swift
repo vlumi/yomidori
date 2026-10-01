@@ -10,6 +10,8 @@ struct CardsView: View {
     @State private var collections: [Collection] = []
     /// The collections shown; none chosen means all cards.
     @State private var chosen: Set<UUID> = []
+    /// Only the cards in no collection, the ones to tidy.
+    @State private var unfiled = false
     /// The cards picked: on the Mac the selection, one card or several; on the phone the
     /// ones ticked while selecting.
     @State private var picked: Set<UUID> = []
@@ -26,7 +28,19 @@ struct CardsView: View {
 
     /// The cards the filter lets through, in the order the list shows them.
     private var shown: [Card] {
-        cards.filter { $0.isIn(anyOf: chosen) }
+        unfiled ? loose : cards.filter { $0.isIn(anyOf: chosen) }
+    }
+
+    /// The cards in none of the collections there are.
+    private var loose: [Card] {
+        let existing = Set(collections.map(\.id))
+        return cards.filter { $0.isInNone(of: existing) }
+    }
+
+    private var filter: some View {
+        CollectionFilter(
+            collections: collections, chosen: $chosen, unfiled: $unfiled,
+            unfiledCount: loose.count)
     }
 
     @ViewBuilder private var stacks: some View {
@@ -64,6 +78,8 @@ struct CardsView: View {
         collections = Cards.collections?.collections() ?? []
         // A card gone, here or on another device, is no longer picked.
         picked.formIntersection(Set(cards.map(\.id)))
+        // The last loose card filed: all cards again, not an empty list.
+        if unfiled, loose.isEmpty { unfiled = false }
     }
 
     #if os(iOS)
@@ -124,7 +140,7 @@ struct CardsView: View {
                 }
             } else if !collections.isEmpty {
                 ToolbarItem(placement: .primaryAction) {
-                    CollectionFilter(collections: collections, chosen: $chosen)
+                    filter
                 }
             }
         }
@@ -202,7 +218,7 @@ struct CardsView: View {
                 if !collections.isEmpty {
                     HStack {
                         Spacer()
-                        CollectionFilter(collections: collections, chosen: $chosen)
+                        filter
                             .controlSize(.small)
                     }
                     .padding(.horizontal, 12)
