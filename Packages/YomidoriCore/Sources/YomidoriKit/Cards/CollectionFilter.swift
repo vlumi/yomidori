@@ -6,13 +6,17 @@ import YomidoriCore
 struct CollectionFilter: View {
     let collections: [Collection]
     @Binding var chosen: Set<UUID>
+    /// Only the cards in no collection: the ones to tidy. Offered while there are any.
+    @Binding var unfiled: Bool
+    var unfiledCount = 0
 
     var body: some View {
         Menu {
             Button {
                 chosen = []
+                unfiled = false
             } label: {
-                if chosen.isEmpty {
+                if chosen.isEmpty, !unfiled {
                     Label {
                         Text("All cards", bundle: .module)
                     } icon: {
@@ -20,6 +24,22 @@ struct CollectionFilter: View {
                     }
                 } else {
                     Text("All cards", bundle: .module)
+                }
+            }
+            if unfiledCount > 0 || unfiled {
+                Button {
+                    chosen = []
+                    unfiled = true
+                } label: {
+                    if unfiled {
+                        Label {
+                            Text("In no collection (\(unfiledCount))", bundle: .module)
+                        } icon: {
+                            Image(systemName: "checkmark")
+                        }
+                    } else {
+                        Text("In no collection (\(unfiledCount))", bundle: .module)
+                    }
                 }
             }
             Section {
@@ -38,6 +58,7 @@ struct CollectionFilter: View {
                 Section {
                     ForEach(tags, id: \.self) { tag in
                         Button {
+                            unfiled = false
                             for collection in collections where collection.hasTag(tag) {
                                 chosen.insert(collection.id)
                             }
@@ -52,7 +73,9 @@ struct CollectionFilter: View {
         } label: {
             // What is chosen, as the label: all cards, the one collection, or how many.
             Label {
-                if chosen.isEmpty {
+                if unfiled {
+                    Text("In no collection", bundle: .module)
+                } else if chosen.isEmpty {
                     Text("All cards", bundle: .module)
                 } else if chosen.count == 1,
                     let one = collections.first(where: { chosen.contains($0.id) })
@@ -63,7 +86,7 @@ struct CollectionFilter: View {
                 }
             } icon: {
                 Image(
-                    systemName: chosen.isEmpty
+                    systemName: chosen.isEmpty && !unfiled
                         ? "line.3.horizontal.decrease.circle"
                         : "line.3.horizontal.decrease.circle.fill")
             }
@@ -72,6 +95,7 @@ struct CollectionFilter: View {
     }
 
     private func toggle(_ id: UUID) {
+        unfiled = false
         if chosen.contains(id) { chosen.remove(id) } else { chosen.insert(id) }
     }
 }

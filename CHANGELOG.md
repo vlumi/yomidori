@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Cards in no collection.** The card list's filter offers *In no collection*, with their number, while there are any: the ones to tidy, ready for *Select* and *Add to…*. It goes from the menu once every card has a collection.
 - **Room round the page.** The page scrolls half a screen's width beyond its own edge on every side, in every mode, so a word at the edge comes out from under the zoom and page buttons.
 - **Correct a sentence in the lesson.** Each sentence on a lesson's card has *Correct the sentence* under it, as on the card itself and in a review, so a misread line is put right where the word is first learned.
 - **Cards in bulk.** *Select* in the card list ticks several cards (*All* takes every one shown), and the bar under the list puts them in a collection or takes them out of one together: for the words kept before their book had a collection. On the Mac, pick several rows with ⌘ or ⇧ and the same two actions stand on the right.

@@ -279,4 +279,10 @@ extension Card {
     public func isIn(anyOf chosen: Set<UUID>) -> Bool {
         chosen.isEmpty || !chosen.isDisjoint(with: collectionIDs)
     }
+
+    /// Whether the card is in none of the collections there are: kept before its book had
+    /// one, or left behind by one since deleted elsewhere.
+    public func isInNone(of collections: Set<UUID>) -> Bool {
+        collections.isDisjoint(with: collectionIDs)
+    }
 }
