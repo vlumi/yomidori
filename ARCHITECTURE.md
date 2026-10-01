@@ -144,8 +144,11 @@ has what remains.
   remembers, most of the screen for the page while looking for a word, more
   drawer once it is found, its content scrolling and its buttons fixed. In every
   mode the frozen still pinches to zoom and drags to pan, a double tap bringing
-  it back; the tap on a line or a word is reported in the still's own
-  coordinates whatever the zoom, so the geometry seam knows nothing of it. What
+  it back, and pans half the view's width beyond its own edge on every side
+  (`Zoom.margin`), so a word at the page's edge comes out from under the
+  controls that stand over it there; the tap on a line or a word is reported
+  in the still's own coordinates whatever the zoom, so the geometry seam knows
+  nothing of it. What
   is done to the page stands in one column over the picture (`PageControls`),
   on the side of the hand that holds the phone, chosen in Settings: the
   spread's buttons on top and the zoom as a slider (`ZoomSlider`) nearest the

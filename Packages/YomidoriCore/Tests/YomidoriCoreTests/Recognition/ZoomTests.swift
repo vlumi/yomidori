@@ -20,13 +20,23 @@ final class ZoomTests: XCTestCase {
         let closer = far.stepped(by: 1.6, in: bounds)
         XCTAssertEqual(closer.scale, 6)
         XCTAssertEqual(closer.offset.width, 120, accuracy: 0.0001)
+        // All the way out: the scale stops at one, and the pan shrinks with it.
         let back = closer.stepped(by: 0.1, in: bounds)
-        XCTAssertEqual(back, Zoom())
+        XCTAssertEqual(back.scale, 1)
+        XCTAssertEqual(back.offset.width, 20, accuracy: 0.0001)
     }
 
-    func testClampingKeepsThePanWithinTheSlack() {
+    func testClampingKeepsThePanWithinTheSlackAndTheMarginBeyondIt() {
+        // The slack at 2x is half the view each way; the margin is half its width more, so a
+        // word at the page's edge comes out from under the controls.
+        XCTAssertEqual(Zoom.margin(in: bounds), 200)
         let zoom = Zoom(scale: 2, offset: CGSize(width: 900, height: -900)).clamped(in: bounds)
-        XCTAssertEqual(zoom.offset, CGSize(width: 200, height: -200))
+        XCTAssertEqual(zoom.offset, CGSize(width: 400, height: -400))
+        // The margin is of the width, whatever the height.
+        let tall = CGSize(width: 100, height: 300)
+        XCTAssertEqual(
+            Zoom(scale: 1, offset: CGSize(width: 900, height: 900)).clamped(in: tall).offset,
+            CGSize(width: 50, height: 50))
     }
 
     func testASliderPositionIsARatioAlongTheRange() {
@@ -45,8 +55,10 @@ final class ZoomTests: XCTestCase {
         let zoomed = Zoom(scale: 2, offset: CGSize(width: 10, height: 0))
         let panned = zoomed.panned(by: CGSize(width: 30, height: -250), in: bounds)
         XCTAssertEqual(panned.scale, 2)
-        XCTAssertEqual(panned.offset, CGSize(width: 40, height: -100))
-        // At 1x there is no slack to pan in.
-        XCTAssertEqual(Zoom().panned(by: CGSize(width: 5, height: 5), in: bounds), Zoom())
+        XCTAssertEqual(panned.offset, CGSize(width: 40, height: -150))
+        // At 1x the margin alone is the room.
+        XCTAssertEqual(
+            Zoom().panned(by: CGSize(width: 500, height: 5), in: bounds).offset,
+            CGSize(width: 50, height: 5))
     }
 }
