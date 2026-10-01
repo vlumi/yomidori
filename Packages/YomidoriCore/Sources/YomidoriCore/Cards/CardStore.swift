@@ -134,6 +134,36 @@ public final class FileCardStore: CardStore {
         }
     }
 
+    /// Many cards put in a collection in one write, as a batch chosen in the list; the
+    /// number it was new to.
+    @discardableResult
+    public func add(_ ids: Set<UUID>, to collection: UUID) throws -> Int {
+        try file.write { cards in
+            var changed = 0
+            for index in cards.indices
+            where ids.contains(cards[index].id) && !cards[index].collectionIDs.contains(collection)
+            {
+                cards[index].add(to: collection)
+                changed += 1
+            }
+            return changed
+        }
+    }
+
+    /// Many cards taken out of a collection in one write; the number that were in it.
+    @discardableResult
+    public func remove(_ ids: Set<UUID>, from collection: UUID) throws -> Int {
+        try file.write { cards in
+            var changed = 0
+            for index in cards.indices
+            where ids.contains(cards[index].id) && cards[index].collectionIDs.contains(collection) {
+                cards[index].remove(from: collection)
+                changed += 1
+            }
+            return changed
+        }
+    }
+
     /// Many changes in one write, as an import makes them.
     public func replaceAll(_ transform: ([Card]) -> [Card]) throws {
         try file.write { $0 = transform($0) }
