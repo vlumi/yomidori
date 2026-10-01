@@ -1,6 +1,7 @@
 import CoreGraphics
 
-/// The still's scale and pan in its view; the pan is kept inside the slack the scale leaves.
+/// The still's scale and pan in its view; the pan is kept inside the slack the scale leaves,
+/// and a margin beyond it.
 public struct Zoom: Equatable, Sendable {
     public var scale: CGFloat
     public var offset: CGSize
@@ -56,9 +57,16 @@ public struct Zoom: Equatable, Sendable {
         ).clamped(in: bounds)
     }
 
+    /// How far the page goes beyond its own edge, on every side: half the view's width, so a
+    /// word at the edge comes out from under the controls that stand over the page there.
+    public static func margin(in bounds: CGSize) -> CGFloat {
+        bounds.width / 2
+    }
+
     public func clamped(in bounds: CGSize) -> Zoom {
-        let slackX = bounds.width * (scale - 1) / 2
-        let slackY = bounds.height * (scale - 1) / 2
+        let margin = Zoom.margin(in: bounds)
+        let slackX = bounds.width * (scale - 1) / 2 + margin
+        let slackY = bounds.height * (scale - 1) / 2 + margin
         return Zoom(
             scale: scale,
             offset: CGSize(
