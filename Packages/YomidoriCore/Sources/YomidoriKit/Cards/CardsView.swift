@@ -3,11 +3,16 @@ import YomidoriCore
 import YomidoriDictionary
 
 /// The cards by stack, filtered by collection, with the way to the collections themselves.
+/// Several can be picked at once and put in a collection or taken out of one together: on
+/// the phone through *Select*, on the Mac by picking several rows.
 struct CardsView: View {
     @State private var cards: [Card] = []
     @State private var collections: [Collection] = []
     /// The collections shown; none chosen means all cards.
     @State private var chosen: Set<UUID> = []
+    /// The cards picked: on the Mac the selection, one card or several; on the phone the
+    /// ones ticked while selecting.
+    @State private var picked: Set<UUID> = []
 
     var body: some View {
         #if os(macOS)
@@ -19,124 +24,15 @@ struct CardsView: View {
         #endif
     }
 
-    #if os(macOS)
-    @State private var selected: UUID?
-    @State private var detailPath = NavigationPath()
-    @State private var forgetting: Card?
-
-    /// With room: the list on the left, the card on the right, the arrow keys moving
-    /// through the stacks, ⌫ forgetting a card after asking.
-    private var split: some View {
-        HSplitView {
-            List(selection: $selected) {
-                Section {
-                    Button {
-                        detailPath = NavigationPath()
-                        detailPath.append(Screen.collections)
-                    } label: {
-                        Label {
-                            Text("Collections", bundle: .module)
-                        } icon: {
-                            Image(systemName: "books.vertical")
-                        }
-                    }
-                    .buttonStyle(.plain)
-                }
-                let shown = cards.filter { $0.isIn(anyOf: chosen) }
-                stack(shown.filter(\.isInReview), header: Text("In review", bundle: .module))
-                stack(shown.filter(\.isWaiting), header: Text("Waiting", bundle: .module))
-                stack(shown.filter(\.shelved), header: Text("Shelved", bundle: .module))
-                if cards.isEmpty {
-                    Text("No cards yet. Select a word under a page and keep it.", bundle: .module)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            .onDeleteCommand {
-                forgetting = cards.first { $0.id == selected }
-            }
-            .confirmationDialog(
-                Text("Forget this card?", bundle: .module), isPresented: forgettingShown,
-                presenting: forgetting
-            ) { card in
-                Button(role: .destructive) {
-                    try? Cards.store?.remove(card)
-                    if selected == card.id { selected = nil }
-                } label: {
-                    Text("Forget \(card.headword)", bundle: .module)
-                }
-            } message: { _ in
-                Text("Its sentences and its answers go with it.", bundle: .module)
-            }
-            .safeAreaInset(edge: .top) {
-                if !collections.isEmpty {
-                    HStack {
-                        Spacer()
-                        CollectionFilter(collections: collections, chosen: $chosen)
-                            .controlSize(.small)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(.bar)
-                }
-            }
-            .frame(minWidth: 280, idealWidth: 340, maxWidth: 480, maxHeight: .infinity)
-            NavigationStack(path: $detailPath) {
-                Group {
-                    if let card = cards.first(where: { $0.id == selected }) {
-                        CardView(card: card).id(card.id)
-                    } else {
-                        Text("Select a card.", bundle: .module)
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
-                }
-                .appDestinations()
-            }
-            .frame(minWidth: 400, maxWidth: .infinity, maxHeight: .infinity)
-        }
-        .navigationTitle(Text("Cards", bundle: .module))
-        // A card chosen: the stack shows it, over whatever was pushed.
-        .onChange(of: selected) { _, _ in detailPath = NavigationPath() }
-        .onAppear(perform: reload)
-        .onReceive(Cards.changes(of: [.card, .collection])) { _ in reload() }
+    /// The cards the filter lets through, in the order the list shows them.
+    private var shown: [Card] {
+        cards.filter { $0.isIn(anyOf: chosen) }
     }
 
-    private var forgettingShown: Binding<Bool> {
-        Binding(get: { forgetting != nil }, set: { if !$0 { forgetting = nil } })
-    }
-    #endif
-
-    private var list: some View {
-        List {
-            Section {
-                NavigationLink(value: Screen.collections) {
-                    Label {
-                        Text("Collections", bundle: .module)
-                    } icon: {
-                        Image(systemName: "books.vertical")
-                    }
-                }
-            }
-            .id(TabTop.id)
-            let shown = cards.filter { $0.isIn(anyOf: chosen) }
-            stack(shown.filter(\.isInReview), header: Text("In review", bundle: .module))
-            stack(shown.filter(\.isWaiting), header: Text("Waiting", bundle: .module))
-            stack(shown.filter(\.shelved), header: Text("Shelved", bundle: .module))
-            if cards.isEmpty {
-                Text("No cards yet. Tap a word under a page and keep it.", bundle: .module)
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .navigationTitle(Text("Cards", bundle: .module))
-        .toolbar {
-            if !collections.isEmpty {
-                ToolbarItem(placement: .primaryAction) {
-                    CollectionFilter(collections: collections, chosen: $chosen)
-                }
-            }
-        }
-        .onAppear(perform: reload)
-        .onReceive(Cards.changes(of: [.card, .collection])) { _ in reload() }
+    @ViewBuilder private var stacks: some View {
+        stack(shown.filter(\.isInReview), header: Text("In review", bundle: .module))
+        stack(shown.filter(\.isWaiting), header: Text("Waiting", bundle: .module))
+        stack(shown.filter(\.shelved), header: Text("Shelved", bundle: .module))
     }
 
     @ViewBuilder private func stack(_ cards: [Card], header: Text) -> some View {
@@ -146,7 +42,9 @@ struct CardsView: View {
                     #if os(macOS)
                     CardRow(card: card).tag(card.id)
                     #else
+                    // While selecting, a row is ticked, not swiped away.
                     NavigationLink(value: card) { CardRow(card: card) }
+                        .deleteDisabled(selecting)
                     #endif
                 }
                 .onDelete { offsets in
@@ -164,7 +62,181 @@ struct CardsView: View {
     private func reload() {
         cards = (Cards.store?.cards() ?? []).sorted { $0.created > $1.created }
         collections = Cards.collections?.collections() ?? []
+        // A card gone, here or on another device, is no longer picked.
+        picked.formIntersection(Set(cards.map(\.id)))
     }
+
+    #if os(iOS)
+    @State private var editMode: EditMode = .inactive
+
+    private var selecting: Bool { editMode.isEditing }
+
+    private var list: some View {
+        List(selection: $picked) {
+            if !selecting {
+                Section {
+                    NavigationLink(value: Screen.collections) {
+                        Label {
+                            Text("Collections", bundle: .module)
+                        } icon: {
+                            Image(systemName: "books.vertical")
+                        }
+                    }
+                }
+                .id(TabTop.id)
+            }
+            stacks
+            if cards.isEmpty {
+                Text("No cards yet. Tap a word under a page and keep it.", bundle: .module)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .environment(\.editMode, $editMode)
+        .navigationTitle(Text("Cards", bundle: .module))
+        .toolbar {
+            if !cards.isEmpty {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        withAnimation {
+                            editMode = selecting ? .inactive : .active
+                            picked = []
+                        }
+                    } label: {
+                        if selecting {
+                            Text("Done", bundle: .module)
+                        } else {
+                            Text("Select", bundle: .module)
+                        }
+                    }
+                }
+            }
+            if selecting {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        picked = picked.count == shown.count ? [] : Set(shown.map(\.id))
+                    } label: {
+                        if picked.count == shown.count, !shown.isEmpty {
+                            Text("None", bundle: .module)
+                        } else {
+                            Text("All", bundle: .module)
+                        }
+                    }
+                }
+            } else if !collections.isEmpty {
+                ToolbarItem(placement: .primaryAction) {
+                    CollectionFilter(collections: collections, chosen: $chosen)
+                }
+            }
+        }
+        // The batch, over the tab bar, while selecting.
+        .safeAreaInset(edge: .bottom) {
+            if selecting {
+                CardsBatch(picked: picked, cards: cards, collections: collections)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .frame(maxWidth: .infinity)
+                    .background(.bar)
+            }
+        }
+        .onAppear {
+            reload()
+            if DemoMode.selecting, !selecting {
+                editMode = .active
+                // Picked once the list is selecting, or entering the mode clears them.
+                let few = Set(shown.filter(\.isInReview).prefix(3).map(\.id))
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { picked = few }
+            }
+        }
+        .onReceive(Cards.changes(of: [.card, .collection])) { _ in reload() }
+    }
+    #endif
+
+    #if os(macOS)
+    @State private var detailPath = NavigationPath()
+    @State private var forgetting = false
+
+    /// With room: the list on the left, the card on the right, the arrow keys moving
+    /// through the stacks, ⌫ forgetting what is picked after asking. Several picked, with
+    /// ⌘ or ⇧, and the right side is what is done to them together.
+    private var split: some View {
+        HSplitView {
+            List(selection: $picked) {
+                Section {
+                    Button {
+                        detailPath = NavigationPath()
+                        detailPath.append(Screen.collections)
+                    } label: {
+                        Label {
+                            Text("Collections", bundle: .module)
+                        } icon: {
+                            Image(systemName: "books.vertical")
+                        }
+                    }
+                    .buttonStyle(.plain)
+                }
+                stacks
+                if cards.isEmpty {
+                    Text("No cards yet. Select a word under a page and keep it.", bundle: .module)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .onDeleteCommand { forgetting = !picked.isEmpty }
+            .confirmationDialog(
+                picked.count == 1
+                    ? Text("Forget this card?", bundle: .module)
+                    : Text("Forget \(picked.count) cards?", bundle: .module),
+                isPresented: $forgetting
+            ) {
+                Button(role: .destructive) {
+                    for card in cards where picked.contains(card.id) {
+                        try? Cards.store?.remove(card)
+                    }
+                    picked = []
+                } label: {
+                    Text("Forget", bundle: .module)
+                }
+            } message: {
+                Text("Their sentences and their answers go with them.", bundle: .module)
+            }
+            .safeAreaInset(edge: .top) {
+                if !collections.isEmpty {
+                    HStack {
+                        Spacer()
+                        CollectionFilter(collections: collections, chosen: $chosen)
+                            .controlSize(.small)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(.bar)
+                }
+            }
+            .frame(minWidth: 280, idealWidth: 340, maxWidth: 480, maxHeight: .infinity)
+            NavigationStack(path: $detailPath) {
+                detail.appDestinations()
+            }
+            .frame(minWidth: 400, maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .navigationTitle(Text("Cards", bundle: .module))
+        // A card chosen: the stack shows it, over whatever was pushed.
+        .onChange(of: picked) { _, _ in detailPath = NavigationPath() }
+        .onAppear(perform: reload)
+        .onReceive(Cards.changes(of: [.card, .collection])) { _ in reload() }
+    }
+
+    @ViewBuilder private var detail: some View {
+        if picked.count == 1, let card = cards.first(where: { picked.contains($0.id) }) {
+            CardView(card: card).id(card.id)
+        } else if picked.count > 1 {
+            CardsBatch(picked: picked, cards: cards, collections: collections)
+                .frame(maxWidth: 360)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            Text("Select a card.", bundle: .module)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
+    #endif
 }
 
 struct CardRow: View {

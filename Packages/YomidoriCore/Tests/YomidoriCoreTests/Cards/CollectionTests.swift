@@ -125,4 +125,36 @@ final class CollectionTests: XCTestCase {
         XCTAssertEqual(reports[1].0.deleted, [kafka.id.uuidString])
         XCTAssertEqual(Set(reports[1].0.saved), [sheep.id.uuidString, dance.id.uuidString])
     }
+
+    func testManyCardsJoinAndLeaveACollectionInOneWrite() throws {
+        let cards = FileCardStore(url: cardsURL)
+        let book = UUID()
+        let other = UUID()
+        let sighting = Sighting(sentence: "", surface: "", offset: 0, source: nil, date: Date())
+        let bark = try cards.keep(
+            sighting, headword: "樹皮", reading: "じゅひ", entryID: nil, collection: nil)
+        let room = try cards.keep(
+            sighting, headword: "部屋", reading: "へや", entryID: nil, collection: book)
+        let cat = try cards.keep(
+            sighting, headword: "猫", reading: "ねこ", entryID: nil, collection: other)
+        var reports: [RecordChange] = []
+        cards.file.onChange = { change, _ in reports.append(change) }
+
+        // 部屋 is in the book already: two are new to it, and one write says so.
+        XCTAssertEqual(try cards.add([bark.id, room.id, cat.id], to: book), 2)
+        XCTAssertEqual(reports.count, 1)
+        XCTAssertEqual(Set(reports[0].saved), [bark.id.uuidString, cat.id.uuidString])
+        XCTAssertEqual(cards.card(id: cat.id)?.collectionIDs, [other, book])
+        // Again changes nothing, and writes nothing.
+        XCTAssertEqual(try cards.add([bark.id, room.id], to: book), 0)
+        XCTAssertEqual(reports.count, 1)
+
+        // Out of the book: only those chosen, only where they were in it.
+        XCTAssertEqual(try cards.remove([bark.id, UUID()], from: book), 1)
+        XCTAssertEqual(reports.count, 2)
+        XCTAssertEqual(cards.card(id: bark.id)?.collectionIDs, [])
+        XCTAssertEqual(cards.card(id: room.id)?.collectionIDs, [book])
+        XCTAssertEqual(try cards.remove([bark.id], from: book), 0)
+        XCTAssertEqual(FileCardStore(url: cardsURL).card(id: cat.id)?.collectionIDs, [other, book])
+    }
 }

@@ -111,6 +111,16 @@
         }
       }
     },
+    "%lld selected" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件を選択中"
+          }
+        }
+      }
+    },
     "%lld started" : {
       "localizations" : {
         "ja" : {
@@ -267,6 +277,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "この文を加える"
+          }
+        }
+      }
+    },
+    "Add to a collection" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コレクションに追加"
+          }
+        }
+      }
+    },
+    "Add to…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加…"
           }
         }
       }
@@ -861,12 +891,32 @@
         }
       }
     },
+    "Forget" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "忘れる"
+          }
+        }
+      }
+    },
     "Forget %@" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ を忘れる"
+          }
+        }
+      }
+    },
+    "Forget %lld cards?" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 枚のカードを忘れますか？"
           }
         }
       }
@@ -2544,6 +2594,26 @@
         }
       }
     },
+    "Take out of a collection" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コレクションから外す"
+          }
+        }
+      }
+    },
+    "Take out of…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外す…"
+          }
+        }
+      }
+    },
     "Take the next page, or start over." : {
       "localizations" : {
         "ja" : {
@@ -2700,6 +2770,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ズームとページのボタンを、写真のこちら側に一列に並べます。ズームは親指に一番近い所に。電話を持つ手の側を選んでください。"
+          }
+        }
+      }
+    },
+    "Their sentences and their answers go with them." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文と回答も一緒になくなります。"
           }
         }
       }

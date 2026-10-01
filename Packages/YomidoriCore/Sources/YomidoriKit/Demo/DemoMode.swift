@@ -42,6 +42,12 @@ public enum DemoMode {
         isRequested && CommandLine.arguments.contains("-yomidori-spread")
     }
 
+    /// `-yomidori-select` opens the card list selecting, a few cards picked, for a look at
+    /// the batch bar.
+    static var selecting: Bool {
+        isRequested && CommandLine.arguments.contains("-yomidori-select")
+    }
+
     /// The settings suite, emptied at launch; nil outside the demo.
     public static let defaults: UserDefaults? = {
         guard isRequested, let defaults = UserDefaults(suiteName: suite) else { return nil }
