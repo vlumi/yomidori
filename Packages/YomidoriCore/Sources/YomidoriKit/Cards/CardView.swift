@@ -52,6 +52,7 @@ struct CardView: View {
         .navigationTitle(Text(verbatim: card.headword))
         .sheet(item: $editing) { sighting in
             SentenceEditor(sighting: sighting, save: replace)
+                .sheetSize(width: 520, height: 360)
         }
         .sheet(item: $adding) { sighting in
             SentenceEditor(sighting: sighting) { added in
