@@ -111,7 +111,15 @@ public struct AppRoot: View {
         }
         .onAppear {
             if DemoMode.isRequested { DemoData.seed(capture) }
-            if let shown = DemoMode.tab { tab = shown }
+            if let shown = DemoMode.tab {
+                tab = shown
+                // Once more after the scene's own restoring, which on the Mac comes later
+                // and would put back the tab the last run was left on.
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(300))
+                    tab = shown
+                }
+            }
             #if os(macOS)
             if tab == .home { tab = .read }
             #endif

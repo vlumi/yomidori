@@ -9,6 +9,7 @@
 #   SCREEN=review|lesson|progress|settings|about|collections   pushed on that tab
 #   SEARCH=<text>                      the search field filled
 #   SPREAD=1                           Read opened on two pages
+#   SELECT=1                           the card list opened selecting, a few cards picked
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -40,5 +41,6 @@ app="$(find .build-xcode/Build/Products/Debug-iphonesimulator \
 xcrun simctl terminate "$udid" "$BUNDLE" >/dev/null 2>&1 || true
 xcrun simctl install "$udid" "$app"
 xcrun simctl launch "$udid" "$BUNDLE" -yomidori-demo ${TAB:+-yomidori-tab "$TAB"} ${SCREEN:+-yomidori-screen "$SCREEN"} \
-  ${SEARCH:+-yomidori-search "$SEARCH"} ${SPREAD:+-yomidori-spread} >/dev/null
+  ${SEARCH:+-yomidori-search "$SEARCH"} ${SPREAD:+-yomidori-spread} \
+  ${SELECT:+-yomidori-select} >/dev/null
 echo "Demo launched on $udid — seeded cards, collections and a page; nothing persists."

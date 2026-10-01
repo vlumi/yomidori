@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Cards in bulk.** *Select* in the card list ticks several cards (*All* takes every one shown), and the bar under the list puts them in a collection or takes them out of one together: for the words kept before their book had a collection. On the Mac, pick several rows with ⌘ or ⇧ and the same two actions stand on the right.
+
 ### build 26 — 2026-09-30
 
 - **The answer field takes the keys on the Mac** as each reading or meaning question comes, so typing starts at once.

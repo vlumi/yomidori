@@ -387,7 +387,10 @@ has what remains.
   wrong. Each page is still its own photo, read and selected in on its own, and
   a selection carries the page it is on. **`CardsView`**
   lists the cards by stack (in review, waiting, shelved), filtered by any number
-  of collections or by a tag, each row with its rank mark; **`CardView`** shows
+  of collections or by a tag, each row with its rank mark; several are picked at
+  once, through *Select* on the phone or by picking several rows on the Mac, and
+  put in a collection or taken out of one together (`CardsBatch`; one write in
+  the store, so one change for sync to send); **`CardView`** shows
   one: the word with its pitch, the dictionary's sections around it
   (`WordSections`), its collections ticked, the moves between the stacks, the
   meanings that count in a review (the dictionary's glosses until the reader
