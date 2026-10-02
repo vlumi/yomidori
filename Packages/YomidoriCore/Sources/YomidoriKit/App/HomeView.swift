@@ -17,13 +17,16 @@ struct HomeView: View {
     private var list: some View {
         List {
             Section {
-                VStack(spacing: 6) {
+                // The bird, the name, and the name read as the app reads any word: its kana
+                // with its pitch. 読み鳥 drops after the second mora, as 鳴き鳥 and 飼い鳥 do
+                // and most words of two morae and 鳥; 読み取り, which it puns on, is flat.
+                VStack(spacing: 10) {
+                    AppIconImage(side: wordmark * 2)
                     Text(japanese: "ヨミドリ")
                         .font(.system(size: wordmark, weight: .semibold, design: .rounded))
                         .foregroundStyle(Palette.nightGreen)
-                    Text(japanese: Kana.hiragana("ヨミドリ"))
-                        .font(.callout)
-                        .foregroundStyle(Palette.silver)
+                    PitchReading(reading: "よみどり", accent: PitchAccent(downstep: 2))
+                        .accessibilityLabel(Text(japanese: "よみどり"))
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
