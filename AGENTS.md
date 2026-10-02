@@ -287,8 +287,9 @@ where a screenshot or a look is wanted, each with its variable for `make`:
 `-yomidori-tab` (`TAB=home|read|study|cards|search`), `-yomidori-screen`
 pushed on that tab (`SCREEN=review|lesson|progress|settings|about|collections`),
 `-yomidori-search` filling the search field (`SEARCH=見当`),
-`-yomidori-spread` opening Read on two pages (`SPREAD=1`), and
-`-yomidori-select` opening the card list selecting (`SELECT=1`). `YomidoriKit/Demo`: `DemoMode`
+`-yomidori-spread` opening Read on two pages (`SPREAD=1`),
+`-yomidori-select` opening the card list selecting (`SELECT=1`), and
+`-yomidori-pick` opening Read with that text of the page selected (`PICK=見当`). `YomidoriKit/Demo`: `DemoMode`
 routes every store (cards, collections, lookups, covers) to a temp folder wiped
 and reseeded at each launch and the settings to their own defaults suite;
 `DemoData` seeds a hundred cards from four public-domain openings (漱石's

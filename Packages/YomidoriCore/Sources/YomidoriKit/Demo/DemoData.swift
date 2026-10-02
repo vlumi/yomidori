@@ -115,6 +115,12 @@ enum DemoData {
         capture.still = still
         capture.transcript = DemoText.page
         capture.recognizedStillID = still.id
+        // A word picked beforehand: the reading takes the selection up when it is done.
+        if let pick = DemoMode.pick, let found = DemoText.page.range(of: pick) {
+            let start = DemoText.page.distance(from: DemoText.page.startIndex, to: found.lowerBound)
+            capture.selectedRange = start..<(start + pick.count)
+            DemoMode.defaults?.set(DrawerDetents.all[1], forKey: SettingsKey.readoutFraction)
+        }
     }
 }
 

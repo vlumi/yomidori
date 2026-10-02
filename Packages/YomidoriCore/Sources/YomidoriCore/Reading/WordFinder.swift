@@ -31,9 +31,41 @@ public enum WordFinder {
         public let isShown: Bool
     }
 
-    public static func segments(in tokens: [Token], dictionary: (any WordDictionary)?)
-        -> [Segment]
+    /// The words a joined word is made of, each one to look up or keep by itself: トロイ and
+    /// 木馬 in トロイの木馬, 蛍光 and 灯 in 蛍光灯. None for a word of one token, or where the
+    /// parts are no words of their own.
+    public static func parts(of word: FoundWord, dictionary: (any WordDictionary)?)
+        -> [FoundWord]
     {
+        guard word.tokens.count > 1, let dictionary else { return [] }
+        let verbal = word.entries.first?.isConjugable == true
+        return segments(in: word.tokens, dictionary: dictionary, span: word.tokens.count - 1)
+            .filter(\.isShown).map(\.word)
+            // A piece in hiragana alone is an ending or a particle of the whole (つか in
+            // 見当がつかぬ), and what the dictionary spells that way is some other word.
+            .filter { !$0.surface.unicodeScalars.allSatisfy(isHiragana) }
+            .map { part in
+                // In a verb joined from stems (走り + 出し), each stem is its verb, not the
+                // noun spelled the same.
+                guard verbal, Deinflector.isStem(part.surface) else { return part }
+                let verbs = dictionary.entries(
+                    conjugableAmong: Deinflector.candidates(for: part.surface))
+                return verbs.isEmpty
+                    ? part
+                    : FoundWord(
+                        tokens: part.tokens, entries: verbs.preferring(reading: part.reading))
+            }
+    }
+
+    private static func isHiragana(_ scalar: Unicode.Scalar) -> Bool {
+        (0x3040...0x309F).contains(scalar.value)
+    }
+
+    /// `span` is the most tokens one word may join; fewer than a whole word's own to cut
+    /// it into its parts.
+    public static func segments(
+        in tokens: [Token], dictionary: (any WordDictionary)?, span: Int = longestSpan
+    ) -> [Segment] {
         var found: [Segment] = []
         var index = 0
         // After a stem and its ending, the endings that follow are the same inflection
@@ -54,7 +86,7 @@ public enum WordFinder {
                 index += 1
                 continue
             }
-            let word = longestWord(from: index, in: tokens, dictionary: dictionary)
+            let word = longestWord(from: index, in: tokens, dictionary: dictionary, span: span)
             found.append(Segment(word: word, isShown: isShown(word)))
             index += word.tokens.count
             inflecting = isInflected(word.tokens, in: tokens, endingAt: index)
@@ -63,10 +95,10 @@ public enum WordFinder {
     }
 
     private static func longestWord(
-        from start: Int, in tokens: [Token], dictionary: (any WordDictionary)?
+        from start: Int, in tokens: [Token], dictionary: (any WordDictionary)?, span: Int
     ) -> FoundWord {
         guard let dictionary else { return FoundWord(tokens: [tokens[start]], entries: []) }
-        let end = min(tokens.count, start + longestSpan)
+        let end = min(tokens.count, start + max(span, 1))
         for stop in stride(from: end, to: start + 1, by: -1) {
             let span = Array(tokens[start..<stop])
             guard span.allSatisfy(\.isWord) else { continue }

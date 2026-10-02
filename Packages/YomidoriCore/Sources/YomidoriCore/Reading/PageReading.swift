@@ -14,6 +14,9 @@ public struct PageReading: Sendable {
         public let word: FoundWord
         /// A word to look up; else punctuation, a particle or an ending, shown but not read.
         public let isWord: Bool
+        /// The words a joined word is made of (木馬 in トロイの木馬), each to keep by itself;
+        /// empty for a word of one piece.
+        public let parts: [FoundWord]
 
         public var surface: String { word.surface }
     }
@@ -45,7 +48,9 @@ public struct PageReading: Sendable {
                 chunks.append(
                     Chunk(
                         id: chunks.count, line: line, range: start..<end, word: segment.word,
-                        isWord: segment.isShown))
+                        isWord: segment.isShown,
+                        parts: segment.isShown
+                            ? WordFinder.parts(of: segment.word, dictionary: dictionary) : []))
             }
         }
         self.chunks = chunks

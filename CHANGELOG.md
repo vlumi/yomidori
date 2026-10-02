@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The parts of a joined word.** Where the dictionary knows several words together as one, トロイの木馬 or 蛍光灯, the words it is made of stand under it in the drawer, each with its reading and its own Keep: 木馬 by itself, when that was the word you wanted.
 - **No red circles while selecting.** Choosing *Select* in the card list no longer flashes the delete circles beside the tick boxes; a card is still forgotten by a swipe.
 
 ### build 27 — 2026-10-01

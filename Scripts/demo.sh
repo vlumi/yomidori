@@ -10,6 +10,7 @@
 #   SEARCH=<text>                      the search field filled
 #   SPREAD=1                           Read opened on two pages
 #   SELECT=1                           the card list opened selecting, a few cards picked
+#   PICK=<text>                        Read opened with that text of the page selected
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -42,5 +43,5 @@ xcrun simctl terminate "$udid" "$BUNDLE" >/dev/null 2>&1 || true
 xcrun simctl install "$udid" "$app"
 xcrun simctl launch "$udid" "$BUNDLE" -yomidori-demo ${TAB:+-yomidori-tab "$TAB"} ${SCREEN:+-yomidori-screen "$SCREEN"} \
   ${SEARCH:+-yomidori-search "$SEARCH"} ${SPREAD:+-yomidori-spread} \
-  ${SELECT:+-yomidori-select} >/dev/null
+  ${SELECT:+-yomidori-select} ${PICK:+-yomidori-pick "$PICK"} >/dev/null
 echo "Demo launched on $udid — seeded cards, collections and a page; nothing persists."

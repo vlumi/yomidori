@@ -90,6 +90,35 @@ struct TranscriptReadout: View {
         ForEach(words) { chunk in
             if chunk.id != words.first?.id { Divider() }
             wordReadout(chunk, in: reading)
+            partReadouts(chunk, in: reading)
+        }
+    }
+
+    /// Under a word joined from several, the words it is made of, each to read and to keep
+    /// by itself: 木馬 under トロイの木馬, where the reader wanted the one word.
+    @ViewBuilder private func partReadouts(_ chunk: PageReading.Chunk, in reading: PageReading)
+        -> some View
+    {
+        ForEach(Array(chunk.parts.enumerated()), id: \.offset) { _, part in
+            WordReadout(
+                word: part,
+                accent: part.entries.first.flatMap { JMdict.bundled?.pitchAccent(of: $0) },
+                estimate: part.entries.first.flatMap { JMdict.bundled?.estimatedPitch(of: $0) }
+                    ?? [],
+                kept: keptWords.contains(Self.wordKey(of: part)),
+                added: addedHere.contains(Self.wordKey(of: part)), canKeep: Cards.store != nil,
+                fix: nil,
+                open: { openedCard = Self.card(of: part) }
+            ) {
+                keep(part, onLine: chunk.line, in: reading)
+            }
+            .padding(.leading, 18)
+            // A bar down the side says these belong to the word above.
+            .overlay(alignment: .leading) {
+                RoundedRectangle(cornerRadius: 1)
+                    .fill(Palette.nightGreen.opacity(0.45))
+                    .frame(width: 2)
+            }
         }
     }
 
