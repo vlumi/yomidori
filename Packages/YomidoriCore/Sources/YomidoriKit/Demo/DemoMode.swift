@@ -43,7 +43,8 @@ public enum DemoMode {
     }
 
     /// `-yomidori-pick 見当` opens the Read tab with that text of the page selected and the
-    /// drawer half up, for a look at a word's readout.
+    /// drawer half up, for a look at a word's readout; a text that is not on the demo's page
+    /// becomes the page, all of it selected, so any phrase can be tried.
     static var pick: String? {
         guard isRequested, let index = CommandLine.arguments.firstIndex(of: "-yomidori-pick"),
             index + 1 < CommandLine.arguments.count

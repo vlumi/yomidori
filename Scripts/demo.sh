@@ -10,7 +10,8 @@
 #   SEARCH=<text>                      the search field filled
 #   SPREAD=1                           Read opened on two pages
 #   SELECT=1                           the card list opened selecting, a few cards picked
-#   PICK=<text>                        Read opened with that text of the page selected
+#   PICK=<text>                        Read opened with that text selected: on the demo's page
+#                                      where it stands there, else as a page of its own
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
