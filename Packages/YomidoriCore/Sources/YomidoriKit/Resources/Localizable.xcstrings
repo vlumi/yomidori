@@ -71,6 +71,16 @@
         }
       }
     },
+    "%lld more after that" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その後にあと %lld 問"
+          }
+        }
+      }
+    },
     "%lld new words, waiting for a lesson; %lld you already had." : {
       "localizations" : {
         "ja" : {
@@ -567,6 +577,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "コレクション"
+          }
+        }
+      }
+    },
+    "Coming up" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "これからの復習"
           }
         }
       }
@@ -1934,6 +1954,16 @@
         }
       }
     },
+    "Questions due each day; today's with what is overdue." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日ごとの問題数です。今日の分には期限を過ぎたものも入ります。"
+          }
+        }
+      }
+    },
     "Random" : {
       "localizations" : {
         "ja" : {
@@ -2820,6 +2850,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "分かち書き"
+          }
+        }
+      }
+    },
+    "Tomorrow" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "明日"
           }
         }
       }

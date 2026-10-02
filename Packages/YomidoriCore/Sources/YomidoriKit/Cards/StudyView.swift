@@ -5,6 +5,7 @@ import YomidoriCore
 struct StudyView: View {
     @State private var cards: [Card] = []
     @State private var dueCount = 0
+    @State private var upcoming = Upcoming()
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -41,6 +42,15 @@ struct StudyView: View {
                 .disabled(waiting == 0)
             }
             .id(TabTop.id)
+            if !upcoming.isEmpty {
+                Section {
+                    UpcomingReviews(upcoming: upcoming)
+                } header: {
+                    Text("Coming up", bundle: .module)
+                } footer: {
+                    Text("Questions due each day; today's with what is overdue.", bundle: .module)
+                }
+            }
             if !cards.isEmpty {
                 Section {
                     RankChart(cards: cards)
@@ -65,5 +75,7 @@ struct StudyView: View {
         Cards.snapshotRanks()
         cards = Cards.store?.cards() ?? []
         dueCount = Cards.dueItems(at: Date()).count
+        upcoming = Upcoming.of(
+            cards, from: Date(), days: 7, asksPitch: { !Cards.accents(of: $0).isEmpty })
     }
 }

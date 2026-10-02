@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Reviews coming up.** The Study tab shows the week ahead in numbers: the questions that come due today (with whatever is overdue), tomorrow and each of the five days after, a bar beside each so a wall is seen coming, and how many lie beyond the week.
+
 ### build 28 — 2026-10-02
 
 - **The bird at home.** The Home screen shows the sparrow over the name, and under it the name read as the app reads any word: よみどり with its pitch drawn, dropping after the second mora.
