@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 28 — 2026-10-02
+
 - **The bird at home.** The Home screen shows the sparrow over the name, and under it the name read as the app reads any word: よみどり with its pitch drawn, dropping after the second mora.
 - **The parts of a joined word.** Where the dictionary knows several words together as one, トロイの木馬 or 蛍光灯, the words it is made of stand under it in the drawer, each with its reading and its own Keep: 木馬 by itself, when that was the word you wanted.
 - **No red circles while selecting.** Choosing *Select* in the card list no longer flashes the delete circles beside the tick boxes; a card is still forgotten by a swipe.
