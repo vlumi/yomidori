@@ -110,17 +110,25 @@ enum DemoData {
             capture.recognizedStillID = still.id
             return
         }
-        guard let image = DemoRenderer.verticalPage(DemoText.page) else { return }
-        let still = Still(image: image)
-        capture.still = still
-        capture.transcript = DemoText.page
-        capture.recognizedStillID = still.id
-        // A word picked beforehand: the reading takes the selection up when it is done.
-        if let pick = DemoMode.pick, let found = DemoText.page.range(of: pick) {
-            let start = DemoText.page.distance(from: DemoText.page.startIndex, to: found.lowerBound)
-            capture.selectedRange = start..<(start + pick.count)
+        // A text picked beforehand: on the demo's page where it stands there, else a page of
+        // its own, so any phrase can be looked at. The reading takes the selection up when it
+        // is done.
+        var text = DemoText.page
+        if let pick = DemoMode.pick, !pick.isEmpty {
+            if let found = text.range(of: pick) {
+                let start = text.distance(from: text.startIndex, to: found.lowerBound)
+                capture.selectedRange = start..<(start + pick.count)
+            } else {
+                text = pick
+                capture.selectedRange = 0..<pick.count
+            }
             DemoMode.defaults?.set(DrawerDetents.all[1], forKey: SettingsKey.readoutFraction)
         }
+        guard let image = DemoRenderer.verticalPage(text) else { return }
+        let still = Still(image: image)
+        capture.still = still
+        capture.transcript = text
+        capture.recognizedStillID = still.id
     }
 }
 
