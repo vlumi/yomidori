@@ -42,6 +42,15 @@ public enum DemoMode {
         isRequested && CommandLine.arguments.contains("-yomidori-spread")
     }
 
+    /// `-yomidori-pick 見当` opens the Read tab with that text of the page selected and the
+    /// drawer half up, for a look at a word's readout.
+    static var pick: String? {
+        guard isRequested, let index = CommandLine.arguments.firstIndex(of: "-yomidori-pick"),
+            index + 1 < CommandLine.arguments.count
+        else { return nil }
+        return CommandLine.arguments[index + 1]
+    }
+
     /// `-yomidori-select` opens the card list selecting, a few cards picked, for a look at
     /// the batch bar.
     static var selecting: Bool {

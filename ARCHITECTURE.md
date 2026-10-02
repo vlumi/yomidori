@@ -261,7 +261,12 @@ has what remains.
   where known (`WordTitle` puts the reading on a second line when one is
   short), and Keep; a tap anywhere along the row opens the meaning, the system
   dictionary button and *Full entry*, which pushes the entry screen over the
-  page. A word with a card carries a mark that opens the card over the page;
+  page. Under a word joined from several stand the words it is made of
+  (`WordFinder.parts`, kept on the chunk: トロイ and 木馬 under トロイの木馬), each
+  read and kept by itself, since the reader may have wanted the one; a piece in
+  hiragana alone is left out as the whole's ending, and a stem in a verb joined
+  from stems (走り + 出し) reads as its verb. A word with a card carries a mark
+  that opens the card over the page;
   where the card lacks this page's sentence, Keep reads *Add this sentence*.
   "Not in the dictionary" is what a misread word looks like, and it is fixed
   on the spot (`FixButton`, `CharacterFixView`): one character, from the

@@ -226,4 +226,75 @@ final class WordFinderTests: XCTestCase {
             dictionary: dictionary)
         XCTAssertEqual(hurry.first?.entries.first?.headword, "急ぎ足")
     }
+
+    /// A word joined from several is also its parts, each a word of its own.
+    func testAJoinedWordGivesItsPartsAsWordsToo() {
+        let dictionary = Stub(
+            headwords: ["トロイの木馬", "トロイ", "木馬", "蛍光灯", "蛍光", "灯"], functionWords: ["の"])
+        let horse = WordFinder.words(
+            in: tokens(
+                "トロイの木馬",
+                [
+                    Cut(surface: "トロイ", reading: "とろい"), Cut(surface: "の", reading: "の"),
+                    Cut(surface: "木馬", reading: "もくば"),
+                ]),
+            dictionary: dictionary)
+        XCTAssertEqual(horse.map(\.surface), ["トロイの木馬"])
+        let parts = WordFinder.parts(of: horse[0], dictionary: dictionary)
+        XCTAssertEqual(parts.map(\.surface), ["トロイ", "木馬"])
+        XCTAssertEqual(parts.map(\.reading), ["とろい", "もくば"])
+        // The parts keep their place in the line, for the sentence a card is kept with.
+        XCTAssertEqual(parts[1].tokens[0].range, horse[0].tokens[2].range)
+
+        let lamp = WordFinder.words(
+            in: tokens(
+                "蛍光灯", [Cut(surface: "蛍光", reading: "けいこう"), Cut(surface: "灯", reading: "とう")]),
+            dictionary: dictionary)
+        XCTAssertEqual(
+            WordFinder.parts(of: lamp[0], dictionary: dictionary).map(\.surface), ["蛍光", "灯"])
+
+        // One token is one piece; and without a dictionary there is nothing to say.
+        XCTAssertEqual(WordFinder.parts(of: parts[1], dictionary: dictionary), [])
+        XCTAssertEqual(WordFinder.parts(of: horse[0], dictionary: nil), [])
+    }
+
+    /// A hiragana piece is the whole's ending, not a word of its own; and in a verb joined
+    /// from stems each stem is its verb, not the noun spelled alike.
+    func testPartsLeaveOutEndingsAndReadStemsAsVerbs() {
+        struct Verbs: WordDictionary {
+            let pos: [String: [String]] = [
+                "見当がつく": ["exp", "v5k"], "見当": ["n"], "つか": ["n"], "走り出す": ["v5s"],
+                "走り": ["n"], "走る": ["v5r"], "出し": ["n"], "出す": ["v5s"],
+            ]
+            func entries(matching text: String) -> [DictionaryEntry] {
+                guard let tags = pos[text] else { return [] }
+                return [
+                    DictionaryEntry(
+                        id: text.hashValue, kanji: [text], readings: [],
+                        senses: [DictionaryEntry.Sense(partsOfSpeech: tags, glosses: ["g"])],
+                        common: true)
+                ]
+            }
+            func pitchAccents(for headword: String, reading: String) -> [PitchAccent] { [] }
+            func search(_ query: String, limit: Int) -> [DictionaryEntry] { [] }
+        }
+        let verbs = Verbs()
+        let idea = WordFinder.words(
+            in: tokens(
+                "見当がつか",
+                [
+                    Cut(surface: "見当", reading: "けんとう"), Cut(surface: "が", reading: "が"),
+                    Cut(surface: "つか", reading: "つか"),
+                ]),
+            dictionary: verbs)
+        XCTAssertEqual(idea.first?.entries.first?.headword, "見当がつく")
+        XCTAssertEqual(WordFinder.parts(of: idea[0], dictionary: verbs).map(\.surface), ["見当"])
+        let run = WordFinder.words(
+            in: tokens(
+                "走り出し", [Cut(surface: "走り", reading: "はしり"), Cut(surface: "出し", reading: "だし")]),
+            dictionary: verbs)
+        XCTAssertEqual(
+            WordFinder.parts(of: run[0], dictionary: verbs).map { $0.entries.first?.headword },
+            ["走る", "出す"])
+    }
 }
