@@ -309,7 +309,11 @@ has what remains.
   sees the same cards. The screen is reached from the Study tab; its span is
   four weeks by day, three months by week, or a year or everything by month
   (`Progress.rollUp`, `RankSnapshot.thinned`), and a finger on a chart puts
-  that period's numbers in the caption above it, as the rank chart does.
+  that period's numbers in the caption above it, as the rank chart does. Ahead
+  of today the Study tab says what is coming (`Upcoming` in Core,
+  `UpcomingReviews` in Kit): the questions that come due on each of the next
+  seven days, today's with what is overdue, and how many lie beyond, in numbers
+  with a thin bar beside each, so a wall is seen before it arrives.
 - **A still from outside** (`ReadInYomidori` in the app target, `StillInbox` in
   Kit): an App Intent, an action in Shortcuts, takes an image and opens the Read
   tab on it as a new page, decoded and limited as any image coming in. After

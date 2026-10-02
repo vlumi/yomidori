@@ -134,4 +134,39 @@ final class ProgressTests: XCTestCase {
         XCTAssertNil(Progress.total(of: [card("樹皮", started: noon(1))]).accuracy)
         XCTAssertEqual(Progress.Total(answered: 4, right: 3, seconds: 42).accuracy, 0.75)
     }
+
+    func testTheQuestionsComingDueAreCountedByDay() {
+        // Started and never answered: both its questions are due now, today's.
+        let fresh = card("樹皮", started: noon(1))
+        // Answered: the reading comes back in three days, the meaning tomorrow.
+        var known = card("部屋", started: noon(1))
+        known.answer(.reading, grade: .good, at: noon(10), seconds: 3)
+        known.answer(.meaning, grade: .again, at: noon(10), seconds: 3)
+        // Waiting and shelved cards are asked nothing.
+        let waiting = card("円柱")
+        var shelved = card("山根", started: noon(1))
+        shelved.shelve()
+
+        let ahead = Upcoming.of(
+            [fresh, known, waiting, shelved], from: noon(10), days: 3, calendar: calendar)
+        XCTAssertEqual(ahead.days.map(\.questions), [2, 1, 0])
+        XCTAssertEqual(
+            ahead.days.map(\.day), [10, 11, 12].map { calendar.startOfDay(for: noon($0)) })
+        XCTAssertEqual(ahead.later, 1)
+        XCTAssertEqual(ahead.most, 2)
+        XCTAssertFalse(ahead.isEmpty)
+        XCTAssertTrue(Upcoming.of([waiting, shelved], from: noon(10), days: 3).isEmpty)
+
+        // Two days on with nothing answered: what was due before today is today's.
+        let overdue = Upcoming.of([fresh, known], from: noon(12), days: 3, calendar: calendar)
+        XCTAssertEqual(overdue.days.map(\.questions), [3, 1, 0])
+        XCTAssertEqual(overdue.later, 0)
+
+        // The pitch counts where the card has one to ask.
+        let pitched = Upcoming.of(
+            [fresh, known], from: noon(10), days: 3, calendar: calendar,
+            asksPitch: { $0.headword == "樹皮" })
+        XCTAssertEqual(pitched.days.map(\.questions), [3, 1, 0])
+        XCTAssertEqual(Upcoming.of([], from: noon(10), days: 0).days, [])
+    }
 }

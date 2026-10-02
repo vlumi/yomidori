@@ -15,6 +15,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 ### Unreleased (next build)
 
 - **The drawer follows the finger.** Dragging the drawer under a page no longer shakes on the way, as if it resisted: the drag is measured on the screen and not against the handle, which moves with it.
+- **Reviews coming up.** The Study tab shows the week ahead in numbers: the questions that come due today (with whatever is overdue), tomorrow and each of the five days after, a bar beside each so a wall is seen coming, and how many lie beyond the week.
 
 ### build 28 — 2026-10-02
 
