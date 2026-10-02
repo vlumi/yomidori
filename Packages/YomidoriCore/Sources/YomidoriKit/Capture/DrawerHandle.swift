@@ -20,7 +20,10 @@ struct DrawerHandle: View {
             .contentShape(Rectangle())
             .onTapGesture(count: 2, perform: toggled)
             .gesture(
-                DragGesture(minimumDistance: 1)
+                // Measured on the screen, not in the handle's own frame: the handle moves with
+                // the drawer, and a finger's travel counted against a frame that travels with
+                // it comes out short, then long, the drawer shaking under the finger.
+                DragGesture(minimumDistance: 1, coordinateSpace: .global)
                     .updating($fractionAtStart) { _, start, _ in
                         if start == nil { start = fraction }
                     }

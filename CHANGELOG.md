@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The drawer follows the finger.** Dragging the drawer under a page no longer shakes on the way, as if it resisted: the drag is measured on the screen and not against the handle, which moves with it.
+
 ### build 28 — 2026-10-02
 
 - **The bird at home.** The Home screen shows the sparrow over the name, and under it the name read as the app reads any word: よみどり with its pitch drawn, dropping after the second mora.
