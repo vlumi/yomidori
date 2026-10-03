@@ -177,7 +177,8 @@ struct SearchView: View {
                         .foregroundStyle(.secondary)
                 }
                 resultRows
-            })
+            }
+            .phoneSearchBarMargin(searching))
     }
 
     /// What both layouts share: the field, its focus and cursor, the parts button in the
