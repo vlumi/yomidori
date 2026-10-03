@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The first page reads as fast as the second.** The dictionary, the tokenizer and the recognizers are warmed up in the background as the app starts, so the first page no longer waits for them, nor holds the rest of the app while it does.
+
 ### build 29 — 2026-10-02
 
 - **The drawer follows the finger.** Dragging the drawer under a page no longer shakes on the way, as if it resisted: the drag is measured on the screen and not against the handle, which moves with it.
