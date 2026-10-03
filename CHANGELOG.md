@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A part of the word before no longer stays on under the next.** The words a joined word is made of are rows of their own word now; the first one could be left over from the selection before, with its reading and its mark.
 - **The Mac window's sections stay in view.** A narrow window no longer clips the sidebar on the Dictionary, Cards or Read, nor folds its *Hide Sidebar* into an overflow menu: the columns fit the window they are given, and the Dictionary's can go a little narrower.
 
 ### build 30 — 2026-10-03

@@ -99,7 +99,14 @@ struct TranscriptReadout: View {
     @ViewBuilder private func partReadouts(_ chunk: PageReading.Chunk, in reading: PageReading)
         -> some View
     {
-        ForEach(Array(chunk.parts.enumerated()), id: \.offset) { _, part in
+        // Each part's row under its own word's id: by its place alone, every word's first
+        // part was row 0 to the lazy stack, and a row from the selection before could stay
+        // on under the next word, unchanged.
+        let rows = chunk.parts.enumerated().map {
+            PartRow(id: "\(chunk.id).\($0.offset)", part: $0.element)
+        }
+        ForEach(rows) { row in
+            let part = row.part
             WordReadout(
                 word: part,
                 accent: part.entries.first.flatMap { JMdict.bundled?.pitchAccent(of: $0) },
@@ -388,4 +395,10 @@ private struct PhraseRow: View {
             }
         }
     }
+}
+
+/// A part's row, told from every other word's parts.
+private struct PartRow: Identifiable {
+    let id: String
+    let part: FoundWord
 }
