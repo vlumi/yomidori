@@ -421,6 +421,16 @@
         }
       }
     },
+    "Appearance" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外観"
+          }
+        }
+      }
+    },
     "As it should read" : {
       "localizations" : {
         "ja" : {
@@ -707,6 +717,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "表紙"
+          }
+        }
+      }
+    },
+    "Dark" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ダーク"
           }
         }
       }
@@ -1311,6 +1331,16 @@
         }
       }
     },
+    "Language" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "言語"
+          }
+        }
+      }
+    },
     "Later" : {
       "localizations" : {
         "ja" : {
@@ -1367,6 +1397,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ライセンスと表示"
+          }
+        }
+      }
+    },
+    "Light" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ライト"
           }
         }
       }
@@ -1820,6 +1860,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ショートカットを開く"
+          }
+        }
+      }
+    },
+    "Open the app again to see it in this language." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この言語で表示するには、アプリを開き直してください。"
           }
         }
       }
@@ -2284,6 +2334,16 @@
         }
       }
     },
+    "Same as the device" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "端末と同じ"
+          }
+        }
+      }
+    },
     "Same reading" : {
       "localizations" : {
         "ja" : {
@@ -2480,6 +2540,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "調べた言葉を表示"
+          }
+        }
+      }
+    },
+    "Shows when the app is next opened." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次にアプリを開いたときから表示に使われます。"
           }
         }
       }

@@ -15,6 +15,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 ### Unreleased (next build)
 
 - **About reads its name.** The name's reading with its pitch, よみどり [2], stands under the title on the About page as on Home.
+- **Appearance and language of your own.** Settings lets the app be light or dark regardless of the device, at once, and English or Japanese regardless of the device, from the next time it is opened.
 
 ### build 31 — 2026-10-03
 

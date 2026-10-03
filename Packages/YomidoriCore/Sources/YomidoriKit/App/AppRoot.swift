@@ -109,6 +109,7 @@ public struct AppRoot: View {
         // A sidebar where there is room, an iPad on its side or a Mac window; the phone's
         // bar in a compact width. The system gives the sidebar its ⌘1 … keys.
         .tabViewStyle(.sidebarAdaptable)
+        .chosenAppearance()
         .tint(Palette.nightGreen)
         .environmentObject(capture)
         .environmentObject(taps)

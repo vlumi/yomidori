@@ -520,9 +520,13 @@ has what remains.
   copy to keep current. **`SettingsView`**: the swipe-back switch, on as iOS has
   it; off, the navigation controller's pop gesture is disabled on every screen
   through a small UIKit helper (`SwipeBack`), for a reader whose swipe meant a
-  word; the side the page's controls stand on; the count on the app's icon;
-  how to read any screen through Shortcuts; iCloud sync with its state; and
-  the backup, shared and restored.
+  word; the side the page's controls stand on; the look (`Appearance`: the
+  device's, light or dark, `chosenAppearance()` on every window's root) and the
+  language (`AppLanguage`: the device's, English or Japanese, written to
+  `AppleLanguages` for the system to read at the next start, with a notice
+  until then); the retention aimed for; the count on the app's icon; how to
+  read any screen through Shortcuts; iCloud sync with its state; and the
+  backup, shared and restored.
 - **Selecting on the page** (Kit, `LiveTextSelection`, `LiveTextImage`): in
   Live Text mode the engine's own selection on the still is the selection, told
   by the interaction's delegate as it changes and widened to whole chunks of
