@@ -17,6 +17,27 @@ final class FSRSTests: XCTestCase {
         XCTAssertGreaterThan(again.difficulty, good.difficulty)
     }
 
+    func testAHigherRetentionBringsAWordBackAboutTwiceAsOften() {
+        // The stability is the same either way; only the due date moves.
+        let usual = FSRS.review(nil, grade: .good, at: start)
+        let keen = FSRS.review(nil, grade: .good, at: start, retention: 0.95)
+        XCTAssertEqual(keen.stability, usual.stability)
+        XCTAssertEqual(keen.due.timeIntervalSince(start) / day, 1, accuracy: 0.001)
+        var state = usual
+        for _ in 0..<3 { state = FSRS.review(state, grade: .good, at: state.due) }
+        let at = state.due
+        let later = FSRS.review(state, grade: .good, at: at).due.timeIntervalSince(at)
+        let sooner = FSRS.review(state, grade: .good, at: at, retention: 0.95).due
+            .timeIntervalSince(at)
+        XCTAssertEqual(sooner / later, 0.46, accuracy: 0.02)
+        XCTAssertEqual(FSRS.retentions, [0.9, 0.95])
+        var card = Card(
+            headword: "部屋", reading: "へや", entryID: nil, sightings: [], created: start)
+        card.start(at: start)
+        card.answer(.reading, grade: .good, at: start, retention: 0.95)
+        XCTAssertEqual(card.review?.due.timeIntervalSince(start) ?? 0, day, accuracy: 1)
+    }
+
     func testIntervalsGrowWithEachGoodAnswerOnTime() {
         var state = FSRS.review(nil, grade: .good, at: start)
         var intervals: [Double] = []

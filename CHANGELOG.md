@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Aim to remember 90 % or 95 %.** A switch in Settings: at 95 % each word comes back about twice as often, for a reader who would rather see them more. Counts from the next answer, on this device.
 - **A part of the word before no longer stays on under the next.** The words a joined word is made of are rows of their own word now; the first one could be left over from the selection before, with its reading and its mark.
 - **Coming up, as a picture.** The Study tab's week ahead is a chart now: a bar for each quarter of a day, the questions due in it stacked in the colors of their cards' ranks, a hairline between the days, the overdue in now's bar; a finger on a bar reads out its hours, its count and its ranks, the whole week's otherwise.
 - **The Mac window's sections stay in view.** A narrow window no longer clips the sidebar on the Dictionary, Cards or Read, nor folds its *Hide Sidebar* into an overflow menu: the columns fit the window they are given, and the Dictionary's can go a little narrower.

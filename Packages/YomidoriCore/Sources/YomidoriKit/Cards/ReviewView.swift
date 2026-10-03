@@ -11,6 +11,7 @@ struct ReviewView: View {
     /// and the drill is over when every question has been answered right. Nil for a review.
     var practicing: Set<UUID>?
     @State private var queue: [ReviewItem] = []
+    @AppStorage(SettingsKey.retention) private var retention = FSRS.desiredRetention
     /// Loaded once; coming back to the screen mustn't start it over and lose the misses
     /// still to be put right.
     @State private var loaded = false
@@ -273,7 +274,8 @@ struct ReviewView: View {
         } else {
             reviewed = try? Cards.store?.answer(
                 item, grade: grade, at: now, reconciled: reconciled, accepting: meaning,
-                glosses: meaning == nil ? [] : Self.glosses(of: item), seconds: seconds)
+                glosses: meaning == nil ? [] : Self.glosses(of: item), seconds: seconds,
+                retention: retention)
             session.answered[item.question, default: 0] += 1
             if grade == .good { session.right[item.question, default: 0] += 1 }
             session.seconds += min(max(seconds, 0), ReviewEntry.longestCounted)

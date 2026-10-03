@@ -1,4 +1,5 @@
 import SwiftUI
+import YomidoriCore
 
 public struct SettingsView: View {
     public init() {}
@@ -7,6 +8,7 @@ public struct SettingsView: View {
     @AppStorage(SettingsKey.iCloudSync) private var iCloudSync = true
     @AppStorage(SettingsKey.pageControlsSide) private var controlsSide: PageControlsSide = .right
     @AppStorage(SettingsKey.appBadge) private var appBadge = false
+    @AppStorage(SettingsKey.retention) private var retention = FSRS.desiredRetention
     /// The reader turned the count on, but notifications are off for the app.
     @State private var badgeRefused = false
     @State private var choosingBackup = false
@@ -41,6 +43,19 @@ public struct SettingsView: View {
                     bundle: .module)
             }
             #endif
+            Section {
+                Picker(selection: $retention) {
+                    Text("90 %", bundle: .module).tag(0.9)
+                    Text("95 %", bundle: .module).tag(0.95)
+                } label: {
+                    Text("Aim to remember", bundle: .module)
+                }
+            } footer: {
+                Text(
+                    // swiftlint:disable:next line_length
+                    "The share of reviews you should get right when a word comes up. At 95 % each word comes back about twice as often as at 90 %. Counts from the next answer, on this device.",
+                    bundle: .module)
+            }
             Section {
                 Toggle(isOn: $appBadge) {
                     Text("Reviews due on the app icon", bundle: .module)
