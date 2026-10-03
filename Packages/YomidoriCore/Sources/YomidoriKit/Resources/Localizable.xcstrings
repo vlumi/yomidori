@@ -1534,6 +1534,16 @@
         }
       }
     },
+    "Next %lld days" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "これから %lld 日間"
+          }
+        }
+      }
+    },
     "No camera here. Choose a photo instead." : {
       "localizations" : {
         "ja" : {
@@ -1954,12 +1964,12 @@
         }
       }
     },
-    "Questions due each day; today's with what is overdue." : {
+    "Questions due by quarter day, in their ranks' colors; now's with what is overdue. Touch a bar for its numbers." : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "日ごとの問題数です。今日の分には期限を過ぎたものも入ります。"
+            "value" : "一日を四つに分けた時間帯ごとの問題数を、段階の色で示します。今の時間帯には期限を過ぎたものも入ります。棒に触れると数が出ます。"
           }
         }
       }

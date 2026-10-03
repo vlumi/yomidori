@@ -48,7 +48,10 @@ struct StudyView: View {
                 } header: {
                     Text("Coming up", bundle: .module)
                 } footer: {
-                    Text("Questions due each day; today's with what is overdue.", bundle: .module)
+                    Text(
+                        // swiftlint:disable:next line_length
+                        "Questions due by quarter day, in their ranks' colors; now's with what is overdue. Touch a bar for its numbers.",
+                        bundle: .module)
                 }
             }
             if !cards.isEmpty {

@@ -311,9 +311,12 @@ has what remains.
   (`Progress.rollUp`, `RankSnapshot.thinned`), and a finger on a chart puts
   that period's numbers in the caption above it, as the rank chart does. Ahead
   of today the Study tab says what is coming (`Upcoming` in Core,
-  `UpcomingReviews` in Kit): the questions that come due on each of the next
-  seven days, today's with what is overdue, and how many lie beyond, in numbers
-  with a thin bar beside each, so a wall is seen before it arrives.
+  `UpcomingReviews` in Kit): the questions that come due in each quarter of
+  the next seven days, stacked in the colors of their cards' ranks with a
+  hairline between the days, what is overdue in now's bar, and how many lie
+  beyond; a finger on a bar puts its span, count and ranks in the caption, the
+  whole week's otherwise. So a wall is seen before it arrives, and whether it
+  is hatchlings or old birds.
 - **A still from outside** (`ReadInYomidori` in the app target, `StillInbox` in
   Kit): an App Intent, an action in Shortcuts, takes an image and opens the Read
   tab on it as a new page, decoded and limited as any image coming in. After
