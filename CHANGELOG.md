@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Appearance and language of your own.** Settings lets the app be light or dark regardless of the device, at once, and English or Japanese regardless of the device, from the next time it is opened.
+
 ### build 31 — 2026-10-03
 
 - **Aim to remember 90 % or 95 %.** A switch in Settings: at 95 % each word comes back about twice as often, for a reader who would rather see them more. Counts from the next answer, on this device.

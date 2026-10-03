@@ -31,6 +31,7 @@ struct YomidoriApp: App {
                 SettingsView()
                     .defaultAppStorage(DemoMode.defaults ?? .standard)
             }
+            .chosenAppearance()
             .frame(width: 560, height: 620)
         }
         Window(Text("About Yomidori"), id: "about") {
@@ -38,6 +39,7 @@ struct YomidoriApp: App {
                 AboutView()
                     .defaultAppStorage(DemoMode.defaults ?? .standard)
             }
+            .chosenAppearance()
             .frame(width: 520, height: 640)
         }
         .windowResizability(.contentSize)

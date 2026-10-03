@@ -9,6 +9,8 @@ public struct SettingsView: View {
     @AppStorage(SettingsKey.pageControlsSide) private var controlsSide: PageControlsSide = .right
     @AppStorage(SettingsKey.appBadge) private var appBadge = false
     @AppStorage(SettingsKey.retention) private var retention = FSRS.desiredRetention
+    @AppStorage(SettingsKey.language) private var language: AppLanguage = .system
+    @AppStorage(SettingsKey.appearance) private var appearance: Appearance = .system
     /// The reader turned the count on, but notifications are off for the app.
     @State private var badgeRefused = false
     @State private var choosingBackup = false
@@ -43,6 +45,37 @@ public struct SettingsView: View {
                     bundle: .module)
             }
             #endif
+            Section {
+                Picker(selection: $appearance) {
+                    ForEach(Appearance.allCases) { appearance in
+                        appearance.label.tag(appearance)
+                    }
+                } label: {
+                    Text("Appearance", bundle: .module)
+                }
+            }
+            Section {
+                Picker(selection: $language) {
+                    ForEach(AppLanguage.allCases) { language in
+                        language.label.tag(language)
+                    }
+                } label: {
+                    Text("Language", bundle: .module)
+                }
+                .onAppear { if AppLanguage.atLaunch == nil { AppLanguage.atLaunch = language } }
+                .onChange(of: language) { _, chosen in AppLanguage.apply(chosen) }
+            } footer: {
+                if let atLaunch = AppLanguage.atLaunch, language != atLaunch {
+                    Label {
+                        Text("Open the app again to see it in this language.", bundle: .module)
+                    } icon: {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.orange)
+                    }
+                } else {
+                    Text("Shows when the app is next opened.", bundle: .module)
+                }
+            }
             Section {
                 Picker(selection: $retention) {
                     Text("90 %", bundle: .module).tag(0.9)
