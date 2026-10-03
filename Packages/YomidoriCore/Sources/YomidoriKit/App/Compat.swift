@@ -52,6 +52,17 @@ extension View {
         #endif
     }
 
+    /// Room under a list for the phone's search bar while it floats over the keyboard: the
+    /// list clears the keyboard on its own, but not the bar above it, so the last row
+    /// sprang back under the bar. Nothing on the Mac, whose field is in the column.
+    func phoneSearchBarMargin(_ searching: Bool) -> some View {
+        #if os(iOS)
+        contentMargins(.bottom, searching ? 64 : 0, for: .scrollContent)
+        #else
+        self
+        #endif
+    }
+
     /// A reading width: at most 640 points, centered, so a sentence in a wide window reads
     /// as on a page; no narrower than the phone.
     func readingWidth() -> some View {
