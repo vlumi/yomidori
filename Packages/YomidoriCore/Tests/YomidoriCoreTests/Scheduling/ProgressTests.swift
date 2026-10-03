@@ -168,5 +168,33 @@ final class ProgressTests: XCTestCase {
             asksPitch: { $0.headword == "樹皮" })
         XCTAssertEqual(pitched.days.map(\.questions), [3, 1, 0])
         XCTAssertEqual(Upcoming.of([], from: noon(10), days: 0).days, [])
+        XCTAssertEqual(Upcoming.of([], from: noon(10), days: 0).slots, [])
+    }
+
+    func testTheQuestionsComingDueArePlacedInQuarterDaysByRank() {
+        let fresh = card("樹皮", started: noon(1))
+        var known = card("部屋", started: noon(1))
+        known.answer(.reading, grade: .good, at: noon(10), seconds: 3)
+        known.answer(.meaning, grade: .again, at: noon(10), seconds: 3)
+        // Asked at noon on the 10th: the fresh card's two questions are due now, in the
+        // 12–18 quarter; the known card's meaning at noon tomorrow, its reading in three days.
+        let ahead = Upcoming.of([fresh, known], from: noon(10), days: 3, calendar: calendar)
+        XCTAssertEqual(ahead.slots.count, 12)
+        XCTAssertEqual(ahead.slots.map(\.questions), [0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0])
+        let tenth = calendar.startOfDay(for: noon(10))
+        XCTAssertEqual(ahead.slots[2].start, calendar.date(byAdding: .hour, value: 12, to: tenth))
+        XCTAssertEqual(ahead.slots[2].end, calendar.date(byAdding: .hour, value: 18, to: tenth))
+        XCTAssertEqual(ahead.slots[3].end, calendar.startOfDay(for: noon(11)))
+        // The fresh card is a hatchling, the answered one a hatchling still at three days.
+        XCTAssertEqual(ahead.slots[2].counts, [.hatchling: 2])
+        XCTAssertEqual(ahead.counts, [.hatchling: 3])
+        XCTAssertEqual(ahead.questions, 3)
+        XCTAssertEqual(ahead.later, 1)
+        // Two days on with nothing answered: what was due before counts where now is, the
+        // 12–18 quarter of the 12th, not in the quarters gone by.
+        let overdue = Upcoming.of([fresh, known], from: noon(12), days: 2, calendar: calendar)
+        XCTAssertEqual(overdue.slots.map(\.questions), [0, 0, 3, 0, 0, 0, 1, 0])
+        XCTAssertTrue(overdue.slots[2].contains(noon(12)))
+        XCTAssertFalse(overdue.slots[1].contains(noon(12)))
     }
 }

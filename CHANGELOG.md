@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Coming up, as a picture.** The Study tab's week ahead is a chart now: a bar for each quarter of a day, the questions due in it stacked in the colors of their cards' ranks, a hairline between the days, the overdue in now's bar; a finger on a bar reads out its hours, its count and its ranks, the whole week's otherwise.
 - **The Mac window's sections stay in view.** A narrow window no longer clips the sidebar on the Dictionary, Cards or Read, nor folds its *Hide Sidebar* into an overflow menu: the columns fit the window they are given, and the Dictionary's can go a little narrower.
 
 ### build 30 — 2026-10-03
