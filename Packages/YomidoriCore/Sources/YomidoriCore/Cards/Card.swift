@@ -140,12 +140,14 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     }
 
     /// The scheduler's verdict and a line in the log; `reconciled` when the reader overruled
-    /// a wrong verdict.
+    /// a wrong verdict, `retention` what the schedule aims for.
     public mutating func answer(
         _ question: Question, grade: Grade, at date: Date, reconciled: Bool = false,
-        seconds: Int = 0
+        seconds: Int = 0, retention: Double = FSRS.desiredRetention
     ) {
-        setState(FSRS.review(state(for: question), grade: grade, at: date), for: question)
+        setState(
+            FSRS.review(state(for: question), grade: grade, at: date, retention: retention),
+            for: question)
         log.append(
             ReviewEntry(
                 date: date, question: question, grade: grade, reconciled: reconciled,

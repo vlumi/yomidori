@@ -415,7 +415,10 @@ has what remains.
   *Add a sentence* takes one typed or pasted, for a word met off the page.
 - **`FSRS`**, **`Grade`** and **`ReviewState`** (Core): the free spaced
   repetition scheduler, version 5, with its published default parameters and a
-  desired retention of 90 %, with one departure: a lapse costs at most one rank,
+  desired retention of 90 %, or 95 % by a switch in Settings (*Aim to
+  remember*, `SettingsKey.retention`, per device, counting from the next
+  answer): the same stability, each word back about twice as often. One
+  departure: a lapse costs at most one rank,
   stability divided by four with FSRS's own value as the floor, since the
   model's own drop (four months to three days) felt harsh; a card truly
   forgotten goes back to waiting from the review and returns through a lesson.

@@ -33,11 +33,14 @@ public struct ReviewState: Hashable, Codable, Sendable {
     }
 }
 
-/// FSRS-5 with its published default parameters and a desired retention of 90 %. One
-/// departure: a lapse costs at most one rank, since the reader found the model's own drop
-/// (four months to three days) harsh; a card they truly forgot goes back to waiting instead.
+/// FSRS-5 with its published default parameters and a desired retention of 90 %, or 95 % for
+/// a reader who would rather see each word about twice as often. One departure: a lapse
+/// costs at most one rank, since the reader found the model's own drop (four months to
+/// three days) harsh; a card they truly forgot goes back to waiting instead.
 public enum FSRS {
     public static let desiredRetention = 0.9
+    /// The retentions a reader may ask for.
+    public static let retentions: [Double] = [0.9, 0.95]
     public static let lapseDivisor = 4.0
     static let decay = -0.5
     static let factor = 19.0 / 81.0
@@ -53,7 +56,12 @@ public enum FSRS {
         return pow(1 + factor * elapsed / state.stability, decay)
     }
 
-    public static func review(_ state: ReviewState?, grade: Grade, at date: Date) -> ReviewState {
+    /// `retention` is the share of reviews the schedule aims to have come out right: the
+    /// higher, the sooner each word comes back.
+    public static func review(
+        _ state: ReviewState?, grade: Grade, at date: Date,
+        retention: Double = desiredRetention
+    ) -> ReviewState {
         let rating = grade.rating
         var next: ReviewState
         if let state {
@@ -86,13 +94,16 @@ public enum FSRS {
                 lastReview: date, reviews: 1, lapses: grade == .again ? 1 : 0)
         }
         next.lastReview = date
-        next.due = date.addingTimeInterval(interval(forStability: next.stability) * day)
+        next.due = date.addingTimeInterval(
+            interval(forStability: next.stability, retention: retention) * day)
         return next
     }
 
     /// Whole days, one at least.
-    static func interval(forStability stability: Double) -> Double {
-        let days = stability / factor * (pow(desiredRetention, 1 / decay) - 1)
+    static func interval(forStability stability: Double, retention: Double = desiredRetention)
+        -> Double
+    {
+        let days = stability / factor * (pow(retention, 1 / decay) - 1)
         return max(1, days.rounded())
     }
 

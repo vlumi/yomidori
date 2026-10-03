@@ -191,6 +191,26 @@
         }
       }
     },
+    "90 %" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "90 %"
+          }
+        }
+      }
+    },
+    "95 %" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "95 %"
+          }
+        }
+      }
+    },
     "A result or a word looked up opens here." : {
       "localizations" : {
         "ja" : {
@@ -327,6 +347,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "もう一度"
+          }
+        }
+      }
+    },
+    "Aim to remember" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "覚えている割合の目安"
           }
         }
       }
@@ -2790,6 +2820,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "写真か、読み取った本文か（⌘↩）"
+          }
+        }
+      }
+    },
+    "The share of reviews you should get right when a word comes up. At 95 % each word comes back about twice as often as at 90 %. Counts from the next answer, on this device." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "復習で正解できる割合の目安です。95 % にすると、それぞれの単語が 90 % のときの約二倍の頻度で出てきます。次の回答から、この端末で効きます。"
           }
         }
       }
