@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **About reads its name.** The name's reading with its pitch, よみどり [2], stands under the title on the About page as on Home.
+
 ### build 31 — 2026-10-03
 
 - **Aim to remember 90 % or 95 %.** A switch in Settings: at 95 % each word comes back about twice as often, for a reader who would rather see them more. Counts from the next answer, on this device.

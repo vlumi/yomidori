@@ -19,6 +19,9 @@ public struct AboutView: View {
                                     .system(size: wordmark, weight: .semibold, design: .rounded)
                                 )
                                 .foregroundStyle(Palette.nightGreen)
+                            // The name read as Home reads it, with its pitch.
+                            PitchReading(reading: "よみどり", accent: PitchAccent(downstep: 2))
+                                .accessibilityLabel(Text(japanese: "よみどり"))
                             Text(verbatim: AppInfo.versionLine)
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
