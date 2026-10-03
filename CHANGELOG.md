@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The drawer stays under the finger.** Dragging the drawer no longer makes it run ahead to the next stop at the start and then follow at a distance: it moves as far as the finger does, from where it was.
+
 ### build 29 — 2026-10-02
 
 - **The drawer follows the finger.** Dragging the drawer under a page no longer shakes on the way, as if it resisted: the drag is measured on the screen and not against the handle, which moves with it.

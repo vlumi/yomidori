@@ -9,7 +9,13 @@ struct DrawerHandle: View {
     let settled: (Double) -> Void
     /// A double tap: the drawer to its largest, or back to where it was.
     let toggled: () -> Void
-    @GestureState private var fractionAtStart: Double?
+    /// Where the finger landed and where the drawer stood then. Kept by the view and not as
+    /// gesture state: a gesture state's updating closure does not reliably see what it set
+    /// on the event before, so a start taken there slid along with the drawer, every move
+    /// counted from the last one while the finger's travel kept counting from the first,
+    /// and the drawer ran ahead of the finger. The finger's landing tells a new drag from
+    /// the one before, should that one have been cut short without ending.
+    @State private var start: (at: CGPoint, fraction: Double)?
 
     var body: some View {
         Capsule()
@@ -24,15 +30,18 @@ struct DrawerHandle: View {
                 // the drawer, and a finger's travel counted against a frame that travels with
                 // it comes out short, then long, the drawer shaking under the finger.
                 DragGesture(minimumDistance: 1, coordinateSpace: .global)
-                    .updating($fractionAtStart) { _, start, _ in
-                        if start == nil { start = fraction }
-                    }
                     .onChanged { value in
+                        if start?.at != value.startLocation {
+                            start = (value.startLocation, fraction)
+                        }
                         fraction = DrawerDetents.dragged(
-                            from: fractionAtStart ?? fraction, by: value.translation.height,
+                            from: start?.fraction ?? fraction, by: value.translation.height,
                             screenHeight: screenHeight)
                     }
-                    .onEnded { _ in settled(fraction) }
+                    .onEnded { _ in
+                        start = nil
+                        settled(fraction)
+                    }
             )
             .accessibilityElement()
             .accessibilityLabel(Text("Drawer", bundle: .module))
