@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Review and the lesson open on Study.** Started from Home, they switch to the Study tab and open there, where they live, instead of over Home.
 - **The first page reads as fast as the second.** The dictionary, the tokenizer and the recognizers are warmed up in the background as the app starts, so the first page no longer waits for them, nor holds the rest of the app while it does.
 - **The drawer stays under the finger.** Dragging the drawer no longer makes it run ahead to the next stop at the start and then follow at a distance: it moves as far as the finger does, from where it was.
 
