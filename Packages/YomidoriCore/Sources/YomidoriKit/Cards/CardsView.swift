@@ -241,6 +241,7 @@ struct CardsView: View {
             }
             .frame(minWidth: 400, maxWidth: .infinity, maxHeight: .infinity)
         }
+        .fittingWindow()
         .navigationTitle(Text("Cards", bundle: .module))
         // A card chosen: the stack shows it, over whatever was pushed.
         .onChange(of: picked) { _, _ in detailPath = NavigationPath() }

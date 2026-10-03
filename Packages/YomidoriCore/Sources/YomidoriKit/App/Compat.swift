@@ -63,6 +63,15 @@ extension View {
         #endif
     }
 
+    /// A split held to the width it is given: left to itself, a split of the Mac's reports
+    /// the width its columns would like, and a window narrower than that is not what it
+    /// is laid out to; the content overflows and the sections' sidebar is clipped.
+    func fittingWindow() -> some View {
+        GeometryReader { geometry in
+            frame(width: geometry.size.width, height: geometry.size.height)
+        }
+    }
+
     /// A reading width: at most 640 points, centered, so a sentence in a wide window reads
     /// as on a page; no narrower than the phone.
     func readingWidth() -> some View {

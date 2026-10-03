@@ -44,7 +44,7 @@ struct SearchView: View {
     @FocusState private var fieldFocused: Bool
 
     private var split: some View {
-        searching(splitColumns)
+        searching(splitColumns.fittingWindow())
             // ⌘F: the field, from anywhere in the dictionary.
             .background {
                 Button {
@@ -93,7 +93,7 @@ struct SearchView: View {
         HSplitView {
             if historyShown {
                 historyColumn
-                    .frame(minWidth: 220, idealWidth: 280, maxWidth: 380, maxHeight: .infinity)
+                    .frame(minWidth: 180, idealWidth: 260, maxWidth: 380, maxHeight: .infinity)
             }
             column(
                 Text("Search", bundle: .module),
@@ -127,7 +127,7 @@ struct SearchView: View {
                 field
                 resultsList
             }
-            .frame(minWidth: 280, idealWidth: 340, maxWidth: 480, maxHeight: .infinity)
+            .frame(minWidth: 240, idealWidth: 320, maxWidth: 480, maxHeight: .infinity)
             NavigationStack(path: $detailPath) {
                 Group {
                     if let picked {
@@ -140,7 +140,7 @@ struct SearchView: View {
                 }
                 .appDestinations()
             }
-            .frame(minWidth: 360, maxWidth: .infinity, maxHeight: .infinity)
+            .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity)
         }
         // A result picked: the entry column shows it, over whatever it had opened.
         .onChange(of: pickedResult) { _, id in

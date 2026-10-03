@@ -47,6 +47,7 @@ public struct MacReadView: View {
             words
                 .frame(minWidth: 320, idealWidth: 400, maxWidth: 560, maxHeight: .infinity)
         }
+        .fittingWindow()
         .background(Palette.page)
         .navigationTitle(Text("Read", bundle: .module))
         .onAppear {
