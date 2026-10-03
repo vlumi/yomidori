@@ -30,7 +30,14 @@ public struct AppRoot: View {
             // app's own menus.
             #if os(iOS)
             Tab(value: .home) {
-                TabStack(tab: .home, stored: true) { HomeView(read: { tab = .read }) }
+                TabStack(tab: .home, stored: true) {
+                    HomeView(
+                        read: { tab = .read },
+                        study: { screen in
+                            taps.open(screen, in: .study)
+                            tab = .study
+                        })
+                }
             } label: {
                 Label {
                     Text("Home", bundle: .module)
@@ -184,6 +191,7 @@ private struct TabStack<Root: View>: View {
     @ViewBuilder let root: () -> Root
     @State private var path = NavigationPath()
     @SceneStorage private var storedPath: Data?
+    @EnvironmentObject private var taps: TabTaps
 
     init(tab: AppTab, stored: Bool = false, @ViewBuilder root: @escaping () -> Root) {
         self.tab = tab
@@ -201,6 +209,14 @@ private struct TabStack<Root: View>: View {
         }
         .onTabTap(tab) { taps in
             if path.isEmpty { taps.tappedAtRoot(tab) } else { path = NavigationPath() }
+        }
+        // A screen asked for on this tab from another; `initial` for a stack made by the
+        // switch itself, after the ask.
+        .onChange(of: taps.opening, initial: true) { _, opening in
+            guard let opening, opening.tab == tab else { return }
+            path = NavigationPath()
+            path.append(opening.screen)
+            taps.opening = nil
         }
         .onAppear {
             if stored { restore() }

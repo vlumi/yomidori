@@ -5,6 +5,8 @@ import YomidoriCore
 struct HomeView: View {
     @ScaledMetric(relativeTo: .largeTitle) private var wordmark: CGFloat = 44
     let read: () -> Void
+    /// Review and the lesson open on the Study tab, where they live, not over Home.
+    let study: (Screen) -> Void
     @State private var dueCount = 0
     @State private var waitingCount = 0
 
@@ -51,7 +53,9 @@ struct HomeView: View {
             }
             Section {
                 if dueCount > 0 {
-                    NavigationLink(value: Screen.review) {
+                    Button {
+                        study(.review)
+                    } label: {
                         Label {
                             Text("Review \(dueCount)", bundle: .module)
                         } icon: {
@@ -63,7 +67,9 @@ struct HomeView: View {
                         .foregroundStyle(.secondary)
                 }
                 if waitingCount > 0 {
-                    NavigationLink(value: Screen.lesson) {
+                    Button {
+                        study(.lesson)
+                    } label: {
                         Label {
                             Text("Lesson · \(waitingCount) waiting", bundle: .module)
                         } icon: {

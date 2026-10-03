@@ -10,9 +10,25 @@ final class TabTaps: ObservableObject {
     @Published private(set) var rootCounts: [AppTab: Int] = [:]
     /// The tab showing, for a screen that acts on being switched to.
     @Published var shown: AppTab?
-    /// A switch asked for from outside the tab bar, the View menu's ⌘1 … ⌘4; taken by the
-    /// root, which then clears it.
-    @Published var requested: AppTab?
+    /// A screen asked for on another tab, Home's Review or Lesson on Study's: the root
+    /// switches to the tab, whose stack opens the screen over its root and clears the ask.
+    @Published var opening: Opening?
+
+    struct Opening: Equatable {
+        let tab: AppTab
+        let screen: Screen
+        /// Two asks for the same screen are two asks.
+        private let id = UUID()
+
+        init(tab: AppTab, screen: Screen) {
+            self.tab = tab
+            self.screen = screen
+        }
+    }
+
+    func open(_ screen: Screen, in tab: AppTab) {
+        opening = Opening(tab: tab, screen: screen)
+    }
 
     func tapped(_ tab: AppTab) {
         counts[tab, default: 0] += 1
