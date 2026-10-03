@@ -146,6 +146,7 @@ public struct AppRoot: View {
         .task {
             Sync.shared.start()
             AppBadge.refresh()
+            Warmup.start()
         }
         .onChange(of: tab, initial: true) { _, shown in taps.shown = shown }
         .onChange(of: scenePhase) { _, phase in
