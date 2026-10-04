@@ -11,6 +11,8 @@ struct YomidoriApp: App {
             AppRoot()
                 .defaultAppStorage(DemoMode.defaults ?? .standard)
         }
+        // The sections by key, ⌘0 … ⌘4, for an iPad with a keyboard.
+        .commands { SectionCommands() }
     }
 }
 
