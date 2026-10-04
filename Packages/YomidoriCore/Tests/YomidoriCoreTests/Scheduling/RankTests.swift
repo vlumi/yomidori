@@ -27,4 +27,16 @@ final class RankTests: XCTestCase {
         XCTAssertTrue(Rank.nest < Rank.egg)
         XCTAssertEqual(Rank.allCases.first, .nest)
     }
+
+    func testTheNumbersCountFromTheEgg() {
+        XCTAssertNil(Rank.nest.number)
+        XCTAssertEqual(Rank.egg.number, 0)
+        XCTAssertEqual(Rank.hatchling.number, 1)
+        XCTAssertEqual(Rank.migrating.number, 5)
+        XCTAssertEqual(Rank.allCases.map(\.index), Array(0..<Rank.allCases.count))
+        let snapshot = RankSnapshot(day: Date(), counts: [1, 2, 3, 4, 5, 6, 7])
+        XCTAssertEqual(snapshot.count(of: .nest), 1)
+        XCTAssertEqual(snapshot.count(of: .egg), 2)
+        XCTAssertEqual(snapshot.count(of: .migrating), 7)
+    }
 }
