@@ -122,11 +122,8 @@ struct PictureView: NSViewRepresentable {
         private func report(_ overlay: ImageAnalysisOverlayView) {
             let page = overlay.text
             let range = overlay.selectedRanges.first.flatMap { range -> Range<Int>? in
-                guard overlay.analysis != nil, range.lowerBound >= page.startIndex,
-                    range.upperBound <= page.endIndex
-                else { return nil }
-                let start = page.distance(from: page.startIndex, to: range.lowerBound)
-                return start..<(start + page[range].count)
+                guard overlay.analysis != nil else { return nil }
+                return CharacterRange.offsets(of: range, in: page)
             }
             let text = overlay.selectedText
             guard text != selection.text || range != selection.range || selection.rangePage != 0
