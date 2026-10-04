@@ -19,7 +19,7 @@ struct PitchReading: View {
             .foregroundStyle(Palette.nightGreen)
             .fixedSize()
             Text(verbatim: "[\(accent.downstep)]")
-                .font(.caption)
+                .font(.footnote)
                 .foregroundStyle(.secondary)
         }
         .accessibilityElement(children: .ignore)

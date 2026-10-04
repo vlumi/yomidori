@@ -14,7 +14,7 @@ struct KanjiRow: View {
                     .foregroundStyle(Palette.nightGreen)
                     .lineLimit(2)
                 Text(verbatim: kanji.meanings.prefix(3).joined(separator: "; "))
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .lineLimit(2)
             }

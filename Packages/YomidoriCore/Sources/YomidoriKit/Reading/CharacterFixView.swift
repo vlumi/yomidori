@@ -120,7 +120,7 @@ struct CharacterFixView: View {
                 .foregroundStyle(.secondary)
             Spacer()
             Text(verbatim: fix.entry.senses.first?.glosses.first ?? "")
-                .font(.caption)
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
         }

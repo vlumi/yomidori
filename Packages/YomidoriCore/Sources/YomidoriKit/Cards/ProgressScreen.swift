@@ -176,7 +176,7 @@ private struct StatRow: View {
                         .font(.title2.weight(.semibold))
                         .monospacedDigit()
                     stat.label
-                        .font(.caption)
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                 }
@@ -306,7 +306,7 @@ private struct RankHistoryChart: View {
                     ForEach(Rank.allCases.filter { shown.count(of: $0) > 0 }, id: \.self) { rank in
                         HStack(spacing: 2) {
                             RankMark(rank: rank, size: 18)
-                            Text(verbatim: "\(shown.count(of: rank))").font(.caption)
+                            Text(verbatim: "\(shown.count(of: rank))").font(.subheadline)
                         }
                     }
                 }

@@ -67,7 +67,7 @@ struct UpcomingReviews: View {
                 HStack(spacing: 2) {
                     RankMark(rank: rank, size: 14)
                     Text(verbatim: "\(counts[rank] ?? 0)")
-                        .font(.caption.monospacedDigit())
+                        .font(.subheadline.monospacedDigit())
                 }
             }
         }
@@ -98,7 +98,7 @@ struct UpcomingReviews: View {
                 AxisValueLabel(anchor: .top) {
                     if let date = value.as(Date.self) {
                         Text(verbatim: dayName(of: date))
-                            .font(.caption2)
+                            .font(.caption)
                     }
                 }
             }

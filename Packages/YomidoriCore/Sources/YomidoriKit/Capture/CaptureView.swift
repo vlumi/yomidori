@@ -290,7 +290,7 @@ public struct CaptureView: View {
         readout
         if still != nil || page.pasted != nil {
             Text("The camera button takes a new page.", bundle: .module)
-                .font(.caption2)
+                .font(.footnote)
                 .foregroundStyle(.tertiary)
         }
     }
@@ -314,7 +314,7 @@ public struct CaptureView: View {
                     "Blurred or not quite framed? The camera button takes another photo.",
                     bundle: .module
                 )
-                .font(.caption)
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
             }

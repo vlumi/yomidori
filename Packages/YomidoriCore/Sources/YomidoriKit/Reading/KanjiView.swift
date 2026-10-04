@@ -83,7 +83,7 @@ struct KanjiView: View {
                 Text("Rank \(rank)", bundle: .module)
             }
         }
-        .font(.caption)
+        .font(.subheadline)
         .foregroundStyle(.secondary)
     }
 
@@ -91,7 +91,7 @@ struct KanjiView: View {
         if !readings.isEmpty {
             HStack(alignment: .firstTextBaseline) {
                 label
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .frame(width: labelWidth, alignment: .leading)
                 Text(japanese: readings.joined(separator: "、"))

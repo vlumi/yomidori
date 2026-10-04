@@ -34,7 +34,7 @@ struct ReviewFront: View {
             HStack(spacing: 12) {
                 if let source = sighting.source {
                     Text(verbatim: source)
-                        .font(.caption)
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
                 if let edit {

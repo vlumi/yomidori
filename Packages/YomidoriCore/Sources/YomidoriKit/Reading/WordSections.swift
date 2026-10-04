@@ -61,7 +61,7 @@ struct WordSections: View {
             ForEach(entry.senses.indices, id: \.self) { index in
                 VStack(alignment: .leading, spacing: 2) {
                     Text(verbatim: entry.senses[index].partsOfSpeech.joined(separator: ", "))
-                        .font(.caption2)
+                        .font(.footnote)
                         .foregroundStyle(.secondary)
                     Text(
                         verbatim:

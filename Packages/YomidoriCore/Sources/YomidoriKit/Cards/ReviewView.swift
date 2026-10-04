@@ -47,15 +47,14 @@ struct ReviewView: View {
         .navigationTitle(
             practicing == nil ? Text("Review", bundle: .module) : Text("Practice", bundle: .module)
         )
-        // A small title beside the back button, and the question's name and what remains at
-        // the right of it: the screen below is the question's.
-        .navigationBarTitleDisplayModeInline()
+        // The title at the system's size, the question's name and what remains at the
+        // right of it.
         .toolbar {
             if let item = queue.current {
                 ToolbarItem(placement: .primaryAction) {
                     HStack(spacing: 8) {
                         Text(verbatim: "\(queue.count)")
-                            .font(.caption.monospacedDigit())
+                            .font(.body.monospacedDigit())
                             .foregroundStyle(.secondary)
                             .accessibilityLabel(Text("\(queue.count) remaining", bundle: .module))
                         QuestionTag(question: item.question)

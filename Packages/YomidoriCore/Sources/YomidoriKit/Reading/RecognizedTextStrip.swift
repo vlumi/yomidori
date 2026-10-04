@@ -32,7 +32,7 @@ struct RecognizedTextStrip: View {
                     Image(systemName: "chevron.right")
                         .rotationEffect(.degrees(expanded ? 90 : 0))
                 }
-                .font(.caption)
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .padding(.vertical, 6)
                 .contentShape(Rectangle())

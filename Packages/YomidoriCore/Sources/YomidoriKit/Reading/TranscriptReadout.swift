@@ -208,7 +208,7 @@ struct TranscriptReadout: View {
             } icon: {
                 Image(systemName: "text.word.spacing")
             }
-            .font(.caption)
+            .font(.footnote)
         }
         .controlSize(.small)
         .accessibilityLabel(Text("Tokenizer", bundle: .module))

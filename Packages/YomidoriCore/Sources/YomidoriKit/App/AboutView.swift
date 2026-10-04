@@ -32,7 +32,7 @@ public struct AboutView: View {
                             Wordmark(size: wordmark)
                             Wordmark.reading
                             Text(verbatim: AppInfo.versionLine)
-                                .font(.caption)
+                                .font(.footnote)
                                 .foregroundStyle(.secondary)
                         }
                     }
