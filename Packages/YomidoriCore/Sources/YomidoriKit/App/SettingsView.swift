@@ -39,10 +39,17 @@ public struct SettingsView: View {
                     Text("Page controls", bundle: .module)
                 }
             } footer: {
-                Text(
-                    // swiftlint:disable:next line_length
-                    "The zoom and the page buttons stand in one column on this side of the picture, the zoom nearest your thumb: the side of the hand that holds the phone.",
-                    bundle: .module)
+                if Device.isPad {
+                    Text(
+                        // swiftlint:disable:next line_length
+                        "The zoom and the page buttons stand in one column on this side of the picture, the zoom nearest your thumb: the side of the hand that holds the iPad.",
+                        bundle: .module)
+                } else {
+                    Text(
+                        // swiftlint:disable:next line_length
+                        "The zoom and the page buttons stand in one column on this side of the picture, the zoom nearest your thumb: the side of the hand that holds the phone.",
+                        bundle: .module)
+                }
             }
             #endif
             Section {
@@ -108,10 +115,17 @@ public struct SettingsView: View {
                 }
             } footer: {
                 if badgeRefused {
+                    #if os(macOS)
+                    Text(
+                        // swiftlint:disable:next line_length
+                        "Notifications are off for Yomidori. Turn on badges for it in System Settings, under Notifications, then here again.",
+                        bundle: .module)
+                    #else
                     Text(
                         // swiftlint:disable:next line_length
                         "Notifications are off for Yomidori. Turn on badges for it in the Settings app, under Notifications, then here again.",
                         bundle: .module)
+                    #endif
                 } else {
                     Text(
                         // swiftlint:disable:next line_length
@@ -133,10 +147,17 @@ public struct SettingsView: View {
             } header: {
                 Text("Read any screen", bundle: .module)
             } footer: {
-                Text(
-                    // swiftlint:disable:next line_length
-                    "In the Shortcuts app, make a shortcut of two actions, Take Screenshot and then Read in Yomidori, and set it to Back Tap (Settings, Accessibility, Touch) or the Action button. A double tap on the back of the phone then opens whatever is on the screen here, ready to tap. Nothing is saved to Photos.",
-                    bundle: .module)
+                if Device.isPad {
+                    Text(
+                        // swiftlint:disable:next line_length
+                        "In the Shortcuts app, make a shortcut of two actions, Take Screenshot and then Read in Yomidori, and put it in Control Center or on the Home Screen. Running it opens whatever is on the screen here, ready to tap. Nothing is saved to Photos.",
+                        bundle: .module)
+                } else {
+                    Text(
+                        // swiftlint:disable:next line_length
+                        "In the Shortcuts app, make a shortcut of two actions, Take Screenshot and then Read in Yomidori, and set it to Back Tap (Settings, Accessibility, Touch) or the Action button. A double tap on the back of the phone then opens whatever is on the screen here, ready to tap. Nothing is saved to Photos.",
+                        bundle: .module)
+                }
             }
             #endif
             Section {
@@ -223,7 +244,12 @@ public struct SettingsView: View {
     @ViewBuilder private var syncStatus: some View {
         switch sync.status {
         case .off: Text("Starting…", bundle: .module)
-        case .noAccount: Text("Sign in to iCloud in Settings to sync.", bundle: .module)
+        case .noAccount:
+            #if os(macOS)
+            Text("Sign in to iCloud in System Settings to sync.", bundle: .module)
+            #else
+            Text("Sign in to iCloud in Settings to sync.", bundle: .module)
+            #endif
         case .syncing: Text("Syncing…", bundle: .module)
         case .upToDate: Text("Up to date", bundle: .module)
         case .failed(let message): Text("Sync failed: \(message)", bundle: .module)

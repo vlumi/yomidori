@@ -55,6 +55,13 @@ public struct MacReadView: View {
             editing = page.reading == nil
         }
         .onChange(of: draft) { _, typed in settle(typed) }
+        // The other recognizer's text is another text: the selection starts over, and the
+        // pane goes to the reading, Vision having no selection over the picture.
+        .onChange(of: page.mode) { _, mode in
+            selection.clear()
+            page.selectedRange = nil
+            if mode == .vision, page.still != nil { pictureAsReading = true }
+        }
         .onChange(of: taps.shown, initial: true) { _, shown in
             if shown == .read, editing { focusAsked += 1 }
         }
@@ -65,17 +72,22 @@ public struct MacReadView: View {
                 editing = false
             }
         }
+        // A picture put on the page from outside, as a shortcut's arrives: read as a dropped
+        // one is. One taken here is already being read, and the demo's comes with its text.
+        .onChange(of: page.still?.id, initial: true) { _, _ in
+            guard let still = page.still, !recognizing, page.analysis == nil, page.lines.isEmpty,
+                page.transcript == nil
+            else { return }
+            take(still)
+        }
         // A picture dropped on the page, from a file or another app.
         .onDrop(of: [.image, .fileURL], isTargeted: $dropping) { providers in
-            take(dropped: providers)
+            Still.take(from: providers, take)
         }
         // File › Open…: a picture from a file.
         .onChange(of: commands.openAsked) { _, _ in opening = true }
         .fileImporter(isPresented: $opening, allowedContentTypes: [.image]) { result in
-            guard let url = try? result.get() else { return }
-            let accessing = url.startAccessingSecurityScopedResource()
-            defer { if accessing { url.stopAccessingSecurityScopedResource() } }
-            if let still = Still(file: url) { take(still) }
+            Still.take(picked: result, take)
         }
     }
 
@@ -90,22 +102,27 @@ public struct MacReadView: View {
                     ReadingPage(
                         reading: reading, selection: selection, onPaste: pasteFromPasteboard)
                 } else {
-                    PictureView(still: still, analysis: page.analysis, selection: selection)
-                        .background(
-                            KeyCatcher(asked: 0) { code, modifiers in
-                                code == 9 && modifiers == [.command] ? pasteFromPasteboard() : false
-                            }
-                        )
-                        .overlay {
-                            if recognizing {
-                                ProgressView {
-                                    Text("Reading the page…", bundle: .module)
-                                }
-                                .padding(20)
-                                .background(
-                                    .regularMaterial, in: RoundedRectangle(cornerRadius: 12))
-                            }
+                    // Vision's text is not the overlay's: no overlay to select in, then; the
+                    // reading is the place.
+                    PictureView(
+                        still: still, analysis: page.mode == .vision ? nil : page.analysis,
+                        selection: selection
+                    )
+                    .background(
+                        KeyCatcher(asked: 0) { code, modifiers in
+                            code == 9 && modifiers == [.command] ? pasteFromPasteboard() : false
                         }
+                    )
+                    .overlay {
+                        if recognizing {
+                            ProgressView {
+                                Text("Reading the page…", bundle: .module)
+                            }
+                            .padding(20)
+                            .background(
+                                .regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+                        }
+                    }
                 }
             } else if editing || page.reading == nil {
                 source
@@ -130,6 +147,14 @@ public struct MacReadView: View {
                 Text(pictureAsReading ? "Reading" : "Picture", bundle: .module)
                     .font(.headline)
                 Spacer()
+                Picker(selection: $page.mode) {
+                    Text("Live Text", bundle: .module).tag(CaptureView.Mode.liveText)
+                    Text("Vision", bundle: .module).tag(CaptureView.Mode.vision)
+                } label: {
+                    Text("Recognizer", bundle: .module)
+                }
+                .fixedSize()
+                .help(Text("Which recognizer's reading of the picture to use", bundle: .module))
                 if page.reading != nil {
                     Button {
                         pictureAsReading.toggle()
@@ -294,28 +319,6 @@ extension MacReadView {
         }
     }
 
-    private func take(dropped providers: [NSItemProvider]) -> Bool {
-        guard let provider = providers.first else { return false }
-        if provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
-            provider.loadDataRepresentation(for: .image) { data, _ in
-                guard let data, let still = Still(data: data) else { return }
-                DispatchQueue.main.async { take(still) }
-            }
-            return true
-        }
-        if provider.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) {
-            provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier) { item, _ in
-                guard let data = item as? Data,
-                    let url = URL(dataRepresentation: data, relativeTo: nil),
-                    let still = Still(file: url)
-                else { return }
-                DispatchQueue.main.async { take(still) }
-            }
-            return true
-        }
-        return false
-    }
-
     /// The pasteboard's picture, or its text into the box; for ⌘V while the page is no text
     /// box.
     private func pasteFromPasteboard() -> Bool {
@@ -352,12 +355,20 @@ extension MacReadView {
         focusAsked += 1
     }
 
-    /// The page's text: the box's, or the picture's as Live Text reads it, the overlay's own
-    /// text once it has it, since its selection counts characters of that one.
+    /// The page's text: the box's, or the picture's as the chosen recognizer reads it — Live
+    /// Text's being the overlay's own text once it has it, since its selection counts
+    /// characters of that one. Vision's lines stand in where Live Text found nothing, or has
+    /// no say on this Mac.
     private var pageText: String? {
         if page.still != nil {
+            if page.mode == .vision, !page.lines.isEmpty {
+                return VisionPage(lines: page.lines).transcript
+            }
             if let analysis = page.analysis, analysis.hasResults(for: .text) {
                 return selection.pageTexts[0] ?? analysis.transcript
+            }
+            if !page.lines.isEmpty {
+                return VisionPage(lines: page.lines).transcript
             }
             // The page's own text, where it came with one (the demo's rendered page).
             return page.transcript
