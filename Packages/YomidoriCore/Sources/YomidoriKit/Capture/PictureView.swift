@@ -13,6 +13,18 @@ struct PictureView: NSViewRepresentable {
     let still: Still
     let analysis: ImageAnalysis?
     @ObservedObject var selection: LiveTextSelection
+    /// The zoom last asked of the picture, by number so the same ask twice is two.
+    var zoom: ZoomAsk?
+
+    /// What the page bar's Zoom menu asks: the trackpad does the rest.
+    struct ZoomAsk: Equatable {
+        let id: Int
+        let kind: ZoomKind
+    }
+
+    enum ZoomKind {
+        case fit, actual, closer, further
+    }
 
     func makeNSView(context: Context) -> NSScrollView {
         let scroll = NSScrollView()
@@ -41,6 +53,10 @@ struct PictureView: NSViewRepresentable {
                 size: NSSize(width: still.image.width, height: still.image.height)
             )
             container.fit(in: scroll)
+        }
+        if let zoom, zoom.id != context.coordinator.zoomApplied {
+            context.coordinator.zoomApplied = zoom.id
+            container.zoom(zoom.kind, in: scroll)
         }
         let overlay = container.overlay
         if overlay.analysis !== analysis {
@@ -102,10 +118,24 @@ struct PictureView: NSViewRepresentable {
             scroll.contentView.scroll(to: NSPoint(x: 0, y: image.size.height))
             scroll.reflectScrolledClipView(scroll.contentView)
         }
+
+        /// A step of zoom about the middle of what is in view, or back to the fit or the
+        /// pixels.
+        func zoom(_ kind: ZoomKind, in scroll: NSScrollView) {
+            let visible = scroll.contentView.bounds
+            let middle = NSPoint(x: visible.midX, y: visible.midY)
+            switch kind {
+            case .fit: fit(in: scroll)
+            case .actual: scroll.setMagnification(1, centeredAt: middle)
+            case .closer: scroll.setMagnification(scroll.magnification * 1.25, centeredAt: middle)
+            case .further: scroll.setMagnification(scroll.magnification / 1.25, centeredAt: middle)
+            }
+        }
     }
 
     @MainActor final class Coordinator: NSObject, ImageAnalysisOverlayViewDelegate {
         weak var container: FittingImageView?
+        var zoomApplied = 0
         private let selection: LiveTextSelection
 
         init(selection: LiveTextSelection) {
