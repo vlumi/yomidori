@@ -116,6 +116,6 @@ public final class FileLookupHistory: LookupHistory {
     private func setClearedAt(_ date: Date) throws {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
-        try encoder.encode(date).write(to: clearedURL, options: .atomic)
+        try encoder.encode(date).write(to: clearedURL, options: .store)
     }
 }

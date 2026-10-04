@@ -4,10 +4,15 @@ import Foundation
 /// show and store: control characters, bidirectional overrides and isolates, which can make
 /// text read other than it is, and byte-order marks go, and it is cut to a length.
 public enum Sanitize {
+    /// A character may be many scalars, so the cut is on characters and on scalars both: a
+    /// thousand combining marks on one letter are one character and still go.
+    public static let scalarsPerCharacter = 4
+
     public static func text(_ text: String, limit: Int, keepsNewlines: Bool = false) -> String {
         var kept = String.UnicodeScalarView()
         for scalar in text.unicodeScalars where isAllowed(scalar, keepsNewlines: keepsNewlines) {
             kept.append(scalar)
+            if kept.count >= limit * scalarsPerCharacter { break }
         }
         return String(String(kept).prefix(limit))
     }
