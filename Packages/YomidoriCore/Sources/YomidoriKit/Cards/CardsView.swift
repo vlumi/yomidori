@@ -16,12 +16,30 @@ struct CardsView: View {
     /// ones ticked while selecting.
     @State private var picked: Set<UUID> = []
 
+    /// The card opened in a split's detail column, over whatever was pushed there.
+    @State private var detailPath = NavigationPath()
+
     var body: some View {
         #if os(macOS)
         split
         #else
-        ScrollViewReader { proxy in
-            list.scrollsToTopOnReselect(of: .cards, with: proxy)
+        if sizeClass == .regular {
+            // Room for two columns: the list stays, the card opens beside it.
+            NavigationSplitView {
+                ScrollViewReader { proxy in
+                    list.scrollsToTopOnReselect(of: .cards, with: proxy)
+                }
+            } detail: {
+                NavigationStack(path: $detailPath) {
+                    detail.appDestinations()
+                }
+            }
+            // A card chosen: the stack shows it, over whatever was pushed.
+            .onChange(of: picked) { _, _ in detailPath = NavigationPath() }
+        } else {
+            ScrollViewReader { proxy in
+                list.scrollsToTopOnReselect(of: .cards, with: proxy)
+            }
         }
         #endif
     }
@@ -56,24 +74,28 @@ struct CardsView: View {
                     #if os(macOS)
                     CardRow(card: card).tag(card.id)
                     #else
-                    // Forgotten by a swipe, a swipe action and not the list's own delete:
-                    // that one puts its red circles on every row the moment selecting
-                    // starts, before they can be told to stay away.
-                    NavigationLink(value: card) { CardRow(card: card) }
-                        .swipeActions(edge: .trailing) {
-                            if !selecting {
-                                Button(role: .destructive) {
-                                    try? Cards.store?.remove(card)
-                                    reload()
-                                } label: {
-                                    Label {
-                                        Text("Forget", bundle: .module)
-                                    } icon: {
-                                        Image(systemName: "trash")
+                    if sizeClass == .regular {
+                        CardRow(card: card).tag(card.id)
+                    } else {
+                        // Forgotten by a swipe, a swipe action and not the list's own delete:
+                        // that one puts its red circles on every row the moment selecting
+                        // starts, before they can be told to stay away.
+                        NavigationLink(value: card) { CardRow(card: card) }
+                            .swipeActions(edge: .trailing) {
+                                if !selecting {
+                                    Button(role: .destructive) {
+                                        try? Cards.store?.remove(card)
+                                        reload()
+                                    } label: {
+                                        Label {
+                                            Text("Forget", bundle: .module)
+                                        } icon: {
+                                            Image(systemName: "trash")
+                                        }
                                     }
                                 }
                             }
-                        }
+                    }
                     #endif
                 }
             } header: {
@@ -93,6 +115,7 @@ struct CardsView: View {
 
     #if os(iOS)
     @State private var editMode: EditMode = .inactive
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     private var selecting: Bool { editMode.isEditing }
 
@@ -100,12 +123,15 @@ struct CardsView: View {
         List(selection: $picked) {
             if !selecting {
                 Section {
-                    NavigationLink(value: Screen.collections) {
-                        Label {
-                            Text("Collections", bundle: .module)
-                        } icon: {
-                            Image(systemName: "books.vertical")
+                    if sizeClass == .regular {
+                        Button {
+                            detailPath = NavigationPath()
+                            detailPath.append(Screen.collections)
+                        } label: {
+                            collectionsLabel
                         }
+                    } else {
+                        NavigationLink(value: Screen.collections) { collectionsLabel }
                     }
                 }
                 .id(TabTop.id)
@@ -177,7 +203,6 @@ struct CardsView: View {
     #endif
 
     #if os(macOS)
-    @State private var detailPath = NavigationPath()
     @State private var forgetting = false
 
     /// With room: the list on the left, the card on the right, the arrow keys moving
@@ -191,11 +216,7 @@ struct CardsView: View {
                         detailPath = NavigationPath()
                         detailPath.append(Screen.collections)
                     } label: {
-                        Label {
-                            Text("Collections", bundle: .module)
-                        } icon: {
-                            Image(systemName: "books.vertical")
-                        }
+                        collectionsLabel
                     }
                     .buttonStyle(.plain)
                 }
@@ -249,6 +270,9 @@ struct CardsView: View {
         .onReceive(Cards.changes(of: [.card, .collection])) { _ in reload() }
     }
 
+    #endif
+
+    /// A split's detail: the one card picked, what is done to several, or a word to pick one.
     @ViewBuilder private var detail: some View {
         if picked.count == 1, let card = cards.first(where: { picked.contains($0.id) }) {
             CardView(card: card).id(card.id)
@@ -262,7 +286,14 @@ struct CardsView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
-    #endif
+
+    private var collectionsLabel: some View {
+        Label {
+            Text("Collections", bundle: .module)
+        } icon: {
+            Image(systemName: "books.vertical")
+        }
+    }
 }
 
 struct CardRow: View {
