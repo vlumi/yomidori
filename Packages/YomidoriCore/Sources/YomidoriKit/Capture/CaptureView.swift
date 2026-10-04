@@ -22,6 +22,10 @@ public struct CaptureView: View {
     @State private var liveFraction: Double?
     /// Where the drawer stood before a double tap took it to its largest.
     @State private var fractionBeforeToggle: Double?
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
+    /// The words column's width when the page stands beside it.
+    static let wordsWidth: CGFloat = 440
 
     public init() {}
 
@@ -52,20 +56,17 @@ public struct CaptureView: View {
 
     public var body: some View {
         GeometryReader { geometry in
-            ZStack(alignment: .bottom) {
-                Color.black.ignoresSafeArea()
-                if let still {
-                    stillView(still, in: pageArea(in: geometry.size))
-                    drawer(screenHeight: geometry.size.height)
-                } else if let pasted = page.pasted {
-                    TextPage(text: pasted, selection: selection)
-                        .frame(height: pageArea(in: geometry.size).height)
-                        .frame(maxHeight: .infinity, alignment: .top)
-                        .onTabReselect(.read) { retake() }
-                    drawer(screenHeight: geometry.size.height)
+            Group {
+                if columns(in: geometry.size) {
+                    // Room beside the page, an iPad on its side: the words in a column of
+                    // their own, as on the Mac, and no drawer.
+                    HStack(spacing: 0) {
+                        pagePane(in: pageArea(in: geometry.size))
+                        wordsColumn
+                    }
                 } else {
-                    VStack(spacing: 0) {
-                        cameraView
+                    ZStack(alignment: .bottom) {
+                        pagePane(in: pageArea(in: geometry.size))
                         drawer(screenHeight: geometry.size.height)
                     }
                 }
@@ -96,14 +97,40 @@ public struct CaptureView: View {
         }
     }
 
-    /// The page above the drawer where it settled; while a drag is on, the drawer lies over
-    /// the page or leaves a gap, and the page follows on release.
+    /// A regular width lying down: the page and the words side by side.
+    private func columns(in screen: CGSize) -> Bool {
+        sizeClass == .regular && screen.width > screen.height
+    }
+
+    /// The page's room: beside the words column, or above the drawer where it settled; while
+    /// a drag is on, the drawer lies over the page or leaves a gap, and the page follows on
+    /// release.
     private func pageArea(in screen: CGSize) -> CGSize {
-        CGSize(
+        if columns(in: screen) {
+            return CGSize(width: screen.width - Self.wordsWidth, height: screen.height)
+        }
+        return CGSize(
             width: screen.width,
             height: screen.height
                 - DrawerDetents.height(
                     fraction: settledFraction ?? readoutFraction, screenHeight: screen.height))
+    }
+
+    /// The still, the pasted text or the camera, in its room, over black.
+    @ViewBuilder private func pagePane(in area: CGSize) -> some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+            if let still {
+                stillView(still, in: area)
+            } else if let pasted = page.pasted {
+                TextPage(text: pasted, selection: selection)
+                    .frame(height: area.height)
+                    .frame(maxHeight: .infinity, alignment: .top)
+                    .onTabReselect(.read) { retake() }
+            } else {
+                cameraView
+            }
+        }
     }
 
     private var cameraView: some View {
@@ -207,30 +234,51 @@ public struct CaptureView: View {
             hasStill: still != nil || page.pasted != nil, screenHeight: screenHeight,
             fraction: Binding(get: { liveFraction ?? readoutFraction }, set: { liveFraction = $0 }),
             settled: { fraction in settle(at: DrawerDetents.nearest(fraction)) },
-            toggled: toggleDrawer
-        ) {
-            if page.pasted == nil {
-                Picker(selection: $page.mode) {
-                    Text("Live Text", bundle: .module).tag(Mode.liveText)
-                    Text("Vision", bundle: .module).tag(Mode.vision)
-                } label: {
-                    Text("Recognizer", bundle: .module)
+            toggled: toggleDrawer, content: { words }, buttons: { buttons })
+    }
+
+    /// The words beside the page: what the drawer holds, standing, with the buttons under.
+    private var wordsColumn: some View {
+        VStack(spacing: 12) {
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 12, pinnedViews: .sectionHeaders) {
+                    words
                 }
-                .pickerStyle(.segmented)
             }
-            readout
-            if still != nil || page.pasted != nil {
-                Text("Tap Read again for a new page.", bundle: .module)
-                    .font(.caption2)
-                    .foregroundStyle(.tertiary)
+            buttons
+        }
+        .padding(.horizontal, 24)
+        .padding(.vertical, 12)
+        .frame(width: Self.wordsWidth)
+        .frame(maxHeight: .infinity, alignment: .top)
+        .background(Palette.page.ignoresSafeArea(edges: .vertical))
+        .tint(Palette.nightGreen)
+    }
+
+    @ViewBuilder private var words: some View {
+        if page.pasted == nil {
+            Picker(selection: $page.mode) {
+                Text("Live Text", bundle: .module).tag(Mode.liveText)
+                Text("Vision", bundle: .module).tag(Mode.vision)
+            } label: {
+                Text("Recognizer", bundle: .module)
             }
-        } buttons: {
-            if still == nil, page.pasted == nil {
-                CameraButtons(
-                    picked: $picked, ready: camera.access == .ready,
-                    label: Text("Read the page", bundle: .module), freeze: takeStill,
-                    paste: paste)
-            }
+            .pickerStyle(.segmented)
+        }
+        readout
+        if still != nil || page.pasted != nil {
+            Text("Tap Read again for a new page.", bundle: .module)
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
+        }
+    }
+
+    @ViewBuilder private var buttons: some View {
+        if still == nil, page.pasted == nil {
+            CameraButtons(
+                picked: $picked, ready: camera.access == .ready,
+                label: Text("Read the page", bundle: .module), freeze: takeStill,
+                paste: paste)
         }
     }
 
