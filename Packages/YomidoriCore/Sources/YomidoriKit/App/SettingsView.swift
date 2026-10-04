@@ -189,10 +189,13 @@ public struct SettingsView: View {
         .tint(Palette.nightGreen)
         .settingsFormStyle()
         .fileImporter(isPresented: $choosingBackup, allowedContentTypes: [.json]) { result in
-            if case .success(let url) = result, let done = try? Cards.restoreBackup(from: url) {
-                restored = done
-            } else if case .success = result {
-                restoreFailed = true
+            guard case .success(let url) = result else { return }
+            Task {
+                if let done = try? await Cards.restoreBackup(from: url) {
+                    restored = done
+                } else {
+                    restoreFailed = true
+                }
             }
         }
         .alert(

@@ -143,11 +143,13 @@ public struct AppRoot: View {
         }
         .task(id: tab) { dueCount = Cards.dueItems(at: Date()).count }
         .onOpenURL { url in
-            if let done = try? Cards.importCollection(from: url) {
-                imported = done
-                tab = .cards
-            } else {
-                importFailed = true
+            Task {
+                if let done = try? await Cards.importCollection(from: url) {
+                    imported = done
+                    tab = .cards
+                } else {
+                    importFailed = true
+                }
             }
         }
         .collectionImportAlerts(imported: $imported, failed: $importFailed)

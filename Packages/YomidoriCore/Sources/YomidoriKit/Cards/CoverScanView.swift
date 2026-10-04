@@ -13,6 +13,8 @@ struct CoverScanView: View {
     @State private var still: Still?
     @State private var lines: [String] = []
     @State private var reading = false
+    /// The cover being scaled and written, off the main thread; the button waits.
+    @State private var keeping = false
     @State private var picked: PhotosPickerItem?
 
     var body: some View {
@@ -53,6 +55,7 @@ struct CoverScanView: View {
                         } label: {
                             Text("Use", bundle: .module)
                         }
+                        .disabled(keeping)
                     }
                 }
             }
@@ -160,10 +163,18 @@ struct CoverScanView: View {
         reading = false
     }
 
+    /// The still scaled to a cover and written, off the main thread — a 48-megapixel still
+    /// drawn down is a visible pause — then the collection takes it and the sheet goes.
     private func keep() {
-        if let still, let id = try? CoverArchive.save(still.image) {
-            collection.coverID = id
+        guard let still, !keeping else { return }
+        keeping = true
+        let image = still.image
+        Task {
+            let id = await Task.detached(priority: .userInitiated) {
+                try? CoverArchive.save(image)
+            }.value
+            if let id { collection.coverID = id }
+            dismiss()
         }
-        dismiss()
     }
 }
