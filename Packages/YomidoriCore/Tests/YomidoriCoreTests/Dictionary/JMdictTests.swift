@@ -52,6 +52,12 @@ final class JMdictTests: XCTestCase {
         XCTAssertEqual(
             dictionary.pitchAccents(for: "かさかさ", reading: "かさかさ").map(\.downstep), [1, 0])
         XCTAssertTrue(dictionary.pitchAccents(for: "街皮", reading: "がいひ").isEmpty)
+        // Asked again, and in katakana: the same answer from the cache, not another query.
+        XCTAssertEqual(dictionary.pitchAccents(for: "樹皮", reading: "ジュヒ").map(\.downstep), [1])
+        XCTAssertEqual(dictionary.pitchAccents(for: "樹皮", reading: "じゅひ").map(\.downstep), [1])
+        XCTAssertEqual(
+            dictionary.estimatedPitch(for: "樹皮", reading: "じゅひ"),
+            dictionary.estimatedPitch(for: "樹皮", reading: "じゅひ"))
     }
 
     func testTypedSearchByKanjiKanaAndGloss() {
