@@ -284,7 +284,16 @@ struct CardsView: View {
                         detailPath = NavigationPath()
                         detailPath.append(Screen.collections)
                     } label: {
-                        collectionsLabel
+                        // A row to the eye and the pointer, chevron and all, not a label
+                        // clickable only on its letters.
+                        HStack {
+                            collectionsLabel
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.tertiary)
+                        }
+                        .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                 }

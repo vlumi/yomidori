@@ -44,14 +44,14 @@ enum DemoData {
             }
             let back = Double(daysAgo) / 42
             var counts = Rank.allCases.map { rank -> Int in
-                let thinning = rank == .nest ? 0.3 : 0.4 + 0.12 * Double(rank.rawValue)
-                return Int((Double(final[rank.rawValue]) * max(0, 1 - back * thinning)).rounded())
+                let thinning = rank == .nest ? 0.3 : 0.4 + 0.12 * Double(rank.index)
+                return Int((Double(final[rank.index]) * max(0, 1 - back * thinning)).rounded())
             }
             // The eggs make up the total, which grows as pages are read.
             let total = Int((Double(final.reduce(0, +)) * (1 - back * 0.6)).rounded())
-            let others = counts.enumerated().filter { $0.offset != Rank.egg.rawValue }
+            let others = counts.enumerated().filter { $0.offset != Rank.egg.index }
                 .map(\.element).reduce(0, +)
-            counts[Rank.egg.rawValue] = max(0, total - others)
+            counts[Rank.egg.index] = max(0, total - others)
             return RankSnapshot(day: day, counts: counts)
         }
         try? snapshots.replaceAll(history)

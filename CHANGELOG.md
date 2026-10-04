@@ -14,6 +14,12 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The iPad's words column no longer says nothing was recognized before a page is taken.** It says the words will read out there.
+- **The Mac's Collections row in the card list reads as a row**, with a chevron and the whole width to click, not a label clickable on its letters.
+- **The Mac's picture zooms by menu and key** — Zoom In ⌘=, Zoom Out ⌘−, Actual Size ⌘0, Zoom to Fit ⌘9 — for a mouse without a trackpad's pinch, as the phone has its slider.
+- **Ranks count from the egg.** A waiting card is 0, the first started rank 1, the migrating bird 5; a shelved card, outside the climb, shows a dash on its dot instead of a number.
+- **The study settings sync.** The retention the schedule aims at, and the lesson's order and size, are the same on every device signed into the same iCloud; the later change wins. What a device keeps to itself — its look, language, badge, which hand holds it, its layout — stays its own.
+- **The Swipe back setting is gone.** iOS 26 drives the back swipe with a gesture the switch no longer reached, so it had stopped doing anything; the swipe is the system's, on, as everywhere.
 - **The card list sorts, groups and filters.** A new menu beside the collection filter sorts by rank, date kept or date changed — each sort also the grouping, into ranks or months, every section folding away under its header with its count — and shows one kind of word: nouns, verbs, adjectives, adverbs, expressions or the rest, read off the dictionary.
 - **A collection, one looked-up word or one accepted meaning can be removed on the Mac.** Each row has it in its menu (right-click, or a long press on the phone and iPad), beside the swipe the phone had; a collection could not be removed on the Mac at all before.
 - **On the Mac, a picture sent by the Read in Yomidori shortcut is read.** It was shown on the page but never recognized, so the words column said nothing was recognized.

@@ -36,7 +36,7 @@ same Kit under an AppKit shell. UIKit-, camera- and Vision-only code sits
 behind `#if os(iOS)` / `#if canImport(UIKit)`; where the Mac needs the same
 thing its own way there is an AppKit branch (appearance-aware colors, the
 pasteboard, the Dictionary app opened on a word), and where it does not (the
-camera, the orientation lock, swipe-back, the phone's Shortcuts section) the
+camera, the orientation lock, the phone's Shortcuts section) the
 fallback does nothing and the view is hidden. On the Mac there is no camera
 and no drawer: Read is the home tab, and the page is one pane with two
 states (`MacReadView`): *Text*, a box the reader pastes into (`TextBox` over an
@@ -331,8 +331,12 @@ has what remains.
   reader's devices through their own iCloud, CloudKit's private database
   driven by `CKSyncEngine`. One record per card, collection and looked-up word
   (`SyncName`, the store key made ASCII; `SyncPayload`, the same JSON the
-  stores write), a cover as the collection record's asset, and one record for
-  the date the history was last cleared. A card's id is made from its word
+  stores write), a cover as the collection record's asset, one record for
+  the date the history was last cleared, and one for the study settings
+  (`StudySettings`: the retention, the lesson's order and size, dated; the
+  later change wins; `StudySettingsBridge` in Kit keeps it and the defaults the
+  screens read the same, so what a device keeps to itself — look, hand, layout
+  — stays out of it). A card's id is made from its word
   (`WordKey.cardID`, a name-based UUID), so the same word kept on two devices
   is one record, merged like any other. Changes made while sync is off are
   kept (`UnsentChanges`) and sent when it starts. The local files are the
@@ -487,13 +491,15 @@ has what remains.
   order the counts and the icon's number are taken from; a review shuffles
   them. *Forgot it.
   Back to waiting* on a review clears the schedule and the card returns
-  through a lesson. `Rank` bands the reading's stability in birds:
-  nest 0 (shelved), egg 1 (waiting), hatchling 2 (under a week), chick 3 (under
-  a month), fledgling 4 (under four months), flying 5 (under a year), migrating
-  6; nothing retires. Study draws the ranks as bars in each rank's color with a
-  selection, and the mark everywhere is the rank's number on a dot of its
-  color, the name beside it where there is room and as the accessibility label
-  where not.
+  through a lesson. `Rank` bands the reading's stability in birds, numbered
+  from the egg: egg 0 (waiting), hatchling 1 (under a week), chick 2 (under a
+  month), fledgling 3 (under four months), flying 4 (under a year), migrating
+  5; the nest (shelved) is outside the climb, raw value −1 so it sorts first
+  and a dash where the others show their number; nothing retires. A stored
+  count (`RankSnapshot.counts`) is indexed by `Rank.index`, the nest first.
+  Study draws the ranks as bars in each rank's color with a selection, and the
+  mark everywhere is the rank's number on a dot of its color, the name beside
+  it where there is room and as the accessibility label where not.
 - **Collections** (`Collection`, `FileCollectionStore` in Core; `CollectionsView`,
   `CollectionEditor`, `CoverScanView`, `TagsEditor`, `CollectionPicker`,
   `CollectionFilter` in Kit): named groups of cards, a book usually, a card in
@@ -527,10 +533,8 @@ has what remains.
   but to the reader's own iCloud while sync is on, the pitch notation explained
   on four words, and the notices every bundled license asks for, which are the
   repository's own THIRD_PARTY_NOTICES.md bundled as a resource so there is one
-  copy to keep current. **`SettingsView`**: the swipe-back switch, on as iOS has
-  it; off, the navigation controller's pop gesture is disabled on every screen
-  through a small UIKit helper (`SwipeBack`), for a reader whose swipe meant a
-  word; the side the page's controls stand on; the look (`Appearance`: the
+  copy to keep current. **`SettingsView`**: the side the page's controls stand
+  on; the look (`Appearance`: the
   device's, light or dark, `chosenAppearance()` on every window's root) and the
   language (`AppLanguage`: the device's, English or Japanese, written to
   `AppleLanguages` for the system to read at the next start, with a notice

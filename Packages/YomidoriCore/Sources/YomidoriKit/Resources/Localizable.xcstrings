@@ -211,6 +211,16 @@
         }
       }
     },
+    "Actual Size": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "実際のサイズ"
+          }
+        }
+      }
+    },
     "Add": {
       "localizations": {
         "ja": {
@@ -3001,26 +3011,6 @@
         }
       }
     },
-    "Swipe back": {
-      "localizations": {
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "スワイプで戻る"
-          }
-        }
-      }
-    },
-    "Swiping in from the left edge goes back a screen, as everywhere on iOS. Off, only the back button does, so a swipe meant for a word never leaves the page.": {
-      "localizations": {
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "左端からのスワイプで前の画面に戻ります（iOSの標準）。オフにすると「戻る」ボタンでだけ戻るようになり、言葉を選ぼうとしたスワイプでページを離れることがなくなります。"
-          }
-        }
-      }
-    },
     "Sync failed: %@": {
       "localizations": {
         "ja": {
@@ -3077,6 +3067,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "尾高型：最後まで高く、続く助詞で下がります。"
+          }
+        }
+      }
+    },
+    "Take a page, and its words read out here.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ページを撮ると、言葉がここに並びます。"
           }
         }
       }
@@ -3587,6 +3587,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "ズーム"
+          }
+        }
+      }
+    },
+    "Zoom In": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拡大"
+          }
+        }
+      }
+    },
+    "Zoom Out": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "縮小"
+          }
+        }
+      }
+    },
+    "Zoom the picture": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真を拡大・縮小"
+          }
+        }
+      }
+    },
+    "Zoom to Fit": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "幅に合わせる"
           }
         }
       }

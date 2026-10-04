@@ -5,7 +5,7 @@ import Foundation
 public struct RankSnapshot: Codable, Equatable, Sendable {
     /// The day's start.
     public let day: Date
-    /// By `Rank.rawValue`.
+    /// By `Rank.index`: the nest first, then the egg and the climb.
     public let counts: [Int]
 
     public init(day: Date, counts: [Int]) {
@@ -15,12 +15,12 @@ public struct RankSnapshot: Codable, Equatable, Sendable {
 
     public static func of(_ cards: [Card], day: Date) -> RankSnapshot {
         var counts = Array(repeating: 0, count: Rank.allCases.count)
-        for card in cards { counts[card.rank.rawValue] += 1 }
+        for card in cards { counts[card.rank.index] += 1 }
         return RankSnapshot(day: day, counts: counts)
     }
 
     public func count(of rank: Rank) -> Int {
-        counts.indices.contains(rank.rawValue) ? counts[rank.rawValue] : 0
+        counts.indices.contains(rank.index) ? counts[rank.index] : 0
     }
 
     public var total: Int { counts.reduce(0, +) }
