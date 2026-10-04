@@ -1,7 +1,8 @@
 import SwiftUI
 import YomidoriCore
 
-/// The meanings the reader added to a card, each removable, and a field for another.
+/// The meanings the reader added to a card, each removable by a swipe or its menu, and a
+/// field for another.
 /// The meanings a review takes as right: the dictionary's until the reader takes one out or
 /// adds one, then the reader's own list.
 struct AcceptedMeanings: View {
@@ -18,12 +19,21 @@ struct AcceptedMeanings: View {
                 Text(verbatim: meaning)
                     // The last one stays: a meaning question needs an answer.
                     .deleteDisabled(answers.count == 1)
+                    .contextMenu {
+                        Button(role: .destructive) {
+                            remove([meaning])
+                        } label: {
+                            Label {
+                                Text("Remove this meaning", bundle: .module)
+                            } icon: {
+                                Image(systemName: "trash")
+                            }
+                        }
+                        .disabled(answers.count == 1)
+                    }
             }
             .onDelete { offsets in
-                for meaning in offsets.map({ answers[$0] }) {
-                    card.removeAnswer(meaning, glosses: glosses)
-                }
-                save()
+                remove(offsets.map { answers[$0] })
             }
             TextField(text: $draft) {
                 Text("Another meaning to accept", bundle: .module)
@@ -42,5 +52,12 @@ struct AcceptedMeanings: View {
                 Text("The dictionary's, until you change them.", bundle: .module)
             }
         }
+    }
+
+    private func remove(_ meanings: [String]) {
+        for meaning in meanings {
+            card.removeAnswer(meaning, glosses: glosses)
+        }
+        save()
     }
 }

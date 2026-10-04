@@ -14,6 +14,13 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A collection, one looked-up word or one accepted meaning can be removed on the Mac.** Each row has it in its menu (right-click, or a long press on the phone and iPad), beside the swipe the phone had; a collection could not be removed on the Mac at all before.
+- **On the Mac, a picture sent by the Read in Yomidori shortcut is read.** It was shown on the page but never recognized, so the words column said nothing was recognized.
+- **The Mac can read a picture with Vision too.** A *Recognizer* picker in the page bar, as the phone's drawer has; and where Live Text finds nothing, Vision's lines stand in by themselves, so a Mac without Live Text still reads.
+- **A collection's cover is chosen on the Mac, not scanned.** *Choose a cover…* opens a pane that takes a picture from Photos, a file or a drop, in place of the black camera pane with a shutter that could not fire.
+- **A picture gets to the Read tab from anywhere on an iPhone or iPad.** The Paste button takes a copied picture as well as text; a folder button opens one from Files; a picture dragged onto the page from another app is read; and ⌘V on a keyboard pastes a picture or a text — the ways the Mac already had.
+- **A pasted page has the camera button too.** The hint under the words said the camera button takes a new page, but a pasted text had none; now it does, on the side the page controls stand.
+- **The Mac can copy a picture's recognized text.** The Copy button under the words shows for a picture, as on the phone; typed text, being in a box already, still has none.
 - **Three Mac sheets have a proper size:** the card opened from a dictionary entry, *Add a sentence* on a card, and the collection's cover sheet, which came up as small as their content let them.
 - **Clearing the dictionary's history takes a deliberate step.** The *Clear* that sat by the search field is now *Clear the history…* under the ⋯ menu, in red, and asks with the number of words before anything goes; the Mac's button under its column asks the same.
 - **A card can be forgotten from anywhere.** On an iPad the row swipes to forget as on the phone, and the card itself has *Forget this card* under its actions, asked once, on every platform.

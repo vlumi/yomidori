@@ -93,6 +93,7 @@ enum DemoData {
 
     /// The page the Read tab opens on, already read.
     @MainActor static func seed(_ capture: CaptureState) {
+        if DemoMode.noPage { return }
         if DemoMode.spread {
             // Two pages, the cat's and then Melos's, as a spread.
             let first = DemoText.cat.lines.joined(separator: "\n")
