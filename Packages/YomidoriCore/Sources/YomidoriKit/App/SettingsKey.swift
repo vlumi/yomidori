@@ -13,6 +13,8 @@ enum SettingsKey {
     static let language = "language"
     /// The app's look, an `Appearance`.
     static let appearance = "appearance"
+    /// The iPad's Read on its side: the words column's width, as dragged.
+    static let wordsColumnWidth = "wordsColumnWidth"
     /// The Mac's search: the history column shown.
     static let historyShown = "historyShown"
 }
