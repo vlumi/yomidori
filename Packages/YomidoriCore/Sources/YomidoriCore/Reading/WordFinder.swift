@@ -14,6 +14,14 @@ public struct FoundWord: Equatable, Sendable {
     public var surface: String { tokens.map(\.surface).joined() }
     public var reading: String { tokens.map(\.reading).joined() }
     public var dictionaryForm: String? { tokens.count == 1 ? tokens[0].dictionaryForm : nil }
+
+    /// What a card of the word is headed by: the dictionary's headword, else the dictionary
+    /// form, else the word as it stands on the page.
+    public var cardHeadword: String { entries.first?.headword ?? dictionaryForm ?? surface }
+    /// What a card of the word reads: the dictionary's first reading, else the page's.
+    public var cardReading: String { Kana.hiragana(entries.first?.readings.first ?? reading) }
+    /// The key a card of the word is kept under (`WordKey`).
+    public var wordKey: String { WordKey.of(headword: cardHeadword, reading: cardReading) }
     public var first: Token { tokens[0] }
 }
 
