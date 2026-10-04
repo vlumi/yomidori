@@ -84,7 +84,7 @@ struct CardsView: View {
                             .swipeActions(edge: .trailing) {
                                 if !selecting {
                                     Button(role: .destructive) {
-                                        try? Cards.store?.remove(card)
+                                        Cards.write { try Cards.store?.remove(card) }
                                         reload()
                                     } label: {
                                         Label {
@@ -235,7 +235,7 @@ struct CardsView: View {
             ) {
                 Button(role: .destructive) {
                     for card in cards where picked.contains(card.id) {
-                        try? Cards.store?.remove(card)
+                        Cards.write { try Cards.store?.remove(card) }
                     }
                     picked = []
                 } label: {

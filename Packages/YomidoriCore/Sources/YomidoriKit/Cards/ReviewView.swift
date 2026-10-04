@@ -119,7 +119,7 @@ struct ReviewView: View {
     private func replace(_ sighting: Sighting, on card: Card) {
         var changed = Cards.store?.card(id: card.id) ?? card
         changed.replace(sighting)
-        try? Cards.store?.update(changed)
+        Cards.write { try Cards.store?.update(changed) }
         queue.replace(card: changed)
     }
 
@@ -261,10 +261,12 @@ struct ReviewView: View {
             // a meaning of the reader's own is still kept.
             reviewed = meaning.flatMap { Self.keep($0, on: item) }
         } else {
-            reviewed = try? Cards.store?.answer(
-                item, grade: grade, at: now, reconciled: reconciled, accepting: meaning,
-                glosses: meaning == nil ? [] : Self.glosses(of: item), seconds: seconds,
-                retention: retention)
+            reviewed = Cards.write {
+                try Cards.store?.answer(
+                    item, grade: grade, at: now, reconciled: reconciled, accepting: meaning,
+                    glosses: meaning == nil ? [] : Self.glosses(of: item), seconds: seconds,
+                    retention: retention)
+            }.flatMap { $0 }
             session.answered[item.question, default: 0] += 1
             if grade == .good { session.right[item.question, default: 0] += 1 }
             session.seconds += min(max(seconds, 0), ReviewEntry.longestCounted)
@@ -279,7 +281,7 @@ struct ReviewView: View {
     private func sendToWaiting(_ card: Card) {
         var waiting = Cards.store?.card(id: card.id) ?? card
         waiting.sendToWaiting()
-        try? Cards.store?.update(waiting)
+        Cards.write { try Cards.store?.update(waiting) }
         revealed = false
         answer = ""
         queue.remove(card: card.id)

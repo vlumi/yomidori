@@ -35,7 +35,7 @@ struct CardsBatch: View {
             Menu {
                 ForEach(collections) { collection in
                     Button {
-                        try? Cards.store?.add(picked, to: collection.id)
+                        Cards.write { try Cards.store?.add(picked, to: collection.id) }
                     } label: {
                         Text(verbatim: collection.name)
                     }
@@ -49,7 +49,7 @@ struct CardsBatch: View {
             Menu {
                 ForEach(holding) { collection in
                     Button(role: .destructive) {
-                        try? Cards.store?.remove(picked, from: collection.id)
+                        Cards.write { try Cards.store?.remove(picked, from: collection.id) }
                     } label: {
                         Text(verbatim: collection.name)
                     }

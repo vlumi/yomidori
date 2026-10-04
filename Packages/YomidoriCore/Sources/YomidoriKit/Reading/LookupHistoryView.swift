@@ -38,7 +38,7 @@ struct LookupHistoryView: View {
             }
             .onDelete { offsets in
                 for index in offsets {
-                    try? Cards.lookups?.remove(lookups[index])
+                    Cards.write { try Cards.lookups?.remove(lookups[index]) }
                 }
                 reload()
             }

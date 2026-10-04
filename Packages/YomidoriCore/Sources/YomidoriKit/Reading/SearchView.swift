@@ -270,7 +270,7 @@ struct SearchView: View {
                 {
                     ToolbarItem(placement: .primaryAction) {
                         Button(role: .destructive) {
-                            try? Cards.lookups?.clear()
+                            Cards.write { try Cards.lookups?.clear() }
                             historyGeneration += 1
                         } label: {
                             Text("Clear", bundle: .module)
@@ -406,7 +406,7 @@ extension SearchView {
                     HStack {
                         Spacer()
                         Button(role: .destructive) {
-                            try? Cards.lookups?.clear()
+                            Cards.write { try Cards.lookups?.clear() }
                             historyGeneration += 1
                         } label: {
                             Text("Clear", bundle: .module)
