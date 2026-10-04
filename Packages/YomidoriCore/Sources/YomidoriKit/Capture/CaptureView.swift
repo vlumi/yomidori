@@ -141,12 +141,17 @@ public struct CaptureView: View {
     /// release.
     private func pageArea(in screen: CGSize) -> CGSize {
         if columns(in: screen) {
-            return CGSize(width: screen.width - columnWidth(in: screen), height: screen.height)
+            return CGSize(
+                width: max(0, screen.width - columnWidth(in: screen)), height: screen.height)
         }
+        // The drawer has a least height; the first layout, before the screen has a size,
+        // must not ask for a page below zero.
         return CGSize(
             width: screen.width,
-            height: screen.height
-                - DrawerDetents.height(fraction: readoutFraction, screenHeight: screen.height))
+            height: max(
+                0,
+                screen.height
+                    - DrawerDetents.height(fraction: readoutFraction, screenHeight: screen.height)))
     }
 
     /// The still, the pasted text or the camera, in its room, over black — which stays
