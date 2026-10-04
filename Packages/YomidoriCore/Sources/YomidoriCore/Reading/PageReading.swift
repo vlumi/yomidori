@@ -25,6 +25,11 @@ public struct PageReading: Sendable {
     public let lines: TranscriptLines
     public let tokenLines: [[Token]]
     public let chunks: [Chunk]
+    /// The chunks of each line, for a page drawn line by line.
+    public let chunksByLine: [[Chunk]]
+    /// Where the line breaks fall in `text`, in characters, for a range to be checked
+    /// against without walking the text.
+    public let lineBreaks: [Int]
 
     public init(
         text: String, tokens: (String) -> [Token], dictionary: (any WordDictionary)?
@@ -54,6 +59,19 @@ public struct PageReading: Sendable {
             }
         }
         self.chunks = chunks
+        var byLine = Array(repeating: [Chunk](), count: tokenLines.count)
+        for chunk in chunks { byLine[chunk.line].append(chunk) }
+        chunksByLine = byLine
+        var breaks: [Int] = []
+        for (offset, character) in text.enumerated() where character.isNewline {
+            breaks.append(offset)
+        }
+        lineBreaks = breaks
+    }
+
+    /// Whether a range of the page's text, in characters, runs over a line break.
+    public func spansLines(_ range: Range<Int>) -> Bool {
+        lineBreaks.contains { range.contains($0) }
     }
 
     /// The chunk holding the character at `offset` of the page's text.
