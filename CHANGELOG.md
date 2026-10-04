@@ -14,11 +14,21 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The iPad's words column no longer says nothing was recognized before a page is taken.** It says the words will read out there.
+- **The Mac's Collections row in the card list reads as a row**, with a chevron and the whole width to click, not a label clickable on its letters.
 - **The Mac's picture zooms by menu and key** — Zoom In ⌘=, Zoom Out ⌘−, Actual Size ⌘0, Zoom to Fit ⌘9 — for a mouse without a trackpad's pinch, as the phone has its slider.
 - **A collection, one looked-up word or one accepted meaning can be removed on the Mac.** Each row has it in its menu (right-click, or a long press on the phone and iPad), beside the swipe the phone had; a collection could not be removed on the Mac at all before.
 - **On the Mac, a picture sent by the Read in Yomidori shortcut is read.** It was shown on the page but never recognized, so the words column said nothing was recognized.
 - **The Mac can read a picture with Vision too.** A *Recognizer* picker in the page bar, as the phone's drawer has; and where Live Text finds nothing, Vision's lines stand in by themselves, so a Mac without Live Text still reads.
+- **A collection's cover is chosen on the Mac, not scanned.** *Choose a cover…* opens a pane that takes a picture from Photos, a file or a drop, in place of the black camera pane with a shutter that could not fire.
 - **A picture gets to the Read tab from anywhere on an iPhone or iPad.** The Paste button takes a copied picture as well as text; a folder button opens one from Files; a picture dragged onto the page from another app is read; and ⌘V on a keyboard pastes a picture or a text — the ways the Mac already had.
+- **A pasted page has the camera button too.** The hint under the words said the camera button takes a new page, but a pasted text had none; now it does, on the side the page controls stand.
+- **The Mac can copy a picture's recognized text.** The Copy button under the words shows for a picture, as on the phone; typed text, being in a box already, still has none.
+- **Three Mac sheets have a proper size:** the card opened from a dictionary entry, *Add a sentence* on a card, and the collection's cover sheet, which came up as small as their content let them.
+- **Settings and About speak of the device in hand.** On an iPad the page-controls note says iPad, not phone, and the shortcut note points to Control Center and the Home Screen rather than Back Tap; on the Mac, badges and iCloud point to System Settings and About no longer mentions a camera. The hint while a page is read names the camera button, not the Read tab.
+- **The cards picked in Select can be forgotten together.** A red *Forget…* at the end of the bar asks with their number first, as the Mac's ⌫ does.
+- **⌘F and ⌘, on an iPad with a keyboard.** ⌘F puts the cursor in the dictionary's search field from anywhere on that tab, as on the Mac; ⌘, opens Settings.
+- **A card's row has *Forget…* in its menu** — a right-click on the Mac, a long press on the phone and iPad — asking first; the swipe stays as it was.
 - **Clearing the dictionary's history takes a deliberate step.** The *Clear* that sat by the search field is now *Clear the history…* under the ⋯ menu, in red, and asks with the number of words before anything goes; the Mac's button under its column asks the same.
 - **A card can be forgotten from anywhere.** On an iPad the row swipes to forget as on the phone, and the card itself has *Forget this card* under its actions, asked once, on every platform.
 - **A camera button on the page, and a way back from +.** A camera button in the page's controls takes another photo, so a retake no longer means finding the Read tab; and the + pressed by mistake has *Back to the page*, which brings the page just taken back as it was.

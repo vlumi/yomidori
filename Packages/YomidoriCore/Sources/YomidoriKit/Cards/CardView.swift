@@ -50,6 +50,7 @@ struct CardView: View {
                 card.add(added)
                 Cards.write { try Cards.store?.update(card) }
             }
+            .sheetSize(width: 520, height: 360)
         }
         .task(id: card.id) {
             details = await WordDetails.load(headword: card.headword, reading: card.reading)

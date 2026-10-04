@@ -127,4 +127,34 @@ extension CaptureView {
         }
         return sheet.transcript
     }
+
+    /// The page read by both recognizers, its reading cleared first; the demo's pick is
+    /// found again in the text as read.
+    func recognize() async {
+        lines = []
+        analysis = nil
+        page.transcript = nil
+        page.newPage(keepingFixes: !pages.isEmpty)
+        selection.clear()
+        selection.pageTexts[pages.count] = nil
+        page.recognizedStillID = nil
+        guard let still else { return }
+        recognizing = true
+        let read = await PageRecognition.read(still)
+        guard !Task.isCancelled, self.still?.id == still.id else { return }
+        lines = read.lines
+        analysis = read.analysis
+        page.recognizedStillID = still.id
+        recognizing = false
+        // The demo's pick, found again in the text as recognized: the reading keeps a
+        // selection that stands when it is made, and the picture shows it.
+        if let pick = DemoMode.pick {
+            let text = Spread.join(pageTexts)
+            page.selectedRange = text.range(of: pick).flatMap {
+                CharacterRange.offsets(of: $0, in: text)
+            }
+        }
+        AccessibilityNotification.Announcement(String(localized: "Page read", bundle: .module))
+            .post()
+    }
 }
