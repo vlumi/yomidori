@@ -125,8 +125,7 @@ struct TextBox: NSViewRepresentable {
                 return
             }
             if let urls = pasteboard.readObjects(forClasses: [NSURL.self]) as? [URL],
-                let url = urls.first, let data = try? Data(contentsOf: url),
-                let still = Still(data: data)
+                let url = urls.first, let still = Still(file: url)
             {
                 onPasteImage(still)
                 return

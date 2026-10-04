@@ -75,7 +75,7 @@ public struct MacReadView: View {
             guard let url = try? result.get() else { return }
             let accessing = url.startAccessingSecurityScopedResource()
             defer { if accessing { url.stopAccessingSecurityScopedResource() } }
-            if let data = try? Data(contentsOf: url), let still = Still(data: data) { take(still) }
+            if let still = Still(file: url) { take(still) }
         }
     }
 
@@ -314,7 +314,7 @@ extension MacReadView {
             provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier) { item, _ in
                 guard let data = item as? Data,
                     let url = URL(dataRepresentation: data, relativeTo: nil),
-                    let file = try? Data(contentsOf: url), let still = Still(data: file)
+                    let still = Still(file: url)
                 else { return }
                 DispatchQueue.main.async { take(still) }
             }
@@ -334,8 +334,7 @@ extension MacReadView {
             return true
         }
         if let urls = pasteboard.readObjects(forClasses: [NSURL.self]) as? [URL],
-            let url = urls.first, let data = try? Data(contentsOf: url),
-            let still = Still(data: data)
+            let url = urls.first, let still = Still(file: url)
         {
             take(still)
             return true

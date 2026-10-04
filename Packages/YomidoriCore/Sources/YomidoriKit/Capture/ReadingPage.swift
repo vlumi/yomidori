@@ -90,6 +90,10 @@ struct KeyCatcher: NSViewRepresentable {
         var asked = 0
         private var monitor: Any?
 
+        deinit {
+            if let monitor { NSEvent.removeMonitor(monitor) }
+        }
+
         override func viewDidMoveToWindow() {
             super.viewDidMoveToWindow()
             if let monitor { NSEvent.removeMonitor(monitor) }
