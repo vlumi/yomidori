@@ -36,6 +36,8 @@ public struct MacReadView: View {
     @State private var recognition: Task<Void, Never>?
     @State private var dropping = false
     @State private var opening = false
+    /// The Zoom menu's last ask of the picture.
+    @State private var zoomAsk: PictureView.ZoomAsk?
     @ObservedObject private var commands = AppCommands.shared
 
     public init() {}
@@ -106,7 +108,7 @@ public struct MacReadView: View {
                     // reading is the place.
                     PictureView(
                         still: still, analysis: page.mode == .vision ? nil : page.analysis,
-                        selection: selection
+                        selection: selection, zoom: zoomAsk
                     )
                     .background(
                         KeyCatcher(asked: 0) { code, modifiers in
@@ -140,6 +142,50 @@ public struct MacReadView: View {
         }
     }
 
+    /// The picture's zoom by menu and key, for a mouse without a trackpad's pinch: the
+    /// phone's slider and double tap, in the Mac's words.
+    private var zoomMenu: some View {
+        Menu {
+            Button {
+                ask(.closer)
+            } label: {
+                Text("Zoom In", bundle: .module)
+            }
+            .keyboardShortcut("=", modifiers: .command)
+            Button {
+                ask(.further)
+            } label: {
+                Text("Zoom Out", bundle: .module)
+            }
+            .keyboardShortcut("-", modifiers: .command)
+            Divider()
+            Button {
+                ask(.actual)
+            } label: {
+                Text("Actual Size", bundle: .module)
+            }
+            .keyboardShortcut("0", modifiers: .command)
+            Button {
+                ask(.fit)
+            } label: {
+                Text("Zoom to Fit", bundle: .module)
+            }
+            .keyboardShortcut("9", modifiers: .command)
+        } label: {
+            Label {
+                Text("Zoom", bundle: .module)
+            } icon: {
+                Image(systemName: "plus.magnifyingglass")
+            }
+        }
+        .fixedSize()
+        .help(Text("Zoom the picture", bundle: .module))
+    }
+
+    private func ask(_ kind: PictureView.ZoomKind) {
+        zoomAsk = PictureView.ZoomAsk(id: (zoomAsk?.id ?? 0) + 1, kind: kind)
+    }
+
     /// What the pane is showing, and the way to the other state.
     private var pageBar: some View {
         HStack {
@@ -155,6 +201,9 @@ public struct MacReadView: View {
                 }
                 .fixedSize()
                 .help(Text("Which recognizer's reading of the picture to use", bundle: .module))
+                if !pictureAsReading {
+                    zoomMenu
+                }
                 if page.reading != nil {
                     Button {
                         pictureAsReading.toggle()

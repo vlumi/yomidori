@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The Mac's picture zooms by menu and key** — Zoom In ⌘=, Zoom Out ⌘−, Actual Size ⌘0, Zoom to Fit ⌘9 — for a mouse without a trackpad's pinch, as the phone has its slider.
 - **A collection, one looked-up word or one accepted meaning can be removed on the Mac.** Each row has it in its menu (right-click, or a long press on the phone and iPad), beside the swipe the phone had; a collection could not be removed on the Mac at all before.
 - **On the Mac, a picture sent by the Read in Yomidori shortcut is read.** It was shown on the page but never recognized, so the words column said nothing was recognized.
 - **The Mac can read a picture with Vision too.** A *Recognizer* picker in the page bar, as the phone's drawer has; and where Live Text finds nothing, Vision's lines stand in by themselves, so a Mac without Live Text still reads.

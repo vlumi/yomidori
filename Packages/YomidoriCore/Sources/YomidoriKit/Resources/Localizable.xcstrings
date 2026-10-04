@@ -211,6 +211,16 @@
         }
       }
     },
+    "Actual Size": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "実際のサイズ"
+          }
+        }
+      }
+    },
     "Add": {
       "localizations": {
         "ja": {
@@ -3287,6 +3297,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "ズーム"
+          }
+        }
+      }
+    },
+    "Zoom In": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拡大"
+          }
+        }
+      }
+    },
+    "Zoom Out": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "縮小"
+          }
+        }
+      }
+    },
+    "Zoom the picture": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真を拡大・縮小"
+          }
+        }
+      }
+    },
+    "Zoom to Fit": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "幅に合わせる"
           }
         }
       }
