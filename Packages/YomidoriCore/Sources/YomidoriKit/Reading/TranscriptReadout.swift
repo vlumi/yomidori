@@ -146,28 +146,37 @@ struct TranscriptReadout: View {
         }
     }
 
+    private var copies: Bool {
+        #if os(macOS)
+        page.still != nil
+        #else
+        true
+        #endif
+    }
+
     private var header: some View {
         HStack {
             CollectionPicker()
                 .controlSize(.small)
             Spacer()
             tokenizerMenu
-            // Not on the Mac, whose page is a text box already.
-            #if os(iOS)
-            Button {
-                Clipboard.copy(page.fixes.matching(pageTexts).fixedText)
-            } label: {
-                Label {
-                    Text("Copy", bundle: .module)
-                } icon: {
-                    Image(systemName: "doc.on.doc")
+            // Not for the Mac's typed text, which is in a box already; a picture's text
+            // has no box on either platform.
+            if copies {
+                Button {
+                    Clipboard.copy(page.fixes.matching(pageTexts).fixedText)
+                } label: {
+                    Label {
+                        Text("Copy", bundle: .module)
+                    } icon: {
+                        Image(systemName: "doc.on.doc")
+                    }
                 }
+                .labelStyle(.iconOnly)
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+                .help(Text("Copy the recognized text", bundle: .module))
             }
-            .labelStyle(.iconOnly)
-            .buttonStyle(.bordered)
-            .controlSize(.small)
-            .help(Text("Copy the recognized text", bundle: .module))
-            #endif
         }
     }
 
