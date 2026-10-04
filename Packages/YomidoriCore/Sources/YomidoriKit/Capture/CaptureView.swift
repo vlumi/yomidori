@@ -293,8 +293,6 @@ public struct CaptureView: View {
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
-        } else if page.pasted != nil {
-            transcript
         } else {
             transcript
         }
@@ -328,22 +326,19 @@ public struct CaptureView: View {
         page.recognizedStillID = nil
         guard let still else { return }
         recognizing = true
-        // Both engines at once, as child tasks: a retake cancels this task, and the cancel
-        // reaches both instead of waiting for the first to finish.
-        async let visionLines = (try? TextRecognizer.recognize(still)) ?? []
-        async let liveText = LiveText.isSupported ? try? LiveText.analyze(still) : nil
-        let (recognized, analyzed) = await (visionLines, liveText)
+        let read = await PageRecognition.read(still)
         guard !Task.isCancelled, self.still?.id == still.id else { return }
-        lines = recognized
-        analysis = analyzed
+        lines = read.lines
+        analysis = read.analysis
         page.recognizedStillID = still.id
         recognizing = false
         // The demo's pick, found again in the text as recognized: the reading keeps a
         // selection that stands when it is made, and the picture shows it.
-        if let pick = DemoMode.pick, let found = Spread.join(pageTexts).range(of: pick) {
+        if let pick = DemoMode.pick {
             let text = Spread.join(pageTexts)
-            let start = text.distance(from: text.startIndex, to: found.lowerBound)
-            page.selectedRange = start..<(start + pick.count)
+            page.selectedRange = text.range(of: pick).flatMap {
+                CharacterRange.offsets(of: $0, in: text)
+            }
         }
         AccessibilityNotification.Announcement(String(localized: "Page read", bundle: .module))
             .post()

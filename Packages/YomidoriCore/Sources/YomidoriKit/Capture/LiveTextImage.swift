@@ -118,11 +118,8 @@ struct LiveTextImage: UIViewRepresentable {
             let page = interaction.text
             let range = interaction.selectedRanges.first.flatMap { range -> Range<Int>? in
                 // A selection outliving the text it came from: nothing to report.
-                guard interaction.analysis != nil, range.lowerBound >= page.startIndex,
-                    range.upperBound <= page.endIndex
-                else { return nil }
-                let start = page.distance(from: page.startIndex, to: range.lowerBound)
-                return start..<(start + page[range].count)
+                guard interaction.analysis != nil else { return nil }
+                return CharacterRange.offsets(of: range, in: page)
             }
             // A page with nothing selected says nothing of the other page's selection.
             guard range != nil || selection.rangePage == index else { return }
