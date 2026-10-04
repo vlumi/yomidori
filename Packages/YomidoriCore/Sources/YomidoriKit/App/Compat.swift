@@ -121,6 +121,24 @@ enum Clipboard {
         NSPasteboard.general.setString(text, forType: .string)
         #endif
     }
+
+    /// What is on the pasteboard, as providers; reading it is the reader's doing, a paste.
+    /// The Mac's Read screen reads its own pasteboard, and has no use for this.
+    static var providers: [NSItemProvider] {
+        #if canImport(UIKit)
+        UIPasteboard.general.itemProviders
+        #else
+        []
+        #endif
+    }
+
+    static var string: String? {
+        #if canImport(UIKit)
+        UIPasteboard.general.string
+        #elseif canImport(AppKit)
+        NSPasteboard.general.string(forType: .string)
+        #endif
+    }
 }
 
 /// Work that must not land inside the view update it was asked from: a published value

@@ -10,6 +10,7 @@ public struct CaptureView: View {
     @EnvironmentObject var page: CaptureState
     @State var recognizing = false
     @State var picked: PhotosPickerItem?
+    @State private var dropping = false
     @StateObject private var zoomControl = ZoomControl()
     @AppStorage(TokenizerChoice.key) var tokenizerChoice: TokenizerChoice = .system
     @AppStorage(SettingsKey.pageControlsSide) private var controlsSide: PageControlsSide = .right
@@ -159,10 +160,43 @@ public struct CaptureView: View {
             } else if let pasted = page.pasted {
                 TextPage(text: pasted, selection: selection)
                     .frame(height: area.height)
+                    // The camera button the picture has, so the hint under the words holds
+                    // for a pasted page too.
+                    .overlay(alignment: controlsSide.alignment) {
+                        PageButton(
+                            symbol: "camera", label: Text("Back to the camera", bundle: .module),
+                            action: retake
+                        )
+                        .padding(12)
+                    }
                     .frame(maxHeight: .infinity, alignment: .top)
                     .onTabReselect(.read) { retake() }
             } else {
                 cameraView
+            }
+        }
+        // A picture dropped on the page from another app or Files, an iPad beside one; and
+        // ⌘V from a keyboard, a picture or a text — the keystroke being the consent to read
+        // the pasteboard, as the Paste button's tap is.
+        .onDrop(of: [.image, .fileURL], isTargeted: $dropping) { providers in
+            Still.take(from: providers, take)
+        }
+        .background {
+            Button {
+                pasteFromPasteboard()
+            } label: {
+                EmptyView()
+            }
+            .keyboardShortcut("v", modifiers: .command)
+            .frame(width: 0, height: 0)
+            .opacity(0)
+        }
+        .overlay {
+            if dropping {
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(Palette.nightGreen, lineWidth: 3)
+                    .padding(6)
+                    .allowsHitTesting(false)
             }
         }
     }
@@ -266,7 +300,7 @@ public struct CaptureView: View {
             CameraButtons(
                 picked: $picked, ready: camera.access == .ready,
                 label: Text("Read the page", bundle: .module), freeze: takeStill,
-                paste: paste)
+                paste: paste, take: take)
         }
     }
 
@@ -305,34 +339,6 @@ public struct CaptureView: View {
             Text("Live Text is not available on this device.", bundle: .module)
                 .foregroundStyle(.secondary)
         }
-    }
-
-    private func recognize() async {
-        lines = []
-        analysis = nil
-        page.transcript = nil
-        page.newPage(keepingFixes: !pages.isEmpty)
-        selection.clear()
-        selection.pageTexts[pages.count] = nil
-        page.recognizedStillID = nil
-        guard let still else { return }
-        recognizing = true
-        let read = await PageRecognition.read(still)
-        guard !Task.isCancelled, self.still?.id == still.id else { return }
-        lines = read.lines
-        analysis = read.analysis
-        page.recognizedStillID = still.id
-        recognizing = false
-        // The demo's pick, found again in the text as recognized: the reading keeps a
-        // selection that stands when it is made, and the picture shows it.
-        if let pick = DemoMode.pick {
-            let text = Spread.join(pageTexts)
-            page.selectedRange = text.range(of: pick).flatMap {
-                CharacterRange.offsets(of: $0, in: text)
-            }
-        }
-        AccessibilityNotification.Announcement(String(localized: "Page read", bundle: .module))
-            .post()
     }
 }
 

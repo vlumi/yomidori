@@ -28,11 +28,19 @@ struct CollectionEditor: View {
                         Button {
                             scanning = true
                         } label: {
+                            #if os(macOS)
+                            Label {
+                                Text("Choose a cover…", bundle: .module)
+                            } icon: {
+                                Image(systemName: "photo.on.rectangle")
+                            }
+                            #else
                             Label {
                                 Text("Scan the cover", bundle: .module)
                             } icon: {
                                 Image(systemName: "camera.viewfinder")
                             }
+                            #endif
                         }
                         if collection.coverID != nil {
                             Button(role: .destructive) {
@@ -104,6 +112,7 @@ struct CollectionEditor: View {
         }
         .sheet(isPresented: $scanning) {
             CoverScanView(collection: $collection)
+                .sheetSize(width: 560, height: 640)
         }
         .onAppear {
             let all = Cards.collections?.collections() ?? []
