@@ -390,10 +390,16 @@ has what remains.
   lookup keeps its later date, and a clear of the history is a date every device
   drops older lookups by, so one that was offline does not bring them back.
 - **`Sentence`** (Core): the sentence around a word, from the previous full stop
-  to the next with its closing quote, across the page's wrapped lines, which in
-  a book are wraps and nothing more; open when the page ends before a full stop.
-  Its continuation on the next page is that page's beginning up to its first
-  full stop. Tested on a page of wrapped lines with quotes.
+  to the next, across the page's wrapped lines, which in a book are wraps and
+  nothing more; open when the page ends before a full stop. A quotation is one
+  piece: a full stop inside 「」 ends nothing, and what follows the quote (と呟い
+  た) stays with it, unless the quote stands on a line of its own as dialogue
+  does — then it is a sentence by itself; a quotation longer than 120
+  characters, or one running off the page, is cut at its own full stops. A line
+  that is only digits, Latin and marks — a page number, a running head — never
+  joins a sentence. The depth of quotation at the word is counted from the top
+  of the page. Its continuation on the next page is that page's beginning up to
+  its first full stop. Tested on wrapped lines, dialogue and furniture.
 - **Keeping a word** (Kit): *Keep* on a word's row saves the sentence it stands
   in, as `Sentence` cuts it, with the word's form and offset, into the current
   collection. No photo of the page is kept: the text is the card, and photos
