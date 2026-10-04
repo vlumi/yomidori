@@ -331,8 +331,12 @@ has what remains.
   reader's devices through their own iCloud, CloudKit's private database
   driven by `CKSyncEngine`. One record per card, collection and looked-up word
   (`SyncName`, the store key made ASCII; `SyncPayload`, the same JSON the
-  stores write), a cover as the collection record's asset, and one record for
-  the date the history was last cleared. A card's id is made from its word
+  stores write), a cover as the collection record's asset, one record for
+  the date the history was last cleared, and one for the study settings
+  (`StudySettings`: the retention, the lesson's order and size, dated; the
+  later change wins; `StudySettingsBridge` in Kit keeps it and the defaults the
+  screens read the same, so what a device keeps to itself — look, hand, layout
+  — stays out of it). A card's id is made from its word
   (`WordKey.cardID`, a name-based UUID), so the same word kept on two devices
   is one record, merged like any other. Changes made while sync is off are
   kept (`UnsentChanges`) and sent when it starts. The local files are the
@@ -482,13 +486,15 @@ has what remains.
   order the counts and the icon's number are taken from; a review shuffles
   them. *Forgot it.
   Back to waiting* on a review clears the schedule and the card returns
-  through a lesson. `Rank` bands the reading's stability in birds:
-  nest 0 (shelved), egg 1 (waiting), hatchling 2 (under a week), chick 3 (under
-  a month), fledgling 4 (under four months), flying 5 (under a year), migrating
-  6; nothing retires. Study draws the ranks as bars in each rank's color with a
-  selection, and the mark everywhere is the rank's number on a dot of its
-  color, the name beside it where there is room and as the accessibility label
-  where not.
+  through a lesson. `Rank` bands the reading's stability in birds, numbered
+  from the egg: egg 0 (waiting), hatchling 1 (under a week), chick 2 (under a
+  month), fledgling 3 (under four months), flying 4 (under a year), migrating
+  5; the nest (shelved) is outside the climb, raw value −1 so it sorts first
+  and a dash where the others show their number; nothing retires. A stored
+  count (`RankSnapshot.counts`) is indexed by `Rank.index`, the nest first.
+  Study draws the ranks as bars in each rank's color with a selection, and the
+  mark everywhere is the rank's number on a dot of its color, the name beside
+  it where there is room and as the accessibility label where not.
 - **Collections** (`Collection`, `FileCollectionStore` in Core; `CollectionsView`,
   `CollectionEditor`, `CoverScanView`, `TagsEditor`, `CollectionPicker`,
   `CollectionFilter` in Kit): named groups of cards, a book usually, a card in

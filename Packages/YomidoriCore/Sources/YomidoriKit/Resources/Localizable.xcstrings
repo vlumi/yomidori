@@ -211,6 +211,16 @@
         }
       }
     },
+    "Actual Size": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "実際のサイズ"
+          }
+        }
+      }
+    },
     "Add": {
       "localizations": {
         "ja": {
@@ -1081,6 +1091,16 @@
         }
       }
     },
+    "Forget the cards": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カードを忘れる"
+          }
+        }
+      }
+    },
     "Forget this card": {
       "localizations": {
         "ja": {
@@ -1107,6 +1127,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "この履歴を消す"
+          }
+        }
+      }
+    },
+    "Forget…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "忘れる…"
           }
         }
       }
@@ -2621,6 +2651,16 @@
         }
       }
     },
+    "Settings…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設定…"
+          }
+        }
+      }
+    },
     "Share this collection": {
       "localizations": {
         "ja": {
@@ -2897,6 +2937,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "尾高型：最後まで高く、続く助詞で下がります。"
+          }
+        }
+      }
+    },
+    "Take a page, and its words read out here.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ページを撮ると、言葉がここに並びます。"
           }
         }
       }
@@ -3387,6 +3437,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "ズーム"
+          }
+        }
+      }
+    },
+    "Zoom In": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拡大"
+          }
+        }
+      }
+    },
+    "Zoom Out": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "縮小"
+          }
+        }
+      }
+    },
+    "Zoom the picture": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真を拡大・縮小"
+          }
+        }
+      }
+    },
+    "Zoom to Fit": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "幅に合わせる"
           }
         }
       }

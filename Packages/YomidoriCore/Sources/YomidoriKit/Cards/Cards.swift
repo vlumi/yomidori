@@ -31,12 +31,14 @@ enum Cards {
     static let collections: FileCollectionStore? = stores?.collections
     static let lookups: FileLookupHistory? = stores?.lookups
     static let snapshots: FileRankSnapshots? = stores?.snapshots
+    static let studySettings: FileStudySettings? = stores?.settings
 
     private struct Stores {
         let cards: FileCardStore
         let collections: FileCollectionStore
         let lookups: FileLookupHistory
         let snapshots: FileRankSnapshots
+        let settings: FileStudySettings
     }
 
     private static let stores: Stores? = {
@@ -46,11 +48,13 @@ enum Cards {
             collections: FileCollectionStore(
                 url: directory.appendingPathComponent("collections.json")),
             lookups: FileLookupHistory(url: directory.appendingPathComponent("lookups.json")),
-            snapshots: FileRankSnapshots(url: directory.appendingPathComponent("progress.json")))
+            snapshots: FileRankSnapshots(url: directory.appendingPathComponent("progress.json")),
+            settings: FileStudySettings(url: directory.appendingPathComponent("settings.json")))
         CoverArchive.migrate(covers: stores.collections.collections().compactMap(\.coverID))
         stores.cards.file.onChange = { changed(.card, $0, $1) }
         stores.collections.file.onChange = { changed(.collection, $0, $1) }
         stores.lookups.file.onChange = { changed(.lookup, $0, $1) }
+        stores.settings.file.onChange = { changed(.settings, $0, $1) }
         stores.lookups.onClear = { _ in Sync.historyCleared() }
         if DemoMode.isRequested {
             DemoData.seed(
@@ -79,6 +83,7 @@ enum Cards {
         guard let stores else { return nil }
         return CloudSync.Stores(
             cards: stores.cards, collections: stores.collections, lookups: stores.lookups,
+            settings: stores.settings,
             coverURL: { id in
                 (try? CoverArchive.url(for: id)).flatMap {
                     FileManager.default.fileExists(atPath: $0.path) ? $0 : nil

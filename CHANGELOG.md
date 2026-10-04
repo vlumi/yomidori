@@ -14,6 +14,11 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The iPad's words column no longer says nothing was recognized before a page is taken.** It says the words will read out there.
+- **The Mac's Collections row in the card list reads as a row**, with a chevron and the whole width to click, not a label clickable on its letters.
+- **The Mac's picture zooms by menu and key** — Zoom In ⌘=, Zoom Out ⌘−, Actual Size ⌘0, Zoom to Fit ⌘9 — for a mouse without a trackpad's pinch, as the phone has its slider.
+- **Ranks count from the egg.** A waiting card is 0, the first started rank 1, the migrating bird 5; a shelved card, outside the climb, shows a dash on its dot instead of a number.
+- **The study settings sync.** The retention the schedule aims at, and the lesson's order and size, are the same on every device signed into the same iCloud; the later change wins. What a device keeps to itself — its look, language, badge, which hand holds it, its layout — stays its own.
 - **The Swipe back setting is gone.** iOS 26 drives the back swipe with a gesture the switch no longer reached, so it had stopped doing anything; the swipe is the system's, on, as everywhere.
 - **A collection, one looked-up word or one accepted meaning can be removed on the Mac.** Each row has it in its menu (right-click, or a long press on the phone and iPad), beside the swipe the phone had; a collection could not be removed on the Mac at all before.
 - **On the Mac, a picture sent by the Read in Yomidori shortcut is read.** It was shown on the page but never recognized, so the words column said nothing was recognized.
@@ -24,6 +29,9 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 - **The Mac can copy a picture's recognized text.** The Copy button under the words shows for a picture, as on the phone; typed text, being in a box already, still has none.
 - **Three Mac sheets have a proper size:** the card opened from a dictionary entry, *Add a sentence* on a card, and the collection's cover sheet, which came up as small as their content let them.
 - **Settings and About speak of the device in hand.** On an iPad the page-controls note says iPad, not phone, and the shortcut note points to Control Center and the Home Screen rather than Back Tap; on the Mac, badges and iCloud point to System Settings and About no longer mentions a camera. The hint while a page is read names the camera button, not the Read tab.
+- **The cards picked in Select can be forgotten together.** A red *Forget…* at the end of the bar asks with their number first, as the Mac's ⌫ does.
+- **⌘F and ⌘, on an iPad with a keyboard.** ⌘F puts the cursor in the dictionary's search field from anywhere on that tab, as on the Mac; ⌘, opens Settings.
+- **A card's row has *Forget…* in its menu** — a right-click on the Mac, a long press on the phone and iPad — asking first; the swipe stays as it was.
 - **Clearing the dictionary's history takes a deliberate step.** The *Clear* that sat by the search field is now *Clear the history…* under the ⋯ menu, in red, and asks with the number of words before anything goes; the Mac's button under its column asks the same.
 - **A card can be forgotten from anywhere.** On an iPad the row swipes to forget as on the phone, and the card itself has *Forget this card* under its actions, asked once, on every platform.
 - **A camera button on the page, and a way back from +.** A camera button in the page's controls takes another photo, so a retake no longer means finding the Read tab; and the + pressed by mistake has *Back to the page*, which brings the page just taken back as it was.

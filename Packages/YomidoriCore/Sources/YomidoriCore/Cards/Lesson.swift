@@ -2,7 +2,7 @@ import Foundation
 
 /// The next cards to start, picked from the waiting stack in the order the reader chose.
 public enum Lesson {
-    public enum Order: String, CaseIterable, Sendable {
+    public enum Order: String, CaseIterable, Codable, Sendable {
         case oldest
         case newest
         case random

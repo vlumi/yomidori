@@ -126,6 +126,12 @@ public struct AppRoot: View {
             tab = asked
             AppCommands.shared.requestedTab = nil
         }
+        #if os(iOS)
+        .onReceive(AppCommands.shared.$settingsAsked.dropFirst()) { _ in
+            tab = .home
+            taps.open(.settings, in: .home)
+        }
+        #endif
         .onAppear {
             if DemoMode.isRequested { DemoData.seed(capture) }
             if let shown = DemoMode.tab {
@@ -162,6 +168,7 @@ public struct AppRoot: View {
             StillInbox.shared.clear()
         }
         .task {
+            StudySettingsBridge.shared.start()
             Sync.shared.start()
             AppBadge.refresh()
             Warmup.start()

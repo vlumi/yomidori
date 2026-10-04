@@ -51,8 +51,10 @@ final class SyncRecordTests: XCTestCase {
     /// here would send records no device reads.
     func testTheRecordTypesAreTheDeployedSchema() {
         XCTAssertEqual(
-            SyncKind.allCases.map(\.recordType), ["Card", "Collection", "Lookup", "HistoryClear"])
+            SyncKind.allCases.map(\.recordType),
+            ["Card", "Collection", "Lookup", "HistoryClear", "Settings"])
         XCTAssertEqual(
-            SyncKind.allCases.map(\.rawValue), ["card", "collection", "lookup", "history"])
+            SyncKind.allCases.map(\.rawValue),
+            ["card", "collection", "lookup", "history", "settings"])
     }
 }

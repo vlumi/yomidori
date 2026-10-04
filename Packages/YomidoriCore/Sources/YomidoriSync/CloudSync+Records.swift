@@ -7,34 +7,40 @@ extension CloudSync {
 
     func record(for recordID: CKRecord.ID) -> CKRecord? {
         guard let kind = SyncName.kind(ofRecordName: recordID.recordName),
-            let key = key(of: recordID.recordName, kind: kind)
+            let key = key(of: recordID.recordName, kind: kind),
+            let fields = fields(of: kind, key: key)
         else { return nil }
         let record = blankRecord(recordID, type: kind.recordType)
+        for (name, value) in fields { record[name] = value }
+        return record
+    }
+
+    /// A record's fields from the stores; nil when this device no longer has it.
+    private func fields(of kind: SyncKind, key: String) -> [String: CKRecordValue]? {
         switch kind {
         case .card:
-            guard let id = UUID(uuidString: key),
-                let card = stores.cards.cards().first(where: { $0.id == id }),
-                let data = try? SyncPayload.encode(card)
-            else { return nil }
-            record["json"] = data
+            return json(UUID(uuidString: key).flatMap { id in stores.cards.card(id: id) })
         case .collection:
             guard let id = UUID(uuidString: key),
                 let collection = stores.collections.collections().first(where: { $0.id == id }),
-                let data = try? SyncPayload.encode(collection)
+                var fields = json(collection)
             else { return nil }
-            record["json"] = data
-            record["cover"] = collection.coverID.flatMap(stores.coverURL).map(
+            fields["cover"] = collection.coverID.flatMap(stores.coverURL).map(
                 CKAsset.init(fileURL:))
+            return fields
         case .lookup:
-            guard let lookup = stores.lookups.lookups().first(where: { $0.id == key }),
-                let data = try? SyncPayload.encode(lookup)
-            else { return nil }
-            record["json"] = data
+            return json(stores.lookups.lookups().first { $0.id == key })
         case .historyCleared:
-            guard let cleared = stores.lookups.clearedAt else { return nil }
-            record["cleared"] = cleared
+            return stores.lookups.clearedAt.map { ["cleared": $0 as NSDate] }
+        case .settings:
+            return json(stores.settings.settings())
         }
-        return record
+    }
+
+    /// The record's content as one JSON field; nil for a record not here.
+    private func json<Record: Encodable>(_ record: Record?) -> [String: CKRecordValue]? {
+        guard let record, let data = try? SyncPayload.encode(record) else { return nil }
+        return ["json": data as NSData]
     }
 
     /// The store key a record name stands for; a lookup's name may be a hash, found among the
@@ -63,6 +69,7 @@ extension CloudSync {
         var collections: [Collection] = []
         var lookups: [Lookup] = []
         var clearedAt: Date?
+        var settings: StudySettings?
     }
 
     func apply(_ changes: CKSyncEngine.Event.FetchedRecordZoneChanges, _ syncEngine: CKSyncEngine) {
@@ -142,6 +149,9 @@ extension CloudSync {
                 },
                 deleting: deleted[.lookup] ?? [], clearedAt: incoming.clearedAt)
         }
+        if let settings = incoming.settings {
+            kept([.settings]) { try stores.settings.applyRemote(settings) }
+        }
         saveSystemFields()
         if let failure { onStatus?(.failed(failure.localizedDescription)) }
     }
@@ -162,20 +172,32 @@ extension CloudSync {
             let local = changedHere ? stores.cards.cards().first { $0.id == remote.id } : nil
             incoming.cards.append(local.map { $0.merged(with: remote) } ?? remote)
         case .collection:
-            guard let remote = decode(Collection.self, record) else { return nil }
-            if let coverID = remote.coverID, let url = (record["cover"] as? CKAsset)?.fileURL {
-                stores.saveCover(coverID, url)
+            guard let collection = takeCollection(record, changedHere: changedHere) else {
+                return nil
             }
-            let local =
-                changedHere ? stores.collections.collections().first { $0.id == remote.id } : nil
-            incoming.collections.append(local.map { $0.merged(with: remote) } ?? remote)
+            incoming.collections.append(collection)
         case .lookup:
             guard let remote = decode(Lookup.self, record) else { return nil }
             incoming.lookups.append(remote)
         case .historyCleared:
             incoming.clearedAt = SyncPayload.clearDate(record["cleared"] as? Date)
+        case .settings:
+            // The later change wins whichever device made it: no merge by hand.
+            guard let remote = decode(StudySettings.self, record) else { return nil }
+            incoming.settings = remote
         }
         return kind
+    }
+
+    /// A collection from another device, its cover taken into the cover files first.
+    private func takeCollection(_ record: CKRecord, changedHere: Bool) -> Collection? {
+        guard let remote = decode(Collection.self, record) else { return nil }
+        if let coverID = remote.coverID, let url = (record["cover"] as? CKAsset)?.fileURL {
+            stores.saveCover(coverID, url)
+        }
+        let local =
+            changedHere ? stores.collections.collections().first { $0.id == remote.id } : nil
+        return local.map { $0.merged(with: remote) } ?? remote
     }
 
     /// The server's version taken into the local one; false when it can't be read.
@@ -185,18 +207,14 @@ extension CloudSync {
         }
         switch kind {
         case .card:
-            guard let remote = decode(Card.self, server) else { return false }
-            // Gone here since: the retried save finds nothing and is dropped.
-            guard let local = stores.cards.cards().first(where: { $0.id == remote.id }) else {
-                return true
+            return mergeLocally(Card.self, server, stores.cards.card(id:)) { local, remote in
+                try stores.cards.applyRemote(saving: [local.merged(with: remote)], deleting: [])
             }
-            try? stores.cards.applyRemote(saving: [local.merged(with: remote)], deleting: [])
         case .collection:
-            guard let remote = decode(Collection.self, server) else { return false }
-            guard
-                let local = stores.collections.collections().first(where: { $0.id == remote.id })
-            else { return true }
-            try? stores.collections.applyRemote(saving: [local.merged(with: remote)], deleting: [])
+            return mergeLocally(Collection.self, server, collection(id:)) { local, remote in
+                try stores.collections.applyRemote(
+                    saving: [local.merged(with: remote)], deleting: [])
+            }
         case .lookup:
             guard let remote = decode(Lookup.self, server) else { return false }
             let local = stores.lookups.lookups().first { $0.id == remote.id }
@@ -207,8 +225,26 @@ extension CloudSync {
             try? stores.lookups.applyRemote(
                 saving: [], deleting: [],
                 clearedAt: SyncPayload.clearDate(server["cleared"] as? Date))
+        case .settings:
+            guard let remote = decode(StudySettings.self, server) else { return false }
+            try? stores.settings.applyRemote(remote)
         }
         return true
+    }
+
+    /// A card's or a collection's server version merged into the local one, if there still
+    /// is one: gone here since, the retried save finds nothing and is dropped.
+    private func mergeLocally<Record: Decodable & Sanitizable & Identifiable>(
+        _ type: Record.Type, _ server: CKRecord, _ local: (Record.ID) -> Record?,
+        _ apply: (Record, Record) throws -> Void
+    ) -> Bool {
+        guard let remote = decode(type, server) else { return false }
+        if let local = local(remote.id) { try? apply(local, remote) }
+        return true
+    }
+
+    private func collection(id: UUID) -> Collection? {
+        stores.collections.collections().first { $0.id == id }
     }
 
     private func decode<Record: Decodable & Sanitizable>(_ type: Record.Type, _ record: CKRecord)
