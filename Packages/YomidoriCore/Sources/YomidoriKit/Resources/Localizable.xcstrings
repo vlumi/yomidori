@@ -2641,6 +2641,16 @@
         }
       }
     },
+    "Settings…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設定…"
+          }
+        }
+      }
+    },
     "Share this collection": {
       "localizations": {
         "ja": {
