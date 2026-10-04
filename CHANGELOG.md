@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 32 — 2026-10-04
+
 - **The first read, warmer and plainer.** The recognizers are warmed on a page of real text as the app starts, at a priority that finishes before a finger reaches the button, so the first page should read as fast as the second; and while a page is being read the whole screen says so, not only the picture.
 - **A save that fails says so.** Keeping a word, answering, filing a card or editing a collection that could not be written — a full disk, a file gone — now shows what went wrong once, instead of looking as if it had happened.
 - **The camera runs lighter while you frame.** Its frames stream in the sensor's own format and only the one you take is converted, a third of the memory a frame took before.
