@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 34 — 2026-10-05
+
 - **A kept sentence keeps its quotation whole.** A full stop inside 「」 no longer cuts the sentence, and what follows the quote — と呟いた — stays with it; a line of dialogue on its own is a sentence by itself; a page number or running head never joins. A speech longer than 120 characters is still cut at its own full stops.
 - **Small print made a size larger.** The review's title is the full-size one and what remains and the question's name beside it are readable; the labels under the progress numbers, a kanji's meanings and readings, a collection's note and tags, the parts of speech, the accent numbers and the hints under a page all went up a step.
 - **The iPad's words column no longer says nothing was recognized before a page is taken.** It says the words will read out there.
