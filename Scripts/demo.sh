@@ -13,6 +13,8 @@
 #   PICK=<text>                        Read opened with that text selected: on the demo's page
 #                                      where it stands there, else as a page of its own
 #   DRAWER=0.2|0.5|0.8                 the drawer under the page at that share of the screen
+#   MODE=livetext|vision|closeup       the recognizer the page opens in
+#   RECOGNIZE=1                        the page read by the recognizers, not taken from its text
 #   DEMO_LANG=en|ja                    the app's language (the simulator's otherwise)
 #   APPEARANCE=light|dark              the simulator's look (light unless asked)
 #   YOMIDORI_UDID_FILE=<path>          the simulator's udid written there, for shoot.sh
@@ -51,6 +53,7 @@ xcrun simctl install "$udid" "$app"
 xcrun simctl launch "$udid" "$BUNDLE" -yomidori-demo ${TAB:+-yomidori-tab "$TAB"} ${SCREEN:+-yomidori-screen "$SCREEN"} \
   ${SEARCH:+-yomidori-search "$SEARCH"} ${SPREAD:+-yomidori-spread} \
   ${SELECT:+-yomidori-select} ${PICK:+-yomidori-pick "$PICK"} ${DRAWER:+-yomidori-drawer "$DRAWER"} \
+  ${MODE:+-yomidori-mode "$MODE"} ${RECOGNIZE:+-yomidori-recognize} \
   ${DEMO_LANG:+-AppleLanguages "($DEMO_LANG)"} >/dev/null
 [ -n "${YOMIDORI_UDID_FILE:-}" ] && echo "$udid" > "$YOMIDORI_UDID_FILE"
 echo "Demo launched on $udid — seeded cards, collections and a page; nothing persists."

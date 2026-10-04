@@ -26,6 +26,14 @@ for your terminal; grant it and run again. The Mac demo is opened in the
 background and sized by System Events, which needs Accessibility permission
 for the terminal too.
 
+## The page shots are read for real
+
+Live Text does not run on a simulator, but Vision does: the two page shots
+open in Vision mode with `RECOGNIZE=1`, so the demo's rendered page is read by
+the recognizer as any page is, every column gets its box and the picked word
+is lit by the app's own highlight — nothing is painted on. The other shots
+take the page as read from its text, which is all they need.
+
 ## Sizes
 
 iPhone 6.9" (iPhone 17 Pro Max, 1320×2868) · iPad 13" (iPad Pro 13-inch,

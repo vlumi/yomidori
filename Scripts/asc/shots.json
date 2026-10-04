@@ -1,5 +1,5 @@
 {
-  "_comment": "The App Store screenshots, one entry each: what it shows, which platforms carry it, and the demo arguments that stage it (TAB/SCREEN/SEARCH/PICK/SELECT/SPREAD, as Scripts/demo.sh and run-mac.sh take them). `store` is the carousel order; `shoot.sh` walks `capture` order and stages each shot by relaunching the demo with its arguments, so nothing is staged by hand. A `stage` note means something is still done by hand before the capture (shoot.sh pauses for it). See SCREENSHOTS.md.",
+  "_comment": "The App Store screenshots, one entry each: what it shows, which platforms carry it, and the demo arguments that stage it (TAB/SCREEN/SEARCH/PICK/SELECT/SPREAD/DRAWER/MODE/RECOGNIZE, as Scripts/demo.sh and run-mac.sh take them). `store` is the carousel order; `shoot.sh` walks `capture` order and stages each shot by relaunching the demo with its arguments, so nothing is staged by hand. A `stage` note means something is still done by hand before the capture (shoot.sh pauses for it). See SCREENSHOTS.md.",
   "capture": [
     "read",
     "phrase",
@@ -32,7 +32,9 @@
       "demo": {
         "TAB": "read",
         "PICK": "吾輩",
-        "DRAWER": "0.5"
+        "DRAWER": "0.5",
+        "MODE": "vision",
+        "RECOGNIZE": "1"
       }
     },
     "phrase": {
@@ -46,7 +48,9 @@
       "demo": {
         "TAB": "read",
         "PICK": "吾輩は猫である",
-        "DRAWER": "0.8"
+        "DRAWER": "0.8",
+        "MODE": "vision",
+        "RECOGNIZE": "1"
       }
     },
     "dictionary": {
