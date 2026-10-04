@@ -331,8 +331,12 @@ has what remains.
   reader's devices through their own iCloud, CloudKit's private database
   driven by `CKSyncEngine`. One record per card, collection and looked-up word
   (`SyncName`, the store key made ASCII; `SyncPayload`, the same JSON the
-  stores write), a cover as the collection record's asset, and one record for
-  the date the history was last cleared. A card's id is made from its word
+  stores write), a cover as the collection record's asset, one record for
+  the date the history was last cleared, and one for the study settings
+  (`StudySettings`: the retention, the lesson's order and size, dated; the
+  later change wins; `StudySettingsBridge` in Kit keeps it and the defaults the
+  screens read the same, so what a device keeps to itself — look, hand, layout
+  — stays out of it). A card's id is made from its word
   (`WordKey.cardID`, a name-based UUID), so the same word kept on two devices
   is one record, merged like any other. Changes made while sync is off are
   kept (`UnsentChanges`) and sent when it starts. The local files are the

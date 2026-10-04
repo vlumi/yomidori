@@ -11,6 +11,7 @@ public final class CloudSync: CKSyncEngineDelegate, @unchecked Sendable {
         public let cards: FileCardStore
         public let collections: FileCollectionStore
         public let lookups: FileLookupHistory
+        public let settings: FileStudySettings
         /// Where a cover's file is, if it has one.
         public let coverURL: (UUID) -> URL?
         /// Takes a cover arrived with a collection into the cover files.
@@ -18,11 +19,13 @@ public final class CloudSync: CKSyncEngineDelegate, @unchecked Sendable {
 
         public init(
             cards: FileCardStore, collections: FileCollectionStore, lookups: FileLookupHistory,
-            coverURL: @escaping (UUID) -> URL?, saveCover: @escaping (UUID, URL) -> Void
+            settings: FileStudySettings, coverURL: @escaping (UUID) -> URL?,
+            saveCover: @escaping (UUID, URL) -> Void
         ) {
             self.cards = cards
             self.collections = collections
             self.lookups = lookups
+            self.settings = settings
             self.coverURL = coverURL
             self.saveCover = saveCover
         }
@@ -127,6 +130,9 @@ public final class CloudSync: CKSyncEngineDelegate, @unchecked Sendable {
             .collection, RecordChange(saved: stores.collections.collections().map(\.id.uuidString)))
         recordsChanged(.lookup, RecordChange(saved: stores.lookups.lookups().map(\.id)))
         if stores.lookups.clearedAt != nil { historyCleared() }
+        if stores.settings.settings() != nil {
+            recordsChanged(.settings, RecordChange(saved: [StudySettings.key]))
+        }
     }
 
     private func id(_ name: SyncName) -> CKRecord.ID {
