@@ -129,9 +129,11 @@ enum DemoData {
         }
         guard let image = DemoRenderer.verticalPage(text) else { return }
         let still = Still(image: image)
+        if let mode = DemoMode.mode { capture.mode = mode }
         capture.still = still
         capture.transcript = text
-        capture.recognizedStillID = still.id
+        // Taken as read from its text, unless the recognizers are to have it.
+        if !DemoMode.recognizes { capture.recognizedStillID = still.id }
     }
 }
 

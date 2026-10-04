@@ -68,6 +68,26 @@ public enum DemoMode {
         return defaults
     }()
 
+    /// `-yomidori-mode vision`: the recognizer the page opens in; Live Text otherwise.
+    static var mode: CaptureView.Mode? {
+        guard isRequested, let index = CommandLine.arguments.firstIndex(of: "-yomidori-mode"),
+            index + 1 < CommandLine.arguments.count
+        else { return nil }
+        switch CommandLine.arguments[index + 1] {
+        case "vision": return .vision
+        case "closeup", "close-up": return .closeUp
+        case "livetext", "live-text": return .liveText
+        default: return nil
+        }
+    }
+
+    /// `-yomidori-recognize`: the demo's page read by the recognizers as any page is, not
+    /// taken as read from its text — on a device, or a simulator whose Vision runs, the
+    /// words then light up on the picture as they do in use.
+    static var recognizes: Bool {
+        isRequested && CommandLine.arguments.contains("-yomidori-recognize")
+    }
+
     /// `-yomidori-drawer 0.8`: the drawer under the page at that share of the screen, the
     /// nearest of its stops, for a screenshot that wants the words to have room.
     static var drawer: Double? {
