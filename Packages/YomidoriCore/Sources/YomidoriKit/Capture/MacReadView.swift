@@ -82,15 +82,12 @@ public struct MacReadView: View {
         }
         // A picture dropped on the page, from a file or another app.
         .onDrop(of: [.image, .fileURL], isTargeted: $dropping) { providers in
-            take(dropped: providers)
+            Still.take(from: providers, take)
         }
         // File › Open…: a picture from a file.
         .onChange(of: commands.openAsked) { _, _ in opening = true }
         .fileImporter(isPresented: $opening, allowedContentTypes: [.image]) { result in
-            guard let url = try? result.get() else { return }
-            let accessing = url.startAccessingSecurityScopedResource()
-            defer { if accessing { url.stopAccessingSecurityScopedResource() } }
-            if let still = Still(file: url) { take(still) }
+            Still.take(picked: result, take)
         }
     }
 
@@ -320,28 +317,6 @@ extension MacReadView {
             page.analysis = read.analysis
             recognizing = false
         }
-    }
-
-    private func take(dropped providers: [NSItemProvider]) -> Bool {
-        guard let provider = providers.first else { return false }
-        if provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
-            provider.loadDataRepresentation(for: .image) { data, _ in
-                guard let data, let still = Still(data: data) else { return }
-                DispatchQueue.main.async { take(still) }
-            }
-            return true
-        }
-        if provider.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) {
-            provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier) { item, _ in
-                guard let data = item as? Data,
-                    let url = URL(dataRepresentation: data, relativeTo: nil),
-                    let still = Still(file: url)
-                else { return }
-                DispatchQueue.main.async { take(still) }
-            }
-            return true
-        }
-        return false
     }
 
     /// The pasteboard's picture, or its text into the box; for ⌘V while the page is no text

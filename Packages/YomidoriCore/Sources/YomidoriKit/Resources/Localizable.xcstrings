@@ -1911,6 +1911,16 @@
         }
       }
     },
+    "Open a picture file": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "画像ファイルを開く"
+          }
+        }
+      }
+    },
     "Open the app again to see it in this language.": {
       "localizations": {
         "ja": {
