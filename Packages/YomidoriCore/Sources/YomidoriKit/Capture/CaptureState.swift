@@ -48,6 +48,20 @@ final class CaptureState: ObservableObject {
         selectedRange = nil
         if !keepingFixes { fixes = SpreadFixes() }
     }
+
+    /// Everything of the page gone — the still, the pasted text, the spread's earlier pages,
+    /// what was read on them and the reading of it — for another to take its place, or none.
+    func clearPage() {
+        newPage()
+        still = nil
+        pasted = nil
+        pages = []
+        nextSide = nil
+        lines = []
+        analysis = nil
+        transcript = nil
+        recognizedStillID = nil
+    }
     @Published var zoom = Zoom()
     /// Where the reader put the second page; nil for where the text's direction puts it.
     @Published var nextSide: SpreadLayout.Side?

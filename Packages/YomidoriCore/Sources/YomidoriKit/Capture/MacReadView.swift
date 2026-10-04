@@ -280,12 +280,7 @@ extension MacReadView {
         draft = ""
         selection.clear()
         selection.pageTexts = [:]
-        page.newPage()
-        page.pasted = nil
-        page.pages = []
-        page.analysis = nil
-        page.lines = []
-        page.transcript = nil
+        page.clearPage()
         page.still = still
         pictureAsReading = false
         editing = false
@@ -352,11 +347,7 @@ extension MacReadView {
     private func clearPicture() {
         recognition?.cancel()
         recognizing = false
-        page.still = nil
-        page.analysis = nil
-        page.lines = []
-        page.transcript = nil
-        page.newPage()
+        page.clearPage()
         selection.clear()
         selection.pageTexts = [:]
         editing = true
