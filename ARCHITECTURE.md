@@ -408,8 +408,13 @@ has what remains.
   of columns, under a page of rows, and moved round by hand if the guess is
   wrong. Each page is still its own photo, read and selected in on its own, and
   a selection carries the page it is on. **`CardsView`**
-  lists the cards by stack (in review, waiting, shelved), filtered by any number
-  of collections or by a tag, each row with its rank mark; several are picked at
+  lists the cards in sections that fold away, the sort being the grouping
+  (`CardSort` in Core: by rank, highest first, or by the month a card was kept
+  or last changed, newest first), filtered by any number of collections or by
+  a tag and by the kind of word (`WordClass` in Core: noun, verb, adjective,
+  adverb, expression or other, folded from JMdict's codes on the entry's first
+  sense, looked up by word for a card kept without its entry's id), each row
+  with its rank mark; several are picked at
   once, through *Select* on the phone or by picking several rows on the Mac, and
   put in a collection or taken out of one together (`CardsBatch`; one write in
   the store, so one change for sync to send); **`CardView`** shows

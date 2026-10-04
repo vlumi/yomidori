@@ -331,6 +331,26 @@
         }
       }
     },
+    "Adjectives": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "形容詞"
+          }
+        }
+      }
+    },
+    "Adverbs": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "副詞"
+          }
+        }
+      }
+    },
     "Again": {
       "localizations": {
         "ja": {
@@ -791,6 +811,26 @@
         }
       }
     },
+    "Date changed": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更新日"
+          }
+        }
+      }
+    },
+    "Date kept": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "登録日"
+          }
+        }
+      }
+    },
     "Day": {
       "localizations": {
         "ja": {
@@ -931,6 +971,16 @@
         }
       }
     },
+    "Every kind of word": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "すべての品詞"
+          }
+        }
+      }
+    },
     "Everything runs on this Mac: the text recognition, the dictionaries, your cards. Nothing is sent anywhere but to your own iCloud, while sync is on.": {
       "localizations": {
         "ja": {
@@ -957,6 +1007,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "広げる・畳む"
+          }
+        }
+      }
+    },
+    "Expressions": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表現"
           }
         }
       }
@@ -1027,6 +1087,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "成鳥"
+          }
+        }
+      }
+    },
+    "Folded": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "たたんでいます"
           }
         }
       }
@@ -1991,6 +2061,16 @@
         }
       }
     },
+    "Nouns": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "名詞"
+          }
+        }
+      }
+    },
     "Oldest first": {
       "localizations": {
         "ja": {
@@ -2087,6 +2167,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "並び順"
+          }
+        }
+      }
+    },
+    "Other words": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "その他"
           }
         }
       }
@@ -2691,6 +2781,16 @@
         }
       }
     },
+    "Show": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表示"
+          }
+        }
+      }
+    },
     "Show or hide the words looked up": {
       "localizations": {
         "ja": {
@@ -2777,6 +2877,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "同期するには、システム設定でiCloudにサインインしてください。"
+          }
+        }
+      }
+    },
+    "Sort and filter": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "並べ替えと絞り込み"
+          }
+        }
+      }
+    },
+    "Sort and filter the cards": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カードを並べ替え、絞り込む"
+          }
+        }
+      }
+    },
+    "Sort by": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "並べ替え"
           }
         }
       }
@@ -3231,6 +3361,16 @@
         }
       }
     },
+    "Unfolded": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開いています"
+          }
+        }
+      }
+    },
     "Up to date": {
       "localizations": {
         "ja": {
@@ -3247,6 +3387,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "使う"
+          }
+        }
+      }
+    },
+    "Verbs": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "動詞"
           }
         }
       }
