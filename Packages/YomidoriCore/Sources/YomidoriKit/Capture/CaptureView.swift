@@ -13,10 +13,9 @@ public struct CaptureView: View {
     @StateObject private var zoomControl = ZoomControl()
     @AppStorage(TokenizerChoice.key) var tokenizerChoice: TokenizerChoice = .system
     @AppStorage(SettingsKey.pageControlsSide) private var controlsSide: PageControlsSide = .right
+    /// Where the drawer rests, and where the page is laid out to: it moves only when the
+    /// finger lifts, so the page reaches the drawer's edge and follows on release.
     @AppStorage(SettingsKey.readoutFraction) private var readoutFraction = DrawerDetents.all[0]
-    /// The drawer's height the page is laid out to: the fraction as the last drag left it,
-    /// so the page reaches the drawer's edge and moves only when the finger lifts.
-    @State private var settledFraction: Double?
     /// The fraction under the finger; written to the stored one only on release, since a
     /// defaults write per frame is what made the drawer lag.
     @State private var liveFraction: Double?
@@ -112,8 +111,7 @@ public struct CaptureView: View {
         return CGSize(
             width: screen.width,
             height: screen.height
-                - DrawerDetents.height(
-                    fraction: settledFraction ?? readoutFraction, screenHeight: screen.height))
+                - DrawerDetents.height(fraction: readoutFraction, screenHeight: screen.height))
     }
 
     /// The still, the pasted text or the camera, in its room, over black.
@@ -203,19 +201,13 @@ public struct CaptureView: View {
         withAnimation(.easeOut(duration: 0.2)) {
             readoutFraction = fraction
             liveFraction = nil
-            settledFraction = fraction
         }
     }
 
     private func toggleDrawer() {
-        let largest = DrawerDetents.all.last ?? 0.8
-        if readoutFraction >= largest {
-            settle(at: fractionBeforeToggle ?? DrawerDetents.all[0])
-            fractionBeforeToggle = nil
-        } else {
-            fractionBeforeToggle = readoutFraction
-            settle(at: largest)
-        }
+        let toggled = DrawerDetents.toggled(from: readoutFraction, remembered: fractionBeforeToggle)
+        fractionBeforeToggle = toggled.remember
+        settle(at: toggled.settle)
     }
 
     /// The slider's place: Live Text's scroll view reports its own; the other modes' zoom is

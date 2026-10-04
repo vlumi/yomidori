@@ -191,26 +191,6 @@
         }
       }
     },
-    "90 %" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "90 %"
-          }
-        }
-      }
-    },
-    "95 %" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "95 %"
-          }
-        }
-      }
-    },
     "A result or a word looked up opens here." : {
       "localizations" : {
         "ja" : {
