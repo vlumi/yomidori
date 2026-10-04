@@ -391,6 +391,16 @@
         }
       }
     },
+    "Another picture": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "別の画像"
+          }
+        }
+      }
+    },
     "Answered": {
       "localizations": {
         "ja": {
@@ -547,6 +557,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "幼鳥"
+          }
+        }
+      }
+    },
+    "Choose a cover…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表紙を選ぶ…"
           }
         }
       }
@@ -821,6 +841,16 @@
         }
       }
     },
+    "Drop a picture of the cover here, or choose one.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表紙の画像をここにドロップするか、選んでください。"
+          }
+        }
+      }
+    },
     "Drop the card (⌘⌫)": {
       "localizations": {
         "ja": {
@@ -1047,6 +1077,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "忘れたので待機に戻す"
+          }
+        }
+      }
+    },
+    "From Photos…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真から…"
+          }
+        }
+      }
+    },
+    "From a file…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ファイルから…"
           }
         }
       }

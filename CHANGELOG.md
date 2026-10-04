@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A collection's cover is chosen on the Mac, not scanned.** *Choose a cover…* opens a pane that takes a picture from Photos, a file or a drop, in place of the black camera pane with a shutter that could not fire.
 - **A picture gets to the Read tab from anywhere on an iPhone or iPad.** The Paste button takes a copied picture as well as text; a folder button opens one from Files; a picture dragged onto the page from another app is read; and ⌘V on a keyboard pastes a picture or a text — the ways the Mac already had.
 - **Clearing the dictionary's history takes a deliberate step.** The *Clear* that sat by the search field is now *Clear the history…* under the ⋯ menu, in red, and asks with the number of words before anything goes; the Mac's button under its column asks the same.
 - **A card can be forgotten from anywhere.** On an iPad the row swipes to forget as on the phone, and the card itself has *Forget this card* under its actions, asked once, on every platform.
