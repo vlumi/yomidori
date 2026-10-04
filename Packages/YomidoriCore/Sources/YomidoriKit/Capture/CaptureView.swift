@@ -10,6 +10,7 @@ public struct CaptureView: View {
     @EnvironmentObject var page: CaptureState
     @State var recognizing = false
     @State var picked: PhotosPickerItem?
+    @State private var dropping = false
     @StateObject private var zoomControl = ZoomControl()
     @AppStorage(TokenizerChoice.key) var tokenizerChoice: TokenizerChoice = .system
     @AppStorage(SettingsKey.pageControlsSide) private var controlsSide: PageControlsSide = .right
@@ -165,6 +166,30 @@ public struct CaptureView: View {
                 cameraView
             }
         }
+        // A picture dropped on the page from another app or Files, an iPad beside one; and
+        // ⌘V from a keyboard, a picture or a text — the keystroke being the consent to read
+        // the pasteboard, as the Paste button's tap is.
+        .onDrop(of: [.image, .fileURL], isTargeted: $dropping) { providers in
+            Still.take(from: providers, take)
+        }
+        .background {
+            Button {
+                pasteFromPasteboard()
+            } label: {
+                EmptyView()
+            }
+            .keyboardShortcut("v", modifiers: .command)
+            .frame(width: 0, height: 0)
+            .opacity(0)
+        }
+        .overlay {
+            if dropping {
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(Palette.nightGreen, lineWidth: 3)
+                    .padding(6)
+                    .allowsHitTesting(false)
+            }
+        }
     }
 
     private var cameraView: some View {
@@ -266,7 +291,7 @@ public struct CaptureView: View {
             CameraButtons(
                 picked: $picked, ready: camera.access == .ready,
                 label: Text("Read the page", bundle: .module), freeze: takeStill,
-                paste: paste)
+                paste: paste, take: take)
         }
     }
 

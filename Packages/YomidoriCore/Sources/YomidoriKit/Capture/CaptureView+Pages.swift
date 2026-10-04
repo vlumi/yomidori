@@ -3,9 +3,21 @@ import SwiftUI
 import VisionKit
 import YomidoriCore
 
-/// How a page comes and goes: the camera, the photo library, a paste; the next page, a start
-/// over, a retake.
+/// How a page comes and goes: the camera, the photo library, a paste, a drop, a file; the
+/// next page, a start over, a retake.
 extension CaptureView {
+    /// A picture from outside the camera — pasted, dropped, opened from a file — in place of
+    /// whatever page was up, as a retake is; the earlier pages of a spread stay.
+    func take(_ loaded: Still) {
+        recognizing = false
+        selection.clear()
+        page.selectedRange = nil
+        page.pasted = nil
+        picked = nil
+        camera.stop()
+        still = loaded
+    }
+
     /// A frame that arrives after the page was filled some other way (a paste, a photo, the
     /// tab left and the camera stopped) is dropped.
     func takeStill() {
@@ -73,14 +85,18 @@ extension CaptureView {
 
     static let longestPaste = 20_000
 
+    /// The pasteboard's picture, else its text, for ⌘V.
+    func pasteFromPasteboard() {
+        if Still.take(from: Clipboard.providers, take) { return }
+        if let text = Clipboard.string { paste(text) }
+    }
+
     func loadPicked() async {
         guard let picked, let data = try? await picked.loadTransferable(type: Data.self),
             let loaded = Still(data: data), !Task.isCancelled
         else { return }
-        camera.stop()
-        still = loaded
         // Loaded once: a return to the tab must not read the photo again.
-        self.picked = nil
+        take(loaded)
     }
 
     /// The page being read now, as the earlier ones are kept.
