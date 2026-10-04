@@ -521,16 +521,6 @@
         }
       }
     },
-    "Blurred or not quite framed? Tap Read to start again." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ぼやけたり、ずれたりしていたら、「読む」をタップして撮り直せます。"
-          }
-        }
-      }
-    },
     "Blurred or not quite framed? The camera button takes another photo." : {
       "localizations" : {
         "ja" : {
@@ -1131,16 +1121,6 @@
         }
       }
     },
-    "Forget %@" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ を忘れる"
-          }
-        }
-      }
-    },
     "Forget %lld cards?" : {
       "localizations" : {
         "ja" : {
@@ -1231,6 +1211,16 @@
         }
       }
     },
+    "From" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開始"
+          }
+        }
+      }
+    },
     "From a file…" : {
       "localizations" : {
         "ja" : {
@@ -1277,16 +1267,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "項目をすべて見る"
-          }
-        }
-      }
-    },
-    "Good" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "できた"
           }
         }
       }
@@ -1667,16 +1647,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "この端末ではテキスト認識表示を使えません。"
-          }
-        }
-      }
-    },
-    "Looked up" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "調べた言葉"
           }
         }
       }
@@ -2231,16 +2201,6 @@
         }
       }
     },
-    "Paste the text you are reading here." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "読んでいる文章をここに貼り付けてください。"
-          }
-        }
-      }
-    },
     "Picture" : {
       "localizations" : {
         "ja" : {
@@ -2322,6 +2282,16 @@
       }
     },
     "Question" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題"
+          }
+        }
+      }
+    },
+    "Questions" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -2801,16 +2771,6 @@
         }
       }
     },
-    "Show or hide the words looked up" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "調べた言葉を表示・非表示"
-          }
-        }
-      }
-    },
     "Show the answer" : {
       "localizations" : {
         "ja" : {
@@ -2927,6 +2887,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "期間"
+          }
+        }
+      }
+    },
+    "Stacked" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "積み上げ"
           }
         }
       }
@@ -3321,6 +3291,16 @@
         }
       }
     },
+    "To" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "終了"
+          }
+        }
+      }
+    },
     "Today" : {
       "localizations" : {
         "ja" : {
@@ -3417,16 +3397,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vision"
-          }
-        }
-      }
-    },
-    "Waiting" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "待機中"
           }
         }
       }
@@ -3577,16 +3547,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "カード、表紙付きのコレクション、調べた言葉の履歴を、ご自身のiCloudを通じてお使いの端末で揃えます。それ以外の場所には何も送りません。"
-          }
-        }
-      }
-    },
-    "Your meanings" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "自分で加えた意味"
           }
         }
       }

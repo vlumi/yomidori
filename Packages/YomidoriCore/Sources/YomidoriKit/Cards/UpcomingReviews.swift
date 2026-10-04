@@ -115,9 +115,12 @@ struct UpcomingReviews: View {
         // A rectangle, not a bar: a bar has its width in points or in units of an axis,
         // and six hours is neither.
         let mark = RectangleMark(
-            xStart: PlottableValue.value("From", from), xEnd: PlottableValue.value("To", to),
-            yStart: PlottableValue.value("Stacked", share.part.from),
-            yEnd: PlottableValue.value("Questions", share.part.to))
+            xStart: PlottableValue.value(String(localized: "From", bundle: .module), from),
+            xEnd: PlottableValue.value(String(localized: "To", bundle: .module), to),
+            yStart: PlottableValue.value(
+                String(localized: "Stacked", bundle: .module), share.part.from),
+            yEnd: PlottableValue.value(
+                String(localized: "Questions", bundle: .module), share.part.to))
         return mark.foregroundStyle(color)
     }
 
