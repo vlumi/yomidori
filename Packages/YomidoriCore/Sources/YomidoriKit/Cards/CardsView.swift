@@ -2,12 +2,26 @@ import SwiftUI
 import YomidoriCore
 import YomidoriDictionary
 
-/// The cards by stack, filtered by collection, with the way to the collections themselves.
-/// Several can be picked at once and put in a collection or taken out of one together: on
-/// the phone through *Select*, on the Mac by picking several rows.
+/// The cards in sections — by rank, or by the month they were kept or last changed, each
+/// section folding away — filtered by collection and by kind of word, with the way to the
+/// collections themselves. Several can be picked at once and put in a collection or taken
+/// out of one together: on the phone through *Select*, on the Mac by picking several rows.
 struct CardsView: View {
     @State private var cards: [Card] = []
     @State private var collections: [Collection] = []
+    @AppStorage(SettingsKey.cardSort) private var sort: CardSort = .rank
+    @AppStorage(SettingsKey.cardWordClass) private var wordClassName = ""
+    /// The kind of word shown; nil for every kind. Kept as its name, so the default is a
+    /// string.
+    private var wordClass: Binding<WordClass?> {
+        Binding(
+            get: { WordClass(rawValue: wordClassName) },
+            set: { wordClassName = $0?.rawValue ?? "" })
+    }
+    /// Each card's kinds of word, read off the dictionary once per card.
+    @State private var classes: [UUID: Set<WordClass>] = [:]
+    /// The sections folded away, by their group.
+    @State private var folded: Set<CardSort.Group> = []
     /// The collections shown; none chosen means all cards.
     @State private var chosen: Set<UUID> = []
     /// Only the cards in no collection, the ones to tidy.
@@ -44,9 +58,15 @@ struct CardsView: View {
         #endif
     }
 
-    /// The cards the filter lets through, in the order the list shows them.
+    /// The cards the filters let through, in the order the list shows them.
     private var shown: [Card] {
-        unfiled ? loose : cards.filter { $0.isIn(anyOf: chosen) }
+        let inCollections = unfiled ? loose : cards.filter { $0.isIn(anyOf: chosen) }
+        guard let wordClass = wordClass.wrappedValue else { return inCollections }
+        return inCollections.filter { classes[$0.id]?.contains(wordClass) ?? false }
+    }
+
+    private var order: some View {
+        CardListOrder(sort: $sort, wordClass: wordClass)
     }
 
     /// The cards in none of the collections there are.
@@ -62,15 +82,16 @@ struct CardsView: View {
     }
 
     @ViewBuilder private var stacks: some View {
-        stack(shown.filter(\.isInReview), header: Text("In review", bundle: .module))
-        stack(shown.filter(\.isWaiting), header: Text("Waiting", bundle: .module))
-        stack(shown.filter(\.shelved), header: Text("Shelved", bundle: .module))
+        ForEach(sort.sections(shown), id: \.group) { section in
+            stack(section)
+        }
     }
 
-    @ViewBuilder private func stack(_ cards: [Card], header: Text) -> some View {
-        if !cards.isEmpty {
-            Section {
-                ForEach(cards) { card in
+    private func stack(_ section: CardSort.Section) -> some View {
+        let isFolded = folded.contains(section.group)
+        return Section {
+            if !isFolded {
+                ForEach(section.cards) { card in
                     row(card)
                         // The pointer's way, and a finger's: asked first, as the Mac's ⌫
                         // is, since a menu's tap is lighter than a swipe's.
@@ -86,9 +107,19 @@ struct CardsView: View {
                             }
                         }
                 }
-            } header: {
-                header
             }
+        } header: {
+            CardSectionHeader(
+                group: section.group, count: section.cards.count,
+                collapsed: Binding(
+                    get: { isFolded },
+                    set: { fold in
+                        if fold {
+                            folded.insert(section.group)
+                        } else {
+                            folded.remove(section.group)
+                        }
+                    }))
         }
     }
 
@@ -133,6 +164,15 @@ struct CardsView: View {
     private func reload() {
         cards = (Cards.store?.cards() ?? []).sorted { $0.created > $1.created }
         collections = Cards.collections?.collections() ?? []
+        // The kinds of word of cards not seen before, from the first sense of each entry;
+        // a card kept without its entry's id is looked up by its word.
+        for card in cards where classes[card.id] == nil {
+            guard let dictionary = JMdict.bundled else { break }
+            let entry =
+                card.entryID.flatMap(dictionary.entry(withID:))
+                ?? dictionary.entry(headword: card.headword, reading: card.reading)
+            classes[card.id] = WordClass.of(partsOfSpeech: entry?.senses.first?.partsOfSpeech ?? [])
+        }
         // A card gone, here or on another device, is no longer picked.
         picked.formIntersection(Set(cards.map(\.id)))
         // The last loose card filed: all cards again, not an empty list.
@@ -200,9 +240,10 @@ struct CardsView: View {
                         }
                     }
                 }
-            } else if !collections.isEmpty {
-                ToolbarItem(placement: .primaryAction) {
-                    filter
+            } else {
+                ToolbarItemGroup(placement: .primaryAction) {
+                    if !collections.isEmpty { filter }
+                    order
                 }
             }
         }
@@ -257,16 +298,15 @@ struct CardsView: View {
             .modifier(ForgetOneDialog(card: $askedToForget, forgotten: reload))
             .forgetCardsDialog(isPresented: $forgetting, picked: $picked, cards: cards)
             .safeAreaInset(edge: .top) {
-                if !collections.isEmpty {
-                    HStack {
-                        Spacer()
-                        filter
-                            .controlSize(.small)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(.bar)
+                HStack {
+                    Spacer()
+                    if !collections.isEmpty { filter }
+                    order
                 }
+                .controlSize(.small)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(.bar)
             }
             .frame(minWidth: 280, idealWidth: 340, maxWidth: 480, maxHeight: .infinity)
             NavigationStack(path: $detailPath) {

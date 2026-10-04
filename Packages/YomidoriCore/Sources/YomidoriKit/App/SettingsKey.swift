@@ -17,4 +17,8 @@ enum SettingsKey {
     static let wordsColumnWidth = "wordsColumnWidth"
     /// The Mac's search: the history column shown.
     static let historyShown = "historyShown"
+    /// The card list's order, a `CardSort`, and the kind of word it shows, a `WordClass`'s
+    /// name or nothing for every kind.
+    static let cardSort = "cardSort"
+    static let cardWordClass = "cardWordClass"
 }
