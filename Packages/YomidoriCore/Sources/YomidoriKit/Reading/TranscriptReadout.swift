@@ -32,7 +32,9 @@ struct TranscriptReadout: View {
             // view; a view of no size at the end is not made while the drawer is short, and
             // the page would never be read.
             header
-                .task(id: "\(choice)|\(fixed)") { await read() }
+                .task(id: ReadKey(choice: choice, texts: pageTexts, fixes: page.fixes)) {
+                    await read()
+                }
                 .onChange(of: selection.range) { selectionOnPage() }
                 .onChange(of: page.selectedRange) { _, range in
                     requestOnPage(range)
@@ -153,7 +155,7 @@ struct TranscriptReadout: View {
             // Not on the Mac, whose page is a text box already.
             #if os(iOS)
             Button {
-                Clipboard.copy(fixed)
+                Clipboard.copy(page.fixes.matching(pageTexts).fixedText)
             } label: {
                 Label {
                     Text("Copy", bundle: .module)
@@ -214,11 +216,13 @@ struct TranscriptReadout: View {
         Spread.offset(ofPage: index, in: pageTexts)
     }
 
-    /// The transcript as recognized, with the reader's corrections in: those made on the
-    /// pages as they read now, since a fix is an offset into one text and means nothing in
-    /// another (the same page by another recognizer, a page taken again).
-    private var fixed: String {
-        page.fixes.matching(pageTexts).fixedText
+    /// What a reading is of: the page texts, the fixes and the tokenizer; another of any
+    /// and the page is read again. Compared whole, which is a memcmp of the texts, where the
+    /// fixed text as a key was built — trimmed, fixed and joined — on every render.
+    private struct ReadKey: Equatable {
+        let choice: TokenizerChoice
+        let texts: [String]
+        let fixes: SpreadFixes
     }
 
     /// The page read into words, off the main thread; taps wait until it is done.
@@ -283,9 +287,8 @@ struct TranscriptReadout: View {
     /// The way to put a run of the page right, where it lies on one line: a run over a line
     /// break is two pieces of text, and is fixed a piece at a time.
     private func fixer(for range: Range<Int>, in reading: PageReading) -> ((PageFix) -> Void)? {
-        let text = Array(reading.text)
-        guard !range.isEmpty, range.lowerBound >= 0, range.upperBound <= text.count,
-            !text[range].contains(where: \.isNewline)
+        guard !range.isEmpty, range.lowerBound >= 0, range.upperBound <= reading.text.count,
+            !reading.spansLines(range)
         else { return nil }
         return { fix(range, $0) }
     }
