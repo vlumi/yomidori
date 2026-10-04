@@ -39,11 +39,14 @@ struct ChunkFlow: View {
                 .contentShape(Rectangle())
                 #if os(macOS)
                 // Shift-click stretches the selection, as in any text; the long press stays
-                // for a finger.
+                // for a finger. (iOS has no shift on a tap; a trackpad's secondary click
+                // opens the menu, which extends.)
                 .gesture(TapGesture().modifiers(.shift).onEnded { extend(chunk) })
                 .onHover { over in
                     if over { NSCursor.pointingHand.push() } else { NSCursor.pop() }
                 }
+                #else
+                .hoverEffect(.highlight)
                 #endif
                 .onTapGesture { if chunk.isWord { select(chunk) } }
                 .onLongPressGesture { extend(chunk) }

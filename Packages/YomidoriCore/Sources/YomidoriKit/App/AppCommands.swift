@@ -1,8 +1,8 @@
 import Combine
 import SwiftUI
 
-/// What the menu bar asks of the app, on a Mac: a tab by its key. Public, since the menus
-/// are the app target's; the root takes each request and clears it.
+/// What the menu bar, or a key held on an iPad, asks of the app: a tab by its key. Public,
+/// since the menus are the app target's; the root takes each request and clears it.
 @MainActor
 public final class AppCommands: ObservableObject {
     public static let shared = AppCommands()
@@ -14,11 +14,14 @@ public final class AppCommands: ObservableObject {
     private init() {}
 }
 
-/// The View menu's way to each section, ⌘1 … ⌘4 on a Mac, where Read is the first.
+/// The View menu's way to each section, ⌘1 … ⌘4 with Read the first on every platform, so
+/// a key learnt on the Mac holds on an iPad with a keyboard; the iPad's Home is ⌘0. File ›
+/// Open a Picture… is the Mac's, whose Read takes a file.
 public struct SectionCommands: Commands {
     public init() {}
 
     public var body: some Commands {
+        #if os(macOS)
         CommandGroup(replacing: .newItem) {
             Button {
                 AppCommands.shared.requestedTab = .read
@@ -28,7 +31,11 @@ public struct SectionCommands: Commands {
             }
             .keyboardShortcut("o", modifiers: .command)
         }
+        #endif
         CommandGroup(before: .sidebar) {
+            #if os(iOS)
+            section(Text("Home", bundle: .module), .home, "0")
+            #endif
             section(Text("Read", bundle: .module), .read, "1")
             section(Text("Study", bundle: .module), .study, "2")
             section(Text("Cards", bundle: .module), .cards, "3")
