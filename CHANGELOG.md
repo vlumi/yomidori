@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A collection, one looked-up word or one accepted meaning can be removed on the Mac.** Each row has it in its menu (right-click, or a long press on the phone and iPad), beside the swipe the phone had; a collection could not be removed on the Mac at all before.
 - **On the Mac, a picture sent by the Read in Yomidori shortcut is read.** It was shown on the page but never recognized, so the words column said nothing was recognized.
 - **Clearing the dictionary's history takes a deliberate step.** The *Clear* that sat by the search field is now *Clear the history…* under the ⋯ menu, in red, and asks with the number of words before anything goes; the Mac's button under its column asks the same.
 - **A card can be forgotten from anywhere.** On an iPad the row swipes to forget as on the phone, and the card itself has *Forget this card* under its actions, asked once, on every platform.
