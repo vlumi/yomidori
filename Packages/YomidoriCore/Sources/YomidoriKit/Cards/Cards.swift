@@ -98,7 +98,7 @@ enum Cards {
         guard Lookup.isWorthKeeping(entry) else { return }
         try? lookups?.record(
             Lookup(
-                headword: entry.headword, reading: Kana.hiragana(entry.readings.first ?? ""),
+                headword: entry.headword, reading: entry.hiraganaReading,
                 entryID: entry.id, date: Date(), source: source))
     }
 

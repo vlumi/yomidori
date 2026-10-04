@@ -18,7 +18,7 @@ struct EntryRow: View {
                 Text(japanese: entry.headword)
                     .font(.title3)
                     .fixedSize()
-                let reading = Kana.hiragana(entry.readings.first ?? "")
+                let reading = entry.hiraganaReading
                 if let accent {
                     PitchReading(reading: reading, accent: accent)
                 } else if !estimate.isEmpty {
