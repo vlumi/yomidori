@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A camera button on the page, and a way back from +.** A camera button in the page's controls takes another photo, so a retake no longer means finding the Read tab; and the + pressed by mistake has *Back to the page*, which brings the page just taken back as it was.
+
 ### build 33 — 2026-10-04
 
 - **The iPad's Read, settled.** Turning the iPad with the camera up no longer rebuilds the camera; on its side the camera takes the room, the words column waits narrow with the buttons until there is a page, and then its edge drags wider or narrower; and the bar at the top keeps its own color instead of the page's black.

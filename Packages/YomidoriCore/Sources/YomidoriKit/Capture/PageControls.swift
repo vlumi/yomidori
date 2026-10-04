@@ -18,12 +18,17 @@ struct PageControls: View {
     let canAddPage: Bool
     let addPage: () -> Void
     let startOver: () -> Void
+    /// Back to the camera for another photo, the page let go.
+    let retake: () -> Void
     /// Moves the second page round the first; nil until there is a second page.
     var moveNextPage: (() -> Void)?
     @Binding var zoom: Double
 
     var body: some View {
         VStack(alignment: side.horizontal, spacing: 14) {
+            PageButton(
+                symbol: "camera", label: Text("Take another photo", bundle: .module),
+                action: retake)
             if let pageCount {
                 StartOverButton(pageCount: pageCount, action: startOver)
             }

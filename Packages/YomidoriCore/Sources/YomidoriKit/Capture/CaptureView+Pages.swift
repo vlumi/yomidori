@@ -25,6 +25,19 @@ extension CaptureView {
         retake()
     }
 
+    /// The + pressed by mistake, or thought better of: the page taken last comes back as it
+    /// was, read and all, and the camera rests.
+    func backToPage() {
+        guard still == nil, let last = pages.popLast() else { return }
+        camera.stop()
+        selection.clear()
+        page.lines = last.lines
+        page.analysis = last.analysis
+        page.transcript = last.transcript
+        page.recognizedStillID = last.still?.id
+        page.still = last.still
+    }
+
     func startOver() {
         pages = []
         page.nextSide = nil
