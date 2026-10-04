@@ -6,44 +6,7 @@ import YomidoriCore
 /// right and wrong, the ranks as they stood, and the words started. A finger on a chart
 /// shows that period's numbers above it.
 struct ProgressScreen: View {
-    /// How far back the charts look, and how finely: days for a month, weeks for a season,
-    /// months for longer.
-    enum Span: String, CaseIterable, Identifiable {
-        case fourWeeks
-        case threeMonths
-        case year
-        case all
-
-        var id: String { rawValue }
-
-        var days: Int? {
-            switch self {
-            case .fourWeeks: return 28
-            case .threeMonths: return 91
-            case .year: return 365
-            case .all: return nil
-            }
-        }
-
-        var unit: Calendar.Component {
-            switch self {
-            case .fourWeeks: return .day
-            case .threeMonths: return .weekOfYear
-            case .year, .all: return .month
-            }
-        }
-
-        var title: Text {
-            switch self {
-            case .fourWeeks: return Text("4 weeks", bundle: .module)
-            case .threeMonths: return Text("3 months", bundle: .module)
-            case .year: return Text("Year", bundle: .module)
-            case .all: return Text("All", bundle: .module)
-            }
-        }
-    }
-
-    @State private var span: Span = .fourWeeks
+    @State private var span: ProgressSpan = .fourWeeks
     @State private var question: Question?
     @State private var today: DayTally?
     @State private var buckets: [DayTally] = []
@@ -61,7 +24,7 @@ struct ProgressScreen: View {
                 stats
                 Section {
                     Picker(selection: $span) {
-                        ForEach(Span.allCases) { span in span.title.tag(span) }
+                        ForEach(ProgressSpan.allCases) { span in span.title.tag(span) }
                     } label: {
                         Text("Span", bundle: .module)
                     }
@@ -143,14 +106,10 @@ struct ProgressScreen: View {
         total = Progress.total(of: cards)
         started = cards.filter { $0.started != nil }.count
         let all = Cards.snapshots?.snapshots() ?? []
-        let from: Date
-        if let days = span.days {
-            from = calendar.date(byAdding: .day, value: 1 - days, to: now) ?? now
-        } else {
-            from = [Progress.earliest(of: cards), all.first?.day].compactMap { $0 }.min() ?? now
-        }
-        // Whole periods: a week's bucket holds the whole week, not from the span's first day.
-        let start = calendar.dateInterval(of: span.unit, for: from)?.start ?? from
+        let start = span.start(
+            now: now,
+            earliest: [Progress.earliest(of: cards), all.first?.day].compactMap { $0 }.min(),
+            calendar: calendar)
         buckets = Progress.rollUp(
             Progress.tallies(of: cards, from: start, to: now, calendar: calendar),
             by: span.unit, calendar: calendar)
@@ -187,12 +146,16 @@ private enum Period {
         }
     }
 
-    /// The period a finger on the chart is over: the last one starting at or before it.
-    static func under<Element>(_ date: Date?, in periods: [Element], start: (Element) -> Date)
-        -> Element?
-    {
-        guard let date else { return nil }
-        return periods.last { start($0) <= date }
+}
+
+extension ProgressSpan {
+    var title: Text {
+        switch self {
+        case .fourWeeks: return Text("4 weeks", bundle: .module)
+        case .threeMonths: return Text("3 months", bundle: .module)
+        case .year: return Text("Year", bundle: .module)
+        case .all: return Text("All", bundle: .module)
+        }
     }
 }
 
@@ -274,7 +237,7 @@ private struct AnswersChart: View {
     }
 
     var body: some View {
-        let picked = Period.under(selected, in: buckets, start: \.day)
+        let picked = ProgressSpan.period(under: selected, in: buckets, start: \.day)
         let shownAnswered = picked.map(answered) ?? buckets.map(answered).reduce(0, +)
         let shownRight = picked.map(right) ?? buckets.map(right).reduce(0, +)
         let rightName = String(localized: "Correct", bundle: .module)
@@ -332,7 +295,8 @@ private struct RankHistoryChart: View {
     @State private var selected: Date?
 
     var body: some View {
-        let shown = Period.under(selected, in: snapshots, start: \.day) ?? snapshots.last
+        let shown =
+            ProgressSpan.period(under: selected, in: snapshots, start: \.day) ?? snapshots.last
         VStack(alignment: .leading, spacing: 8) {
             ChartCaption {
                 if let shown {
@@ -384,7 +348,7 @@ private struct StartedChart: View {
     @State private var selected: Date?
 
     var body: some View {
-        let picked = Period.under(selected, in: buckets, start: \.day)
+        let picked = ProgressSpan.period(under: selected, in: buckets, start: \.day)
         let shown = picked?.started ?? buckets.map(\.started).reduce(0, +)
         VStack(alignment: .leading, spacing: 8) {
             ChartCaption {
