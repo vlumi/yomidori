@@ -751,6 +751,16 @@
         }
       }
     },
+    "Drag to make the column wider or narrower" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ドラッグで欄の幅を変えられます"
+          }
+        }
+      }
+    },
     "Drawer" : {
       "localizations" : {
         "ja" : {
@@ -3037,6 +3047,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "同梱しているもの"
+          }
+        }
+      }
+    },
+    "Words column edge" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "言葉の欄の端"
           }
         }
       }

@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The iPad's Read, settled.** Turning the iPad with the camera up no longer rebuilds the camera; on its side the camera takes the room, the words column waits narrow with the buttons until there is a page, and then its edge drags wider or narrower; and the bar at the top keeps its own color instead of the page's black.
+
 ### build 32 — 2026-10-04
 
 - **The first read, warmer and plainer.** The recognizers are warmed on a page of real text as the app starts, at a priority that finishes before a finger reaches the button, so the first page should read as fast as the second; and while a page is being read the whole screen says so, not only the picture.
