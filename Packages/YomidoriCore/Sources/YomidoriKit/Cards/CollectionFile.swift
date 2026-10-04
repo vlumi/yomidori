@@ -47,11 +47,8 @@ extension Cards {
     }
 
     nonisolated static func importCollection(from url: URL) throws -> CollectionImport {
-        let accessing = url.startAccessingSecurityScopedResource()
-        defer { if accessing { url.stopAccessingSecurityScopedResource() } }
-        let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? .max
-        guard size <= SharedCollection.largestFile else { throw CocoaError(.fileReadTooLarge) }
-        let shared = try SharedCollection.decoded(from: Data(contentsOf: url))
+        let shared = try SharedCollection.decoded(
+            from: readImport(url, largest: SharedCollection.largestFile))
         guard let store, let collections else { throw CocoaError(.fileReadUnknown) }
         var collection =
             collections.collections().first { $0.name == shared.name }
@@ -69,5 +66,17 @@ extension Cards {
         }
         return CollectionImport(
             name: shared.name, added: merged?.added ?? 0, joined: merged?.joined ?? 0)
+    }
+}
+
+extension Cards {
+    /// A file handed in from outside — picked, shared, opened — read within its security
+    /// scope and only if it is no larger than `largest`, checked before a byte is read.
+    nonisolated static func readImport(_ url: URL, largest: Int) throws -> Data {
+        let accessing = url.startAccessingSecurityScopedResource()
+        defer { if accessing { url.stopAccessingSecurityScopedResource() } }
+        let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? .max
+        guard size <= largest else { throw CocoaError(.fileReadTooLarge) }
+        return try Data(contentsOf: url)
     }
 }
