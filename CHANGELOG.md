@@ -15,6 +15,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 ### Unreleased (next build)
 
 - **The Mac takes pictures from files only.** A web address pasted or dropped on Read is left alone, where before the app went and fetched it; a file is checked for its size before being read.
+- **The iPad on its side reads like the Mac.** In landscape the page fills the left and the words stand in a column beside it, no drawer; portrait keeps the phone's drawer.
 - **Close-up is gone, and 210 MB with it.** The third reader, manga-ocr on a window around the tap, read nothing the page's own readers did not; the picker is Live Text and Vision now, and the app is a third of its size, under the cellular download limit.
 - **The Japanese read over.** Progress no longer says 右 for the answers got right (正解); keeping a word is 残す everywhere, a kanji is found by its 部品, strokes are 筆順, ranks are ランク, recognized text is 読み取った本文; a format for VoiceOver's percent fixed; and some thirty labels and footers that read as a translation now read as Japanese.
 - **Live Text fits the Japanese picker.** The recognizer picker says Live Text in Japanese too, as Apple does, instead of テキスト認識表示, which did not fit a smaller phone.
