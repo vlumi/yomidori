@@ -34,6 +34,13 @@ final class PageReadingTests: XCTestCase {
         XCTAssertEqual(room?.range, 7..<9)
         XCTAssertEqual(room?.line, 1)
         XCTAssertEqual(page.chunks.map(\.id), Array(page.chunks.indices))
+        // The lines' chunks and the line breaks, laid out once for the pages that draw by line.
+        XCTAssertEqual(page.chunksByLine.flatMap { $0 }.map(\.id), page.chunks.map(\.id))
+        XCTAssertEqual(page.chunksByLine.map { $0.first?.line }, [0, 1])
+        XCTAssertEqual(
+            page.lineBreaks, [text.distance(from: text.startIndex, to: text.firstIndex(of: "\n")!)])
+        XCTAssertFalse(page.spansLines(7..<9))
+        XCTAssertTrue(page.spansLines(5..<9))
     }
 
     func testChunksCoverWholeCharactersOfOddText() {
