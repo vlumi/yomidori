@@ -13,7 +13,7 @@ struct SessionSummary: View {
                 .font(.largeTitle.weight(.semibold))
             HStack(alignment: .top) {
                 stat("\(session.total)", Text("Answered", bundle: .module))
-                stat("\(session.rightTotal)", Text("Right", bundle: .module))
+                stat("\(session.rightTotal)", Text("Correct", bundle: .module))
                 stat("\(session.total - session.rightTotal)", Text("Again", bundle: .module))
                 stat("\(session.seconds / 60)", Text("Minutes", bundle: .module))
             }

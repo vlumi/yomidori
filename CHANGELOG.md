@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The Japanese read over.** Progress no longer says 右 for the answers got right (正解); keeping a word is 残す everywhere, a kanji is found by its 部品, strokes are 筆順, ranks are ランク, recognized text is 読み取った本文; a format for VoiceOver's percent fixed; and some thirty labels and footers that read as a translation now read as Japanese.
 - **About reads its name.** The name's reading with its pitch, よみどり [2], stands under the title on the About page as on Home.
 - **Appearance and language of your own.** Settings lets the app be light or dark regardless of the device, at once, and English or Japanese regardless of the device, from the next time it is opened.
 
