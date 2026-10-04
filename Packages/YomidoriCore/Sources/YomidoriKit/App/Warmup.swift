@@ -3,31 +3,24 @@ import Foundation
 import YomidoriCore
 import YomidoriDictionary
 
-/// What is slow the first time and never again, done once at launch in the background, so
-/// the first page reads as fast as the second: the dictionary opened and its statements
-/// made, the analyzer's first cut, Vision's document model and Live Text's analyzer loaded
-/// on a blank still. Nothing is kept; the loads are the frameworks' own.
+/// What is slow the first time and never again, done once at launch so the first page reads
+/// as fast as the second: the recognizers' text models, which load only once there is text
+/// to read, so the page is a rendered one with a few lines of Japanese on it; the analyzer's
+/// first cut and the dictionary's first lookups through the same reading the drawer makes.
+/// At a priority that gets it done before a finger can reach the button; a blank still at
+/// utility priority, tried first, loaded the detectors and not the readers.
 enum Warmup {
-    static func start() {
-        Task.detached(priority: .utility) {
-            _ = JMdict.bundled?.entries(matching: "本")
-            _ = SystemTokenizer().tokens(in: "吾輩は猫である。")
-            guard let still = blank() else { return }
-            _ = try? await TextRecognizer.recognize(still)
-            if LiveText.isSupported { _ = try? await LiveText.analyze(still) }
-        }
-    }
+    static let text = "吾輩は猫である。名前はまだ無い。どこで生れたかとんと見当がつかぬ。"
 
-    /// A small white still, enough to run the recognizers over.
-    private static func blank() -> Still? {
-        guard
-            let context = CGContext(
-                data: nil, width: 64, height: 64, bitsPerComponent: 8, bytesPerRow: 0,
-                space: CGColorSpaceCreateDeviceRGB(),
-                bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)
-        else { return nil }
-        context.setFillColor(CGColor(red: 1, green: 1, blue: 1, alpha: 1))
-        context.fill(CGRect(x: 0, y: 0, width: 64, height: 64))
-        return context.makeImage().map(Still.init(image:))
+    static func start() {
+        Task.detached(priority: .userInitiated) {
+            guard let image = DemoRenderer.verticalPage(text, size: CGSize(width: 600, height: 900))
+            else { return }
+            let still = Still(image: image)
+            async let read = PageRecognition.read(still)
+            async let words = PageReader.shared.read(text, with: .system)
+            _ = await (read, words)
+            _ = JMdict.bundled?.entries(matching: "本")
+        }
     }
 }

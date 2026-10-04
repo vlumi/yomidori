@@ -70,6 +70,30 @@ public struct CaptureView: View {
                     }
                 }
             }
+            // The page being read, said over the whole screen — the picture and the words'
+            // place alike — so a wait of a second or two reads as the app at work and not
+            // as the app stuck; the picture still zooms and pans under it.
+            .overlay {
+                if let busy {
+                    ZStack {
+                        Color.black.opacity(0.35)
+                        VStack(spacing: 12) {
+                            ProgressView()
+                                .controlSize(.large)
+                                .tint(.white)
+                            busy
+                                .font(.headline)
+                                .foregroundStyle(.white)
+                        }
+                        .padding(24)
+                        .background(.black.opacity(0.5), in: RoundedRectangle(cornerRadius: 16))
+                    }
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                    .transition(.opacity)
+                }
+            }
+            .animation(.easeOut(duration: 0.2), value: busy == nil)
             .onAppear {
                 OrientationLock.portrait(true)
                 if still == nil, page.pasted == nil { camera.start() }
@@ -94,6 +118,16 @@ public struct CaptureView: View {
                 await recognize()
             }
         }
+    }
+
+    /// What the app is at while a page is on its way to its words: the recognizers, then
+    /// the reading of the words; nil once the words are there, or when there is no page.
+    private var busy: Text? {
+        if recognizing { return Text("Reading the page…", bundle: .module) }
+        if currentTranscript != nil, page.reading == nil {
+            return Text("Reading the words…", bundle: .module)
+        }
+        return nil
     }
 
     /// A regular width lying down: the page and the words side by side.
@@ -157,28 +191,6 @@ public struct CaptureView: View {
             }
         }
         .frame(width: area.width, height: area.height)
-        // The page is being read: said over the whole picture, not only in the drawer, and
-        // the picture still zooms and pans under it.
-        .overlay {
-            if recognizing {
-                ZStack {
-                    Color.black.opacity(0.35)
-                    VStack(spacing: 12) {
-                        ProgressView()
-                            .controlSize(.large)
-                            .tint(.white)
-                        Text("Reading the page…", bundle: .module)
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                    }
-                    .padding(24)
-                    .background(.black.opacity(0.5), in: RoundedRectangle(cornerRadius: 16))
-                }
-                .allowsHitTesting(false)
-                .transition(.opacity)
-            }
-        }
-        .animation(.easeOut(duration: 0.2), value: recognizing)
         .overlay(alignment: controlsSide.alignment) {
             PageControls(
                 side: controlsSide, pageCount: pages.isEmpty ? nil : pages.count + 1,
