@@ -661,6 +661,16 @@
         }
       }
     },
+    "Could not save" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存できませんでした"
+          }
+        }
+      }
+    },
     "Count it right" : {
       "localizations" : {
         "ja" : {

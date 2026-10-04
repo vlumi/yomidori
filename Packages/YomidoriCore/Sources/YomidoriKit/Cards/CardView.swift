@@ -23,10 +23,10 @@ struct CardView: View {
                 }
             }
             WordSections(headword: card.headword, details: details)
-            CardCollections(card: $card) { try? Cards.store?.update(card) }
-            CardActions(card: $card) { try? Cards.store?.update(card) }
+            CardCollections(card: $card) { Cards.write { try Cards.store?.update(card) } }
+            CardActions(card: $card) { Cards.write { try Cards.store?.update(card) } }
             AcceptedMeanings(card: $card, glosses: details.entry?.senses.flatMap(\.glosses) ?? []) {
-                try? Cards.store?.update(card)
+                Cards.write { try Cards.store?.update(card) }
             }
             CardFacts(card: card)
             ForEach(card.sightings.sorted { $0.date > $1.date }) { sighting in
@@ -58,7 +58,7 @@ struct CardView: View {
             SentenceEditor(sighting: sighting) { added in
                 guard !added.sentence.isEmpty else { return }
                 card.add(added)
-                try? Cards.store?.update(card)
+                Cards.write { try Cards.store?.update(card) }
             }
         }
         .task(id: card.id) {
@@ -73,6 +73,6 @@ struct CardView: View {
 
     private func replace(_ sighting: Sighting) {
         card.replace(sighting)
-        try? Cards.store?.update(card)
+        Cards.write { try Cards.store?.update(card) }
     }
 }

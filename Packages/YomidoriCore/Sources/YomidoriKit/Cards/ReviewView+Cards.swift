@@ -13,7 +13,7 @@ extension ReviewView {
     static func keep(_ meaning: String, on item: ReviewItem) -> Card? {
         guard var card = Cards.store?.card(id: item.card.id) else { return nil }
         card.addAnswer(meaning, glosses: glosses(of: item))
-        try? Cards.store?.update(card)
+        Cards.write { try Cards.store?.update(card) }
         return card
     }
 }

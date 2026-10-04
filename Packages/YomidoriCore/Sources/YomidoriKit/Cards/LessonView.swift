@@ -126,7 +126,7 @@ struct LessonView: View {
     private func correct(_ sighting: Sighting, on card: Card) {
         var changed = Cards.store?.card(id: card.id) ?? card
         changed.replace(sighting)
-        try? Cards.store?.update(changed)
+        Cards.write { try Cards.store?.update(changed) }
         cards = cards?.map { $0.id == changed.id ? changed : $0 }
     }
 
@@ -138,12 +138,12 @@ struct LessonView: View {
         switch verdict {
         case .start:
             changed.start(at: Date())
-            try? Cards.store?.update(changed)
+            Cards.write { try Cards.store?.update(changed) }
             started.append(changed)
         case .later:
             later += 1
         case .drop:
-            try? Cards.store?.remove(card)
+            Cards.write { try Cards.store?.remove(card) }
             dropped += 1
         }
         cards?.removeFirst()
