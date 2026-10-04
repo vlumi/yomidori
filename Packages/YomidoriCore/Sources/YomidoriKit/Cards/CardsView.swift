@@ -71,27 +71,47 @@ struct CardsView: View {
         if !cards.isEmpty {
             Section {
                 ForEach(cards) { card in
-                    #if os(macOS)
-                    CardRow(card: card).tag(card.id)
-                    #else
-                    // Forgotten by a swipe, a swipe action and not the list's own delete:
-                    // that one puts its red circles on every row the moment selecting
-                    // starts, before they can be told to stay away.
-                    if sizeClass == .regular {
-                        CardRow(card: card).tag(card.id).swipeActions(edge: .trailing) {
-                            forget(card)
+                    row(card)
+                        // The pointer's way, and a finger's: asked first, as the Mac's ⌫
+                        // is, since a menu's tap is lighter than a swipe's.
+                        .contextMenu {
+                            Button(role: .destructive) {
+                                askedToForget = card
+                            } label: {
+                                Label {
+                                    Text("Forget…", bundle: .module)
+                                } icon: {
+                                    Image(systemName: "trash")
+                                }
+                            }
                         }
-                    } else {
-                        NavigationLink(value: card) { CardRow(card: card) }
-                            .swipeActions(edge: .trailing) { forget(card) }
-                    }
-                    #endif
                 }
             } header: {
                 header
             }
         }
     }
+
+    @ViewBuilder private func row(_ card: Card) -> some View {
+        #if os(macOS)
+        CardRow(card: card).tag(card.id)
+        #else
+        // Forgotten by a swipe, a swipe action and not the list's own delete: that one
+        // puts its red circles on every row the moment selecting starts, before they can
+        // be told to stay away.
+        if sizeClass == .regular {
+            CardRow(card: card).tag(card.id).swipeActions(edge: .trailing) {
+                forget(card)
+            }
+        } else {
+            NavigationLink(value: card) { CardRow(card: card) }
+                .swipeActions(edge: .trailing) { forget(card) }
+        }
+        #endif
+    }
+
+    /// The card a row's menu asked to forget, until it is answered for.
+    @State private var askedToForget: Card?
 
     #if os(iOS)
     @ViewBuilder private func forget(_ card: Card) -> some View {
@@ -149,6 +169,7 @@ struct CardsView: View {
             }
         }
         .environment(\.editMode, $editMode)
+        .modifier(ForgetOneDialog(card: $askedToForget, forgotten: reload))
         .navigationTitle(Text("Cards", bundle: .module))
         .toolbar {
             if !cards.isEmpty {
@@ -188,7 +209,7 @@ struct CardsView: View {
         // The batch, over the tab bar, while selecting.
         .safeAreaInset(edge: .bottom) {
             if selecting {
-                CardsBatch(picked: picked, cards: cards, collections: collections)
+                CardsBatch(picked: $picked, cards: cards, collections: collections)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
                     .frame(maxWidth: .infinity)
@@ -233,23 +254,8 @@ struct CardsView: View {
                 }
             }
             .onDeleteCommand { forgetting = !picked.isEmpty }
-            .confirmationDialog(
-                picked.count == 1
-                    ? Text("Forget this card?", bundle: .module)
-                    : Text("Forget \(picked.count) cards?", bundle: .module),
-                isPresented: $forgetting
-            ) {
-                Button(role: .destructive) {
-                    for card in cards where picked.contains(card.id) {
-                        Cards.write { try Cards.store?.remove(card) }
-                    }
-                    picked = []
-                } label: {
-                    Text("Forget", bundle: .module)
-                }
-            } message: {
-                Text("Their sentences and their answers go with them.", bundle: .module)
-            }
+            .modifier(ForgetOneDialog(card: $askedToForget, forgotten: reload))
+            .forgetCardsDialog(isPresented: $forgetting, picked: $picked, cards: cards)
             .safeAreaInset(edge: .top) {
                 if !collections.isEmpty {
                     HStack {
@@ -283,7 +289,7 @@ struct CardsView: View {
         if picked.count == 1, let card = cards.first(where: { picked.contains($0.id) }) {
             CardView(card: card).id(card.id)
         } else if picked.count > 1 {
-            CardsBatch(picked: picked, cards: cards, collections: collections)
+            CardsBatch(picked: $picked, cards: cards, collections: collections)
                 .frame(maxWidth: 360)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
@@ -314,6 +320,29 @@ struct CardRow: View {
             Spacer()
             RankMark(rank: card.rank, size: 22)
                 .accessibilityLabel(RankName.text(for: card.rank))
+        }
+    }
+}
+
+/// The question before one card goes from its row's menu.
+private struct ForgetOneDialog: ViewModifier {
+    @Binding var card: Card?
+    let forgotten: () -> Void
+
+    func body(content: Content) -> some View {
+        content.confirmationDialog(
+            Text("Forget this card?", bundle: .module),
+            isPresented: Binding(get: { card != nil }, set: { if !$0 { card = nil } }),
+            presenting: card
+        ) { card in
+            Button(role: .destructive) {
+                Cards.write { try Cards.store?.remove(card) }
+                forgotten()
+            } label: {
+                Text("Forget", bundle: .module)
+            }
+        } message: { _ in
+            Text("Their sentences and their answers go with them.", bundle: .module)
         }
     }
 }
