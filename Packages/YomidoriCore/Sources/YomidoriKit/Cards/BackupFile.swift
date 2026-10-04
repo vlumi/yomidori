@@ -13,7 +13,7 @@ struct BackupFile: Transferable {
 }
 
 /// What a restore did, for the note shown after it.
-struct BackupRestore: Identifiable {
+struct BackupRestore: Identifiable, Sendable {
     let id = UUID()
     let addedCards: Int
     let joinedCards: Int
@@ -26,15 +26,20 @@ extension Cards {
         let backup = Backup(
             created: Date(), cards: store?.cards() ?? [],
             collections: collections?.collections() ?? [], lookups: lookups?.lookups() ?? [])
-        let url = FileManager.default.temporaryDirectory
+        let url = try Cards.shareFolder()
             .appendingPathComponent(Backup.fileName(at: Date()))
             .appendingPathExtension("json")
-        try backup.encoded().write(to: url, options: .atomic)
+        try backup.encoded().write(to: url, options: .store)
         return url
     }
 
     /// A backup's contents added to what is here; nothing here is taken away.
-    static func restoreBackup(from url: URL) throws -> BackupRestore {
+    /// The restore off the main thread, as the import.
+    static func restoreBackup(from url: URL) async throws -> BackupRestore {
+        try await Task.detached(priority: .userInitiated) { try restoreBackup(from: url) }.value
+    }
+
+    nonisolated static func restoreBackup(from url: URL) throws -> BackupRestore {
         let accessing = url.startAccessingSecurityScopedResource()
         defer { if accessing { url.stopAccessingSecurityScopedResource() } }
         let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? .max
@@ -46,5 +51,17 @@ extension Cards {
         return BackupRestore(
             addedCards: restored.addedCards, joinedCards: restored.joinedCards,
             addedCollections: restored.addedCollections)
+    }
+}
+
+extension Cards {
+    /// Where a file to share is written: a folder of its own under tmp, emptied for each
+    /// share, so a copy of every card never sits there longer than the next share.
+    static func shareFolder() throws -> URL {
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent(
+            "share", isDirectory: true)
+        try? FileManager.default.removeItem(at: folder)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        return folder
     }
 }

@@ -10,15 +10,11 @@ struct ReviewView: View {
     /// A drill over these cards only, as after a lesson: a miss comes back a few questions on,
     /// and the drill is over when every question has been answered right. Nil for a review.
     var practicing: Set<UUID>?
-    @State private var queue: [ReviewItem] = []
+    @State private var queue = ReviewQueue([])
     @AppStorage(SettingsKey.retention) private var retention = FSRS.desiredRetention
     /// Loaded once; coming back to the screen mustn't start it over and lose the misses
     /// still to be put right.
     @State private var loaded = false
-    /// The questions asked once already this sitting, by `key`: in a review, their first
-    /// answer is the one that counts, and a miss comes back until it is right, for practice
-    /// alone.
-    @State private var asked: Set<String> = []
     @State private var revealed = false
     @State private var answer = ""
     /// What was typed, or nil for nothing but spaces: one rule for every button and line.
@@ -39,7 +35,7 @@ struct ReviewView: View {
 
     var body: some View {
         Group {
-            if let item = queue.first {
+            if let item = queue.current {
                 review(item)
             } else if session.total > 0 {
                 SessionSummary(session: session) { dismiss() }
@@ -55,7 +51,7 @@ struct ReviewView: View {
         // the right of it: the screen below is the question's.
         .navigationBarTitleDisplayModeInline()
         .toolbar {
-            if let item = queue.first {
+            if let item = queue.current {
                 ToolbarItem(placement: .primaryAction) {
                     HStack(spacing: 8) {
                         Text(verbatim: "\(queue.count)")
@@ -69,7 +65,7 @@ struct ReviewView: View {
             }
         }
         .onAppear(perform: reload)
-        .onChange(of: queue.first) { shown = Date() }
+        .onChange(of: queue.current) { shown = Date() }
     }
 
     /// The question scrolls, so a long sentence shows whole; the answer stays put below.
@@ -77,7 +73,7 @@ struct ReviewView: View {
         VStack(alignment: .leading, spacing: 20) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    if practicing == nil, asked.contains(Self.key(item)) {
+                    if practicing == nil, queue.isRepeat(item) {
                         Label {
                             Text(
                                 "Once more, to get it right. This one no longer counts.",
@@ -124,9 +120,7 @@ struct ReviewView: View {
         var changed = Cards.store?.card(id: card.id) ?? card
         changed.replace(sighting)
         try? Cards.store?.update(changed)
-        queue = queue.map {
-            $0.card.id == changed.id ? ReviewItem(card: changed, question: $0.question) : $0
-        }
+        queue.replace(card: changed)
     }
 
     @ViewBuilder private func prompt(_ item: ReviewItem) -> some View {
@@ -258,16 +252,11 @@ struct ReviewView: View {
         _ item: ReviewItem, _ grade: Grade, reconciled: Bool = false,
         accepting meaning: String? = nil
     ) {
-        // Two buttons pressed at once both land here with the same item: grade it once.
-        guard let current = queue.first, current.card.id == item.card.id,
-            current.question == item.question
-        else { return }
+        guard queue.isCurrent(item) else { return }
         let now = Date()
         let seconds = Int(now.timeIntervalSince(shown).rounded())
-        let isRepeat = asked.contains(Self.key(item))
-        asked.insert(Self.key(item))
         let reviewed: Card?
-        if isRepeat, practicing == nil {
+        if queue.isRepeat(item), practicing == nil {
             // Once more, to finish right: nothing on the schedule, the log or the summary;
             // a meaning of the reader's own is still kept.
             reviewed = meaning.flatMap { Self.keep($0, on: item) }
@@ -282,20 +271,8 @@ struct ReviewView: View {
         }
         revealed = false
         answer = ""
-        queue.removeFirst()
-        if let reviewed {
-            queue = queue.map {
-                $0.card.id == reviewed.id ? ReviewItem(card: reviewed, question: $0.question) : $0
-            }
-        }
-        // A miss comes back, a few questions on, until it is right.
-        if grade == .again {
-            let again = ReviewItem(card: reviewed ?? item.card, question: item.question)
-            queue.insert(again, at: min(Self.missComesBackAfter, queue.count))
-        }
+        queue.answered(item, grade: grade, card: reviewed)
     }
-
-    static let missComesBackAfter = 3
 
     /// The card leaves the queue with every question it had in it, to come back through a
     /// lesson.
@@ -305,7 +282,7 @@ struct ReviewView: View {
         try? Cards.store?.update(waiting)
         revealed = false
         answer = ""
-        queue.removeAll { $0.card.id == card.id }
+        queue.remove(card: card.id)
     }
 
     /// Shuffled, so a card's three questions don't follow one another unless chance says so.
@@ -315,12 +292,13 @@ struct ReviewView: View {
         guard !loaded else { return }
         loaded = true
         if let practicing {
-            queue = Cards.dueItems(at: Date()).filter { practicing.contains($0.card.id) }.shuffled()
+            queue = ReviewQueue(
+                Cards.dueItems(at: Date()).filter { practicing.contains($0.card.id) }.shuffled())
         } else {
-            queue = Cards.dueItems(at: Date()).shuffled()
+            queue = ReviewQueue(Cards.dueItems(at: Date()).shuffled())
         }
         picked = Dictionary(
-            queue.compactMap { item in
+            queue.items.compactMap { item in
                 ReviewFront.sentences(of: item.card).randomElement().map { (Self.key(item), $0.id) }
             }, uniquingKeysWith: { first, _ in first })
         revealed = false

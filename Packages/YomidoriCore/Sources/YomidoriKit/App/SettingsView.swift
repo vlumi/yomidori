@@ -78,8 +78,10 @@ public struct SettingsView: View {
             }
             Section {
                 Picker(selection: $retention) {
-                    Text("90 %", bundle: .module).tag(0.9)
-                    Text("95 %", bundle: .module).tag(0.95)
+                    ForEach(FSRS.retentions, id: \.self) { retention in
+                        Text(retention, format: .percent.precision(.fractionLength(0)))
+                            .tag(retention)
+                    }
                 } label: {
                     Text("Aim to remember", bundle: .module)
                 }
@@ -187,10 +189,13 @@ public struct SettingsView: View {
         .tint(Palette.nightGreen)
         .settingsFormStyle()
         .fileImporter(isPresented: $choosingBackup, allowedContentTypes: [.json]) { result in
-            if case .success(let url) = result, let done = try? Cards.restoreBackup(from: url) {
-                restored = done
-            } else if case .success = result {
-                restoreFailed = true
+            guard case .success(let url) = result else { return }
+            Task {
+                if let done = try? await Cards.restoreBackup(from: url) {
+                    restored = done
+                } else {
+                    restoreFailed = true
+                }
             }
         }
         .alert(

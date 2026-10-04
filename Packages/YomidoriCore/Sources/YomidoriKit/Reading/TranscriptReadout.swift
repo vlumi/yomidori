@@ -81,8 +81,8 @@ struct TranscriptReadout: View {
         if chunks.count > 1 {
             PhraseRow(
                 reading: reading, chunks: chunks, fix: fixer(for: range, in: reading),
-                kept: { keptWords.contains(Self.wordKey(of: $0)) },
-                added: { addedHere.contains(Self.wordKey(of: $0)) },
+                kept: { keptWords.contains($0.wordKey) },
+                added: { addedHere.contains($0.wordKey) },
                 open: { openedCard = Self.card(of: $0) }
             ) {
                 keep($0, onLine: chunks[0].line, in: reading)
@@ -114,8 +114,8 @@ struct TranscriptReadout: View {
                 accent: part.entries.first.flatMap { JMdict.bundled?.pitchAccent(of: $0) },
                 estimate: part.entries.first.flatMap { JMdict.bundled?.estimatedPitch(of: $0) }
                     ?? [],
-                kept: keptWords.contains(Self.wordKey(of: part)),
-                added: addedHere.contains(Self.wordKey(of: part)), canKeep: Cards.store != nil,
+                kept: keptWords.contains(part.wordKey),
+                added: addedHere.contains(part.wordKey), canKeep: Cards.store != nil,
                 fix: nil,
                 open: { openedCard = Self.card(of: part) }
             ) {
@@ -137,8 +137,8 @@ struct TranscriptReadout: View {
             accent: chunk.word.entries.first.flatMap { JMdict.bundled?.pitchAccent(of: $0) },
             estimate: chunk.word.entries.first.flatMap { JMdict.bundled?.estimatedPitch(of: $0) }
                 ?? [],
-            kept: keptWords.contains(Self.wordKey(of: chunk.word)),
-            added: addedHere.contains(Self.wordKey(of: chunk.word)), canKeep: Cards.store != nil,
+            kept: keptWords.contains(chunk.word.wordKey),
+            added: addedHere.contains(chunk.word.wordKey), canKeep: Cards.store != nil,
             fix: fixer(for: chunk.range, in: reading),
             open: { openedCard = Self.card(of: chunk.word) }
         ) {
@@ -253,17 +253,8 @@ struct TranscriptReadout: View {
         if page.selectedRange == nil { selectionOnPage() }
     }
 
-    /// The key a word's card is kept under: the dictionary's headword and first reading, as
-    /// `keep` files it.
-    private static func wordKey(of word: FoundWord) -> String {
-        let entry = word.entries.first
-        return WordKey.of(
-            headword: entry?.headword ?? word.dictionaryForm ?? word.surface,
-            reading: Kana.hiragana(entry?.readings.first ?? word.reading))
-    }
-
     private static func card(of word: FoundWord) -> Card? {
-        Cards.store?.cards().first { $0.wordKey == wordKey(of: word) }
+        Cards.store?.cards().first { $0.wordKey == word.wordKey }
     }
 
     /// Corrects one character of a word and reads the page again, the selection kept on it,
@@ -347,16 +338,14 @@ struct TranscriptReadout: View {
         else {
             return
         }
-        let entry = word.entries.first
-        let headword = entry?.headword ?? word.dictionaryForm ?? word.surface
-        let reading = Kana.hiragana(entry?.readings.first ?? word.reading)
         guard
             (try? store.keep(
-                sighting, headword: headword, reading: reading, entryID: entry?.id,
-                collection: Cards.currentCollectionID())) != nil
+                sighting, headword: word.cardHeadword, reading: word.cardReading,
+                entryID: word.entries.first?.id, collection: Cards.currentCollectionID()))
+                != nil
         else { return }
-        keptWords.insert(Self.wordKey(of: word))
-        addedHere.insert(Self.wordKey(of: word))
+        keptWords.insert(word.wordKey)
+        addedHere.insert(word.wordKey)
     }
 }
 

@@ -108,7 +108,7 @@ public final class RecordFile<Record: Codable & Equatable>: @unchecked Sendable 
             data = try JSONSerialization.data(
                 withJSONObject: readable + unreadable, options: [.prettyPrinted, .sortedKeys])
         }
-        try data.write(to: url, options: .atomic)
+        try data.write(to: url, options: .store)
         loaded = records
     }
 

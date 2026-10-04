@@ -58,11 +58,13 @@ struct CollectionsView: View {
             isPresented: $importing, allowedContentTypes: [.yomidoriCollection, .json]
         ) { result in
             guard let url = try? result.get() else { return }
-            if let done = try? Cards.importCollection(from: url) {
-                imported = done
-                reload()
-            } else {
-                failed = true
+            Task {
+                if let done = try? await Cards.importCollection(from: url) {
+                    imported = done
+                    reload()
+                } else {
+                    failed = true
+                }
             }
         }
         .collectionImportAlerts(imported: $imported, failed: $failed)

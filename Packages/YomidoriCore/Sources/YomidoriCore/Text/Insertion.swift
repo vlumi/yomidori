@@ -43,4 +43,14 @@ public enum CharacterRange {
         let lower = text.index(text.startIndex, offsetBy: range.lowerBound)
         return lower..<text.index(lower, offsetBy: range.count)
     }
+
+    /// The other way: a range of a text as character offsets, only when it lies within the
+    /// text (a range kept from another text, the page before a retake, is nil).
+    public static func offsets(of range: Range<String.Index>, in text: String) -> Range<Int>? {
+        guard range.lowerBound >= text.startIndex, range.upperBound <= text.endIndex else {
+            return nil
+        }
+        let start = text.distance(from: text.startIndex, to: range.lowerBound)
+        return start..<(start + text[range].count)
+    }
 }

@@ -116,7 +116,7 @@ struct CharacterFixView: View {
                 .font(.title)
                 .foregroundStyle(Palette.nightGreen)
             Text(japanese: fix.entry.headword)
-            Text(japanese: Kana.hiragana(fix.entry.readings.first ?? ""))
+            Text(japanese: fix.entry.hiraganaReading)
                 .foregroundStyle(.secondary)
             Spacer()
             Text(verbatim: fix.entry.senses.first?.glosses.first ?? "")
