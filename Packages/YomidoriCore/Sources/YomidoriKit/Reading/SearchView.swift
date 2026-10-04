@@ -19,22 +19,51 @@ struct SearchView: View {
     @State private var fieldButton: SearchFieldButton?
     @EnvironmentObject private var taps: TabTaps
 
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    #endif
+
     var body: some View {
         #if os(macOS)
         split
         #else
-        ScrollViewReader { proxy in
-            list.scrollsToTopOnReselect(of: .search, with: proxy)
+        if sizeClass == .regular {
+            // Room for two columns: the history or the results stay, the entry opens beside,
+            // picked as on the Mac, since a list that selects takes the taps a link would.
+            NavigationSplitView {
+                ScrollViewReader { proxy in
+                    searching(pickingList).scrollsToTopOnReselect(of: .search, with: proxy)
+                }
+            } detail: {
+                NavigationStack(path: $detailPath) {
+                    Group {
+                        if let picked {
+                            EntryView(entry: picked).id(picked.id)
+                        } else {
+                            Text("A result or a word looked up opens here.", bundle: .module)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .appDestinations()
+                }
+            }
+            .onChange(of: pickedResult) { _, id in pick(result: id) }
+        } else {
+            ScrollViewReader { proxy in
+                list.scrollsToTopOnReselect(of: .search, with: proxy)
+            }
         }
         #endif
     }
 
-    #if os(macOS)
+    /// A split's entry column: the entry picked, a result or a line of the history, with
+    /// what it opens pushed over it.
     @State private var detailPath = NavigationPath()
-    /// The entry shown in the third column: a result picked, or a line of the history.
     @State private var picked: DictionaryEntry?
-    /// The result the arrow keys and a click choose, by id.
+    /// The result the arrow keys and a tap choose, by id.
     @State private var pickedResult: Int?
+
+    #if os(macOS)
     @AppStorage(SettingsKey.historyShown) private var historyShown = true
 
     /// With room, three columns: the history, folded away or not; the results under the
@@ -142,26 +171,59 @@ struct SearchView: View {
             }
             .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity)
         }
-        // A result picked: the entry column shows it, over whatever it had opened.
-        .onChange(of: pickedResult) { _, id in
-            guard let entry = results.first(where: { $0.id == id }) else { return }
-            picked = entry
-            detailPath = NavigationPath()
-        }
+        .onChange(of: pickedResult) { _, id in pick(result: id) }
     }
 
     #endif
 
+    /// A result picked: the entry column shows it, over whatever it had opened.
+    private func pick(result id: Int?) {
+        guard let entry = results.first(where: { $0.id == id }) else { return }
+        picked = entry
+        detailPath = NavigationPath()
+    }
+
+    /// A line of the history opened in the entry column.
+    private func open(_ entry: DictionaryEntry) {
+        pickedResult = nil
+        picked = entry
+        detailPath = NavigationPath()
+    }
+
+    #if os(iOS)
+    /// The phone's list with the Mac's picking: the history's lines open the entry column,
+    /// the results are picked by selection.
+    private var pickingList: some View {
+        List(selection: $pickedResult) {
+            if SearchQuery.kind(of: query) == .empty {
+                LookupHistoryView(generation: historyGeneration, open: open)
+                    .id(TabTop.id)
+            } else if results.isEmpty {
+                Text("No matches.", bundle: .module)
+                    .foregroundStyle(.secondary)
+            }
+            ForEach(results) { entry in
+                row(for: entry)
+                    .tag(entry.id)
+            }
+        }
+    }
+    #endif
+
+    /// A result's row: the entry with its pitch, known or worked out, and whether it is kept.
+    private func row(for entry: DictionaryEntry) -> EntryRow {
+        EntryRow(
+            entry: entry, accent: accents[entry.id], estimate: estimates[entry.id] ?? [],
+            kept: kept.contains(
+                WordKey.of(
+                    headword: entry.headword,
+                    reading: Kana.hiragana(entry.readings.first ?? ""))))
+    }
+
     private var resultRows: some View {
         ForEach(results) { entry in
             NavigationLink(value: entry) {
-                EntryRow(
-                    entry: entry, accent: accents[entry.id],
-                    estimate: estimates[entry.id] ?? [],
-                    kept: kept.contains(
-                        WordKey.of(
-                            headword: entry.headword,
-                            reading: Kana.hiragana(entry.readings.first ?? ""))))
+                row(for: entry)
             }
         }
     }
@@ -340,11 +402,7 @@ extension SearchView {
             }
         ) {
             List {
-                LookupHistoryView(generation: historyGeneration) { entry in
-                    pickedResult = nil
-                    picked = entry
-                    detailPath = NavigationPath()
-                }
+                LookupHistoryView(generation: historyGeneration, open: open)
             }
             .safeAreaInset(edge: .bottom) {
                 if Cards.lookups?.lookups().isEmpty == false {
@@ -380,15 +438,8 @@ extension SearchView {
                     .foregroundStyle(.secondary)
             }
             ForEach(results) { entry in
-                EntryRow(
-                    entry: entry, accent: accents[entry.id],
-                    estimate: estimates[entry.id] ?? [],
-                    kept: kept.contains(
-                        WordKey.of(
-                            headword: entry.headword,
-                            reading: Kana.hiragana(entry.readings.first ?? "")))
-                )
-                .tag(entry.id)
+                row(for: entry)
+                    .tag(entry.id)
             }
         }
     }

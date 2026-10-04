@@ -21,6 +21,7 @@ public struct AppRoot: View {
     @State private var imported: CollectionImport?
     @State private var importFailed = false
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     public init() {}
 
@@ -75,11 +76,18 @@ public struct AppRoot: View {
                 }
             }
             .badge(dueCount)
+            // Cards and the dictionary are splits where there is room — the Mac, an iPad
+            // in a regular width — with a stack of their own in the detail column; a stack
+            // over a split is not had, so they get no TabStack there.
             Tab(value: .cards) {
                 #if os(macOS)
                 CardsView()
                 #else
-                TabStack(tab: .cards) { CardsView() }
+                if sizeClass == .regular {
+                    CardsView()
+                } else {
+                    TabStack(tab: .cards) { CardsView() }
+                }
                 #endif
             } label: {
                 Label {
@@ -89,13 +97,14 @@ public struct AppRoot: View {
                 }
             }
             Tab(value: .search, role: .search) {
-                // On the Mac the dictionary is a split of its own, with a stack in its
-                // entry column; one stack over another puts two toolbars in one window,
-                // which AppKit will not have.
                 #if os(macOS)
                 SearchView()
                 #else
-                TabStack(tab: .search) { SearchView() }
+                if sizeClass == .regular {
+                    SearchView()
+                } else {
+                    TabStack(tab: .search) { SearchView() }
+                }
                 #endif
             } label: {
                 Label {
