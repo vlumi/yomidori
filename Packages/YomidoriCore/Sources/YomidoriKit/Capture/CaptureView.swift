@@ -310,10 +310,13 @@ public struct CaptureView: View {
                 ProgressView {
                     Text("Reading the page…", bundle: .module)
                 }
-                Text("Blurred or not quite framed? Tap Read to start again.", bundle: .module)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
+                Text(
+                    "Blurred or not quite framed? The camera button takes another photo.",
+                    bundle: .module
+                )
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
             }
         } else {
             transcript

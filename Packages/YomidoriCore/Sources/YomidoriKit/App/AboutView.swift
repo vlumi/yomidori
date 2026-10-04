@@ -7,6 +7,21 @@ public struct AboutView: View {
     @ScaledMetric(relativeTo: .largeTitle) private var wordmark: CGFloat = 34
     @ScaledMetric(relativeTo: .title3) private var legendWidth: CGFloat = 130
 
+    /// What stays on the machine, named for the machine: a Mac has no camera to mention.
+    private var onDevice: Text {
+        #if os(macOS)
+        Text(
+            // swiftlint:disable:next line_length
+            "Everything runs on this Mac: the text recognition, the dictionaries, your cards. Nothing is sent anywhere but to your own iCloud, while sync is on.",
+            bundle: .module)
+        #else
+        Text(
+            // swiftlint:disable:next line_length
+            "Everything runs on this device: the camera, the text recognition, the dictionaries, your cards. Nothing is sent anywhere but to your own iCloud, while sync is on.",
+            bundle: .module)
+        #endif
+    }
+
     public var body: some View {
         List {
             Section {
@@ -23,13 +38,9 @@ public struct AboutView: View {
                     }
                     Text("Point at a word, get its reading.", bundle: .module)
                         .padding(.top, 4)
-                    Text(
-                        // swiftlint:disable:next line_length
-                        "Everything runs on this device: the camera, the text recognition, the dictionaries, your cards. Nothing is sent anywhere but to your own iCloud, while sync is on.",
-                        bundle: .module
-                    )
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
+                    onDevice
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
                 }
                 .padding(.vertical, 6)
             }
