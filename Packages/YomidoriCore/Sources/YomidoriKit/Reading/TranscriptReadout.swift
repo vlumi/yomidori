@@ -338,12 +338,12 @@ struct TranscriptReadout: View {
         else {
             return
         }
-        guard
-            (try? store.keep(
+        let kept = Cards.write {
+            try store.keep(
                 sighting, headword: word.cardHeadword, reading: word.cardReading,
-                entryID: word.entries.first?.id, collection: Cards.currentCollectionID()))
-                != nil
-        else { return }
+                entryID: word.entries.first?.id, collection: Cards.currentCollectionID())
+        }
+        guard kept != nil else { return }
         keptWords.insert(word.wordKey)
         addedHere.insert(word.wordKey)
     }

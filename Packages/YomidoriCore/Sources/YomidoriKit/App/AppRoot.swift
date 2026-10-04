@@ -153,6 +153,7 @@ public struct AppRoot: View {
             }
         }
         .collectionImportAlerts(imported: $imported, failed: $importFailed)
+        .saveFailureAlert()
         // An image from outside, a shortcut's screenshot: a new page on the Read tab.
         .onReceive(StillInbox.shared.$arrival.compactMap { $0 }) { still in
             capture.clearPage()

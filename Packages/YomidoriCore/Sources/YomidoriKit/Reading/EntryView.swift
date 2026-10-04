@@ -51,11 +51,11 @@ struct EntryView: View {
         let sighting = Sighting(
             sentence: "", surface: entry.headword, offset: 0, source: nil,
             date: Date())
-        if (try? Cards.store?.keep(
-            sighting, headword: entry.headword, reading: entry.hiraganaReading, entryID: entry.id,
-            collection: Cards.currentCollectionID())) != nil
-        {
-            kept = true
+        let card = Cards.write {
+            try Cards.store?.keep(
+                sighting, headword: entry.headword, reading: entry.hiraganaReading,
+                entryID: entry.id, collection: Cards.currentCollectionID())
         }
+        if card != nil { kept = true }
     }
 }

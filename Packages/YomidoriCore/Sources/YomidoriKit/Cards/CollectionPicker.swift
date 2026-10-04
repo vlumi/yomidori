@@ -89,7 +89,7 @@ struct CollectionPicker: View {
         let trimmed = name.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return }
         let collection = Collection(name: trimmed)
-        try? Cards.collections?.save(collection)
+        Cards.write { try Cards.collections?.save(collection) }
         collections = Cards.collections?.collections() ?? []
         currentID = collection.id.uuidString
     }

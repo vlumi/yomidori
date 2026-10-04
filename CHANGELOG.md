@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A save that fails says so.** Keeping a word, answering, filing a card or editing a collection that could not be written — a full disk, a file gone — now shows what went wrong once, instead of looking as if it had happened.
 - **The camera runs lighter while you frame.** Its frames stream in the sensor's own format and only the one you take is converted, a third of the memory a frame took before.
 - **Cards and the Dictionary in two columns on the iPad.** With room, the list stays and the card or the entry opens beside it, as on the Mac; a phone, or an iPad sharing its screen, keeps the stack.
 - **The sections by key on an iPad.** With a keyboard, ⌘1 to ⌘4 go to Read, Study, Cards and the Dictionary as on the Mac, and ⌘0 to Home; a pointer lights the word it is over.
