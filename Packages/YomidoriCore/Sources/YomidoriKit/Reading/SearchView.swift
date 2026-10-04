@@ -431,18 +431,3 @@ extension SearchView {
     }
 }
 #endif
-
-/// Forgets every word looked up, and bumps the history's generation so its view reloads.
-private struct ClearHistoryButton: View {
-    @Binding var generation: Int
-
-    var body: some View {
-        Button(role: .destructive) {
-            Cards.write { try Cards.lookups?.clear() }
-            generation += 1
-        } label: {
-            Text("Clear", bundle: .module)
-        }
-        .help(Text("Forget every word looked up", bundle: .module))
-    }
-}

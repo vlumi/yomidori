@@ -571,6 +571,26 @@
         }
       }
     },
+    "Clear the history" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "履歴を消す"
+          }
+        }
+      }
+    },
+    "Clear the history…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "履歴を消す…"
+          }
+        }
+      }
+    },
     "Clear the search (⌘F to type again)" : {
       "localizations" : {
         "ja" : {
@@ -987,6 +1007,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld 枚のカードを忘れますか？"
+          }
+        }
+      }
+    },
+    "Forget all %lld words looked up?" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "調べた %lld 語の履歴をすべて消しますか？"
           }
         }
       }
@@ -1537,6 +1567,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "更新"
+          }
+        }
+      }
+    },
+    "More" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その他"
           }
         }
       }
@@ -2927,6 +2967,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "表紙の文字を読み取るので、名前は入力せず選べます。"
+          }
+        }
+      }
+    },
+    "The words themselves stay in the dictionary; only the list of what you looked up goes." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "言葉そのものは辞書に残ります。消えるのは、調べた言葉の一覧だけです。"
           }
         }
       }
