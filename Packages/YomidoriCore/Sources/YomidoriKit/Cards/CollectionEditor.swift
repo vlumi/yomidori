@@ -10,8 +10,8 @@ struct CollectionEditor: View {
     /// The cover on record, and the ones scanned here: files nothing refers to until Save.
     @State private var persistedCoverID: UUID?
     @State private var scannedCoverIDs: Set<UUID> = []
-    @State private var saved = false
-    @State private var isSaved = false
+    @State private var savePressed = false
+    @State private var existsInStore = false
 
     var body: some View {
         Form {
@@ -71,7 +71,7 @@ struct CollectionEditor: View {
                 }
             }
             TagsEditor(tags: $collection.tags, known: others.allTags)
-            if isSaved {
+            if existsInStore {
                 Section {
                     ShareLink(
                         item: CollectionFile(collection: collection),
@@ -91,7 +91,7 @@ struct CollectionEditor: View {
                 }
             }
         }
-        .navigationTitle(Text(verbatim: collection.name.isEmpty ? "" : collection.name))
+        .navigationTitle(Text(verbatim: collection.name))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button {
@@ -109,13 +109,13 @@ struct CollectionEditor: View {
             let all = Cards.collections?.collections() ?? []
             others = all.filter { $0.id != collection.id }
             persistedCoverID = all.first { $0.id == collection.id }?.coverID
-            isSaved = all.contains { $0.id == collection.id }
+            existsInStore = all.contains { $0.id == collection.id }
         }
         .onChange(of: collection.coverID) { _, scanned in
             if let scanned, scanned != persistedCoverID { scannedCoverIDs.insert(scanned) }
         }
         .onDisappear {
-            if !saved { removeCovers(scannedCoverIDs) }
+            if !savePressed { removeCovers(scannedCoverIDs) }
         }
         .tint(Palette.nightGreen)
     }
@@ -126,7 +126,7 @@ struct CollectionEditor: View {
         record.note = record.note.trimmingCharacters(in: .whitespaces)
         // The old cover goes only once the collection no longer needs it on disk.
         guard Cards.write({ try Cards.collections?.save(record) }) != nil else { return }
-        saved = true
+        savePressed = true
         var stale = scannedCoverIDs
         if let old = persistedCoverID, old != record.coverID { stale.insert(old) }
         if let kept = record.coverID { stale.remove(kept) }

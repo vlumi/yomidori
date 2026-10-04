@@ -269,12 +269,7 @@ struct SearchView: View {
                     Cards.lookups?.lookups().isEmpty == false
                 {
                     ToolbarItem(placement: .primaryAction) {
-                        Button(role: .destructive) {
-                            Cards.write { try Cards.lookups?.clear() }
-                            historyGeneration += 1
-                        } label: {
-                            Text("Clear", bundle: .module)
-                        }
+                        ClearHistoryButton(generation: $historyGeneration)
                     }
                 }
                 #endif
@@ -405,14 +400,8 @@ extension SearchView {
                 if Cards.lookups?.lookups().isEmpty == false {
                     HStack {
                         Spacer()
-                        Button(role: .destructive) {
-                            Cards.write { try Cards.lookups?.clear() }
-                            historyGeneration += 1
-                        } label: {
-                            Text("Clear", bundle: .module)
-                        }
-                        .controlSize(.small)
-                        .help(Text("Forget every word looked up", bundle: .module))
+                        ClearHistoryButton(generation: $historyGeneration)
+                            .controlSize(.small)
                     }
                     .padding(8)
                     .background(.bar)
@@ -442,3 +431,18 @@ extension SearchView {
     }
 }
 #endif
+
+/// Forgets every word looked up, and bumps the history's generation so its view reloads.
+private struct ClearHistoryButton: View {
+    @Binding var generation: Int
+
+    var body: some View {
+        Button(role: .destructive) {
+            Cards.write { try Cards.lookups?.clear() }
+            generation += 1
+        } label: {
+            Text("Clear", bundle: .module)
+        }
+        .help(Text("Forget every word looked up", bundle: .module))
+    }
+}

@@ -277,6 +277,12 @@ public struct Sighting: Identifiable, Hashable, Codable, Sendable {
 extension Card {
     public var wordKey: String { WordKey.of(headword: headword, reading: reading) }
 
+    /// The sightings with a sentence to show: a word kept from a search has none.
+    public var sightingsWithSentence: [Sighting] { sightings.filter { !$0.sentence.isEmpty } }
+
+    /// The sightings as a card shows them, the latest first.
+    public var sightingsNewestFirst: [Sighting] { sightings.sorted { $0.date > $1.date } }
+
     /// Whether the card is in one of `chosen`; none chosen means every card.
     public func isIn(anyOf chosen: Set<UUID>) -> Bool {
         chosen.isEmpty || !chosen.isDisjoint(with: collectionIDs)

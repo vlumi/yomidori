@@ -11,17 +11,7 @@ struct CardView: View {
 
     var body: some View {
         List {
-            Section {
-                WordTitle(
-                    headword: card.headword, reading: card.reading,
-                    accent: details.accent(of: card.reading), estimate: details.estimate,
-                    font: .largeTitle
-                ) {
-                    DictionaryButton(term: card.headword)
-                        .labelStyle(.iconOnly)
-                        .help(Text("Dictionary", bundle: .module))
-                }
-            }
+            WordHeader(headword: card.headword, reading: card.reading, details: details)
             WordSections(headword: card.headword, details: details)
             CardCollections(card: $card) { Cards.write { try Cards.store?.update(card) } }
             CardActions(card: $card) { Cards.write { try Cards.store?.update(card) } }
@@ -29,7 +19,7 @@ struct CardView: View {
                 Cards.write { try Cards.store?.update(card) }
             }
             CardFacts(card: card)
-            ForEach(card.sightings.sorted { $0.date > $1.date }) { sighting in
+            ForEach(card.sightingsNewestFirst) { sighting in
                 SightingSection(sighting: sighting) {
                     editing = sighting
                 }
