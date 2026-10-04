@@ -168,6 +168,7 @@ public struct AppRoot: View {
             StillInbox.shared.clear()
         }
         .task {
+            StudySettingsBridge.shared.start()
             Sync.shared.start()
             AppBadge.refresh()
             Warmup.start()

@@ -1,13 +1,14 @@
 import CryptoKit
 import Foundation
 
-/// What sync keeps in iCloud, one record per card, collection and looked-up word, and one
-/// for the date the history was last cleared.
+/// What sync keeps in iCloud, one record per card, collection and looked-up word, one for
+/// the date the history was last cleared, and one for the study settings.
 public enum SyncKind: String, CaseIterable, Sendable {
     case card
     case collection
     case lookup
     case historyCleared = "history"
+    case settings
 
     /// The record's type in CloudKit.
     public var recordType: String {
@@ -16,6 +17,7 @@ public enum SyncKind: String, CaseIterable, Sendable {
         case .collection: return "Collection"
         case .lookup: return "Lookup"
         case .historyCleared: return "HistoryClear"
+        case .settings: return "Settings"
         }
     }
 }
@@ -34,6 +36,7 @@ public struct SyncName: Equatable, Hashable, Sendable {
     }
 
     public static let historyCleared = SyncName(.historyCleared, "cleared")
+    public static let settings = SyncName(.settings, StudySettings.key)
     static let longest = 255
     /// Starts a hashed key; percent-encoding never writes it.
     private static let hashMark = "_"
