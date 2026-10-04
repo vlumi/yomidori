@@ -3141,6 +3141,16 @@
         }
       }
     },
+    "Which recognizer's reading of the picture to use": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真をどちらの認識器で読むか"
+          }
+        }
+      }
+    },
     "Whose work this bundles": {
       "localizations": {
         "ja": {

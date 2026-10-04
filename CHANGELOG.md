@@ -16,6 +16,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 - **A collection, one looked-up word or one accepted meaning can be removed on the Mac.** Each row has it in its menu (right-click, or a long press on the phone and iPad), beside the swipe the phone had; a collection could not be removed on the Mac at all before.
 - **On the Mac, a picture sent by the Read in Yomidori shortcut is read.** It was shown on the page but never recognized, so the words column said nothing was recognized.
+- **The Mac can read a picture with Vision too.** A *Recognizer* picker in the page bar, as the phone's drawer has; and where Live Text finds nothing, Vision's lines stand in by themselves, so a Mac without Live Text still reads.
 - **Clearing the dictionary's history takes a deliberate step.** The *Clear* that sat by the search field is now *Clear the history…* under the ⋯ menu, in red, and asks with the number of words before anything goes; the Mac's button under its column asks the same.
 - **A card can be forgotten from anywhere.** On an iPad the row swipes to forget as on the phone, and the card itself has *Forget this card* under its actions, asked once, on every platform.
 - **A camera button on the page, and a way back from +.** A camera button in the page's controls takes another photo, so a retake no longer means finding the Read tab; and the + pressed by mistake has *Back to the page*, which brings the page just taken back as it was.
