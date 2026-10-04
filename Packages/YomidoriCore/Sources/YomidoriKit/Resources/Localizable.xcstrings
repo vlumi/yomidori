@@ -1416,7 +1416,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "テキスト認識表示"
+            "value" : "Live Text"
           }
         }
       }
