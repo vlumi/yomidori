@@ -421,6 +421,16 @@
         }
       }
     },
+    "Back to the camera": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カメラに戻る"
+          }
+        }
+      }
+    },
     "Back to the page": {
       "localizations": {
         "ja": {

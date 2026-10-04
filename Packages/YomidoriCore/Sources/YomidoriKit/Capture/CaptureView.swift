@@ -160,6 +160,15 @@ public struct CaptureView: View {
             } else if let pasted = page.pasted {
                 TextPage(text: pasted, selection: selection)
                     .frame(height: area.height)
+                    // The camera button the picture has, so the hint under the words holds
+                    // for a pasted page too.
+                    .overlay(alignment: controlsSide.alignment) {
+                        PageButton(
+                            symbol: "camera", label: Text("Back to the camera", bundle: .module),
+                            action: retake
+                        )
+                        .padding(12)
+                    }
                     .frame(maxHeight: .infinity, alignment: .top)
                     .onTabReselect(.read) { retake() }
             } else {
@@ -327,34 +336,6 @@ public struct CaptureView: View {
             Text("Live Text is not available on this device.", bundle: .module)
                 .foregroundStyle(.secondary)
         }
-    }
-
-    private func recognize() async {
-        lines = []
-        analysis = nil
-        page.transcript = nil
-        page.newPage(keepingFixes: !pages.isEmpty)
-        selection.clear()
-        selection.pageTexts[pages.count] = nil
-        page.recognizedStillID = nil
-        guard let still else { return }
-        recognizing = true
-        let read = await PageRecognition.read(still)
-        guard !Task.isCancelled, self.still?.id == still.id else { return }
-        lines = read.lines
-        analysis = read.analysis
-        page.recognizedStillID = still.id
-        recognizing = false
-        // The demo's pick, found again in the text as recognized: the reading keeps a
-        // selection that stands when it is made, and the picture shows it.
-        if let pick = DemoMode.pick {
-            let text = Spread.join(pageTexts)
-            page.selectedRange = text.range(of: pick).flatMap {
-                CharacterRange.offsets(of: $0, in: text)
-            }
-        }
-        AccessibilityNotification.Announcement(String(localized: "Page read", bundle: .module))
-            .post()
     }
 }
 
