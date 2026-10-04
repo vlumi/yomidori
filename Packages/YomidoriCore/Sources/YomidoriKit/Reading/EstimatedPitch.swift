@@ -12,7 +12,7 @@ struct EstimatedPitch: View {
                 PitchReading(reading: phrase.reading, accent: phrase.accent)
             }
             Text("estimated", bundle: .module)
-                .font(.caption2)
+                .font(.footnote)
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 6)
                 .padding(.vertical, 2)

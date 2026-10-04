@@ -46,7 +46,7 @@ struct SessionSummary: View {
                 .font(.title.weight(.semibold))
                 .monospacedDigit()
             label
-                .font(.caption)
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)

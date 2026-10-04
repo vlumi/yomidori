@@ -117,12 +117,12 @@ struct CollectionRow: View {
                 Text(verbatim: collection.name)
                 if !collection.note.isEmpty {
                     Text(verbatim: collection.note)
-                        .font(.caption)
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
                 if !collection.tags.isEmpty {
                     Text(verbatim: collection.tags.joined(separator: " · "))
-                        .font(.caption2)
+                        .font(.footnote)
                         .foregroundStyle(Palette.nightGreen)
                 }
             }

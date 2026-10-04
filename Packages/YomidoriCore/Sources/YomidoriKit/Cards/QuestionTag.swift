@@ -9,7 +9,7 @@ struct QuestionTag: View {
     var body: some View {
         Label {
             Text(verbatim: question.name.uppercased())
-                .font(.caption.weight(.bold))
+                .font(.subheadline.weight(.bold))
                 .tracking(1)
         } icon: {
             Image(systemName: symbol)

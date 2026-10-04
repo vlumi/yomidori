@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Small print made a size larger.** The review's title is the full-size one and what remains and the question's name beside it are readable; the labels under the progress numbers, a kanji's meanings and readings, a collection's note and tags, the parts of speech, the accent numbers and the hints under a page all went up a step.
 - **The iPad's words column no longer says nothing was recognized before a page is taken.** It says the words will read out there.
 - **The Mac's Collections row in the card list reads as a row**, with a chevron and the whole width to click, not a label clickable on its letters.
 - **The Mac's picture zooms by menu and key** — Zoom In ⌘=, Zoom Out ⌘−, Actual Size ⌘0, Zoom to Fit ⌘9 — for a mouse without a trackpad's pinch, as the phone has its slider.
