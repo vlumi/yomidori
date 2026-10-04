@@ -116,7 +116,7 @@ public struct AppRoot: View {
         }
         .minimizingTabBarOnScroll()
         // A sidebar where there is room, an iPad on its side or a Mac window; the phone's
-        // bar in a compact width. The system gives the sidebar its ⌘1 … keys.
+        // bar in a compact width. SectionCommands gives the sections their ⌘ keys.
         .tabViewStyle(.sidebarAdaptable)
         .chosenAppearance()
         .tint(Palette.nightGreen)
