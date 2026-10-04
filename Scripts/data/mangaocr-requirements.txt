@@ -1,6 +1,0 @@
-torch
-transformers
-coremltools
-huggingface_hub
-numpy
-pillow

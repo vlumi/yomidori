@@ -48,7 +48,6 @@ final class CaptureState: ObservableObject {
         selectedRange = nil
         if !keepingFixes { fixes = SpreadFixes() }
     }
-    @Published var closeUp: CaptureView.CloseUp?
     @Published var zoom = Zoom()
     /// Where the reader put the second page; nil for where the text's direction puts it.
     @Published var nextSide: SpreadLayout.Side?

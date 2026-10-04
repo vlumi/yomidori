@@ -40,6 +40,4 @@ __pycache__/
 .build-data/
 Sources/Shared/Dictionaries/jmdict.sqlite
 
-# manga-ocr converted to Core ML (make models); ~210 MB, optional
-Sources/Shared/Models/
 shots/

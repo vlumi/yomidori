@@ -63,7 +63,7 @@ public struct AboutView: View {
             } footer: {
                 Text(
                     // swiftlint:disable:next line_length
-                    "JMdict by the Electronic Dictionary Research and Development Group; KANJIDIC2, KRADFILE and KanjiVG for the kanji and their strokes; pitch accents from Kanjium by Uros O.; MeCab and IPADic; Mecab-Swift; manga-ocr. Their terms are inside.",
+                    "JMdict by the Electronic Dictionary Research and Development Group; KANJIDIC2, KRADFILE and KanjiVG for the kanji and their strokes; pitch accents from Kanjium by Uros O.; MeCab and IPADic; Mecab-Swift. Their terms are inside.",
                     bundle: .module)
             }
         }

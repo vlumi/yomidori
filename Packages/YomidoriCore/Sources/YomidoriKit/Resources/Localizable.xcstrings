@@ -591,16 +591,6 @@
         }
       }
     },
-    "Close-up" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "拡大"
-          }
-        }
-      }
-    },
     "Collection" : {
       "localizations" : {
         "ja" : {
@@ -1241,12 +1231,12 @@
         }
       }
     },
-    "JMdict by the Electronic Dictionary Research and Development Group; KANJIDIC2, KRADFILE and KanjiVG for the kanji and their strokes; pitch accents from Kanjium by Uros O.; MeCab and IPADic; Mecab-Swift; manga-ocr. Their terms are inside." : {
+    "JMdict by the Electronic Dictionary Research and Development Group; KANJIDIC2, KRADFILE and KanjiVG for the kanji and their strokes; pitch accents from Kanjium by Uros O.; MeCab and IPADic; Mecab-Swift. Their terms are inside." : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Electronic Dictionary Research and Development GroupのJMdict、漢字と筆順のKANJIDIC2・KRADFILE・KanjiVG、Uros O.によるKanjiumのアクセントデータ、MeCabとIPADic、Mecab-Swift、manga-ocr。各ライセンスは中にあります。"
+            "value" : "Electronic Dictionary Research and Development GroupのJMdict、漢字と筆順のKANJIDIC2・KRADFILE・KanjiVG、Uros O.によるKanjiumのアクセントデータ、MeCabとIPADic、Mecab-Swift。各ライセンスは中にあります。"
           }
         }
       }
@@ -1440,9 +1430,6 @@
           }
         }
       }
-    },
-    "manga-ocr" : {
-      "shouldTranslate" : false
     },
     "Meaning" : {
       "localizations" : {
@@ -2164,16 +2151,6 @@
         }
       }
     },
-    "Reading up close…" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "拡大して読み取り中…"
-          }
-        }
-      }
-    },
     "Readings" : {
       "localizations" : {
         "ja" : {
@@ -2780,16 +2757,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "次のページを撮るか、最初からやり直してください。"
-          }
-        }
-      }
-    },
-    "Tap a word to read it up close." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "言葉をタップすると、拡大して読み取ります。"
           }
         }
       }

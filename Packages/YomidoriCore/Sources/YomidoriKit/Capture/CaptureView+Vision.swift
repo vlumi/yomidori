@@ -47,17 +47,6 @@ extension CaptureView {
         }
     }
 
-    /// The spread's pages as Close-up draws them: the square read up close, on its page.
-    var closeUpSheets: [StillView.Sheet] {
-        spreadPages.enumerated().compactMap { index, sheet in
-            sheet.still.map {
-                StillView.Sheet(
-                    still: $0, lines: sheet.lines, selected: [],
-                    highlights: closeUp.flatMap { $0.page == index ? [$0.box] : nil } ?? [])
-            }
-        }
-    }
-
     /// The selection over a page's Vision lines, one box per line it touches, normalized
     /// like them. Not on a page with a fix in it, whose characters are no longer the
     /// lines'; there the lines light whole.

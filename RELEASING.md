@@ -96,7 +96,7 @@ between them is the merged commit on the base — no state file:
 1. **preflight** — fetch origin and mirror its tags, then refuse unless on a
    clean release base matching its origin, with `gh`/`xcodegen` available and an
    **opaque app icon** (ASC silently rejects a transparent icon; `make icon`
-   flattens it). It says so when the manga-ocr models are absent. **What the
+   flattens it). **What the
    release bundles is what this Mac has built:** the dictionary as `make
    dictionary` last built it (from the downloads cached in `.build-data/`;
    delete the cached JMdict and run it again for fresh data), with estimated

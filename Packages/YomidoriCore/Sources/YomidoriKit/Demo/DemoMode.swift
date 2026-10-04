@@ -75,7 +75,6 @@ public enum DemoMode {
         else { return nil }
         switch CommandLine.arguments[index + 1] {
         case "vision": return .vision
-        case "closeup", "close-up": return .closeUp
         case "livetext", "live-text": return .liveText
         default: return nil
         }
