@@ -112,6 +112,7 @@ struct CollectionEditor: View {
         }
         .sheet(isPresented: $scanning) {
             CoverScanView(collection: $collection)
+                .sheetSize(width: 560, height: 640)
         }
         .onAppear {
             let all = Cards.collections?.collections() ?? []

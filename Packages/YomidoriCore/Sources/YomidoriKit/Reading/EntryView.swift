@@ -18,6 +18,7 @@ struct EntryView: View {
         .navigationTitle(Text(verbatim: entry.headword))
         .sheet(item: $openedCard) { card in
             CardSheet(card: card)
+                .sheetSize(width: 560, height: 700)
         }
         .task(id: entry.id) {
             Cards.noteLookup(of: entry, from: .search)
