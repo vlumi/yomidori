@@ -37,7 +37,7 @@ public struct UnsentChanges: Codable, Equatable, Sendable {
         if isEmpty {
             try? FileManager.default.removeItem(at: url)
         } else {
-            try JSONEncoder().encode(self).write(to: url, options: .atomic)
+            try JSONEncoder().encode(self).write(to: url, options: .store)
         }
     }
 }

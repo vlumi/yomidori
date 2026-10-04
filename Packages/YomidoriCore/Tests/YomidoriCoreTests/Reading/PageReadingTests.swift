@@ -34,6 +34,13 @@ final class PageReadingTests: XCTestCase {
         XCTAssertEqual(room?.range, 7..<9)
         XCTAssertEqual(room?.line, 1)
         XCTAssertEqual(page.chunks.map(\.id), Array(page.chunks.indices))
+        // The lines' chunks and the line breaks, laid out once for the pages that draw by line.
+        XCTAssertEqual(page.chunksByLine.flatMap { $0 }.map(\.id), page.chunks.map(\.id))
+        XCTAssertEqual(page.chunksByLine.map { $0.first?.line }, [0, 1])
+        XCTAssertEqual(
+            page.lineBreaks, [text.distance(from: text.startIndex, to: text.firstIndex(of: "\n")!)])
+        XCTAssertFalse(page.spansLines(7..<9))
+        XCTAssertTrue(page.spansLines(5..<9))
     }
 
     func testChunksCoverWholeCharactersOfOddText() {
@@ -73,6 +80,10 @@ final class PageReadingTests: XCTestCase {
         let range = PageReading.range(from: room, to: smell)
         XCTAssertEqual(range, 3..<9)
         XCTAssertEqual(page.phrase(range), "匂いが部屋")
+        // A selection stretched to a chunk on either side of it, or inside it, grows or stays.
+        XCTAssertEqual(PageReading.range(7..<9, stretchedTo: smell), 3..<9)
+        XCTAssertEqual(PageReading.range(3..<5, stretchedTo: room), 3..<9)
+        XCTAssertEqual(PageReading.range(3..<9, stretchedTo: room), 3..<9)
     }
 
     func testSegmentsKeepEveryPieceAndMarkTheWords() {

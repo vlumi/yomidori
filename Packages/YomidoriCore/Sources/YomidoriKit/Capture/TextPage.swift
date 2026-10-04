@@ -76,10 +76,7 @@ struct TextPage: UIViewRepresentable {
             let range = Range(view.selectedRange, in: text)
             selection.text = range.map { String(text[$0]) } ?? ""
             selection.rangePage = 0
-            selection.range = range.map { range in
-                let start = text.distance(from: text.startIndex, to: range.lowerBound)
-                return start..<(start + text[range].count)
-            }
+            selection.range = range.flatMap { CharacterRange.offsets(of: $0, in: text) }
         }
     }
 }
@@ -232,9 +229,7 @@ struct TextBox: NSViewRepresentable {
             selection.text = range.map { String(text[$0]) } ?? ""
             selection.rangePage = 0
             selection.range = range.flatMap { range in
-                guard !range.isEmpty else { return nil }
-                let start = text.distance(from: text.startIndex, to: range.lowerBound)
-                return start..<(start + text[range].count)
+                range.isEmpty ? nil : CharacterRange.offsets(of: range, in: text)
             }
         }
     }
