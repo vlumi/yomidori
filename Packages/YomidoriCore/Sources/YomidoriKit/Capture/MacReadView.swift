@@ -65,6 +65,14 @@ public struct MacReadView: View {
                 editing = false
             }
         }
+        // A picture put on the page from outside, as a shortcut's arrives: read as a dropped
+        // one is. One taken here is already being read, and the demo's comes with its text.
+        .onChange(of: page.still?.id, initial: true) { _, _ in
+            guard let still = page.still, !recognizing, page.analysis == nil, page.lines.isEmpty,
+                page.transcript == nil
+            else { return }
+            take(still)
+        }
         // A picture dropped on the page, from a file or another app.
         .onDrop(of: [.image, .fileURL], isTargeted: $dropping) { providers in
             take(dropped: providers)
