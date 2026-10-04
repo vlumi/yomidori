@@ -14,14 +14,8 @@ public struct AboutView: View {
                     HStack(spacing: 14) {
                         AppIconImage(side: wordmark * 1.6)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(verbatim: "ヨミドリ")
-                                .font(
-                                    .system(size: wordmark, weight: .semibold, design: .rounded)
-                                )
-                                .foregroundStyle(Palette.nightGreen)
-                            // The name read as Home reads it, with its pitch.
-                            PitchReading(reading: "よみどり", accent: PitchAccent(downstep: 2))
-                                .accessibilityLabel(Text(japanese: "よみどり"))
+                            Wordmark(size: wordmark)
+                            Wordmark.reading
                             Text(verbatim: AppInfo.versionLine)
                                 .font(.caption)
                                 .foregroundStyle(.secondary)

@@ -286,12 +286,10 @@ extension MacReadView {
         editing = false
         recognizing = true
         recognition = Task { @MainActor in
-            async let lines = (try? TextRecognizer.recognize(still)) ?? []
-            async let analysis = LiveText.isSupported ? try? LiveText.analyze(still) : nil
-            let (recognized, analyzed) = await (lines, analysis)
+            let read = await PageRecognition.read(still)
             guard !Task.isCancelled, page.still?.id == still.id else { return }
-            page.lines = recognized
-            page.analysis = analyzed
+            page.lines = read.lines
+            page.analysis = read.analysis
             recognizing = false
         }
     }

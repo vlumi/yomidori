@@ -214,10 +214,7 @@ struct SearchView: View {
     private func row(for entry: DictionaryEntry) -> EntryRow {
         EntryRow(
             entry: entry, accent: accents[entry.id], estimate: estimates[entry.id] ?? [],
-            kept: kept.contains(
-                WordKey.of(
-                    headword: entry.headword,
-                    reading: Kana.hiragana(entry.readings.first ?? ""))))
+            kept: kept.contains(entry.wordKey))
     }
 
     private var resultRows: some View {

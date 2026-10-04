@@ -15,7 +15,7 @@ final class CaptureState: ObservableObject {
     @Published var transcript: String?
     /// Text pasted in place of a page, cleaned; nil while a photo or the camera is up.
     @Published var pasted: String?
-    /// The page read into its words, over `readingText`; nil while it is being read.
+    /// The page read into its words; nil while it is being read.
     @Published var reading: PageReading?
     /// The selection everything shows: the strip, the picture and the drawer. Characters of
     /// the reading's text, whole chunks.
@@ -34,10 +34,7 @@ final class CaptureState: ObservableObject {
             if chunk.isWord { selectedRange = chunk.range }
             return
         }
-        selectedRange =
-            min(
-                range.lowerBound, chunk.range.lowerBound)..<max(
-                range.upperBound, chunk.range.upperBound)
+        selectedRange = PageReading.range(range, stretchedTo: chunk)
     }
 
     /// A new page, or a new spread: the reading and the selection go, and so do the fixes
