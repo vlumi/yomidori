@@ -2,9 +2,11 @@ import SwiftUI
 import YomidoriCore
 
 struct NoticesView: View {
+    /// The notices parsed once, when the screen opens, not on every render.
+    @State private var blocks: [MarkdownBlock] = []
+
     var body: some View {
         ScrollView {
-            let blocks = MarkdownBlock.parse(AppInfo.notices)
             VStack(alignment: .leading, spacing: 14) {
                 ForEach(blocks.indices, id: \.self) { index in
                     render(blocks[index])
@@ -15,6 +17,7 @@ struct NoticesView: View {
             .padding()
         }
         .navigationTitle(Text("Licenses and notices", bundle: .module))
+        .task { blocks = MarkdownBlock.parse(AppInfo.notices) }
     }
 
     @ViewBuilder private func render(_ block: MarkdownBlock) -> some View {

@@ -1,5 +1,6 @@
 import AVFoundation
 import CoreGraphics
+import CoreImage
 import Foundation
 
 #if os(iOS)
@@ -29,18 +30,14 @@ final class FrameSink: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate,
         pending.resume(returning: Self.image(from: buffer))
     }
 
+    /// One context for the one frame taken per page; nothing cached between frames.
+    private static let context = CIContext(options: [.cacheIntermediates: false])
+
+    /// The frame as an RGB image of its own, converted from the camera's planar format and
+    /// copied out of the buffer, which the camera takes back for the next frame.
     private static func image(from buffer: CVPixelBuffer) -> CGImage? {
-        CVPixelBufferLockBaseAddress(buffer, .readOnly)
-        defer { CVPixelBufferUnlockBaseAddress(buffer, .readOnly) }
-        guard let base = CVPixelBufferGetBaseAddress(buffer) else { return nil }
-        let context = CGContext(
-            data: base, width: CVPixelBufferGetWidth(buffer),
-            height: CVPixelBufferGetHeight(buffer),
-            bitsPerComponent: 8, bytesPerRow: CVPixelBufferGetBytesPerRow(buffer),
-            space: CGColorSpaceCreateDeviceRGB(),
-            bitmapInfo: CGBitmapInfo.byteOrder32Little.rawValue
-                | CGImageAlphaInfo.premultipliedFirst.rawValue)
-        return context?.makeImage()
+        let frame = CIImage(cvPixelBuffer: buffer)
+        return context.createCGImage(frame, from: frame.extent)
     }
 }
 #endif

@@ -365,7 +365,9 @@ has what remains.
   decoded and drawn anew, never stored as it came.
 - **`RecordFile`** (Core): the one JSON store under the cards, the collections
   and the lookup history: loaded once, changed under a lock, written whole and
-  atomically, and every write reported by the keys it saved and deleted and by
+  atomically (and on a phone unreadable while it is locked, unless already open
+  — `Data.WritingOptions.store`, the sync state and a file to share the same),
+  and every write reported by the keys it saved and deleted and by
   whether it was made here or came from another device, so sync sends only what
   was done here and the screens refresh for both (`Cards.changes(of:)`, which a
   screen listens to for the kinds of record it shows). The file is read record

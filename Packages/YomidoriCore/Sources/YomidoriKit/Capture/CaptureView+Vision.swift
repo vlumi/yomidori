@@ -12,14 +12,7 @@ extension CaptureView {
 
     func extendWord(onPage index: Int, at point: CGPoint, in frame: CGRect) {
         guard let chunk = chunk(onPage: index, at: point, in: frame) else { return }
-        guard let range = page.selectedRange else {
-            if chunk.isWord { page.selectedRange = chunk.range }
-            return
-        }
-        page.selectedRange =
-            min(
-                range.lowerBound, chunk.range.lowerBound)..<max(
-                range.upperBound, chunk.range.upperBound)
+        page.extendSelection(to: chunk)
     }
 
     /// The chunk of the reading under a point on a page; nil until the page is read.
@@ -80,11 +73,6 @@ extension CaptureView {
     /// Where a page starts in the text of all the pages together.
     func offset(ofPage index: Int) -> Int {
         Spread.offset(ofPage: index, in: pageTexts)
-    }
-
-    /// Where the page on screen starts in the text of all the pages together.
-    var pageOffset: Int {
-        offset(ofPage: pages.count)
     }
 
     /// Which side the next page lies on: left of columns, under rows, by the first page; left
