@@ -40,11 +40,7 @@ extension Cards {
     }
 
     nonisolated static func restoreBackup(from url: URL) throws -> BackupRestore {
-        let accessing = url.startAccessingSecurityScopedResource()
-        defer { if accessing { url.stopAccessingSecurityScopedResource() } }
-        let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? .max
-        guard size <= Backup.largestFile else { throw CocoaError(.fileReadTooLarge) }
-        let backup = try Backup.decoded(from: Data(contentsOf: url))
+        let backup = try Backup.decoded(from: readImport(url, largest: Backup.largestFile))
         guard let store, let collections, let lookups else { throw CocoaError(.fileReadUnknown) }
         let restored = try backup.restore(
             cards: store, collections: collections, lookups: lookups)

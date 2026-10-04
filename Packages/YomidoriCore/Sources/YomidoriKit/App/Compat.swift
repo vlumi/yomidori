@@ -110,3 +110,11 @@ enum Clipboard {
         #endif
     }
 }
+
+/// Work that must not land inside the view update it was asked from: a published value
+/// changed while SwiftUI updates the view that publishes it is a warning at best and a
+/// dropped change at worst (a selection set from elsewhere, a zoom reported from a layout
+/// pass, a text replaced). Run on the main queue's next turn, after the update.
+func afterViewUpdate(_ work: @escaping @MainActor () -> Void) {
+    DispatchQueue.main.async(execute: work)
+}

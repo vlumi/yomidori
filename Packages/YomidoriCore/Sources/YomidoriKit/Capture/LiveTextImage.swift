@@ -41,8 +41,7 @@ struct LiveTextImage: UIViewRepresentable {
             if interaction.analysis !== sheet.analysis {
                 interaction.analysis = sheet.analysis
                 let selection = self.selection
-                // Published after the update, not within it.
-                DispatchQueue.main.async {
+                afterViewUpdate {
                     selection.pageTexts[index] =
                         interaction.analysis == nil ? nil : interaction.text
                 }
@@ -82,9 +81,7 @@ struct LiveTextImage: UIViewRepresentable {
         }
 
         func textSelectionDidChange(_ interaction: ImageAnalysisInteraction) {
-            // Told during an update of the view (a selection set from elsewhere): recorded
-            // after it, not within.
-            DispatchQueue.main.async { [weak self] in
+            afterViewUpdate { [weak self] in
                 guard let self else { return }
                 self.coordinator?.selectionChanged(on: self.index)
             }
@@ -266,9 +263,8 @@ struct LiveTextImage: UIViewRepresentable {
         func scrollViewDidZoom(_ scrollView: UIScrollView) {
             center()
             updateHighlights()
-            // Reported after the layout pass it may come from, not within it.
             let fraction = Zoom.fraction(of: zoomScale, in: minimumZoomScale...maximumZoomScale)
-            DispatchQueue.main.async { [weak self] in self?.reportZoom?(fraction) }
+            afterViewUpdate { [weak self] in self?.reportZoom?(fraction) }
         }
     }
 }
