@@ -10,13 +10,16 @@ public final class AppCommands: ObservableObject {
     @Published public var requestedTab: AppTab?
     /// Bumped by File › Open…: a picture of a page from a file, on the Read tab.
     @Published public var openAsked = 0
+    /// Bumped by ⌘, on an iPad, whose Settings is a screen on Home and not a window.
+    @Published public var settingsAsked = 0
 
     private init() {}
 }
 
 /// The View menu's way to each section, ⌘1 … ⌘4 with Read the first on every platform, so
-/// a key learnt on the Mac holds on an iPad with a keyboard; the iPad's Home is ⌘0. File ›
-/// Open a Picture… is the Mac's, whose Read takes a file.
+/// a key learnt on the Mac holds on an iPad with a keyboard; the iPad's Home is ⌘0, and its
+/// ⌘, opens Settings on Home, the Mac having its own window for it. File › Open a Picture…
+/// is the Mac's, whose Read takes a file.
 public struct SectionCommands: Commands {
     public init() {}
 
@@ -30,6 +33,16 @@ public struct SectionCommands: Commands {
                 Text("Open a Picture…", bundle: .module)
             }
             .keyboardShortcut("o", modifiers: .command)
+        }
+        #endif
+        #if os(iOS)
+        CommandGroup(replacing: .appSettings) {
+            Button {
+                AppCommands.shared.settingsAsked += 1
+            } label: {
+                Text("Settings…", bundle: .module)
+            }
+            .keyboardShortcut(",", modifiers: .command)
         }
         #endif
         CommandGroup(before: .sidebar) {
