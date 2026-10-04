@@ -1081,6 +1081,16 @@
         }
       }
     },
+    "Forget the cards": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カードを忘れる"
+          }
+        }
+      }
+    },
     "Forget this card": {
       "localizations": {
         "ja": {
@@ -1107,6 +1117,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "この履歴を消す"
+          }
+        }
+      }
+    },
+    "Forget…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "忘れる…"
           }
         }
       }
