@@ -44,8 +44,7 @@ Decided 2026-09-18: a Mac app is wanted, after the phone's recognizer question i
 ## Store — *out the door*
 
 - [ ] **Japanese interface** completed and reviewed by a native ear; the ヨミドリ storefront name.
-- [ ] **Screenshots and listing tooling.** The demo mode's cast is the screenshot stage; a guided `make shots` like the siblings' captures the chosen screens per language, and `Scripts/asc/` syncs the listing once one exists.
-- [ ] **The App Store.** *On TestFlight since build 1.* Privacy answers are all "no" except the camera, which is used on device and never uploaded.
+- [ ] **The App Store.** *On TestFlight since build 1, the Mac too. The listing is in the repo and synced (`Scripts/asc/listing.json`, `make asc-listing-apply`); the screenshots are staged by the demo and captured by `make shots` per platform and language, uploaded by `make asc-screenshots-apply` (2026-10-04).* Left: the shots themselves taken once every form of the app has had more use, the record's hand-set parts (categories, age rating, App Privacy: all "no", the camera used on the device and never uploaded), and the submission.
 
 ## Ideas to evaluate — *not scheduled*
 
