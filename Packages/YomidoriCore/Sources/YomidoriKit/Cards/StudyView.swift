@@ -18,26 +18,17 @@ struct StudyView: View {
             Section {
                 if dueCount > 0 {
                     NavigationLink(value: Screen.review) {
-                        Label {
-                            Text("Review \(dueCount)", bundle: .module)
-                        } icon: {
-                            Image(systemName: "checkmark.rectangle.stack")
-                        }
-                        .font(.title3.weight(.semibold))
-                        .foregroundStyle(Palette.nightGreen)
+                        StudyLabel.review(dueCount)
+                            .font(.title3.weight(.semibold))
+                            .foregroundStyle(Palette.nightGreen)
                     }
                 } else {
-                    Text("Nothing due. Read on.", bundle: .module)
-                        .foregroundStyle(.secondary)
+                    StudyLabel.nothingDue
                 }
                 let waiting = cards.filter(\.isWaiting).count
                 NavigationLink(value: Screen.lesson) {
-                    Label {
-                        Text("Lesson · \(waiting) waiting", bundle: .module)
-                    } icon: {
-                        Image(systemName: "book")
-                    }
-                    .font(.title3)
+                    StudyLabel.lesson(waiting: waiting)
+                        .font(.title3)
                 }
                 .disabled(waiting == 0)
             }
