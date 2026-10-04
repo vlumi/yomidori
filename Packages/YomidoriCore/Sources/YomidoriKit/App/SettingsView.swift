@@ -78,8 +78,10 @@ public struct SettingsView: View {
             }
             Section {
                 Picker(selection: $retention) {
-                    Text("90 %", bundle: .module).tag(0.9)
-                    Text("95 %", bundle: .module).tag(0.95)
+                    ForEach(FSRS.retentions, id: \.self) { retention in
+                        Text(retention, format: .percent.precision(.fractionLength(0)))
+                            .tag(retention)
+                    }
                 } label: {
                     Text("Aim to remember", bundle: .module)
                 }

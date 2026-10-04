@@ -19,16 +19,10 @@ struct HomeView: View {
     private var list: some View {
         List {
             Section {
-                // The bird, the name, and the name read as the app reads any word: its kana
-                // with its pitch. 読み鳥 drops after the second mora, as 鳴き鳥 and 飼い鳥 do
-                // and most words of two morae and 鳥; 読み取り, which it puns on, is flat.
                 VStack(spacing: 10) {
                     AppIconImage(side: wordmark * 2)
-                    Text(japanese: "ヨミドリ")
-                        .font(.system(size: wordmark, weight: .semibold, design: .rounded))
-                        .foregroundStyle(Palette.nightGreen)
-                    PitchReading(reading: "よみどり", accent: PitchAccent(downstep: 2))
-                        .accessibilityLabel(Text(japanese: "よみどり"))
+                    Wordmark(size: wordmark)
+                    Wordmark.reading
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
@@ -56,25 +50,16 @@ struct HomeView: View {
                     Button {
                         study(.review)
                     } label: {
-                        Label {
-                            Text("Review \(dueCount)", bundle: .module)
-                        } icon: {
-                            Image(systemName: "checkmark.rectangle.stack")
-                        }
+                        StudyLabel.review(dueCount)
                     }
                 } else {
-                    Text("Nothing due. Read on.", bundle: .module)
-                        .foregroundStyle(.secondary)
+                    StudyLabel.nothingDue
                 }
                 if waitingCount > 0 {
                     Button {
                         study(.lesson)
                     } label: {
-                        Label {
-                            Text("Lesson · \(waitingCount) waiting", bundle: .module)
-                        } icon: {
-                            Image(systemName: "book")
-                        }
+                        StudyLabel.lesson(waiting: waitingCount)
                     }
                 }
             } header: {

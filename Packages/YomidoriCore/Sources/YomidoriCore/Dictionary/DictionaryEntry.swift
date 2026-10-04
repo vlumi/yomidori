@@ -185,3 +185,11 @@ extension Array where Element == DictionaryEntry {
         filter { $0.isRead(reading) } + filter { !$0.isRead(reading) }
     }
 }
+
+extension DictionaryEntry {
+    /// The entry's first reading in hiragana: the reading a card is keyed and shown by.
+    public var hiraganaReading: String { Kana.hiragana(readings.first ?? "") }
+
+    /// The key a card of this entry is kept under (`WordKey`).
+    public var wordKey: String { WordKey.of(headword: headword, reading: hiraganaReading) }
+}

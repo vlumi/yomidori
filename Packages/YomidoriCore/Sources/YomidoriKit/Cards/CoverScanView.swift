@@ -157,11 +157,9 @@ struct CoverScanView: View {
         lines = []
         guard let still else { return }
         reading = true
-        let recognized = (try? await TextRecognizer.recognize(still)) ?? []
-        let transcript =
-            LiveText.isSupported ? (try? await LiveText.analyze(still))?.transcript : nil
+        let read = await PageRecognition.read(still)
         guard !Task.isCancelled else { return }
-        lines = CoverLines.merge(vision: recognized, liveText: transcript)
+        lines = CoverLines.merge(vision: read.lines, liveText: read.analysis?.transcript)
         reading = false
     }
 

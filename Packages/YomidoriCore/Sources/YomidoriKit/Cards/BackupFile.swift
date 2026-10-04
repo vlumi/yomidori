@@ -26,10 +26,10 @@ extension Cards {
         let backup = Backup(
             created: Date(), cards: store?.cards() ?? [],
             collections: collections?.collections() ?? [], lookups: lookups?.lookups() ?? [])
-        let url = FileManager.default.temporaryDirectory
+        let url = try Cards.shareFolder()
             .appendingPathComponent(Backup.fileName(at: Date()))
             .appendingPathExtension("json")
-        try backup.encoded().write(to: url, options: .atomic)
+        try backup.encoded().write(to: url, options: .store)
         return url
     }
 
@@ -51,5 +51,17 @@ extension Cards {
         return BackupRestore(
             addedCards: restored.addedCards, joinedCards: restored.joinedCards,
             addedCollections: restored.addedCollections)
+    }
+}
+
+extension Cards {
+    /// Where a file to share is written: a folder of its own under tmp, emptied for each
+    /// share, so a copy of every card never sits there longer than the next share.
+    static func shareFolder() throws -> URL {
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent(
+            "share", isDirectory: true)
+        try? FileManager.default.removeItem(at: folder)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        return folder
     }
 }
