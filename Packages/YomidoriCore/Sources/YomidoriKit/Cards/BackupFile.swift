@@ -13,7 +13,7 @@ struct BackupFile: Transferable {
 }
 
 /// What a restore did, for the note shown after it.
-struct BackupRestore: Identifiable {
+struct BackupRestore: Identifiable, Sendable {
     let id = UUID()
     let addedCards: Int
     let joinedCards: Int
@@ -34,7 +34,12 @@ extension Cards {
     }
 
     /// A backup's contents added to what is here; nothing here is taken away.
-    static func restoreBackup(from url: URL) throws -> BackupRestore {
+    /// The restore off the main thread, as the import.
+    static func restoreBackup(from url: URL) async throws -> BackupRestore {
+        try await Task.detached(priority: .userInitiated) { try restoreBackup(from: url) }.value
+    }
+
+    nonisolated static func restoreBackup(from url: URL) throws -> BackupRestore {
         let accessing = url.startAccessingSecurityScopedResource()
         defer { if accessing { url.stopAccessingSecurityScopedResource() } }
         let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? .max

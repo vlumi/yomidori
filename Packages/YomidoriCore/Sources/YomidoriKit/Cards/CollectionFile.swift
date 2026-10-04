@@ -30,7 +30,7 @@ struct CollectionFile: Transferable {
 }
 
 /// What an import did, for the note shown after it.
-struct CollectionImport: Identifiable {
+struct CollectionImport: Identifiable, Sendable {
     let id = UUID()
     let name: String
     let added: Int
@@ -39,7 +39,14 @@ struct CollectionImport: Identifiable {
 
 extension Cards {
     /// Into the collection of the same name, or a new one; the words merge into the cards.
-    static func importCollection(from url: URL) throws -> CollectionImport {
+    /// The import off the main thread: a file of thousands of words is decoded, merged
+    /// against every card and written whole, which is seconds on a big deck.
+    static func importCollection(from url: URL) async throws -> CollectionImport {
+        try await Task.detached(priority: .userInitiated) { try importCollection(from: url) }
+            .value
+    }
+
+    nonisolated static func importCollection(from url: URL) throws -> CollectionImport {
         let accessing = url.startAccessingSecurityScopedResource()
         defer { if accessing { url.stopAccessingSecurityScopedResource() } }
         let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? .max
