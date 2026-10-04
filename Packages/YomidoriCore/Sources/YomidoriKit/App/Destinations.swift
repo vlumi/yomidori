@@ -8,14 +8,8 @@ struct Destinations: ViewModifier {
             .navigationDestination(for: Screen.self) { screen in
                 Group {
                     switch screen {
-                    case .capture:
-                        CaptureView().clearNavigationBar()
-                    case .cards:
-                        CardsView()
                     case .review:
                         ReviewView()
-                    case .search:
-                        SearchView()
                     case .about:
                         AboutView()
                     case .settings:

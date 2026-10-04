@@ -20,10 +20,10 @@ struct CollectionFile: Transferable {
                 separatedBy: CharacterSet(charactersIn: "/:\\")
             )
             .joined(separator: " ")
-            let url = FileManager.default.temporaryDirectory
+            let url = try Cards.shareFolder()
                 .appendingPathComponent(name.isEmpty ? "Yomidori" : name)
                 .appendingPathExtension("yomidori")
-            try shared.encoded().write(to: url, options: .atomic)
+            try shared.encoded().write(to: url, options: .store)
             return SentTransferredFile(url)
         }
     }

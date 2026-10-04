@@ -49,9 +49,9 @@ struct RecognizedTextStrip: View {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 6) {
-                ForEach(reading.lines.lines.indices, id: \.self) { line in
+                ForEach(reading.chunksByLine.indices, id: \.self) { line in
                     ChunkFlow(
-                        chunks: reading.chunks.filter { $0.line == line },
+                        chunks: reading.chunksByLine[line],
                         selected: page.selectedRange,
                         select: { page.selectedRange = $0.range },
                         extend: page.extendSelection)
