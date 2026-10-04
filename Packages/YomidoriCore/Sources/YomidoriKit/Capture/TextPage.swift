@@ -46,7 +46,7 @@ struct TextPage: UIViewRepresentable {
                 // selection kept is the older one, and choosing that word again in the
                 // text would look like no change and go unreported.
                 let coordinator = context.coordinator
-                DispatchQueue.main.async { coordinator.report(view) }
+                afterViewUpdate { coordinator.report(view) }
             }
         }
     }
@@ -171,7 +171,7 @@ struct TextBox: NSViewRepresentable {
         (view as? PastingTextView)?.onPasteImage = onPasteImage
         if context.coordinator.focusAsked != focusAsked {
             context.coordinator.focusAsked = focusAsked
-            DispatchQueue.main.async { view.window?.makeFirstResponder(view) }
+            afterViewUpdate { view.window?.makeFirstResponder(view) }
         }
         context.coordinator.text = text
         if view.string != text {
@@ -189,7 +189,7 @@ struct TextBox: NSViewRepresentable {
                 view.scrollRangeToVisible(selected)
                 context.coordinator.applying = false
                 let coordinator = context.coordinator
-                DispatchQueue.main.async { coordinator.report(view) }
+                afterViewUpdate { coordinator.report(view) }
             }
         }
     }

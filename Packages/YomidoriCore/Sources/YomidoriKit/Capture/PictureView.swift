@@ -46,8 +46,7 @@ struct PictureView: NSViewRepresentable {
         if overlay.analysis !== analysis {
             overlay.analysis = analysis
             let selection = self.selection
-            // Published after the update, not within it.
-            DispatchQueue.main.async {
+            afterViewUpdate {
                 selection.pageTexts[0] = overlay.analysis == nil ? nil : overlay.text
             }
         }
@@ -114,9 +113,7 @@ struct PictureView: NSViewRepresentable {
         }
 
         func textSelectionDidChange(_ overlayView: ImageAnalysisOverlayView) {
-            // Told during an update of the view (a selection set from elsewhere): recorded
-            // after it, not within.
-            DispatchQueue.main.async { [weak self] in self?.report(overlayView) }
+            afterViewUpdate { [weak self] in self?.report(overlayView) }
         }
 
         private func report(_ overlay: ImageAnalysisOverlayView) {
