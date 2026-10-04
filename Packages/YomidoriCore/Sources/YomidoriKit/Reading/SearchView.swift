@@ -27,6 +27,13 @@ struct SearchView: View {
         #if os(macOS)
         split
         #else
+        phoneOrPad
+            .background { fieldShortcut }
+        #endif
+    }
+
+    #if os(iOS)
+    @ViewBuilder private var phoneOrPad: some View {
         if sizeClass == .regular {
             // Room for two columns: the history or the results stay, the entry opens beside,
             // picked as on the Mac, since a list that selects takes the taps a link would.
@@ -53,7 +60,19 @@ struct SearchView: View {
                 list.scrollsToTopOnReselect(of: .search, with: proxy)
             }
         }
-        #endif
+    }
+    #endif
+
+    /// ⌘F: the field, from anywhere in the dictionary.
+    private var fieldShortcut: some View {
+        Button {
+            focusField()
+        } label: {
+            EmptyView()
+        }
+        .keyboardShortcut("f", modifiers: .command)
+        .frame(width: 0, height: 0)
+        .opacity(0)
     }
 
     /// A split's entry column: the entry picked, a result or a line of the history, with
@@ -74,17 +93,7 @@ struct SearchView: View {
 
     private var split: some View {
         searching(splitColumns.fittingWindow())
-            // ⌘F: the field, from anywhere in the dictionary.
-            .background {
-                Button {
-                    fieldFocused = true
-                } label: {
-                    EmptyView()
-                }
-                .keyboardShortcut("f", modifiers: .command)
-                .frame(width: 0, height: 0)
-                .opacity(0)
-            }
+            .background { fieldShortcut }
     }
 
     private var field: some View {

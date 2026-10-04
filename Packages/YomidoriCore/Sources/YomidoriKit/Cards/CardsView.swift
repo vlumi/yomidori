@@ -209,7 +209,7 @@ struct CardsView: View {
         // The batch, over the tab bar, while selecting.
         .safeAreaInset(edge: .bottom) {
             if selecting {
-                CardsBatch(picked: picked, cards: cards, collections: collections)
+                CardsBatch(picked: $picked, cards: cards, collections: collections)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
                     .frame(maxWidth: .infinity)
@@ -255,23 +255,7 @@ struct CardsView: View {
             }
             .onDeleteCommand { forgetting = !picked.isEmpty }
             .modifier(ForgetOneDialog(card: $askedToForget, forgotten: reload))
-            .confirmationDialog(
-                picked.count == 1
-                    ? Text("Forget this card?", bundle: .module)
-                    : Text("Forget \(picked.count) cards?", bundle: .module),
-                isPresented: $forgetting
-            ) {
-                Button(role: .destructive) {
-                    for card in cards where picked.contains(card.id) {
-                        Cards.write { try Cards.store?.remove(card) }
-                    }
-                    picked = []
-                } label: {
-                    Text("Forget", bundle: .module)
-                }
-            } message: {
-                Text("Their sentences and their answers go with them.", bundle: .module)
-            }
+            .forgetCardsDialog(isPresented: $forgetting, picked: $picked, cards: cards)
             .safeAreaInset(edge: .top) {
                 if !collections.isEmpty {
                     HStack {
@@ -305,7 +289,7 @@ struct CardsView: View {
         if picked.count == 1, let card = cards.first(where: { picked.contains($0.id) }) {
             CardView(card: card).id(card.id)
         } else if picked.count > 1 {
-            CardsBatch(picked: picked, cards: cards, collections: collections)
+            CardsBatch(picked: $picked, cards: cards, collections: collections)
                 .frame(maxWidth: 360)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {

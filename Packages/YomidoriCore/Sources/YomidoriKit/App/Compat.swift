@@ -99,6 +99,18 @@ extension View {
     }
 }
 
+/// Which kind of device this is, for the words that name it: a phone has a back to tap and
+/// a hand that holds it, an iPad neither, a Mac no camera.
+enum Device {
+    static var isPad: Bool {
+        #if canImport(UIKit)
+        UIDevice.current.userInterfaceIdiom == .pad
+        #else
+        false
+        #endif
+    }
+}
+
 /// The system's pasteboard, whichever the platform has, so views stay free of `#if`.
 enum Clipboard {
     static func copy(_ text: String) {
@@ -107,6 +119,24 @@ enum Clipboard {
         #elseif canImport(AppKit)
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(text, forType: .string)
+        #endif
+    }
+
+    /// What is on the pasteboard, as providers; reading it is the reader's doing, a paste.
+    /// The Mac's Read screen reads its own pasteboard, and has no use for this.
+    static var providers: [NSItemProvider] {
+        #if canImport(UIKit)
+        UIPasteboard.general.itemProviders
+        #else
+        []
+        #endif
+    }
+
+    static var string: String? {
+        #if canImport(UIKit)
+        UIPasteboard.general.string
+        #elseif canImport(AppKit)
+        NSPasteboard.general.string(forType: .string)
         #endif
     }
 }

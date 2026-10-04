@@ -2,7 +2,7 @@ import SwiftUI
 import YomidoriCore
 
 /// The collections with their covers, tags and counts; a tap edits, the plus adds, a swipe
-/// removes (which only takes the collection off its cards).
+/// or the row's menu removes (which only takes the collection off its cards).
 struct CollectionsView: View {
     @State private var collections: [Collection] = []
     @State private var importing = false
@@ -17,12 +17,23 @@ struct CollectionsView: View {
                 NavigationLink(value: collection) {
                     CollectionRow(collection: collection, count: counts[collection.id] ?? 0)
                 }
+                // The Mac has no swipe; the menu is the row's way, on every platform.
+                .contextMenu {
+                    Button(role: .destructive) {
+                        remove(collection)
+                    } label: {
+                        Label {
+                            Text("Remove the collection", bundle: .module)
+                        } icon: {
+                            Image(systemName: "trash")
+                        }
+                    }
+                }
             }
             .onDelete { offsets in
                 for index in offsets {
-                    Cards.removeCollection(collections[index])
+                    remove(collections[index])
                 }
-                reload()
             }
             if collections.isEmpty {
                 Text("No collections yet. A book, say.", bundle: .module)
@@ -68,6 +79,11 @@ struct CollectionsView: View {
             }
         }
         .collectionImportAlerts(imported: $imported, failed: $failed)
+    }
+
+    private func remove(_ collection: Collection) {
+        Cards.removeCollection(collection)
+        reload()
     }
 
     private func reload() {

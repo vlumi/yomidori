@@ -391,6 +391,16 @@
         }
       }
     },
+    "Another picture": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "別の画像"
+          }
+        }
+      }
+    },
     "Answered": {
       "localizations": {
         "ja": {
@@ -417,6 +427,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "正しい本文"
+          }
+        }
+      }
+    },
+    "Back to the camera": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カメラに戻る"
           }
         }
       }
@@ -477,6 +497,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "ぼやけたり、ずれたりしていたら、「読む」をタップして撮り直せます。"
+          }
+        }
+      }
+    },
+    "Blurred or not quite framed? The camera button takes another photo.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ぼやけたり、ずれたりしていたら、カメラボタンで撮り直せます。"
           }
         }
       }
@@ -547,6 +577,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "幼鳥"
+          }
+        }
+      }
+    },
+    "Choose a cover…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表紙を選ぶ…"
           }
         }
       }
@@ -821,6 +861,16 @@
         }
       }
     },
+    "Drop a picture of the cover here, or choose one.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表紙の画像をここにドロップするか、選んでください。"
+          }
+        }
+      }
+    },
     "Drop the card (⌘⌫)": {
       "localizations": {
         "ja": {
@@ -867,6 +917,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "卵"
+          }
+        }
+      }
+    },
+    "Everything runs on this Mac: the text recognition, the dictionaries, your cards. Nothing is sent anywhere but to your own iCloud, while sync is on.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文字の読み取りも、辞書も、カードも、すべてこのMacの中で動きます。同期がオンのときにご自身のiCloudへ送るほかは、どこにも送信しません。"
           }
         }
       }
@@ -1021,6 +1081,16 @@
         }
       }
     },
+    "Forget the cards": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カードを忘れる"
+          }
+        }
+      }
+    },
     "Forget this card": {
       "localizations": {
         "ja": {
@@ -1041,6 +1111,16 @@
         }
       }
     },
+    "Forget this lookup": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この履歴を消す"
+          }
+        }
+      }
+    },
     "Forget…": {
       "localizations": {
         "ja": {
@@ -1057,6 +1137,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "忘れたので待機に戻す"
+          }
+        }
+      }
+    },
+    "From Photos…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真から…"
+          }
+        }
+      }
+    },
+    "From a file…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ファイルから…"
           }
         }
       }
@@ -1257,6 +1357,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "復習中"
+          }
+        }
+      }
+    },
+    "In the Shortcuts app, make a shortcut of two actions, Take Screenshot and then Read in Yomidori, and put it in Control Center or on the Home Screen. Running it opens whatever is on the screen here, ready to tap. Nothing is saved to Photos.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ショートカットアプリで「スクリーンショットを撮る」と「ヨミドリで読む」の二つのアクションからなるショートカットを作り、コントロールセンターかホーム画面に置きます。実行すると、いま画面にあるものがここで開き、すぐにタップできます。写真には何も保存されません。"
           }
         }
       }
@@ -1851,6 +1961,16 @@
         }
       }
     },
+    "Notifications are off for Yomidori. Turn on badges for it in System Settings, under Notifications, then here again.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ヨミドリの通知がオフです。システム設定の「通知」でバッジをオンにしてから、もう一度ここでオンにしてください。"
+          }
+        }
+      }
+    },
     "Notifications are off for Yomidori. Turn on badges for it in the Settings app, under Notifications, then here again.": {
       "localizations": {
         "ja": {
@@ -1907,6 +2027,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "写真を開く…"
+          }
+        }
+      }
+    },
+    "Open a picture file": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "画像ファイルを開く"
           }
         }
       }
@@ -2251,12 +2381,32 @@
         }
       }
     },
+    "Remove the collection": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コレクションを削除"
+          }
+        }
+      }
+    },
     "Remove the cover": {
       "localizations": {
         "ja": {
           "stringUnit": {
             "state": "translated",
             "value": "表紙を消す"
+          }
+        }
+      }
+    },
+    "Remove this meaning": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この意味を外す"
           }
         }
       }
@@ -2491,6 +2641,16 @@
         }
       }
     },
+    "Settings…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設定…"
+          }
+        }
+      }
+    },
     "Share this collection": {
       "localizations": {
         "ja": {
@@ -2597,6 +2757,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "同期するには、設定でiCloudにサインインしてください。"
+          }
+        }
+      }
+    },
+    "Sign in to iCloud in System Settings to sync.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同期するには、システム設定でiCloudにサインインしてください。"
           }
         }
       }
@@ -2981,6 +3151,16 @@
         }
       }
     },
+    "The zoom and the page buttons stand in one column on this side of the picture, the zoom nearest your thumb: the side of the hand that holds the iPad.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ズームとページのボタンを、写真のこちら側に一列に並べます。ズームは親指に一番近い所に。iPadを持つ手の側を選んでください。"
+          }
+        }
+      }
+    },
     "The zoom and the page buttons stand in one column on this side of the picture, the zoom nearest your thumb: the side of the hand that holds the phone.": {
       "localizations": {
         "ja": {
@@ -3117,6 +3297,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "アクセントは？"
+          }
+        }
+      }
+    },
+    "Which recognizer's reading of the picture to use": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真をどちらの認識器で読むか"
           }
         }
       }
