@@ -338,10 +338,11 @@ public struct CaptureView: View {
         recognizing = false
         // The demo's pick, found again in the text as recognized: the reading keeps a
         // selection that stands when it is made, and the picture shows it.
-        if let pick = DemoMode.pick, let found = Spread.join(pageTexts).range(of: pick) {
+        if let pick = DemoMode.pick {
             let text = Spread.join(pageTexts)
-            let start = text.distance(from: text.startIndex, to: found.lowerBound)
-            page.selectedRange = start..<(start + pick.count)
+            page.selectedRange = text.range(of: pick).flatMap {
+                CharacterRange.offsets(of: $0, in: text)
+            }
         }
         AccessibilityNotification.Announcement(String(localized: "Page read", bundle: .module))
             .post()
