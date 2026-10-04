@@ -23,6 +23,23 @@ public struct Upcoming: Equatable, Sendable {
         public var questions: Int { counts.values.reduce(0, +) }
 
         public func contains(_ date: Date) -> Bool { start <= date && date < end }
+
+        /// The ranks that come up in the slot, each with where its part of the bar lies.
+        public var shares: [Share] {
+            var stacked = 0
+            return Rank.allCases.compactMap { rank in
+                guard let count = counts[rank], count > 0 else { return nil }
+                defer { stacked += count }
+                return Share(rank: rank, from: stacked, to: stacked + count)
+            }
+        }
+    }
+
+    /// A rank's part of a slot's bar, stacked from the lowest rank up.
+    public struct Share: Equatable, Sendable {
+        public let rank: Rank
+        public let from: Int
+        public let to: Int
     }
 
     /// A day's total, for the words beside the picture.

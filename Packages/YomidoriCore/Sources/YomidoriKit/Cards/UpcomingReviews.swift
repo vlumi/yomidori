@@ -11,24 +11,15 @@ struct UpcomingReviews: View {
     @State private var selected: Date?
     @ScaledMetric(relativeTo: .body) private var height: CGFloat = 132
 
-    /// A rank's share of a bar, stacked from the lowest rank up.
+    /// One rank's part of one slot's bar, as the chart draws it.
     private struct Share: Identifiable {
         let slot: Date
-        let rank: Rank
-        let from: Int
-        let to: Int
-        var id: String { "\(slot.timeIntervalSinceReferenceDate).\(rank.rawValue)" }
+        let part: Upcoming.Share
+        var id: String { "\(slot.timeIntervalSinceReferenceDate).\(part.rank.rawValue)" }
     }
 
     private var shares: [Share] {
-        upcoming.slots.flatMap { slot in
-            var stacked = 0
-            return Rank.allCases.compactMap { rank -> Share? in
-                guard let count = slot.counts[rank], count > 0 else { return nil }
-                defer { stacked += count }
-                return Share(slot: slot.start, rank: rank, from: stacked, to: stacked + count)
-            }
-        }
+        upcoming.slots.flatMap { slot in slot.shares.map { Share(slot: slot.start, part: $0) } }
     }
 
     private var chosen: Upcoming.Slot? {
@@ -120,13 +111,13 @@ struct UpcomingReviews: View {
     private func bar(_ share: Share, dimmed: Bool) -> some ChartContent {
         let from: Date = share.slot.addingTimeInterval(gap)
         let to: Date = slotEnd(share.slot).addingTimeInterval(-gap)
-        let color: Color = share.rank.color.opacity(dimmed ? 0.4 : 1)
+        let color: Color = share.part.rank.color.opacity(dimmed ? 0.4 : 1)
         // A rectangle, not a bar: a bar has its width in points or in units of an axis,
         // and six hours is neither.
         let mark = RectangleMark(
             xStart: PlottableValue.value("From", from), xEnd: PlottableValue.value("To", to),
-            yStart: PlottableValue.value("Stacked", share.from),
-            yEnd: PlottableValue.value("Questions", share.to))
+            yStart: PlottableValue.value("Stacked", share.part.from),
+            yEnd: PlottableValue.value("Questions", share.part.to))
         return mark.foregroundStyle(color)
     }
 
