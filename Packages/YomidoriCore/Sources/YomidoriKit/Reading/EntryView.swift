@@ -10,17 +10,8 @@ struct EntryView: View {
 
     var body: some View {
         List {
-            Section {
-                WordTitle(
-                    headword: entry.headword, reading: entry.hiraganaReading,
-                    accent: details.accent(of: entry.hiraganaReading),
-                    estimate: details.estimate, font: .largeTitle
-                ) {
-                    DictionaryButton(term: entry.headword)
-                        .labelStyle(.iconOnly)
-                        .help(Text("Dictionary", bundle: .module))
-                    keepButton
-                }
+            WordHeader(headword: entry.headword, reading: entry.hiraganaReading, details: details) {
+                keepButton
             }
             WordSections(headword: entry.headword, details: details)
         }

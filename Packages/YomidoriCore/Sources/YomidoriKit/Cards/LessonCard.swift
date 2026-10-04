@@ -19,17 +19,8 @@ struct LessonCard: View {
 
     var body: some View {
         List {
-            Section {
-                WordTitle(
-                    headword: card.headword, reading: card.reading,
-                    accent: details.accent(of: card.reading), estimate: details.estimate,
-                    font: .largeTitle
-                ) {
-                    DictionaryButton(term: card.headword).labelStyle(.iconOnly)
-                        .help(Text("Dictionary", bundle: .module))
-                }
-            }
-            ForEach(card.sightings.sorted { $0.date > $1.date }) { sighting in
+            WordHeader(headword: card.headword, reading: card.reading, details: details)
+            ForEach(card.sightingsNewestFirst) { sighting in
                 if !sighting.sentence.isEmpty {
                     Section {
                         MarkedSentence(sighting: sighting)

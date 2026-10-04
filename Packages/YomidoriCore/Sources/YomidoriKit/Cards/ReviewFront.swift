@@ -13,13 +13,8 @@ struct ReviewFront: View {
     /// Opens the sentence for correction; nil where it can't be edited.
     var edit: ((Sighting) -> Void)?
 
-    /// The sightings with a sentence to show.
-    static func sentences(of card: Card) -> [Sighting] {
-        card.sightings.filter { !$0.sentence.isEmpty }
-    }
-
     private var sighting: Sighting? {
-        let sentences = Self.sentences(of: card)
+        let sentences = card.sightingsWithSentence
         return sentences.first { $0.id == sightingID } ?? sentences.max { $0.date < $1.date }
     }
 

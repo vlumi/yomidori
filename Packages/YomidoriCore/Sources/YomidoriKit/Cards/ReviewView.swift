@@ -301,7 +301,7 @@ struct ReviewView: View {
         }
         picked = Dictionary(
             queue.items.compactMap { item in
-                ReviewFront.sentences(of: item.card).randomElement().map { (Self.key(item), $0.id) }
+                item.card.sightingsWithSentence.randomElement().map { (Self.key(item), $0.id) }
             }, uniquingKeysWith: { first, _ in first })
         revealed = false
     }
