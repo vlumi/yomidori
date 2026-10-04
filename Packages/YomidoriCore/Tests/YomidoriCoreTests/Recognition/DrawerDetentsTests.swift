@@ -19,4 +19,15 @@ final class DrawerDetentsTests: XCTestCase {
         XCTAssertEqual(DrawerDetents.dragged(from: 0.5, by: 800, screenHeight: 800), 0.2)
         XCTAssertEqual(DrawerDetents.dragged(from: 0.5, by: -800, screenHeight: 800), 0.8)
     }
+
+    func testADoubleTapGoesToTheLargestAndBackToWhereItStood() {
+        let up = DrawerDetents.toggled(from: 0.5, remembered: nil)
+        XCTAssertEqual(up.settle, 0.8)
+        XCTAssertEqual(up.remember, 0.5)
+        let back = DrawerDetents.toggled(from: 0.8, remembered: 0.5)
+        XCTAssertEqual(back.settle, 0.5)
+        XCTAssertNil(back.remember)
+        // Opened to the largest by hand, with nothing remembered: back to the smallest.
+        XCTAssertEqual(DrawerDetents.toggled(from: 0.8, remembered: nil).settle, 0.2)
+    }
 }
