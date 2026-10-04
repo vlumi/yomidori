@@ -2811,6 +2811,16 @@
         }
       }
     },
+    "Take a page, and its words read out here.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ページを撮ると、言葉がここに並びます。"
+          }
+        }
+      }
+    },
     "Take another photo": {
       "localizations": {
         "ja": {
