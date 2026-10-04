@@ -68,9 +68,14 @@ public struct PageReading: Sendable {
 
     /// From one chunk to another, whichever comes first, as one range of the page's text.
     public static func range(from first: Chunk, to second: Chunk) -> Range<Int> {
-        min(
-            first.range.lowerBound, second.range.lowerBound)..<max(
-                first.range.upperBound, second.range.upperBound)
+        range(first.range, stretchedTo: second)
+    }
+
+    /// A selection stretched to a chunk, whichever way the chunk lies from it.
+    public static func range(_ selected: Range<Int>, stretchedTo chunk: Chunk) -> Range<Int> {
+        let lower = min(selected.lowerBound, chunk.range.lowerBound)
+        let upper = max(selected.upperBound, chunk.range.upperBound)
+        return lower..<upper
     }
 
     /// A range grown to the chunks it touches, so a selection never cuts a word.

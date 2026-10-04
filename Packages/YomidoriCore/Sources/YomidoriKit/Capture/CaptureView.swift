@@ -293,8 +293,6 @@ public struct CaptureView: View {
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
-        } else if page.pasted != nil {
-            transcript
         } else {
             transcript
         }
