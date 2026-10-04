@@ -2881,26 +2881,6 @@
         }
       }
     },
-    "Swipe back": {
-      "localizations": {
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "スワイプで戻る"
-          }
-        }
-      }
-    },
-    "Swiping in from the left edge goes back a screen, as everywhere on iOS. Off, only the back button does, so a swipe meant for a word never leaves the page.": {
-      "localizations": {
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "左端からのスワイプで前の画面に戻ります（iOSの標準）。オフにすると「戻る」ボタンでだけ戻るようになり、言葉を選ぼうとしたスワイプでページを離れることがなくなります。"
-          }
-        }
-      }
-    },
     "Sync failed: %@": {
       "localizations": {
         "ja": {

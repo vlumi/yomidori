@@ -24,19 +24,18 @@ struct Destinations: ViewModifier {
                         ReviewView(practicing: Set(cards))
                     }
                 }
-                .swipeBackSetting()
             }
             .navigationDestination(for: Card.self) { card in
-                CardView(card: card).swipeBackSetting()
+                CardView(card: card)
             }
             .navigationDestination(for: DictionaryEntry.self) { entry in
-                EntryView(entry: entry).swipeBackSetting()
+                EntryView(entry: entry)
             }
             .navigationDestination(for: KanjiEntry.self) { kanji in
-                KanjiView(kanji: kanji).swipeBackSetting()
+                KanjiView(kanji: kanji)
             }
             .navigationDestination(for: Collection.self) { collection in
-                CollectionEditor(collection: collection).swipeBackSetting()
+                CollectionEditor(collection: collection)
             }
     }
 }

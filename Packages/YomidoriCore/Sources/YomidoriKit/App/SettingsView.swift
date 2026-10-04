@@ -4,7 +4,6 @@ import YomidoriCore
 public struct SettingsView: View {
     public init() {}
 
-    @AppStorage(SwipeBack.key) private var swipeBack = true
     @AppStorage(SettingsKey.iCloudSync) private var iCloudSync = true
     @AppStorage(SettingsKey.pageControlsSide) private var controlsSide: PageControlsSide = .right
     @AppStorage(SettingsKey.appBadge) private var appBadge = false
@@ -21,16 +20,6 @@ public struct SettingsView: View {
     public var body: some View {
         Form {
             #if os(iOS)
-            Section {
-                Toggle(isOn: $swipeBack) {
-                    Text("Swipe back", bundle: .module)
-                }
-            } footer: {
-                Text(
-                    // swiftlint:disable:next line_length
-                    "Swiping in from the left edge goes back a screen, as everywhere on iOS. Off, only the back button does, so a swipe meant for a word never leaves the page.",
-                    bundle: .module)
-            }
             Section {
                 Picker(selection: $controlsSide) {
                     Text("Left", bundle: .module).tag(PageControlsSide.left)
