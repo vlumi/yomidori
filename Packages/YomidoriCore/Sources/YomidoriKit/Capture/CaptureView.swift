@@ -173,7 +173,7 @@ public struct CaptureView: View {
                 .ignoresSafeArea()
             CameraNotice(access: camera.access)
             if !pages.isEmpty {
-                SpreadNotice(startOver: startOver)
+                SpreadNotice(backToPage: backToPage, startOver: startOver)
             }
         }
     }
@@ -197,7 +197,7 @@ public struct CaptureView: View {
             PageControls(
                 side: controlsSide, pageCount: pages.isEmpty ? nil : pages.count + 1,
                 canAddPage: currentTranscript != nil && pages.count + 1 < Self.pagesInASpread,
-                addPage: addPage, startOver: startOver,
+                addPage: addPage, startOver: startOver, retake: retake,
                 moveNextPage: pages.count + 1 < Self.pagesInASpread ? nil : moveNextPage,
                 zoom: zoomFraction(in: area)
             )
@@ -255,7 +255,7 @@ public struct CaptureView: View {
         }
         readout
         if still != nil || page.pasted != nil {
-            Text("Tap Read again for a new page.", bundle: .module)
+            Text("The camera button takes a new page.", bundle: .module)
                 .font(.caption2)
                 .foregroundStyle(.tertiary)
         }

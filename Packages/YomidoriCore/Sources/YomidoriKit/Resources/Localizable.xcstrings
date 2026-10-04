@@ -421,6 +421,16 @@
         }
       }
     },
+    "Back to the page" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ページに戻る"
+          }
+        }
+      }
+    },
     "Back to waiting (⌘⌫)" : {
       "localizations" : {
         "ja" : {
@@ -2721,6 +2731,16 @@
         }
       }
     },
+    "Take another photo" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撮り直す"
+          }
+        }
+      }
+    },
     "Take off the shelf" : {
       "localizations" : {
         "ja" : {
@@ -2751,22 +2771,12 @@
         }
       }
     },
-    "Take the next page, or start over." : {
+    "Take the next page." : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "次のページを撮るか、最初からやり直してください。"
-          }
-        }
-      }
-    },
-    "Tap Read again for a new page." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "もう一度「読む」をタップすると次のページを撮れます。"
+            "value" : "次のページを撮ってください。"
           }
         }
       }
@@ -2817,6 +2827,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "このファイルはヨミドリのコレクションではありません。"
+          }
+        }
+      }
+    },
+    "The camera button takes a new page." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カメラのボタンで次のページを撮れます。"
           }
         }
       }
