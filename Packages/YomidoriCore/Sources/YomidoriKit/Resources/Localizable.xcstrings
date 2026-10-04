@@ -1041,6 +1041,16 @@
         }
       }
     },
+    "Forget this lookup": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この履歴を消す"
+          }
+        }
+      }
+    },
     "Forgot it. Back to waiting": {
       "localizations": {
         "ja": {
@@ -2251,12 +2261,32 @@
         }
       }
     },
+    "Remove the collection": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コレクションを削除"
+          }
+        }
+      }
+    },
     "Remove the cover": {
       "localizations": {
         "ja": {
           "stringUnit": {
             "state": "translated",
             "value": "表紙を消す"
+          }
+        }
+      }
+    },
+    "Remove this meaning": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この意味を外す"
           }
         }
       }
@@ -3117,6 +3147,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "アクセントは？"
+          }
+        }
+      }
+    },
+    "Which recognizer's reading of the picture to use": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真をどちらの認識器で読むか"
           }
         }
       }
