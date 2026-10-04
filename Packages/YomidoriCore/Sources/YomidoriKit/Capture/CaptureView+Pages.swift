@@ -52,11 +52,9 @@ extension CaptureView {
         let cleaned = Sanitize.text(text, limit: Self.longestPaste, keepsNewlines: true)
             .trimmingCharacters(in: .whitespacesAndNewlines)
         guard !cleaned.isEmpty else { return }
-        page.newPage()
         camera.stop()
-        pages = []
-        selection.text = ""
-        selection.range = nil
+        page.clearPage()
+        selection.clear()
         page.pasted = cleaned
     }
 
