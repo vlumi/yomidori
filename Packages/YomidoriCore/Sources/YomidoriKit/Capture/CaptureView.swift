@@ -9,12 +9,10 @@ public struct CaptureView: View {
     @StateObject var selection = LiveTextSelection()
     @EnvironmentObject var page: CaptureState
     @State var recognizing = false
-    @State private var readingCloseUp = false
     @State var picked: PhotosPickerItem?
     @StateObject private var zoomControl = ZoomControl()
     @AppStorage(TokenizerChoice.key) var tokenizerChoice: TokenizerChoice = .system
     @AppStorage(SettingsKey.pageControlsSide) private var controlsSide: PageControlsSide = .right
-    @State private var closeUpTask: Task<Void, Never>?
     @AppStorage(SettingsKey.readoutFraction) private var readoutFraction = DrawerDetents.all[0]
     /// The drawer's height the page is laid out to: the fraction as the last drag left it,
     /// so the page reaches the drawer's edge and moves only when the finger lifts.
@@ -46,10 +44,6 @@ public struct CaptureView: View {
     var analysis: ImageAnalysis? {
         get { page.analysis }
         nonmutating set { page.analysis = newValue }
-    }
-    var closeUp: CloseUp? {
-        get { page.closeUp }
-        nonmutating set { page.closeUp = newValue }
     }
     private var zoom: Zoom {
         get { page.zoom }
@@ -135,10 +129,6 @@ public struct CaptureView: View {
                     sheets: spreadPages.compactMap { sheet in
                         sheet.still.map { LiveTextImage.Sheet(still: $0, analysis: sheet.analysis) }
                     }, side: spreadSide, selection: selection, zoomControl: zoomControl)
-            case .closeUp:
-                StillView(
-                    zoom: $page.zoom, sheets: closeUpSheets, side: spreadSide,
-                    onTap: readCloseUp)
             }
         }
         .frame(width: area.width, height: area.height)
@@ -223,7 +213,6 @@ public struct CaptureView: View {
                 Picker(selection: $page.mode) {
                     Text("Live Text", bundle: .module).tag(Mode.liveText)
                     Text("Vision", bundle: .module).tag(Mode.vision)
-                    Text("Close-up", bundle: .module).tag(Mode.closeUp)
                 } label: {
                     Text("Recognizer", bundle: .module)
                 }
@@ -259,12 +248,7 @@ public struct CaptureView: View {
         } else if page.pasted != nil {
             transcript
         } else {
-            switch mode {
-            case .vision, .liveText:
-                transcript
-            case .closeUp:
-                CloseUpReadout(reading: readingCloseUp, closeUp: closeUp)
-            }
+            transcript
         }
     }
 
@@ -286,24 +270,6 @@ public struct CaptureView: View {
         }
     }
 
-    /// A tap on a Vision line lands on a character; the word over it is outlined and given to
-    /// the drawer as a selection, as Live Text's would be, so it reads, keeps and fixes alike.
-    private func readCloseUp(onPage index: Int, at point: CGPoint, in frame: CGRect) {
-        guard spreadPages.indices.contains(index), let still = spreadPages[index].still,
-            let geometry = CloseUpGeometry(
-                tap: point, in: frame, lines: spreadPages[index].lines, imageSize: still.size)
-        else { return }
-        readingCloseUp = true
-        closeUpTask?.cancel()
-        closeUpTask = Task { @MainActor in
-            var read = await CloseUpReader.read(still, at: geometry)
-            guard !Task.isCancelled else { return }
-            read?.page = index
-            closeUp = read
-            readingCloseUp = false
-        }
-    }
-
     private func recognize() async {
         lines = []
         analysis = nil
@@ -311,10 +277,6 @@ public struct CaptureView: View {
         page.newPage(keepingFixes: !pages.isEmpty)
         selection.clear()
         selection.pageTexts[pages.count] = nil
-        closeUp = nil
-        closeUpTask?.cancel()
-        closeUpTask = nil
-        readingCloseUp = false
         page.recognizedStillID = nil
         guard let still else { return }
         recognizing = true

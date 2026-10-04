@@ -2,13 +2,13 @@
 # Run the package logic tests with coverage, write the report Codecov takes and print what
 # is covered, file by file, least covered first. Usage: coverage.sh
 #
-# Only the targets that are tested count: the SwiftUI layer (YomidoriKit), the Core ML model's
-# runner (YomidoriMangaOCR) and the CloudKit side (YomidoriSync) are left out here, the same
-# as codecov.yml ignores them, so the figure is of the logic the tests can reach.
+# Only the targets that are tested count: the SwiftUI layer (YomidoriKit) and the CloudKit
+# side (YomidoriSync) are left out here, the same as codecov.yml ignores them, so the figure
+# is of the logic the tests can reach.
 set -euo pipefail
 cd "$(dirname "$0")/../Packages/YomidoriCore"
 
-IGNORED='(\.build|Tests)/|/Yomidori(Kit|MangaOCR|Sync)/'
+IGNORED='(\.build|Tests)/|/Yomidori(Kit|Sync)/'
 
 swift test --enable-code-coverage
 

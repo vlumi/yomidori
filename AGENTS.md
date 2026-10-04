@@ -89,12 +89,7 @@ describing intent as fact otherwise.
   release wants it run. `make pitch-measure` prints the agreement with Kanjium
   on compounds held out. Open JTalk and its dictionary are Modified BSD; the
   notice is in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
-- **manga-ocr is optional and built, not committed.** `make models` converts
-  the model to Core ML into `Sources/Shared/Models/` (~210 MB, gitignored) with
-  Homebrew's `python@3.13` and a local venv; the app hides the engine when the
-  models are absent, so CI and a fresh clone build without them, and a release
-  cut without them ships without the engine (the preflight says so). Apache
-  2.0; the notice is in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
 - **Third-party code at runtime: none by default.** Everything ships with the OS
   (Foundation, SwiftUI, UIKit, Vision and VisionKit, AVFoundation, CloudKit,
   Core ML, Charts, App Intents, UserNotifications). The one exception is
@@ -142,26 +137,23 @@ yomidori/
 │     assets/make-icon.swift        Renders the app icon PNG (make icon)
 │     data/build-jmdict.py          JMdict, KANJIDIC2, KRADFILE, KanjiVG, Kanjium accents → the bundled SQLite (make dictionary)
 │     data/estimate-pitch.py        Open JTalk and Kanjium's habits → estimated pitch in the SQLite (make pitch; optional)
-│     data/build-mangaocr.py        manga-ocr → Core ML (make models; optional)
 ├── Sources/iOS/                    Thin @main app shell and the orientation hook (+ Info.plist, entitlements)
 ├── Sources/macOS/                  The Mac's @main shell: the window, Settings (⌘,), About in the app menu, CloudKit's pushes (+ Info.plist, entitlements: sandbox, iCloud)
 ├── Sources/Shared/                 The Shortcuts action (ReadInYomidori), the asset catalog (AppIcon), the app-level String Catalogs (InfoPlist too)
 │     Dictionaries/jmdict.sqlite    Built by make dictionary; gitignored
-│     Models/                       manga-ocr's Core ML packages, by make models; gitignored, optional
 └── Packages/YomidoriCore/          Swift package — all the code
     ├── Sources/YomidoriCore/       Pure logic — tested, coverage-gated; grouped by domain as it grows:
     │   ├── Kana.swift              katakana ↔ hiragana, the first of the reading helpers
     │   ├── Cards/                  Card, Sighting, CardStore, Collection, Lesson, LookupHistory, WordKey; RecordFile (the one JSON store under all three); the sync side (SyncRecord, CardMerge, UnsentChanges); what comes in and goes out (Intake, SharedCollection, Backup)
     │   ├── Dictionary/             DictionaryEntry, the WordDictionary protocol and its lookups, KanjiEntry, KanjiPart, CharacterFix, SVGPath
     │   ├── Reading/                Token, Tokenizer, SystemTokenizer, Deinflector, WordFinder, PageReading, TextFix, PitchAccent, PitchPhrase, Sentence, Spread, TranscriptLines
-    │   ├── Recognition/            RecognizedLine, VisionPage, TextGeometry, CloseUpGeometry (the Vision-box ↔ view seam), SpreadLayout, QuarterTurn, ImageIntake, Zoom, DrawerDetents, CoverLines
+    │   ├── Recognition/            RecognizedLine, VisionPage, TextGeometry (the Vision-box ↔ view seam), SpreadLayout, QuarterTurn, ImageIntake, Zoom, DrawerDetents, CoverLines
     │   ├── Scheduling/             FSRS, Rank, ReadingCheck, MeaningCheck, Progress, RankSnapshot, BadgeSchedule
     │   └── Text/                   MarkdownBlocks, Sanitize, Insertion
     ├── Sources/YomidoriDictionary/ JMdict, the SQLite reader over the bundled database (system SQLite)
     ├── Sources/YomidoriMeCab/      MeCab + IPADic behind Tokenizer — the one third-party dependency, quarantined
     ├── Sources/YomidoriSync/       CloudSync: iCloud sync through CKSyncEngine, the only CloudKit code; coverage-ignored
-    ├── Sources/YomidoriMangaOCR/   manga-ocr through Core ML: a CGImage in, a String out; coverage-ignored
-    ├── Sources/YomidoriKit/        SwiftUI + UIKit + Vision, depends on Core, Dictionary, MeCab, MangaOCR and Sync; coverage-ignored
+    ├── Sources/YomidoriKit/        SwiftUI + UIKit + Vision, depends on Core, Dictionary, MeCab and Sync; coverage-ignored
     │   ├── App/                    AppRoot (the tabs, TabStack), HomeView, Screen, Destinations, TabTaps, SettingsView, SettingsKey, Sync (the sync engine's owner), AppBadge, StillInbox, OrientationLock, SwipeBack, AboutView, NoticesView, AppInfo, Palette, Compat, FlowLayout, FitsOrStacks, JapaneseText (`Text(japanese:)`) — a file per main type, its small helpers with it
     │   ├── Capture/                Camera, CameraPreview, FrameSink, Still, TextRecognizer, LiveText*, CaptureState, CaptureView (+Pages, +Vision) and its drawer, StillView with Zoomable, the camera buttons, PageControls with the ZoomSlider and ZoomControl, SpreadNotice, TextPage, readouts and reader; on the Mac MacReadView (the text box, TextBox, and the words beside it)
     │   ├── Cards/                  CardsView, CardView and its sections (AcceptedMeanings, SentenceEditor), StudyView, ProgressScreen, LessonView/LessonCard, ReviewView with front, back, AnswerField, QuestionTag, PitchChoices and SessionSummary, RankName/RankChart, Collection* screens and CollectionFile, BackupFile, CoverScanView, TagsEditor, CoverArchive, Cards (the store roots), MeaningFold
@@ -208,8 +200,6 @@ make icon              # regenerate the app icon PNG
 make dictionary        # build the bundled JMdict database (downloads JMdict_e once)
 make pitch             # estimate the pitch Kanjium lacks into the dictionary (optional; python3.13 + venv)
 make pitch-measure     # how often the estimate agrees with Kanjium, on compounds held out
-make models            # convert manga-ocr to Core ML into the app (optional; python3.13 + venv; ~210 MB)
-make clean-models      # remove them again, and nothing else
 make generate          # regenerate Yomidori.xcodeproj from project.yml (only if stale)
 make clean             # remove the generated project + build output
 ```
@@ -272,7 +262,7 @@ Agent-specific mechanics on top of that:
   rest. A failed upload fails the test job, so a missing report is red, never
   silently absent. New logic comes with its tests in the same PR.
 - **The whole `YomidoriKit` target is coverage-ignored** (the SwiftUI/Vision
-  layer), and `YomidoriMangaOCR` and `YomidoriSync` with it, so pure logic goes
+  layer), and `YomidoriSync` with it, so pure logic goes
   in `YomidoriCore` to be tracked. If a Kit file
   grows testable logic, move the logic, don't widen the ignore list.
 - **BEHIND blocks merge** (branch protection). Merge `origin/main` into the

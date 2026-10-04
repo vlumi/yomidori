@@ -44,12 +44,6 @@ let package = Package(
             dependencies: ["YomidoriCore"],
             linkerSettings: [.linkedLibrary("sqlite3")]
         ),
-        // manga-ocr through Core ML, behind nothing but a CGImage in and a String out;
-        // present at runtime only when the app bundles the models (see `make models`).
-        .target(
-            name: "YomidoriMangaOCR",
-            dependencies: ["YomidoriCore"]
-        ),
         // iCloud sync through CloudKit: the one target that talks to anything off the device,
         // and only to the reader's own iCloud.
         .target(
@@ -59,8 +53,7 @@ let package = Package(
         .target(
             name: "YomidoriKit",
             dependencies: [
-                "YomidoriCore", "YomidoriMeCab", "YomidoriDictionary", "YomidoriMangaOCR",
-                "YomidoriSync",
+                "YomidoriCore", "YomidoriMeCab", "YomidoriDictionary", "YomidoriSync",
             ],
             resources: [.process("Resources/Localizable.xcstrings")]
         ),

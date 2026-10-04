@@ -33,7 +33,3 @@ sync_tags
     || die "local ${base} differs from origin/${base} — pull/push to sync first."
 echo "✓ preflight: on a clean ${base} matching origin."
 
-# The manga-ocr models are optional and built locally (make models); a cut without
-# them ships without the third reader, which is allowed but should not be a surprise.
-[ -d Sources/Shared/Models/MangaOCREncoder.mlpackage ] \
-    || echo "note: manga-ocr models not built (make models); this build will not bundle the third reader." >&2

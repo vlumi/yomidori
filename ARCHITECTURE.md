@@ -21,13 +21,13 @@ before it is built. The one place with a reading over every word is the
 *Recognized text* strip in the drawer, folded until the reader opens it, which
 is asking.
 
-## Six targets, one seam
+## Five targets, one seam
 
-| | `YomidoriCore` | `YomidoriDictionary` | `YomidoriMeCab` | `YomidoriMangaOCR` | `YomidoriSync` | `YomidoriKit` |
-| --- | --- | --- | --- | --- | --- | --- |
-| holds | kana and reading helpers, the token model and the OS's tokenizer, the dictionary entry model, the cards and the scheduler | `JMdict`, the reader over the bundled SQLite database, behind Core's `WordDictionary` | MeCab with IPADic behind Core's `Tokenizer`, the one third-party dependency, kept apart so it can be cut | manga-ocr through Core ML, a `CGImage` in and a `String` out, present only when the models are bundled | `CloudSync`, iCloud sync through CloudKit's sync engine, the one code that talks off the device | SwiftUI screens, the camera, Vision text recognition, the palette |
-| imports | Foundation | YomidoriCore, the system's SQLite3 | YomidoriCore, Mecab-Swift | YomidoriCore, CoreML | YomidoriCore, CloudKit | SwiftUI, UIKit and Vision (iOS only), AppKit (macOS only), YomidoriCore, YomidoriDictionary, YomidoriMeCab, YomidoriMangaOCR, YomidoriSync |
-| tested | headless, coverage-gated | headless, on a fixture built by the same script | headless, on the same fixture | coverage-ignored (the models are not in the tests) | coverage-ignored (CloudKit needs an account; the naming, payload and merges it uses are Core's, tested) | coverage-ignored |
+| | `YomidoriCore` | `YomidoriDictionary` | `YomidoriMeCab` | `YomidoriSync` | `YomidoriKit` |
+| --- | --- | --- | --- | --- | --- |
+| holds | kana and reading helpers, the token model and the OS's tokenizer, the dictionary entry model, the cards and the scheduler | `JMdict`, the reader over the bundled SQLite database, behind Core's `WordDictionary` | MeCab with IPADic behind Core's `Tokenizer`, the one third-party dependency, kept apart so it can be cut | `CloudSync`, iCloud sync through CloudKit's sync engine, the one code that talks off the device | SwiftUI screens, the camera, Vision text recognition, the palette |
+| imports | Foundation | YomidoriCore, the system's SQLite3 | YomidoriCore, Mecab-Swift | YomidoriCore, CloudKit | SwiftUI, UIKit and Vision (iOS only), AppKit (macOS only), YomidoriCore, YomidoriDictionary, YomidoriMeCab, YomidoriSync |
+| tested | headless, coverage-gated | headless, on a fixture built by the same script | headless, on the same fixture | coverage-ignored (CloudKit needs an account; the naming, payload and merges it uses are Core's, tested) | coverage-ignored |
 
 The rule: **testable logic goes in YomidoriCore.** The Kit is one for the
 phone and the Mac: `swift test` runs it on the Mac, and the Mac app
@@ -132,14 +132,7 @@ has what remains.
   characters in size and off its axis, so っ and ゃ stay); `LiveText` wraps
   VisionKit's `ImageAnalyzer`, the Live Text engine,
   which yields a transcript and, on iOS, its own text selection over the image.
-  A third mode reads *up close*: a tap cuts the line under it, as the page pass
-  found it, out of the still at full resolution with the paper around it, and
-  every engine reads only that; where no line was found a square around the tap
-  stands in.
-  Recognizers downscale a whole page before reading, so a dense kanji reaches
-  them at a fraction of the pixels the sensor caught; the crop hands them the
-  pixels back without the reader zooming, and a whole line with clean margins
-  reads better than a square that halves the glyphs at its edges. The readout
+  The readout
   sits in a drawer under the still whose height the reader drags and the app
   remembers, most of the screen for the page while looking for a word, more
   drawer once it is found, its content scrolling and its buttons fixed. In every
@@ -563,15 +556,6 @@ has what remains.
   no accessory, so `SearchFieldButton` finds the `UISearchTextField` once it has
   the keyboard and sets the button as its right view, and nothing happens if it
   is not found.
-- **`MangaOCR`** (its own target): manga-ocr, a vision transformer reading one
-  line or bubble of Japanese at a time, vertical included, converted to Core ML
-  by `Scripts/data/build-mangaocr.py`: the encoder as it is, the decoder
-  re-expressed as one cache-free step with an explicit mask, the vocabulary
-  beside them; ~210 MB at half precision, Apache 2.0, optional at build and absent from
-  the engine list when not bundled. In Close-up it reads a window of about eight
-  characters along the line around the tap (`TextGeometry.window`), which is the
-  bubble's worth it was trained on; a whole long line squeezed into its 224
-  pixels fails, so it is never given one. Nothing leaves the device.
 - **`DictionaryButton`** (Kit): beside a tapped word, on a card and on the
   review's back, a button that opens the system's own dictionaries on the
   headword through the reference library view, スーパー大辞林 among them on a
@@ -621,9 +605,12 @@ its text.
 Built on the boxes: the app's own tap in Vision mode and the furigana taken
 out of its lines (see *What exists*). Both ways of selecting on the page are
 the app's now, so whether Live Text's selection stays the default is a field
-question. manga-ocr over a whole page remains possible as a second reading,
-the boxes cutting the page into the lines it reads, but no longer stands
-between the app and positions.
+question. A second reader over a whole page would be possible, the boxes
+cutting the page into the lines it reads, but none stands between the app and
+positions. (manga-ocr was tried as a third, up-close reader — a window of eight
+characters around the tap through a Core ML conversion of the model — and
+taken out on 2026-10-04: 210 MB of a 343 MB app for a mode nobody chose; the
+conversion script and the target are in the history before that date.)
 
 The camera is one source of a still, not the only one. A screenshot of an
 e-book app or a web page enters the same screen through the photo picker or
