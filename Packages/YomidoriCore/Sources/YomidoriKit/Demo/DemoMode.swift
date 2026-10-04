@@ -87,6 +87,12 @@ public enum DemoMode {
         isRequested && CommandLine.arguments.contains("-yomidori-recognize")
     }
 
+    /// `-yomidori-nopage`: the Read tab at the camera, no page seeded, for a look at the ways
+    /// in.
+    static var noPage: Bool {
+        isRequested && CommandLine.arguments.contains("-yomidori-nopage")
+    }
+
     /// `-yomidori-drawer 0.8`: the drawer under the page at that share of the screen, the
     /// nearest of its stops, for a screenshot that wants the words to have room.
     static var drawer: Double? {
