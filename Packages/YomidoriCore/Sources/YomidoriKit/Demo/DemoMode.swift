@@ -64,8 +64,19 @@ public enum DemoMode {
         defaults.removePersistentDomain(forName: suite)
         // Live Text does not run on the simulator, so the strip is the way to a word: open.
         defaults.set(true, forKey: SettingsKey.transcriptExpanded)
+        if let drawer { defaults.set(drawer, forKey: SettingsKey.readoutFraction) }
         return defaults
     }()
+
+    /// `-yomidori-drawer 0.8`: the drawer under the page at that share of the screen, the
+    /// nearest of its stops, for a screenshot that wants the words to have room.
+    static var drawer: Double? {
+        guard isRequested, let index = CommandLine.arguments.firstIndex(of: "-yomidori-drawer"),
+            index + 1 < CommandLine.arguments.count,
+            let fraction = Double(CommandLine.arguments[index + 1])
+        else { return nil }
+        return DrawerDetents.nearest(fraction)
+    }
 
     /// The stores' folder, fresh and seeded; created once per launch.
     static let directory: URL = {

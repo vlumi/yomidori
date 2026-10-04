@@ -127,8 +127,29 @@ run-mac: Yomidori.xcodeproj  ## Build the Mac app signed for this Mac and open i
 	@Scripts/run-mac.sh
 
 .PHONY: demo-mac
-demo-mac: Yomidori.xcodeproj  ## Open the seeded demo on this Mac (TAB=, SCREEN=, SEARCH=)
+demo-mac: Yomidori.xcodeproj  ## Open the seeded demo on this Mac (TAB=, SCREEN=, SEARCH=, PICK=, DEMO_LANG=)
 	@DEMO=1 Scripts/run-mac.sh
+
+##@ App Store (Scripts/asc: listing.json and shots.json are the sources; asc-* are dry runs, -apply writes)
+.PHONY: shots
+shots: Yomidori.xcodeproj  ## Capture the store screenshots from the demo: PLATFORM=iphone|ipad|mac [LANGS=en,ja] [OUT=shots] [PAUSE=1] [ONLY=a,b]
+	@Scripts/shoot.sh
+
+.PHONY: asc-listing
+asc-listing:  ## Show what the listing text in listing.json would change in ASC
+	@Scripts/asc/run.sh listing
+
+.PHONY: asc-listing-apply
+asc-listing-apply:  ## Write the listing text to ASC
+	@Scripts/asc/run.sh listing --apply
+
+.PHONY: asc-screenshots
+asc-screenshots:  ## Show the screenshot upload plan from shots/
+	@Scripts/asc/run.sh screens
+
+.PHONY: asc-screenshots-apply
+asc-screenshots-apply:  ## Replace the ASC screenshot sets with shots/
+	@Scripts/asc/run.sh screens --apply
 
 # Logic tests run straight from the Swift package — no Xcode project involved.
 .PHONY: test

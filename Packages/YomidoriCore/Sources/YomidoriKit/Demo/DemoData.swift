@@ -122,7 +122,10 @@ enum DemoData {
                 text = pick
                 capture.selectedRange = 0..<pick.count
             }
-            DemoMode.defaults?.set(DrawerDetents.all[1], forKey: SettingsKey.readoutFraction)
+            // The drawer at half, so the picked word has room — unless asked for a height.
+            if DemoMode.drawer == nil {
+                DemoMode.defaults?.set(DrawerDetents.all[1], forKey: SettingsKey.readoutFraction)
+            }
         }
         guard let image = DemoRenderer.verticalPage(text) else { return }
         let still = Still(image: image)

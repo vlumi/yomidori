@@ -12,6 +12,10 @@
 #   SELECT=1                           the card list opened selecting, a few cards picked
 #   PICK=<text>                        Read opened with that text selected: on the demo's page
 #                                      where it stands there, else as a page of its own
+#   DRAWER=0.2|0.5|0.8                 the drawer under the page at that share of the screen
+#   DEMO_LANG=en|ja                    the app's language (the simulator's otherwise)
+#   APPEARANCE=light|dark              the simulator's look (light unless asked)
+#   YOMIDORI_UDID_FILE=<path>          the simulator's udid written there, for shoot.sh
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -19,7 +23,7 @@ PLATFORM="${PLATFORM:-iphone}"
 BUNDLE="fi.misaki.yomidori"
 
 case "$PLATFORM" in
-    iphone) pat="${DEVICE:-iPhone 1[6-9] Pro}" ;;
+    iphone) pat="${DEVICE:-iPhone 1[6-9] Pro Max}" ;;
     ipad) pat="${DEVICE:-iPad Pro 13-inch}" ;;
     *) echo "PLATFORM must be iphone | ipad" >&2; exit 2 ;;
 esac
@@ -40,9 +44,13 @@ app="$(find .build-xcode/Build/Products/Debug-iphonesimulator \
     -maxdepth 1 -name '*.app' -print -quit 2>/dev/null)"
 [ -n "$app" ] && [ -d "$app" ] || { echo "Build the app first (make build-ios)." >&2; exit 1; }
 
+# The light look, the store's default, unless asked otherwise.
+xcrun simctl ui "$udid" appearance "${APPEARANCE:-light}" >/dev/null 2>&1 || true
 xcrun simctl terminate "$udid" "$BUNDLE" >/dev/null 2>&1 || true
 xcrun simctl install "$udid" "$app"
 xcrun simctl launch "$udid" "$BUNDLE" -yomidori-demo ${TAB:+-yomidori-tab "$TAB"} ${SCREEN:+-yomidori-screen "$SCREEN"} \
   ${SEARCH:+-yomidori-search "$SEARCH"} ${SPREAD:+-yomidori-spread} \
-  ${SELECT:+-yomidori-select} ${PICK:+-yomidori-pick "$PICK"} >/dev/null
+  ${SELECT:+-yomidori-select} ${PICK:+-yomidori-pick "$PICK"} ${DRAWER:+-yomidori-drawer "$DRAWER"} \
+  ${DEMO_LANG:+-AppleLanguages "($DEMO_LANG)"} >/dev/null
+[ -n "${YOMIDORI_UDID_FILE:-}" ] && echo "$udid" > "$YOMIDORI_UDID_FILE"
 echo "Demo launched on $udid — seeded cards, collections and a page; nothing persists."

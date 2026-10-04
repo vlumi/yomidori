@@ -4,7 +4,10 @@
 #   TAB=home|read|study|cards|search   open on that tab (demo only)
 #   SCREEN=review|lesson|progress|settings|about|collections   pushed on that tab
 #   SEARCH=<text>                      the search field filled
+#   PICK=<text>                        Read opened with that text selected (demo only)
+#   DEMO_LANG=en|ja                    the app's language (the system's otherwise)
 #   SHOTS=<seconds>                    a picture of the window saved to the app's container that often
+#   BUILD=0                            open the last build without building again
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -16,12 +19,14 @@ build() {
         -destination "generic/platform=macOS" -derivedDataPath "$derived" \
         -allowProvisioningUpdates build
 }
-echo "Building ${scheme}..."
-if command -v xcbeautify >/dev/null; then
-    set -o pipefail
-    build | xcbeautify
-else
-    build
+if [ "${BUILD:-1}" != 0 ]; then
+    echo "Building ${scheme}..."
+    if command -v xcbeautify >/dev/null; then
+        set -o pipefail
+        build | xcbeautify
+    else
+        build
+    fi
 fi
 
 app="$derived/Build/Products/Debug/Yomidori.app"
@@ -36,7 +41,9 @@ if [ -n "${DEMO:-}" ]; then
     [ -n "${TAB:-}" ] && args+=(-yomidori-tab "$TAB")
     [ -n "${SCREEN:-}" ] && args+=(-yomidori-screen "$SCREEN")
     [ -n "${SEARCH:-}" ] && args+=(-yomidori-search "$SEARCH")
+    [ -n "${PICK:-}" ] && args+=(-yomidori-pick "$PICK")
 fi
+[ -n "${DEMO_LANG:-}" ] && args+=(-AppleLanguages "($DEMO_LANG)")
 # Quit the running one properly, so it leaves no half-written window state behind: a
 # window restored from that never appears.
 osascript -e 'tell application id "fi.misaki.yomidori" to quit' >/dev/null 2>&1 || true

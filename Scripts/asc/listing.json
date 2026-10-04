@@ -1,0 +1,36 @@
+{
+  "_comment": "Canonical App Store listing text — the single source for the listing sync (Scripts/asc/listing.py). Edit HERE, never in the ASC UI. `appInfo` fields (name/subtitle/privacyPolicyUrl) are app-level, shared across platforms; `version` fields are per-platform but identical text here (the sync writes both iOS + macOS). Limits: subtitle 30, keywords 100 (comma-separated, no spaces), promotionalText 170, description/whatsNew 4000. Add `whatsNew` per locale from the first update on; a first release has none.",
+  "bundleId": "fi.misaki.yomidori",
+  "expectedLocales": [
+    "en-US",
+    "ja"
+  ],
+  "appInfo": {
+    "en-US": {
+      "name": "Yomidori",
+      "subtitle": "Tap a word, get its reading",
+      "privacyPolicyUrl": "https://yomidori.app/privacy/"
+    },
+    "ja": {
+      "name": "ヨミドリ",
+      "subtitle": "読めない言葉をタップ、読みと音調",
+      "privacyPolicyUrl": "https://yomidori.app/privacy/"
+    }
+  },
+  "version": {
+    "en-US": {
+      "description": "Yomidori is a companion for whatever Japanese you're reading — a paperback, a manga, a screen, a page you pasted. Tap the word you can't read and get its reading and its pitch, right there, without leaving the page. The sentence you were reading becomes a card, and the cards are what you study.\n\nHELP ONLY WHERE ASKED\nNo furigana over the whole page, no translation of anything you didn't tap. Frame the line and read the page; tap a word in a vertical column or a horizontal line and the whole word lights up with its reading in kana and its pitch accent, drawn the way a dictionary draws it. The meaning is one more tap away, never shown before you ask. A joined word lists the words it is made of; a misread character is fixed on the spot; the sentence can be read aloud.\n\nTHE BOOK IS THE CORPUS\nKeep a word and the sentence you met it in, as it stood on the page, becomes its card. Meet the same word in another book and the card gains a second sentence. Collections keep the cards by book, with the cover you scanned, and can be shared as a file.\n\nLESSONS AND REVIEWS THAT ASK YOU TO TYPE\nA lesson starts a card when you have time for it, with a short drill after. Reviews ask three things: the reading and the meaning by typing, and which pitch by a pick. A question you miss comes back until you get it right, and only the first answer counts. Spaced by FSRS, with a switch for how often you'd like words back.\n\nBIRDS, NOT STREAKS\nEvery card climbs from egg to hatchling, chick, fledgling, flying and migrating as you remember it. The Study tab shows the week ahead by quarter day in the colours of the birds coming up, so a wall of reviews is seen before it arrives. Nothing nags; a count on the app's icon only if you ask for it.\n\nKANJI, PITCH, DICTIONARY\nKanji come with their stroke order, their readings and their parts, and a kanji you can't type can be found by its parts. Pitch accent is Tokyo's, from Kanjium, and estimated for compounds when the dictionary is silent. The dictionary is JMdict, searched by kana, kanji or English, with a history of what you looked up.\n\nEVERYTHING ON THE DEVICE\nText recognition, tokenizing, readings, pitch, cards: all local, offline, from dictionaries bundled with the app. No account, no server, no model in the cloud. Your cards sync between your devices through your own iCloud, unless you turn that off.\n\nIPHONE, IPAD AND MAC\nOne app under one purchase, the same cards everywhere. The phone reads the book in your other hand or a screenshot of anything on it; the Mac reads what is pasted or dropped on it and reviews on a keyboard. English and Japanese interfaces.\n\nFree. Open source. No ads, no accounts, no tracking. Just the reading.",
+      "keywords": "japanese,reading,kanji,furigana,pitch,accent,dictionary,jmdict,ocr,camera,srs,flashcards,novel,manga",
+      "promotionalText": "Point at a word, get its reading and its pitch. The sentence you were reading becomes a card. Everything on your device; nothing is sent anywhere.",
+      "supportUrl": "https://yomidori.app/support/",
+      "marketingUrl": "https://yomidori.app/"
+    },
+    "ja": {
+      "description": "ヨミドリは、読んでいる日本語のそばにいる相棒です。文庫本でも、マンガでも、画面でも、貼りつけた文章でも。読めない言葉をタップすると、その場で読みとアクセントが出ます。ページを離れることはありません。読んでいた文がそのままカードになり、そのカードで覚えます。\n\n頼まれたところだけ\nページ全体にふりがなを振ることも、タップしていない言葉を訳すこともしません。行を写してページを読み取り、縦書きでも横書きでも言葉をタップすると、言葉全体が光って、かなの読みとアクセントが、辞書と同じ描き方で出ます。意味はもう一回タップしたときだけ。複合語はその中の言葉ごとに、読み違えた文字はその場で直せて、文は読み上げられます。\n\n本がそのまま例文集\n言葉を取っておくと、ページにあったままの文がカードになります。別の本で同じ言葉に出会えば、二つ目の文が加わります。コレクションは本ごとにカードをまとめ、写した表紙つきで、ファイルとして共有できます。\n\n打って答える、レッスンと復習\n時間のあるときにレッスンでカードを始め、短い練習が続きます。復習で聞かれるのは三つ：読みと意味は打って、アクセントは選んで。間違えた問題は正解するまで戻ってきて、数えられるのは最初の答えだけ。間隔は FSRS で、言葉の戻る頻度は設定で選べます。\n\n連続記録ではなく、鳥\nカードは覚えているほど、卵からヒナ、若鳥、巣立ち、飛ぶ鳥、渡り鳥へと育ちます。学習タブには一週間先までの復習が一日四つの時間帯ごとに、出てくる鳥の色で示され、復習の山が来る前に見えます。せかすものはなく、アイコンの数字も頼んだときだけ。\n\n漢字、アクセント、辞書\n漢字には書き順、読み、部品がついて、打てない漢字は部品から探せます。アクセントは Kanjium の東京式、辞書にないときは複合語として推定。辞書は JMdict で、かな・漢字・英語で引けて、引いた言葉の履歴が残ります。\n\nすべて端末の中で\n文字認識、分かち書き、読み、アクセント、カード：すべて端末の中で、オフラインで、同梱の辞書から。アカウントも、サーバーも、クラウドのモデルもありません。カードは自分の iCloud を通して端末どうしで同期し、切ることもできます。\n\niPhone、iPad、Mac\n一つのアプリ、一度の購入で、どの端末でも同じカード。電話は手に持った本や画面のスクリーンショットを読み、Mac は貼りつけたり落としたりした文章を読んで、キーボードで復習します。英語と日本語の表示。\n\n無料。オープンソース。広告なし、アカウントなし、追跡なし。あるのは読みだけ。",
+      "keywords": "日本語,読書,漢字,ふりがな,アクセント,辞書,文字認識,カメラ,単語帳,復習,小説,マンガ,読み,語彙",
+      "promotionalText": "読めない言葉をタップすると、読みとアクセントがその場で。読んでいた文がカードになります。すべて端末の中で、どこにも送られません。",
+      "supportUrl": "https://yomidori.app/support/",
+      "marketingUrl": "https://yomidori.app/"
+    }
+  }
+}

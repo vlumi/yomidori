@@ -1,0 +1,127 @@
+{
+  "_comment": "The App Store screenshots, one entry each: what it shows, which platforms carry it, and the demo arguments that stage it (TAB/SCREEN/SEARCH/PICK/SELECT/SPREAD, as Scripts/demo.sh and run-mac.sh take them). `store` is the carousel order; `shoot.sh` walks `capture` order and stages each shot by relaunching the demo with its arguments, so nothing is staged by hand. A `stage` note means something is still done by hand before the capture (shoot.sh pauses for it). See SCREENSHOTS.md.",
+  "capture": [
+    "read",
+    "phrase",
+    "dictionary",
+    "review",
+    "lesson",
+    "study",
+    "cards",
+    "progress"
+  ],
+  "store": [
+    "read",
+    "phrase",
+    "review",
+    "dictionary",
+    "cards",
+    "study",
+    "lesson",
+    "progress"
+  ],
+  "shots": {
+    "read": {
+      "title": "A word tapped on the page",
+      "about": "The hero: the page frozen on the screen, 吾輩 picked, its reading and pitch in the drawer. The whole idea in one frame.",
+      "platforms": [
+        "iphone",
+        "ipad",
+        "mac"
+      ],
+      "demo": {
+        "TAB": "read",
+        "PICK": "吾輩",
+        "DRAWER": "0.5"
+      }
+    },
+    "phrase": {
+      "title": "A phrase, every word read",
+      "about": "A longer selection: the phrase looked up whole, then each word with its reading, pitch and kept mark — shows the selection is a stretch, not one word.",
+      "platforms": [
+        "iphone",
+        "ipad",
+        "mac"
+      ],
+      "demo": {
+        "TAB": "read",
+        "PICK": "吾輩は猫である",
+        "DRAWER": "0.8"
+      }
+    },
+    "dictionary": {
+      "title": "The dictionary, with pitch",
+      "about": "Search results for みる: headwords, readings with the pitch drawn, the estimated ones marked. On the Mac the three columns.",
+      "platforms": [
+        "iphone",
+        "ipad",
+        "mac"
+      ],
+      "demo": {
+        "TAB": "search",
+        "SEARCH": "みる"
+      }
+    },
+    "review": {
+      "title": "A review, typed",
+      "about": "The sentence as it stood on the page, the word marked, the reading asked for by typing.",
+      "platforms": [
+        "iphone",
+        "ipad",
+        "mac"
+      ],
+      "demo": {
+        "TAB": "study",
+        "SCREEN": "review"
+      }
+    },
+    "lesson": {
+      "title": "A lesson",
+      "about": "A card met for the first time: the word, its sentence, its meaning, the kanji — start it or leave it for later.",
+      "platforms": [
+        "iphone",
+        "ipad"
+      ],
+      "demo": {
+        "TAB": "study",
+        "SCREEN": "lesson"
+      }
+    },
+    "study": {
+      "title": "The week ahead",
+      "about": "The Study tab: what is due, the week ahead by quarter day in the colours of the birds coming up, the ranks.",
+      "platforms": [
+        "iphone",
+        "ipad",
+        "mac"
+      ],
+      "demo": {
+        "TAB": "study"
+      }
+    },
+    "cards": {
+      "title": "The cards, by book",
+      "about": "The card list by stack with the collections above; on the Mac the split with a card open.",
+      "platforms": [
+        "iphone",
+        "ipad",
+        "mac"
+      ],
+      "demo": {
+        "TAB": "cards"
+      }
+    },
+    "progress": {
+      "title": "Progress",
+      "about": "The graphs: answers per day, the ranks over time.",
+      "platforms": [
+        "iphone",
+        "ipad"
+      ],
+      "demo": {
+        "TAB": "study",
+        "SCREEN": "progress"
+      }
+    }
+  }
+}

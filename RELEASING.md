@@ -168,10 +168,23 @@ no progress file to go stale. Re-enter the chain at the right point:
 
 ## App Store listing & screenshots
 
-Not wired yet. The siblings keep the listing in the repo (`Scripts/asc/`,
-`make shots`, `make asc-*`), and the same tooling is copied here when there is a
-listing to sync — a roadmap item under *Store*. Until then the ASC record's text
-is edited in App Store Connect.
+The listing lives in the repo and is synced, never typed into App Store
+Connect: [`Scripts/asc/listing.json`](Scripts/asc/listing.json) is the text
+(name, subtitle, description, keywords, promotional text, URLs; en-US and ja),
+[`Scripts/asc/shots.json`](Scripts/asc/shots.json) the screenshots — each one
+a set of demo arguments, so `make shots` stages and captures every shot by
+itself, per platform and language, and `make asc-screenshots-apply` replaces
+the sets in ASC. [`Scripts/asc/README.md`](Scripts/asc/README.md) has the
+commands and the few things still set by hand on the record (categories, age
+rating, App Privacy, pricing);
+[`Scripts/asc/SCREENSHOTS.md`](Scripts/asc/SCREENSHOTS.md) the shot plan,
+sizes and the capture.
+
+```sh
+make asc-listing && make asc-listing-apply        # the text, both platforms
+make shots PLATFORM=iphone                        # then ipad, mac
+make asc-screenshots && make asc-screenshots-apply
+```
 
 ## One-time setup
 
