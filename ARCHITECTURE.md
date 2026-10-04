@@ -135,7 +135,9 @@ has what remains.
   The readout
   sits in a drawer under the still whose height the reader drags and the app
   remembers, most of the screen for the page while looking for a word, more
-  drawer once it is found, its content scrolling and its buttons fixed. In every
+  drawer once it is found, its content scrolling and its buttons fixed; in a
+  regular width lying down, an iPad on its side, the same content stands in a
+  440-point column beside the page instead, as on the Mac, with no drawer. In every
   mode the frozen still pinches to zoom and drags to pan, a double tap bringing
   it back, and pans half the view's width beyond its own edge on every side
   (`Zoom.margin`), so a word at the page's edge comes out from under the

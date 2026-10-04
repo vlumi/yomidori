@@ -23,6 +23,7 @@ reproduces them.
 
 import argparse
 import gzip
+import io
 import os
 import re
 import sqlite3
@@ -30,14 +31,20 @@ import sys
 import urllib.request
 import xml.etree.ElementTree as ET
 
-DEFAULT_SOURCE = "http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz"
+# Over https, from www.edrdg.org (ftp.edrdg.org has no TLS): these files go into the app,
+# so what the build fetches must be what edrdg serves. No checksums: edrdg regenerates
+# JMdict and KANJIDIC2 nightly, so a pinned hash would break the build the next day.
+DEFAULT_SOURCE = "https://www.edrdg.org/pub/Nihongo/JMdict_e.gz"
 DEFAULT_ACCENTS = "https://raw.githubusercontent.com/mifunetoshiro/kanjium/master/data/source_files/raw/accents.txt"
-DEFAULT_KANJIDIC = "http://www.edrdg.org/kanjidic/kanjidic2.xml.gz"
-DEFAULT_KRADFILE = "http://ftp.edrdg.org/pub/Nihongo/kradfile.gz"
+DEFAULT_KANJIDIC = "https://www.edrdg.org/kanjidic/kanjidic2.xml.gz"
+DEFAULT_KRADFILE = "https://www.edrdg.org/pub/Nihongo/kradfile.gz"
 # Pinned to a release: the "latest" lookup needs GitHub's API, whose unauthenticated
 # rate limit CI runners share and exhaust.
 DEFAULT_KANJIVG = "https://github.com/KanjiVG/kanjivg/releases/download/r20250816/kanjivg-20250816-main.zip"
 CACHE_DIR = ".build-data"
+# The most any one download may expand to: JMdict_e is ~100 MB unpacked, KanjiVG's zip
+# ~60 MB; a bomb in either's place stops here instead of filling the build machine.
+LARGEST_UNPACKED = 512 * 1024 * 1024
 DEFAULT_OUTPUT = "Sources/Shared/Dictionaries/jmdict.sqlite"
 PRIORITY = ("news1", "ichi1", "spec1", "spec2", "gai1")  # the tags that mark a common word
 
@@ -64,8 +71,11 @@ CREATE INDEX kanji_stroke_literal ON kanji_stroke (literal);
 
 
 def fetch(source):
-    """The source as bytes, downloading a URL once into the cache and reusing it."""
+    """The source as bytes, downloading a URL once into the cache and reusing it; a .gz
+    unpacked, to no more than LARGEST_UNPACKED."""
     if re.match(r"^https?://", source):
+        if not source.startswith("https://"):
+            sys.exit(f"refusing to download over plain http: {source}")
         cached = os.path.join(CACHE_DIR, os.path.basename(source))
         if not os.path.exists(cached):
             os.makedirs(CACHE_DIR, exist_ok=True)
@@ -74,7 +84,12 @@ def fetch(source):
         source = cached
     with open(source, "rb") as f:
         data = f.read()
-    return gzip.decompress(data) if source.endswith(".gz") else data
+    if not source.endswith(".gz"):
+        return data
+    unpacked = gzip.GzipFile(fileobj=io.BytesIO(data)).read(LARGEST_UNPACKED + 1)
+    if len(unpacked) > LARGEST_UNPACKED:
+        sys.exit(f"{source} unpacks to more than {LARGEST_UNPACKED} bytes; refusing it")
+    return unpacked
 
 
 def accent_rows(text):
@@ -138,6 +153,8 @@ def kanjivg_files(source):
                     yield name[:5], f.read()
         return
     with zipfile.ZipFile(io.BytesIO(fetch(source))) as archive:
+        if sum(entry.file_size for entry in archive.infolist()) > LARGEST_UNPACKED:
+            sys.exit(f"{source} unpacks to more than {LARGEST_UNPACKED} bytes; refusing it")
         for name in sorted(archive.namelist()):
             match = re.search(r"(?:^|/)kanji/([0-9a-f]{5})\.svg$", name)
             if match:
