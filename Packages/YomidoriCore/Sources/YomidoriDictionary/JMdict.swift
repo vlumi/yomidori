@@ -24,6 +24,10 @@ public final class JMdict: WordDictionary {
     private var statements: [String: OpaquePointer] = [:]
     private var entryCache = BoundedCache<Int, DictionaryEntry>(limit: 8192)
     private var matchCache = BoundedCache<String, [Int]>(limit: 8192)
+    /// The pitch of a word is asked for by every row and readout that shows it, on every
+    /// render; kept once read, by headword and reading.
+    private var accentCache = BoundedCache<String, [PitchAccent]>(limit: 8192)
+    private var estimateCache = BoundedCache<String, [PitchPhrase]>(limit: 8192)
 
     public init(url: URL) throws {
         let flags = SQLITE_OPEN_READONLY | SQLITE_OPEN_NOMUTEX
@@ -95,25 +99,35 @@ public final class JMdict: WordDictionary {
     }
 
     public func pitchAccents(for headword: String, reading: String) -> [PitchAccent] {
-        queue.sync {
+        let kana = Kana.hiragana(reading)
+        let key = "\(headword)\u{0}\(kana)"
+        return queue.sync {
+            if let cached = accentCache[key] { return cached }
             let downsteps =
                 rows(
                     "SELECT downsteps FROM accent WHERE headword = ?1 AND reading = ?2",
-                    binds: [headword, Kana.hiragana(reading)]
+                    binds: [headword, kana]
                 ).first?[0] ?? ""
-            return downsteps.split(separator: ",").compactMap { Int($0) }
+            let accents = downsteps.split(separator: ",").compactMap { Int($0) }
                 .map(PitchAccent.init(downstep:))
+            accentCache[key] = accents
+            return accents
         }
     }
 
     /// From the table `Scripts/data/estimate-pitch.py` adds; none in a database without it.
     public func estimatedPitch(for headword: String, reading: String) -> [PitchPhrase] {
-        queue.sync {
-            PitchPhrase.parse(
+        let kana = Kana.hiragana(reading)
+        let key = "\(headword)\u{0}\(kana)"
+        return queue.sync {
+            if let cached = estimateCache[key] { return cached }
+            let phrases = PitchPhrase.parse(
                 rows(
                     "SELECT phrases FROM accent_estimate WHERE headword = ?1 AND reading = ?2",
-                    binds: [headword, Kana.hiragana(reading)]
+                    binds: [headword, kana]
                 ).first?[0] ?? "")
+            estimateCache[key] = phrases
+            return phrases
         }
     }
 

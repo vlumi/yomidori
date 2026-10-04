@@ -341,7 +341,11 @@ has what remains.
   are not sent back), merged by Core's rules only where this device changed
   the same record and had not sent it yet; a save that finds a newer version
   on the server merges it in and goes again on top of it. Each record's server
-  system fields are kept so a save updates the version it knows. Deletions are
+  system fields are kept so a save updates the version it knows — kept only
+  once the store has written the record, so one that could not be written is
+  not held as the server's version: its next save goes up without the fields,
+  and the conflict that answers brings the server's copy down to merge; the
+  failed write is reported as the sync's status. Deletions are
   CloudKit's own, not tombstones; a zone deleted from iCloud, or a new
   account, is filled again from this device. Pushes wake the engine, and the
   app fetches when it comes to the front. On unless turned off in Settings,

@@ -180,8 +180,12 @@ final class Camera: ObservableObject {
         session.beginConfiguration()
         defer { session.commitConfiguration() }
         session.sessionPreset = .photo
+        // The sensor's own planar format, a byte and a half a pixel: the frames stream the
+        // whole time the camera is up and only one is ever kept, so they are not converted
+        // to four-byte BGRA at frame rate; the one taken is converted on its own.
         output.videoSettings = [
-            kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA
+            kCVPixelBufferPixelFormatTypeKey as String:
+                kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
         ]
         output.alwaysDiscardsLateVideoFrames = true
         // With the photo preset the output delivers preview-sized frames by default,

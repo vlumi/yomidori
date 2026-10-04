@@ -8,12 +8,14 @@ struct CollectionsView: View {
     @State private var importing = false
     @State private var imported: CollectionImport?
     @State private var failed = false
+    /// How many cards each collection has, counted when the lists load, not per row.
+    @State private var counts: [UUID: Int] = [:]
 
     var body: some View {
         List {
             ForEach(collections) { collection in
                 NavigationLink(value: collection) {
-                    CollectionRow(collection: collection, count: count(in: collection))
+                    CollectionRow(collection: collection, count: counts[collection.id] ?? 0)
                 }
             }
             .onDelete { offsets in
@@ -66,12 +68,13 @@ struct CollectionsView: View {
         .collectionImportAlerts(imported: $imported, failed: $failed)
     }
 
-    private func count(in collection: Collection) -> Int {
-        (Cards.store?.cards() ?? []).filter { $0.collectionIDs.contains(collection.id) }.count
-    }
-
     private func reload() {
         collections = Cards.collections?.collections() ?? []
+        var counted: [UUID: Int] = [:]
+        for card in Cards.store?.cards() ?? [] {
+            for id in card.collectionIDs { counted[id, default: 0] += 1 }
+        }
+        counts = counted
     }
 }
 
