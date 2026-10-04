@@ -3,9 +3,9 @@ import SwiftUI
 import VisionKit
 import YomidoriCore
 
-/// A book cover through the camera or from the photos: the picture becomes the collection's
-/// cover, and the words read off it are offered for the name and the note, the largest
-/// print first, so a title need not be typed.
+/// A book cover through the camera or from the photos — on the Mac, from the photos, a file
+/// or a drop: the picture becomes the collection's cover, and the words read off it are
+/// offered for the name and the note, the largest print first, so a title need not be typed.
 struct CoverScanView: View {
     @Binding var collection: Collection
     @Environment(\.dismiss) private var dismiss
@@ -16,6 +16,8 @@ struct CoverScanView: View {
     /// The cover being scaled and written, off the main thread; the button waits.
     @State private var keeping = false
     @State private var picked: PhotosPickerItem?
+    @State private var opening = false
+    @State private var dropping = false
 
     var body: some View {
         NavigationStack {
@@ -23,6 +25,9 @@ struct CoverScanView: View {
                 if let still {
                     read(still)
                 } else {
+                    #if os(macOS)
+                    chooser
+                    #else
                     ZStack {
                         Color.black.ignoresSafeArea()
                         CameraPreview(camera: camera, access: camera.access, freeze: takeStill)
@@ -37,6 +42,7 @@ struct CoverScanView: View {
                         .padding(16)
                         .background(Palette.page)
                     }
+                    #endif
                 }
             }
             .navigationTitle(Text("Cover", bundle: .module))
@@ -95,11 +101,19 @@ struct CoverScanView: View {
                 picked = nil
                 camera.start()
             } label: {
+                #if os(macOS)
+                Label {
+                    Text("Another picture", bundle: .module)
+                } icon: {
+                    Image(systemName: "photo.on.rectangle")
+                }
+                #else
                 Label {
                     Text("Retake", bundle: .module)
                 } icon: {
                     Image(systemName: "camera")
                 }
+                #endif
             }
         }
     }
@@ -135,6 +149,45 @@ struct CoverScanView: View {
             Text("Read off the cover", bundle: .module)
         }
     }
+
+    #if os(macOS)
+    /// No camera on the Mac: the photos, a file, or a picture dropped in.
+    private var chooser: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "photo.on.rectangle.angled")
+                .font(.system(size: 40))
+                .foregroundStyle(.secondary)
+            Text("Drop a picture of the cover here, or choose one.", bundle: .module)
+                .foregroundStyle(.secondary)
+            HStack(spacing: 12) {
+                PhotosPicker(selection: $picked, matching: .images) {
+                    Text("From Photos…", bundle: .module)
+                }
+                Button {
+                    opening = true
+                } label: {
+                    Text("From a file…", bundle: .module)
+                }
+            }
+            .buttonStyle(.bordered)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(24)
+        .overlay {
+            if dropping {
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(Palette.nightGreen, lineWidth: 3)
+                    .padding(6)
+            }
+        }
+        .onDrop(of: [.image, .fileURL], isTargeted: $dropping) { providers in
+            Still.take(from: providers) { still = $0 }
+        }
+        .fileImporter(isPresented: $opening, allowedContentTypes: [.image]) { result in
+            Still.take(picked: result) { still = $0 }
+        }
+    }
+    #endif
 
     private func takeStill() {
         Task { @MainActor in
