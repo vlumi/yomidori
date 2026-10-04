@@ -332,6 +332,10 @@ public struct CaptureView: View {
     @ViewBuilder private var transcript: some View {
         if currentTranscript != nil {
             TranscriptReadout(pageTexts: pageTexts, selection: selection)
+        } else if still == nil, page.pasted == nil {
+            // No page yet: nothing has failed.
+            Text("Take a page, and its words read out here.", bundle: .module)
+                .foregroundStyle(.secondary)
         } else if LiveText.isSupported {
             Text("Nothing was recognized.", bundle: .module)
                 .foregroundStyle(.secondary)
