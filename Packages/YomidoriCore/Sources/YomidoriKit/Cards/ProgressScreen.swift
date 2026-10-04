@@ -109,7 +109,8 @@ struct ProgressScreen: View {
                 StatRow(stats: [
                     Stat(value: "\(today?.total ?? 0)", label: Text("Reviews", bundle: .module)),
                     Stat(
-                        value: Percent.text(today?.accuracy), label: Text("Right", bundle: .module)),
+                        value: Percent.text(today?.accuracy),
+                        label: Text("Correct", bundle: .module)),
                     Stat(
                         value: "\((today?.seconds ?? 0) / 60)",
                         label: Text("Minutes", bundle: .module)),
@@ -122,7 +123,8 @@ struct ProgressScreen: View {
                 StatRow(stats: [
                     Stat(value: "\(total.answered)", label: Text("Reviews", bundle: .module)),
                     Stat(
-                        value: Percent.text(total.accuracy), label: Text("Right", bundle: .module)),
+                        value: Percent.text(total.accuracy), label: Text("Correct", bundle: .module)
+                    ),
                     Stat(value: Self.hours(total.seconds), label: Text("Hours", bundle: .module)),
                     Stat(value: "\(started)", label: Text("Words started", bundle: .module)),
                 ])
@@ -275,7 +277,7 @@ private struct AnswersChart: View {
         let picked = Period.under(selected, in: buckets, start: \.day)
         let shownAnswered = picked.map(answered) ?? buckets.map(answered).reduce(0, +)
         let shownRight = picked.map(right) ?? buckets.map(right).reduce(0, +)
-        let rightName = String(localized: "Right", bundle: .module)
+        let rightName = String(localized: "Correct", bundle: .module)
         let wrongName = String(localized: "Wrong", bundle: .module)
         VStack(alignment: .leading, spacing: 8) {
             ChartCaption {

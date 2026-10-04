@@ -16,7 +16,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "回答%lld · 正答%lld"
+            "value" : "回答%lld · 正解%lld"
           }
         }
       }
@@ -46,7 +46,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld のコレクション"
+            "value" : "コレクション%lld件"
           }
         }
       }
@@ -56,7 +56,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "削除 %lld"
+            "value" : "%lld枚を捨てました"
           }
         }
       }
@@ -96,7 +96,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld%"
+            "value" : "%lldパーセント"
           }
         }
       }
@@ -106,7 +106,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "後回し %lld"
+            "value" : "%lld枚を後回しにしました"
           }
         }
       }
@@ -166,7 +166,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld語を始めた"
+            "value" : "%lld語を始めました"
           }
         }
       }
@@ -266,7 +266,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "答えに加える"
+            "value" : "答えとして追加"
           }
         }
       }
@@ -286,7 +286,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "次のページを足す"
+            "value" : "次のページを追加"
           }
         }
       }
@@ -436,7 +436,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正しい読み取り"
+            "value" : "正しい本文"
           }
         }
       }
@@ -486,7 +486,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ぼやけた、またはずれた？「読む」をタップすると撮り直せます。"
+            "value" : "ぼやけたり、ずれたりしていたら、「読む」をタップして撮り直せます。"
           }
         }
       }
@@ -666,7 +666,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "認識した文章をコピー"
+            "value" : "読み取った本文をコピー"
           }
         }
       }
@@ -776,7 +776,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "引き出し"
+            "value" : "パネル"
           }
         }
       }
@@ -786,7 +786,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "もう一度なぞります"
+            "value" : "もう一度筆順を再生します"
           }
         }
       }
@@ -896,7 +896,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "部首から漢字を探す"
+            "value" : "部品から漢字を探す"
           }
         }
       }
@@ -1016,7 +1016,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "忘れた。待機に戻す"
+            "value" : "忘れたので待機に戻す"
           }
         }
       }
@@ -1316,7 +1316,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "保存済み。カードを開く"
+            "value" : "残しました。カードを開く"
           }
         }
       }
@@ -1396,7 +1396,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ライセンスと表示"
+            "value" : "ライセンスと表記"
           }
         }
       }
@@ -1489,7 +1489,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ほかで出会った言葉なら、その文を入力か貼り付けで。"
+            "value" : "ほかで出会った言葉なら、その文を入力するか貼り付けてください。"
           }
         }
       }
@@ -1499,7 +1499,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "中高型：数字の拍のあとで下がります。"
+            "value" : "中高型：数字で示した拍のあとで下がります。"
           }
         }
       }
@@ -1629,7 +1629,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カードはまだありません。ページの下で言葉を選んで、取っておきましょう。"
+            "value" : "カードはまだありません。ページの下で言葉を選んで、残しておきましょう。"
           }
         }
       }
@@ -1659,7 +1659,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "コレクションはまだありません。本ごとに、など。"
+            "value" : "コレクションはまだありません。本ごとに作るのがおすすめです。"
           }
         }
       }
@@ -1709,7 +1709,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "何も選ばなければすべてから。"
+            "value" : "何も選ばなければすべてのコレクションから出題します。"
           }
         }
       }
@@ -1809,7 +1809,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ヨミドリの通知がオフです。設定アプリの「通知」でバッジをオンにしてから、もう一度ここで。"
+            "value" : "ヨミドリの通知がオフです。設定アプリの「通知」でバッジをオンにしてから、もう一度ここでオンにしてください。"
           }
         }
       }
@@ -1899,7 +1899,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "順番"
+            "value" : "並び順"
           }
         }
       }
@@ -2049,7 +2049,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "一日を四つに分けた時間帯ごとの問題数を、段階の色で示します。今の時間帯には期限を過ぎたものも入ります。棒に触れると数が出ます。"
+            "value" : "一日を四つに分けた時間帯ごとの問題数を、ランクの色で示します。今の時間帯には期限を過ぎたものも入ります。棒に触れると数が出ます。"
           }
         }
       }
@@ -2479,7 +2479,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "棚"
+            "value" : "棚上げ"
           }
         }
       }
@@ -2549,7 +2549,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "次にアプリを開いたときから表示に使われます。"
+            "value" : "次にアプリを開いたときから反映されます。"
           }
         }
       }
@@ -2639,7 +2639,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "書き順"
+            "value" : "筆順"
           }
         }
       }
@@ -2679,7 +2679,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "左端からのスワイプで前の画面に戻ります（iOSの標準）。オフにすると戻るボタンだけが戻るので、言葉を選ぼうとしたスワイプでページを離れることがありません。"
+            "value" : "左端からのスワイプで前の画面に戻ります（iOSの標準）。オフにすると「戻る」ボタンでだけ戻るようになり、言葉を選ぼうとしたスワイプでページを離れることがなくなります。"
           }
         }
       }
@@ -2689,7 +2689,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "同期できませんでした: %@"
+            "value" : "同期できませんでした：%@"
           }
         }
       }
@@ -2799,7 +2799,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "もう一度「読む」を押すと次の撮影へ。"
+            "value" : "もう一度「読む」をタップすると次のページを撮れます。"
           }
         }
       }
@@ -2899,7 +2899,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "復習で正解できる割合の目安です。95 % にすると、それぞれの単語が 90 % のときの約二倍の頻度で出てきます。次の回答から、この端末で効きます。"
+            "value" : "復習で正解できる割合の目安です。95 % にすると、それぞれの言葉が 90 % のときの約二倍の頻度で出てきます。次の回答から、この端末に反映されます。"
           }
         }
       }
@@ -2939,7 +2939,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ズームとページのボタンを、写真のこちら側に一列に並べます。ズームは親指に一番近い所に。電話を持つ手の側を選んでください。"
+            "value" : "ズームとページのボタンを、写真のこちら側に一列に並べます。ズームは親指に一番近い所に。端末を持つ手の側を選んでください。"
           }
         }
       }
@@ -2969,7 +2969,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分かち書き"
+            "value" : "分かち書きエンジン"
           }
         }
       }
@@ -3129,7 +3129,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "誤答"
+            "value" : "不正解"
           }
         }
       }
@@ -3159,7 +3159,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カード、コレクション、検索履歴を一つのファイルにして、好きな場所に保存できます（表紙は含みません）。復元はバックアップの内容をここに加えるだけで、何も消しません。"
+            "value" : "カード、コレクション、調べた言葉の履歴を一つのファイルにして、好きな場所に保存できます（表紙は含みません）。復元はバックアップの内容をここに加えるだけで、何も消しません。"
           }
         }
       }
@@ -3169,7 +3169,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カード、表紙付きのコレクション、調べた言葉の履歴を、あなた自身のiCloudを通じてお使いの端末で揃えます。それ以外の場所には何も送りません。"
+            "value" : "カード、表紙付きのコレクション、調べた言葉の履歴を、ご自身のiCloudを通じてお使いの端末で揃えます。それ以外の場所には何も送りません。"
           }
         }
       }
@@ -3179,7 +3179,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自分の意味"
+            "value" : "自分で加えた意味"
           }
         }
       }
