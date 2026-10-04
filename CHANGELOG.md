@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A card can be forgotten from anywhere.** On an iPad the row swipes to forget as on the phone, and the card itself has *Forget this card* under its actions, asked once, on every platform.
 - **A camera button on the page, and a way back from +.** A camera button in the page's controls takes another photo, so a retake no longer means finding the Read tab; and the + pressed by mistake has *Back to the page*, which brings the page just taken back as it was.
 
 ### build 33 — 2026-10-04

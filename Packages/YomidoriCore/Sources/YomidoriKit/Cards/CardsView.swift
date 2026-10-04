@@ -74,27 +74,16 @@ struct CardsView: View {
                     #if os(macOS)
                     CardRow(card: card).tag(card.id)
                     #else
+                    // Forgotten by a swipe, a swipe action and not the list's own delete:
+                    // that one puts its red circles on every row the moment selecting
+                    // starts, before they can be told to stay away.
                     if sizeClass == .regular {
-                        CardRow(card: card).tag(card.id)
+                        CardRow(card: card).tag(card.id).swipeActions(edge: .trailing) {
+                            forget(card)
+                        }
                     } else {
-                        // Forgotten by a swipe, a swipe action and not the list's own delete:
-                        // that one puts its red circles on every row the moment selecting
-                        // starts, before they can be told to stay away.
                         NavigationLink(value: card) { CardRow(card: card) }
-                            .swipeActions(edge: .trailing) {
-                                if !selecting {
-                                    Button(role: .destructive) {
-                                        Cards.write { try Cards.store?.remove(card) }
-                                        reload()
-                                    } label: {
-                                        Label {
-                                            Text("Forget", bundle: .module)
-                                        } icon: {
-                                            Image(systemName: "trash")
-                                        }
-                                    }
-                                }
-                            }
+                            .swipeActions(edge: .trailing) { forget(card) }
                     }
                     #endif
                 }
@@ -103,6 +92,23 @@ struct CardsView: View {
             }
         }
     }
+
+    #if os(iOS)
+    @ViewBuilder private func forget(_ card: Card) -> some View {
+        if !selecting {
+            Button(role: .destructive) {
+                Cards.write { try Cards.store?.remove(card) }
+                reload()
+            } label: {
+                Label {
+                    Text("Forget", bundle: .module)
+                } icon: {
+                    Image(systemName: "trash")
+                }
+            }
+        }
+    }
+    #endif
 
     private func reload() {
         cards = (Cards.store?.cards() ?? []).sorted { $0.created > $1.created }

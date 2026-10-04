@@ -6,6 +6,8 @@ import YomidoriCore
 struct CardActions: View {
     @Binding var card: Card
     let save: () -> Void
+    @State private var forgetting = false
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         Section {
@@ -55,6 +57,29 @@ struct CardActions: View {
                         Image(systemName: "tray.and.arrow.down")
                     }
                 }
+            }
+            // The card gone for good, from here as from the list's swipe, since a card open
+            // beside its list has no row to swipe.
+            Button(role: .destructive) {
+                forgetting = true
+            } label: {
+                Label {
+                    Text("Forget this card", bundle: .module)
+                } icon: {
+                    Image(systemName: "trash")
+                }
+            }
+            .confirmationDialog(
+                Text("Forget this card?", bundle: .module), isPresented: $forgetting
+            ) {
+                Button(role: .destructive) {
+                    Cards.write { try Cards.store?.remove(card) }
+                    dismiss()
+                } label: {
+                    Text("Forget", bundle: .module)
+                }
+            } message: {
+                Text("Its sentences and its answers go with it.", bundle: .module)
             }
         } header: {
             if card.shelved {
