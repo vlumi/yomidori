@@ -80,6 +80,10 @@ final class PageReadingTests: XCTestCase {
         let range = PageReading.range(from: room, to: smell)
         XCTAssertEqual(range, 3..<9)
         XCTAssertEqual(page.phrase(range), "匂いが部屋")
+        // A selection stretched to a chunk on either side of it, or inside it, grows or stays.
+        XCTAssertEqual(PageReading.range(7..<9, stretchedTo: smell), 3..<9)
+        XCTAssertEqual(PageReading.range(3..<5, stretchedTo: room), 3..<9)
+        XCTAssertEqual(PageReading.range(3..<9, stretchedTo: room), 3..<9)
     }
 
     func testSegmentsKeepEveryPieceAndMarkTheWords() {

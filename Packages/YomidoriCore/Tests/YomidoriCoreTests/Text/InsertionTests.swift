@@ -41,4 +41,14 @@ final class InsertionTests: XCTestCase {
         XCTAssertNil(CharacterRange.of(0..<1, in: ""))
         XCTAssertEqual(CharacterRange.of(0..<0, in: ""), "".startIndex..<"".startIndex)
     }
+
+    func testARangeOfTheTextComesBackAsCharacterOffsetsAndNothingOutsideIt() throws {
+        let text = "葛\u{E0100}の花が、👩‍👩‍👧と咲いた"
+        let flower = try XCTUnwrap(text.range(of: "花"))
+        XCTAssertEqual(CharacterRange.offsets(of: flower, in: text), 2..<3)
+        let family = try XCTUnwrap(text.range(of: "👩‍👩‍👧と"))
+        XCTAssertEqual(CharacterRange.offsets(of: family, in: text), 5..<7)
+        XCTAssertEqual(CharacterRange.of(5..<7, in: text), family)
+        XCTAssertNil(CharacterRange.offsets(of: "花".startIndex..<"花".endIndex, in: ""))
+    }
 }

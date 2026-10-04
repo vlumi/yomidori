@@ -36,6 +36,26 @@ public struct PitchAccent: Equatable, Sendable {
         }
     }
 
+    /// How each mora is drawn: high or low, with the fall after it where the pitch drops
+    /// (after the last mora too, when the drop comes on what follows), and the rise before
+    /// it where the pitch climbs.
+    public struct Mark: Equatable, Sendable {
+        public let high: Bool
+        public let dropsAfter: Bool
+        public let risesBefore: Bool
+    }
+
+    public func marks(forMoraCount count: Int) -> [Mark] {
+        let highs = highs(forMoraCount: count)
+        return highs.indices.map { index in
+            let last = index + 1 == highs.count
+            return Mark(
+                high: highs[index],
+                dropsAfter: highs[index] && (last ? downstep == index + 1 : !highs[index + 1]),
+                risesBefore: !highs[index] && !last && highs[index + 1])
+        }
+    }
+
     private static let smallKana: Set<Character> = [
         "ゃ", "ゅ", "ょ", "ぁ", "ぃ", "ぅ", "ぇ", "ぉ", "ゎ",
         "ャ", "ュ", "ョ", "ァ", "ィ", "ゥ", "ェ", "ォ", "ヮ",
