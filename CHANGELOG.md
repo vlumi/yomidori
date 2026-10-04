@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The camera runs lighter while you frame.** Its frames stream in the sensor's own format and only the one you take is converted, a third of the memory a frame took before.
 - **Cards and the Dictionary in two columns on the iPad.** With room, the list stays and the card or the entry opens beside it, as on the Mac; a phone, or an iPad sharing its screen, keeps the stack.
 - **The Mac takes pictures from files only.** A web address pasted or dropped on Read is left alone, where before the app went and fetched it; a file is checked for its size before being read.
 - **The iPad on its side reads like the Mac.** In landscape the page fills the left and the words stand in a column beside it, no drawer; portrait keeps the phone's drawer.
