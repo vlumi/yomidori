@@ -51,7 +51,9 @@ struct YomidoriApp: App {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApplication.shared.registerForRemoteNotifications()
+        #if DEBUG
         WindowShots.startIfAsked()
+        #endif
     }
 
     /// One window, and the app goes with it, as a small utility does.
@@ -60,9 +62,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
+#if DEBUG
 /// A development aid: launched with `-yomidori-shots <seconds>`, the app saves a picture of
 /// its window to `Shots/` in its container every so many seconds, for a session that cannot
-/// see the screen (an agent's terminal, a CI log) to look at. Nothing without the argument.
+/// see the screen (an agent's terminal, a CI log) to look at. Nothing without the argument,
+/// and not in a release build at all.
 enum WindowShots {
     static func startIfAsked() {
         guard let index = CommandLine.arguments.firstIndex(of: "-yomidori-shots"),
@@ -101,3 +105,4 @@ enum WindowShots {
         }
     }
 }
+#endif

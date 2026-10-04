@@ -116,8 +116,7 @@ enum DemoData {
         var text = DemoText.page
         if let pick = DemoMode.pick, !pick.isEmpty {
             if let found = text.range(of: pick) {
-                let start = text.distance(from: text.startIndex, to: found.lowerBound)
-                capture.selectedRange = start..<(start + pick.count)
+                capture.selectedRange = CharacterRange.offsets(of: found, in: text)
             } else {
                 text = pick
                 capture.selectedRange = 0..<pick.count
@@ -186,7 +185,8 @@ private struct CardSeeder {
         daysAgo: Double
     ) -> Card? {
         let offset = sentence.flatMap { text in
-            text.range(of: headword).map { text.distance(from: text.startIndex, to: $0.lowerBound) }
+            text.range(of: headword).flatMap { CharacterRange.offsets(of: $0, in: text) }?
+                .lowerBound
         }
         let sighting = Sighting(
             sentence: sentence ?? "", surface: headword, offset: offset ?? 0, source: nil,

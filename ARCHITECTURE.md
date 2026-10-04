@@ -365,7 +365,9 @@ has what remains.
   decoded and drawn anew, never stored as it came.
 - **`RecordFile`** (Core): the one JSON store under the cards, the collections
   and the lookup history: loaded once, changed under a lock, written whole and
-  atomically, and every write reported by the keys it saved and deleted and by
+  atomically (and on a phone unreadable while it is locked, unless already open
+  — `Data.WritingOptions.store`, the sync state and a file to share the same),
+  and every write reported by the keys it saved and deleted and by
   whether it was made here or came from another device, so sync sends only what
   was done here and the screens refresh for both (`Cards.changes(of:)`, which a
   screen listens to for the kinds of record it shows). The file is read record
@@ -430,7 +432,9 @@ has what remains.
   rule. Tested for the shapes that matter: a first Good comes back in three
   days, a first Again tomorrow, intervals grow, a lapse shrinks stability,
   retrievability is one at review and 90 % at the due date. **`ReviewView`**
-  (Kit) runs the due queue one question at a time, a sentence with the word
+  (Kit) runs the due queue (`ReviewQueue` in Core: the front item up, a miss back
+  three questions on, a question asked once a repeat that counts for nothing,
+  the card as answered standing in its other questions) one question at a time, a sentence with the word
   marked as the front. How many questions are left and what is asked
   (`QuestionTag`, a colored label with its icon) stand in the navigation bar
   beside a small title, which leaves the screen to the sentence. Every question is answered, not
