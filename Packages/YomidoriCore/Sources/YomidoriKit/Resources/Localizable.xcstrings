@@ -1,3256 +1,3316 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "%@, pitch %lld" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@、アクセント%2$lld"
+  "sourceLanguage": "en",
+  "strings": {
+    "%@, pitch %lld": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@、アクセント%2$lld"
           }
         }
       }
     },
-    "%lld answers · %lld right" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "回答%lld · 正解%lld"
+    "%lld answers · %lld right": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回答%lld · 正解%lld"
           }
         }
       }
     },
-    "%lld cards" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld枚"
+    "%lld cards": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld枚"
           }
         }
       }
     },
-    "%lld cards added, %lld joined with cards already here, %lld collections added." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カード%lld枚を追加、%lld枚を既存のカードに統合、コレクション%lld件を追加しました。"
+    "%lld cards added, %lld joined with cards already here, %lld collections added.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カード%lld枚を追加、%lld枚を既存のカードに統合、コレクション%lld件を追加しました。"
           }
         }
       }
     },
-    "%lld collections" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "コレクション%lld件"
+    "%lld collections": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コレクション%lld件"
           }
         }
       }
     },
-    "%lld dropped" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld枚を捨てました"
+    "%lld dropped": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld枚を捨てました"
           }
         }
       }
     },
-    "%lld good · %lld again" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正解 %lld · もう一度 %lld"
+    "%lld good · %lld again": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正解 %lld · もう一度 %lld"
           }
         }
       }
     },
-    "%lld more after that" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "その後にあと %lld 問"
+    "%lld more after that": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "その後にあと %lld 問"
           }
         }
       }
     },
-    "%lld new words, waiting for a lesson; %lld you already had." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しい言葉%1$lld語はレッスン待ちに入りました。%2$lld語は既にありました。"
+    "%lld new words, waiting for a lesson; %lld you already had.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新しい言葉%1$lld語はレッスン待ちに入りました。%2$lld語は既にありました。"
           }
         }
       }
     },
-    "%lld percent" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lldパーセント"
+    "%lld percent": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lldパーセント"
           }
         }
       }
     },
-    "%lld put back for later" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld枚を後回しにしました"
+    "%lld put back for later": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld枚を後回しにしました"
           }
         }
       }
     },
-    "%lld remaining" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "残り%lld"
+    "%lld remaining": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "残り%lld"
           }
         }
       }
     },
-    "%lld selected" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 件を選択中"
+    "%lld selected": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 件を選択中"
           }
         }
       }
     },
-    "%lld started" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld枚を始めました"
+    "%lld started": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld枚を始めました"
           }
         }
       }
     },
-    "%lld strokes" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld画"
+    "%lld strokes": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld画"
           }
         }
       }
     },
-    "%lld waiting" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "待機中 %lld"
+    "%lld waiting": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "待機中 %lld"
           }
         }
       }
     },
-    "%lld words started" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld語を始めました"
+    "%lld words started": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld語を始めました"
           }
         }
       }
     },
-    "3 months" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "3か月"
+    "3 months": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3か月"
           }
         }
       }
     },
-    "4 weeks" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "4週間"
+    "4 weeks": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "4週間"
           }
         }
       }
     },
-    "A result or a word looked up opens here." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "検索結果か調べた言葉がここに開きます。"
+    "A result or a word looked up opens here.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "検索結果か調べた言葉がここに開きます。"
           }
         }
       }
     },
-    "About" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このアプリについて"
+    "About": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このアプリについて"
           }
         }
       }
     },
-    "Add" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "追加"
+    "Add": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "追加"
           }
         }
       }
     },
-    "Add a sentence" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文を加える"
+    "Add a sentence": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文を加える"
           }
         }
       }
     },
-    "Add a tag" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "タグを追加"
+    "Add a tag": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "タグを追加"
           }
         }
       }
     },
-    "Add as an answer" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "答えとして追加"
+    "Add as an answer": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "答えとして追加"
           }
         }
       }
     },
-    "Add as an answer (⌘⇧A)" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "答えとして追加（⌘⇧A）"
+    "Add as an answer (⌘⇧A)": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "答えとして追加（⌘⇧A）"
           }
         }
       }
     },
-    "Add next page" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "次のページを追加"
+    "Add next page": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "次のページを追加"
           }
         }
       }
     },
-    "Add tag %@" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "タグ「%@」を付ける"
+    "Add tag %@": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "タグ「%@」を付ける"
           }
         }
       }
     },
-    "Add this sentence" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この文を加える"
+    "Add this sentence": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この文を加える"
           }
         }
       }
     },
-    "Add to a collection" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "コレクションに追加"
+    "Add to a collection": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コレクションに追加"
           }
         }
       }
     },
-    "Add to…" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "追加…"
+    "Add to…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "追加…"
           }
         }
       }
     },
-    "Added" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "追加"
+    "Added": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "追加"
           }
         }
       }
     },
-    "Again" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "もう一度"
+    "Again": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "もう一度"
           }
         }
       }
     },
-    "Aim to remember" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "覚えている割合の目安"
+    "Aim to remember": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "覚えている割合の目安"
           }
         }
       }
     },
-    "All" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "すべて"
+    "All": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "すべて"
           }
         }
       }
     },
-    "All cards" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "すべてのカード"
+    "All cards": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "すべてのカード"
           }
         }
       }
     },
-    "All time" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "これまで"
+    "All time": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "これまで"
           }
         }
       }
     },
-    "An author, say" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "著者など"
+    "An author, say": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "著者など"
           }
         }
       }
     },
-    "Another meaning to accept" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "認める意味をもう一つ"
+    "Another meaning to accept": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "認める意味をもう一つ"
           }
         }
       }
     },
-    "Answered" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "回答"
+    "Answered": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回答"
           }
         }
       }
     },
-    "Appearance" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "外観"
+    "Appearance": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "外観"
           }
         }
       }
     },
-    "As it should read" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正しい本文"
+    "As it should read": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正しい本文"
           }
         }
       }
     },
-    "Back to the page" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ページに戻る"
+    "Back to the camera": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カメラに戻る"
           }
         }
       }
     },
-    "Back to waiting (⌘⌫)" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "待機に戻す（⌘⌫）"
+    "Back to the page": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ページに戻る"
           }
         }
       }
     },
-    "Back up cards" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カードをバックアップ"
+    "Back to waiting (⌘⌫)": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "待機に戻す（⌘⌫）"
           }
         }
       }
     },
-    "Backup restored" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "復元しました"
+    "Back up cards": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カードをバックアップ"
           }
         }
       }
     },
-    "Begin" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "始める"
+    "Backup restored": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "復元しました"
           }
         }
       }
     },
-    "Blurred or not quite framed? Tap Read to start again." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ぼやけたり、ずれたりしていたら、「読む」をタップして撮り直せます。"
+    "Begin": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "始める"
           }
         }
       }
     },
-    "By tag" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "タグで"
+    "Blurred or not quite framed? Tap Read to start again.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ぼやけたり、ずれたりしていたら、「読む」をタップして撮り直せます。"
           }
         }
       }
     },
-    "Camera access is off. Turn it on in Settings to frame a page." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カメラへのアクセスがオフになっています。設定でオンにすると、ページを撮影できます。"
+    "By tag": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "タグで"
           }
         }
       }
     },
-    "Cancel" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "キャンセル"
+    "Camera access is off. Turn it on in Settings to frame a page.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カメラへのアクセスがオフになっています。設定でオンにすると、ページを撮影できます。"
           }
         }
       }
     },
-    "Cards" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カード"
+    "Cancel": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "キャンセル"
           }
         }
       }
     },
-    "Change the text (⌘E)" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "本文を編集（⌘E）"
+    "Cards": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カード"
           }
         }
       }
     },
-    "Check" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "確認"
+    "Change the text (⌘E)": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本文を編集（⌘E）"
           }
         }
       }
     },
-    "Chick" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "幼鳥"
+    "Check": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "確認"
           }
         }
       }
     },
-    "Choose a photo" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "写真を選ぶ"
+    "Chick": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "幼鳥"
           }
         }
       }
     },
-    "Clear" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "消去"
+    "Choose a photo": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真を選ぶ"
           }
         }
       }
     },
-    "Clear the history" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "履歴を消す"
+    "Clear": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "消去"
           }
         }
       }
     },
-    "Clear the history…" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "履歴を消す…"
+    "Clear the history": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "履歴を消す"
           }
         }
       }
     },
-    "Clear the search (⌘F to type again)" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "検索を消す（⌘F でまた入力）"
+    "Clear the history…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "履歴を消す…"
           }
         }
       }
     },
-    "Collection" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "コレクション"
+    "Clear the search (⌘F to type again)": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "検索を消す（⌘F でまた入力）"
           }
         }
       }
     },
-    "Collections" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "コレクション"
+    "Collection": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コレクション"
           }
         }
       }
     },
-    "Coming up" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "これからの復習"
+    "Collections": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コレクション"
           }
         }
       }
     },
-    "Common words first" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "頻出語から順に"
+    "Coming up": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "これからの復習"
           }
         }
       }
     },
-    "Components" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "部品"
+    "Common words first": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "頻出語から順に"
           }
         }
       }
     },
-    "Copy" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "コピー"
+    "Components": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "部品"
           }
         }
       }
     },
-    "Copy the recognized text" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "読み取った本文をコピー"
+    "Copy": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コピー"
           }
         }
       }
     },
-    "Correct" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正解"
+    "Copy the recognized text": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み取った本文をコピー"
           }
         }
       }
     },
-    "Correct the sentence" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文を直す"
+    "Correct": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正解"
           }
         }
       }
     },
-    "Could not save" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "保存できませんでした"
+    "Correct the sentence": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文を直す"
           }
         }
       }
     },
-    "Count it right" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正解にする"
+    "Could not save": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存できませんでした"
           }
         }
       }
     },
-    "Count it right (⌘Y)" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正解にする（⌘Y）"
+    "Count it right": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正解にする"
           }
         }
       }
     },
-    "Cover" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "表紙"
+    "Count it right (⌘Y)": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正解にする（⌘Y）"
           }
         }
       }
     },
-    "Dark" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ダーク"
+    "Cover": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表紙"
           }
         }
       }
     },
-    "Day" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "日"
+    "Dark": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ダーク"
           }
         }
       }
     },
-    "Days in a row" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "連続日数"
+    "Day": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日"
           }
         }
       }
     },
-    "Dictionary" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "辞書"
+    "Days in a row": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "連続日数"
           }
         }
       }
     },
-    "Done" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "完了"
+    "Dictionary": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "辞書"
           }
         }
       }
     },
-    "Drag to make the column wider or narrower" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ドラッグで欄の幅を変えられます"
+    "Done": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完了"
           }
         }
       }
     },
-    "Drawer" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "パネル"
+    "Drag to make the column wider or narrower": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ドラッグで欄の幅を変えられます"
           }
         }
       }
     },
-    "Draws the strokes again" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "もう一度筆順を再生します"
+    "Drawer": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "パネル"
           }
         }
       }
     },
-    "Drop" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "捨てる"
+    "Draws the strokes again": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "もう一度筆順を再生します"
           }
         }
       }
     },
-    "Drop the card (⌘⌫)" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カードを捨てる（⌘⌫）"
+    "Drop": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "捨てる"
           }
         }
       }
     },
-    "Drops after mora %lld" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld拍目の後で下がる"
+    "Drop the card (⌘⌫)": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カードを捨てる（⌘⌫）"
           }
         }
       }
     },
-    "Edit" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "編集"
+    "Drops after mora %lld": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld拍目の後で下がる"
           }
         }
       }
     },
-    "Edit the sentence" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文を直す"
+    "Edit": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "編集"
           }
         }
       }
     },
-    "Egg" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "卵"
+    "Edit the sentence": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文を直す"
           }
         }
       }
     },
-    "estimated" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "推定"
+    "Egg": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卵"
           }
         }
       }
     },
-    "Everything runs on this device: the camera, the text recognition, the dictionaries, your cards. Nothing is sent anywhere but to your own iCloud, while sync is on." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カメラも、文字の読み取りも、辞書も、カードも、すべてこの端末の中で動きます。同期がオンのときにご自身のiCloudへ送るほかは、どこにも送信しません。"
+    "Everything runs on this device: the camera, the text recognition, the dictionaries, your cards. Nothing is sent anywhere but to your own iCloud, while sync is on.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カメラも、文字の読み取りも、辞書も、カードも、すべてこの端末の中で動きます。同期がオンのときにご自身のiCloudへ送るほかは、どこにも送信しません。"
           }
         }
       }
     },
-    "Expand or collapse" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "広げる・畳む"
+    "Expand or collapse": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "広げる・畳む"
           }
         }
       }
     },
-    "Extend the selection to here" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ここまで選択を広げる"
+    "Extend the selection to here": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ここまで選択を広げる"
           }
         }
       }
     },
-    "Find a kanji by its parts" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "部品から漢字を探す"
+    "Find a kanji by its parts": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "部品から漢字を探す"
           }
         }
       }
     },
-    "Fix the text" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文字を直す"
+    "Fix the text": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文字を直す"
           }
         }
       }
     },
-    "Flat" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "平板"
+    "Flat": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "平板"
           }
         }
       }
     },
-    "Flat: low, then high to the end and beyond." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "平板型：低く始まり、高いまま続きます。"
+    "Flat: low, then high to the end and beyond.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "平板型：低く始まり、高いまま続きます。"
           }
         }
       }
     },
-    "Fledgling" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "若鳥"
+    "Fledgling": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "若鳥"
           }
         }
       }
     },
-    "Flying" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "成鳥"
+    "Flying": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "成鳥"
           }
         }
       }
     },
-    "For a word or a line read wrong in more than one place." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "二か所以上違っているときに。"
+    "For a word or a line read wrong in more than one place.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二か所以上違っているときに。"
           }
         }
       }
     },
-    "Forget" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "忘れる"
+    "Forget": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "忘れる"
           }
         }
       }
     },
-    "Forget %@" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ を忘れる"
+    "Forget %@": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ を忘れる"
           }
         }
       }
     },
-    "Forget %lld cards?" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 枚のカードを忘れますか？"
+    "Forget %lld cards?": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 枚のカードを忘れますか？"
           }
         }
       }
     },
-    "Forget all %lld words looked up?" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "調べた %lld 語の履歴をすべて消しますか？"
+    "Forget all %lld words looked up?": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "調べた %lld 語の履歴をすべて消しますか？"
           }
         }
       }
     },
-    "Forget every word looked up" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "調べた言葉をすべて忘れる"
+    "Forget every word looked up": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "調べた言葉をすべて忘れる"
           }
         }
       }
     },
-    "Forget this card" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このカードを捨てる"
+    "Forget this card": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このカードを捨てる"
           }
         }
       }
     },
-    "Forget this card?" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このカードを忘れますか？"
+    "Forget this card?": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このカードを忘れますか？"
           }
         }
       }
     },
-    "Forgot it. Back to waiting" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "忘れたので待機に戻す"
+    "Forget this lookup": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この履歴を消す"
           }
         }
       }
     },
-    "From a page" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ページから"
+    "Forgot it. Back to waiting": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "忘れたので待機に戻す"
           }
         }
       }
     },
-    "From a search" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "検索から"
+    "From a page": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ページから"
           }
         }
       }
     },
-    "Full entry" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "項目をすべて見る"
+    "From a search": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "検索から"
           }
         }
       }
     },
-    "Good" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "できた"
+    "Full entry": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "項目をすべて見る"
           }
         }
       }
     },
-    "Grade %lld" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "小学%lld年"
+    "Good": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "できた"
           }
         }
       }
     },
-    "Hatchling" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "雛"
+    "Grade %lld": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "小学%lld年"
           }
         }
       }
     },
-    "Head-high: the first mora high, then low." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "頭高型：最初の拍だけ高く、あとは低くなります。"
+    "Hatchling": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "雛"
           }
         }
       }
     },
-    "Hear the sentence" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文を聞く"
+    "Head-high: the first mora high, then low.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "頭高型：最初の拍だけ高く、あとは低くなります。"
           }
         }
       }
     },
-    "Hide" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "隠す"
+    "Hear the sentence": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文を聞く"
           }
         }
       }
     },
-    "Hide the meaning" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "意味を閉じる"
+    "Hide": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隠す"
           }
         }
       }
     },
-    "Hide the words looked up" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "調べた言葉を隠す"
+    "Hide the meaning": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "意味を閉じる"
           }
         }
       }
     },
-    "History" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "履歴"
+    "Hide the words looked up": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "調べた言葉を隠す"
           }
         }
       }
     },
-    "Home" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ホーム"
+    "History": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "履歴"
           }
         }
       }
     },
-    "Hours" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "時間"
+    "Home": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ホーム"
           }
         }
       }
     },
-    "How pitch is drawn" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "アクセントの表し方"
+    "Hours": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "時間"
           }
         }
       }
     },
-    "Import a collection…" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "コレクションを読み込む…"
+    "How pitch is drawn": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アクセントの表し方"
           }
         }
       }
     },
-    "In names" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "名乗り"
+    "Import a collection…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コレクションを読み込む…"
           }
         }
       }
     },
-    "In no collection" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "コレクションなし"
+    "In names": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "名乗り"
           }
         }
       }
     },
-    "In no collection (%lld)" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "コレクションなし（%lld）"
+    "In no collection": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コレクションなし"
           }
         }
       }
     },
-    "In review" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "復習中"
+    "In no collection (%lld)": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コレクションなし（%lld）"
           }
         }
       }
     },
-    "In the Shortcuts app, make a shortcut of two actions, Take Screenshot and then Read in Yomidori, and set it to Back Tap (Settings, Accessibility, Touch) or the Action button. A double tap on the back of the phone then opens whatever is on the screen here, ready to tap. Nothing is saved to Photos." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ショートカットアプリで「スクリーンショットを撮る」と「ヨミドリで読む」の二つのアクションからなるショートカットを作り、背面タップ（設定 › アクセシビリティ › タッチ）かアクションボタンに割り当てます。背面をダブルタップすると、いま画面にあるものがここで開き、すぐにタップできます。写真には何も保存されません。"
+    "In review": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "復習中"
           }
         }
       }
     },
-    "Its sentences and its answers go with it." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文と回答もいっしょに消えます。"
+    "In the Shortcuts app, make a shortcut of two actions, Take Screenshot and then Read in Yomidori, and set it to Back Tap (Settings, Accessibility, Touch) or the Action button. A double tap on the back of the phone then opens whatever is on the screen here, ready to tap. Nothing is saved to Photos.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ショートカットアプリで「スクリーンショットを撮る」と「ヨミドリで読む」の二つのアクションからなるショートカットを作り、背面タップ（設定 › アクセシビリティ › タッチ）かアクションボタンに割り当てます。背面をダブルタップすると、いま画面にあるものがここで開き、すぐにタップできます。写真には何も保存されません。"
           }
         }
       }
     },
-    "JMdict by the Electronic Dictionary Research and Development Group; KANJIDIC2, KRADFILE and KanjiVG for the kanji and their strokes; pitch accents from Kanjium by Uros O.; MeCab and IPADic; Mecab-Swift. Their terms are inside." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Electronic Dictionary Research and Development GroupのJMdict、漢字と筆順のKANJIDIC2・KRADFILE・KanjiVG、Uros O.によるKanjiumのアクセントデータ、MeCabとIPADic、Mecab-Swift。各ライセンスは中にあります。"
+    "Its sentences and its answers go with it.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文と回答もいっしょに消えます。"
           }
         }
       }
     },
-    "Kana, kanji, or English" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "かな、漢字、または英語"
+    "JMdict by the Electronic Dictionary Research and Development Group; KANJIDIC2, KRADFILE and KanjiVG for the kanji and their strokes; pitch accents from Kanjium by Uros O.; MeCab and IPADic; Mecab-Swift. Their terms are inside.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Electronic Dictionary Research and Development GroupのJMdict、漢字と筆順のKANJIDIC2・KRADFILE・KanjiVG、Uros O.によるKanjiumのアクセントデータ、MeCabとIPADic、Mecab-Swift。各ライセンスは中にあります。"
           }
         }
       }
     },
-    "Kanji" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "漢字"
+    "Kana, kanji, or English": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "かな、漢字、または英語"
           }
         }
       }
     },
-    "Kanji by parts" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "部品で漢字を探す"
+    "Kanji": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "漢字"
           }
         }
       }
     },
-    "Keep" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "残す"
+    "Kanji by parts": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "部品で漢字を探す"
           }
         }
       }
     },
-    "Kept" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "残しました"
+    "Keep": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "残す"
           }
         }
       }
     },
-    "Kept from a search; no sentence yet." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "検索から残した言葉。文はまだありません。"
+    "Kept": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "残しました"
           }
         }
       }
     },
-    "Kept; open the card" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "残しました。カードを開く"
+    "Kept from a search; no sentence yet.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "検索から残した言葉。文はまだありません。"
           }
         }
       }
     },
-    "Kun" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "訓読み"
+    "Kept; open the card": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "残しました。カードを開く"
           }
         }
       }
     },
-    "Language" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "言語"
+    "Kun": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "訓読み"
           }
         }
       }
     },
-    "Later" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "あとで"
+    "Language": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "言語"
           }
         }
       }
     },
-    "Left" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "左"
+    "Later": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "あとで"
           }
         }
       }
     },
-    "Lesson" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レッスン"
+    "Left": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左"
           }
         }
       }
     },
-    "Lesson · %lld waiting" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レッスン · 待機中 %lld"
+    "Lesson": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "レッスン"
           }
         }
       }
     },
-    "Lesson done" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レッスン終了"
+    "Lesson done": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "レッスン終了"
           }
         }
       }
     },
-    "Licenses and notices" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ライセンスと表記"
+    "Lesson · %lld waiting": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "レッスン · 待機中 %lld"
           }
         }
       }
     },
-    "Light" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ライト"
+    "Licenses and notices": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ライセンスと表記"
           }
         }
       }
     },
-    "Live Text" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Live Text"
+    "Light": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ライト"
           }
         }
       }
     },
-    "Live Text is not available on this device." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この端末ではテキスト認識表示を使えません。"
+    "Live Text": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live Text"
           }
         }
       }
     },
-    "Looked up" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "調べた言葉"
+    "Live Text is not available on this device.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この端末ではテキスト認識表示を使えません。"
           }
         }
       }
     },
-    "Meaning" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "意味"
+    "Looked up": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "調べた言葉"
           }
         }
       }
     },
-    "Meanings that count" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正答とする意味"
+    "MeCab": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MeCab"
           }
         }
       }
     },
-    "MeCab" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "MeCab"
+    "MeCab could not load its dictionary.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MeCabの辞書を読み込めませんでした。"
           }
         }
       }
     },
-    "MeCab could not load its dictionary." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "MeCabの辞書を読み込めませんでした。"
+    "Meaning": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "意味"
           }
         }
       }
     },
-    "Met the word somewhere else? Type or paste the sentence." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ほかで出会った言葉なら、その文を入力するか貼り付けてください。"
+    "Meanings that count": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正答とする意味"
           }
         }
       }
     },
-    "Mid-high: the drop after the numbered mora." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "中高型：数字で示した拍のあとで下がります。"
+    "Met the word somewhere else? Type or paste the sentence.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ほかで出会った言葉なら、その文を入力するか貼り付けてください。"
           }
         }
       }
     },
-    "Migrating" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "渡り鳥"
+    "Mid-high: the drop after the numbered mora.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "中高型：数字で示した拍のあとで下がります。"
           }
         }
       }
     },
-    "Minutes" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "分"
+    "Migrating": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "渡り鳥"
           }
         }
       }
     },
-    "Modified" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "更新"
+    "Minutes": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分"
           }
         }
       }
     },
-    "More" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "その他"
+    "Modified": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更新"
           }
         }
       }
     },
-    "Move the second page" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "2ページ目の位置を変える"
+    "More": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "その他"
           }
         }
       }
     },
-    "Name" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "名前"
+    "Move the second page": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2ページ目の位置を変える"
           }
         }
       }
     },
-    "Name kanji" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "人名用"
+    "Name": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "名前"
           }
         }
       }
     },
-    "Nest" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "巣"
+    "Name kanji": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "人名用"
           }
         }
       }
     },
-    "New collection" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しいコレクション"
+    "Nest": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "巣"
           }
         }
       }
     },
-    "New collection…" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しいコレクション…"
+    "New collection": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新しいコレクション"
           }
         }
       }
     },
-    "Newest first" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しい順"
+    "New collection…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新しいコレクション…"
           }
         }
       }
     },
-    "Next %lld days" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "これから %lld 日間"
+    "Newest first": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新しい順"
           }
         }
       }
     },
-    "No camera here. Choose a photo instead." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カメラがありません。写真を選んでください。"
+    "Next %lld days": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "これから %lld 日間"
           }
         }
       }
     },
-    "No cards yet. Select a word under a page and keep it." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カードはまだありません。ページの下で言葉を選んで、残しておきましょう。"
+    "No camera here. Choose a photo instead.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カメラがありません。写真を選んでください。"
           }
         }
       }
     },
-    "No cards yet. Tap a word under a page and keep it." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カードはまだありません。ページの下の言葉をタップして残してください。"
+    "No cards yet. Select a word under a page and keep it.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カードはまだありません。ページの下で言葉を選んで、残しておきましょう。"
           }
         }
       }
     },
-    "No collection" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "コレクションなし"
+    "No cards yet. Tap a word under a page and keep it.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カードはまだありません。ページの下の言葉をタップして残してください。"
           }
         }
       }
     },
-    "No collections yet. A book, say." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "コレクションはまだありません。本ごとに作るのがおすすめです。"
+    "No collection": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コレクションなし"
           }
         }
       }
     },
-    "No kanji has all of these parts." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "これらの部品をすべて持つ漢字はありません。"
+    "No collections yet. A book, say.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コレクションはまだありません。本ごとに作るのがおすすめです。"
           }
         }
       }
     },
-    "No matches." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "見つかりません。"
+    "No kanji has all of these parts.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "これらの部品をすべて持つ漢字はありません。"
           }
         }
       }
     },
-    "No word in the dictionary fits." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "辞書に当てはまる言葉がありません。"
+    "No matches.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "見つかりません。"
           }
         }
       }
     },
-    "None" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "なし"
+    "No word in the dictionary fits.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "辞書に当てはまる言葉がありません。"
           }
         }
       }
     },
-    "None chosen means all of them." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "何も選ばなければすべてのコレクションから出題します。"
+    "None": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "なし"
           }
         }
       }
     },
-    "Not answered" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未回答"
+    "None chosen means all of them.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "何も選ばなければすべてのコレクションから出題します。"
           }
         }
       }
     },
-    "Not in the dictionary." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "辞書にありません。"
+    "Not answered": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未回答"
           }
         }
       }
     },
-    "Not quite. You typed %@." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "残念。入力は %@ でした。"
+    "Not in the dictionary.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "辞書にありません。"
           }
         }
       }
     },
-    "Note" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "メモ"
+    "Not quite. You typed %@.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "残念。入力は %@ でした。"
           }
         }
       }
     },
-    "Note, an author say" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "メモ（著者など）"
+    "Note": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メモ"
           }
         }
       }
     },
-    "Nothing due. Read on." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の分はありません。読書を続けてください。"
+    "Note, an author say": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メモ（著者など）"
           }
         }
       }
     },
-    "Nothing reviewed yet. Do a lesson, then a review." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "まだ復習がありません。レッスンのあとに復習を。"
+    "Nothing due. Read on.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今日の分はありません。読書を続けてください。"
           }
         }
       }
     },
-    "Nothing was read off the cover." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "表紙から何も読み取れませんでした。"
+    "Nothing reviewed yet. Do a lesson, then a review.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだ復習がありません。レッスンのあとに復習を。"
           }
         }
       }
     },
-    "Nothing was recognized." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文字が見つかりませんでした。"
+    "Nothing was read off the cover.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表紙から何も読み取れませんでした。"
           }
         }
       }
     },
-    "Notifications are off for Yomidori. Turn on badges for it in the Settings app, under Notifications, then here again." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ヨミドリの通知がオフです。設定アプリの「通知」でバッジをオンにしてから、もう一度ここでオンにしてください。"
+    "Nothing was recognized.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文字が見つかりませんでした。"
           }
         }
       }
     },
-    "Oldest first" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "古い順"
+    "Notifications are off for Yomidori. Turn on badges for it in the Settings app, under Notifications, then here again.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ヨミドリの通知がオフです。設定アプリの「通知」でバッジをオンにしてから、もう一度ここでオンにしてください。"
           }
         }
       }
     },
-    "On" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "音読み"
+    "Oldest first": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "古い順"
           }
         }
       }
     },
-    "Once more, to get it right. This one no longer counts." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正解するまでもう一度。今回は記録されません。"
+    "On": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "音読み"
           }
         }
       }
     },
-    "Open a Picture…" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "写真を開く…"
+    "Once more, to get it right. This one no longer counts.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正解するまでもう一度。今回は記録されません。"
           }
         }
       }
     },
-    "Open Shortcuts" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ショートカットを開く"
+    "Open Shortcuts": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ショートカットを開く"
           }
         }
       }
     },
-    "Open the app again to see it in this language." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この言語で表示するには、アプリを開き直してください。"
+    "Open a Picture…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真を開く…"
           }
         }
       }
     },
-    "Or retype it whole" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "まとめて打ち直す"
+    "Open a picture file": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "画像ファイルを開く"
           }
         }
       }
     },
-    "Or type the right one" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "または正しい文字を入力"
+    "Open the app again to see it in this language.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この言語で表示するには、アプリを開き直してください。"
           }
         }
       }
     },
-    "Order" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "並び順"
+    "Or retype it whole": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まとめて打ち直す"
           }
         }
       }
     },
-    "Page %lld; start over" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lldページ目。最初からやり直す"
+    "Or type the right one": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "または正しい文字を入力"
           }
         }
       }
     },
-    "Page controls" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ページの操作"
+    "Order": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "並び順"
           }
         }
       }
     },
-    "Page read" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ページを読み取りました"
+    "Page %lld; start over": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lldページ目。最初からやり直す"
           }
         }
       }
     },
-    "Paste the text you are reading here, or drop a picture of the page." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "読んでいる文章をここに貼り付けるか、ページの写真をドロップしてください。"
+    "Page controls": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ページの操作"
           }
         }
       }
     },
-    "Paste the text you are reading here." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "読んでいる文章をここに貼り付けてください。"
+    "Page read": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ページを読み取りました"
           }
         }
       }
     },
-    "Picture" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "写真"
+    "Paste the text you are reading here, or drop a picture of the page.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読んでいる文章をここに貼り付けるか、ページの写真をドロップしてください。"
           }
         }
       }
     },
-    "Pitch" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "アクセント"
+    "Paste the text you are reading here.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読んでいる文章をここに貼り付けてください。"
           }
         }
       }
     },
-    "Point at a word, get its reading." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "言葉に向けると、読みがわかる。"
+    "Picture": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真"
           }
         }
       }
     },
-    "Practice" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "練習"
+    "Pitch": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アクセント"
           }
         }
       }
     },
-    "Practice them now" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今すぐ練習する"
+    "Point at a word, get its reading.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "言葉に向けると、読みがわかる。"
           }
         }
       }
     },
-    "Progress" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "進捗"
+    "Practice": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "練習"
           }
         }
       }
     },
-    "Put it back for later (⌘→)" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "後回しにする（⌘→）"
+    "Practice them now": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今すぐ練習する"
           }
         }
       }
     },
-    "Put the picture away (⌘⌫)" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "写真を片付ける（⌘⌫）"
+    "Progress": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "進捗"
           }
         }
       }
     },
-    "Question" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "問題"
+    "Put it back for later (⌘→)": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "後回しにする（⌘→）"
           }
         }
       }
     },
-    "Questions due by quarter day, in their ranks' colors; now's with what is overdue. Touch a bar for its numbers." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "一日を四つに分けた時間帯ごとの問題数を、ランクの色で示します。今の時間帯には期限を過ぎたものも入ります。棒に触れると数が出ます。"
+    "Put the picture away (⌘⌫)": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真を片付ける（⌘⌫）"
           }
         }
       }
     },
-    "Random" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ランダム"
+    "Question": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "問題"
           }
         }
       }
     },
-    "Rank" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ランク"
+    "Questions due by quarter day, in their ranks' colors; now's with what is overdue. Touch a bar for its numbers.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一日を四つに分けた時間帯ごとの問題数を、ランクの色で示します。今の時間帯には期限を過ぎたものも入ります。棒に触れると数が出ます。"
           }
         }
       }
     },
-    "Rank %lld" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "頻度%lld位"
+    "Random": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ランダム"
           }
         }
       }
     },
-    "Ranks" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ランク"
+    "Rank": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ランク"
           }
         }
       }
     },
-    "Read" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "読む"
+    "Rank %lld": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "頻度%lld位"
           }
         }
       }
     },
-    "Read any screen" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "どの画面でも読む"
+    "Ranks": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ランク"
           }
         }
       }
     },
-    "Read off the cover" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "表紙から読み取った文字"
+    "Read": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読む"
           }
         }
       }
     },
-    "Read the page" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "読み取る"
+    "Read any screen": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "どの画面でも読む"
           }
         }
       }
     },
-    "Reading" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "読み"
+    "Read off the cover": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表紙から読み取った文字"
           }
         }
       }
     },
-    "Reading the page…" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "読み取り中…"
+    "Read the page": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み取る"
           }
         }
       }
     },
-    "Reading the words…" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "言葉を読み取っています…"
+    "Reading": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み"
           }
         }
       }
     },
-    "Readings" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "読み"
+    "Reading the page…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み取り中…"
           }
         }
       }
     },
-    "Recognized text" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "読み取った文字"
+    "Reading the words…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "言葉を読み取っています…"
           }
         }
       }
     },
-    "Recognizer" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "認識エンジン"
+    "Readings": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み"
           }
         }
       }
     },
-    "Remove tag %@" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "タグ「%@」を外す"
+    "Recognized text": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み取った文字"
           }
         }
       }
     },
-    "Remove the cover" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "表紙を消す"
+    "Recognizer": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "認識エンジン"
           }
         }
       }
     },
-    "Replace" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "置き換える"
+    "Remove tag %@": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "タグ「%@」を外す"
           }
         }
       }
     },
-    "Required" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "必須"
+    "Remove the collection": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コレクションを削除"
           }
         }
       }
     },
-    "Reset zoom" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ズームを戻す"
+    "Remove the cover": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表紙を消す"
           }
         }
       }
     },
-    "Restore a backup" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "バックアップから復元"
+    "Remove this meaning": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この意味を外す"
           }
         }
       }
     },
-    "Result" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "結果"
+    "Replace": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "置き換える"
           }
         }
       }
     },
-    "Retake" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "撮り直す"
+    "Required": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "必須"
           }
         }
       }
     },
-    "Review" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "復習"
+    "Reset zoom": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ズームを戻す"
           }
         }
       }
     },
-    "Review %lld" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "復習 %lld"
+    "Restore a backup": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "バックアップから復元"
           }
         }
       }
     },
-    "Reviews" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "復習"
+    "Result": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "結果"
           }
         }
       }
     },
-    "Reviews due on the app icon" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "アプリアイコンに復習の数"
+    "Retake": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "撮り直す"
           }
         }
       }
     },
-    "Right" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "右"
+    "Review": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "復習"
           }
         }
       }
     },
-    "Same as the device" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "端末と同じ"
+    "Review %lld": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "復習 %lld"
           }
         }
       }
     },
-    "Same reading" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "同じ読み"
+    "Reviews": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "復習"
           }
         }
       }
     },
-    "Save" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "保存"
+    "Reviews due on the app icon": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリアイコンに復習の数"
           }
         }
       }
     },
-    "Scan the cover" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "表紙を撮る"
+    "Right": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右"
           }
         }
       }
     },
-    "Search" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "検索"
+    "Same as the device": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "端末と同じ"
           }
         }
       }
     },
-    "Secondary school" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "中学"
+    "Same reading": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同じ読み"
           }
         }
       }
     },
-    "Select" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "選択"
+    "Save": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存"
           }
         }
       }
     },
-    "Select a card." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カードを選んでください。"
+    "Scan the cover": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表紙を撮る"
           }
         }
       }
     },
-    "Select a word in the text, and it reads out here." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文章の中の言葉を選ぶと、ここに読みが出ます。"
+    "Search": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "検索"
           }
         }
       }
     },
-    "Send back to waiting" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "待機に戻す"
+    "Secondary school": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "中学"
           }
         }
       }
     },
-    "Session done" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "セッション終了"
+    "Select": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選択"
           }
         }
       }
     },
-    "Settings" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "設定"
+    "Select a card.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カードを選んでください。"
           }
         }
       }
     },
-    "Share this collection" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このコレクションを共有"
+    "Select a word in the text, and it reads out here.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文章の中の言葉を選ぶと、ここに読みが出ます。"
           }
         }
       }
     },
-    "Shelve, never review" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "棚に置く（復習しない）"
+    "Send back to waiting": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "待機に戻す"
           }
         }
       }
     },
-    "Shelved" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "棚上げ"
+    "Session done": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "セッション終了"
           }
         }
       }
     },
-    "Show or hide the words looked up" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "調べた言葉を表示・非表示"
+    "Settings": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設定"
           }
         }
       }
     },
-    "Show the answer" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "答えを見る"
+    "Share this collection": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このコレクションを共有"
           }
         }
       }
     },
-    "Show the answer (⌘↩)" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "答えを見る（⌘↩）"
+    "Shelve, never review": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "棚に置く（復習しない）"
           }
         }
       }
     },
-    "Show the meaning" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "意味を見る"
+    "Shelved": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "棚上げ"
           }
         }
       }
     },
-    "Show the text as read (⌘↩)" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "読み取った本文を表示（⌘↩）"
+    "Show or hide the words looked up": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "調べた言葉を表示・非表示"
           }
         }
       }
     },
-    "Show the words looked up" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "調べた言葉を表示"
+    "Show the answer": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "答えを見る"
           }
         }
       }
     },
-    "Shows when the app is next opened." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "次にアプリを開いたときから反映されます。"
+    "Show the answer (⌘↩)": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "答えを見る（⌘↩）"
           }
         }
       }
     },
-    "Sign in to iCloud in Settings to sync." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "同期するには、設定でiCloudにサインインしてください。"
+    "Show the meaning": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "意味を見る"
           }
         }
       }
     },
-    "Span" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "期間"
+    "Show the text as read (⌘↩)": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み取った本文を表示（⌘↩）"
           }
         }
       }
     },
-    "Start" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "始める"
+    "Show the words looked up": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "調べた言葉を表示"
           }
         }
       }
     },
-    "Start now" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今すぐ始める"
+    "Shows when the app is next opened.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "次にアプリを開いたときから反映されます。"
           }
         }
       }
     },
-    "Start over" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "最初から"
+    "Sign in to iCloud in Settings to sync.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同期するには、設定でiCloudにサインインしてください。"
           }
         }
       }
     },
-    "Start the card (↩)" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カードを始める（↩）"
+    "Span": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "期間"
           }
         }
       }
     },
-    "Starting…" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "開始中…"
+    "Start": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "始める"
           }
         }
       }
     },
-    "Stop" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "止める"
+    "Start now": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今すぐ始める"
           }
         }
       }
     },
-    "Stroke order" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "筆順"
+    "Start over": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最初から"
           }
         }
       }
     },
-    "Stroke order, %lld strokes" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "筆順、%lld画"
+    "Start the card (↩)": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カードを始める（↩）"
           }
         }
       }
     },
-    "Study" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習"
+    "Starting…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開始中…"
           }
         }
       }
     },
-    "Swipe back" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "スワイプで戻る"
+    "Stop": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "止める"
           }
         }
       }
     },
-    "Swiping in from the left edge goes back a screen, as everywhere on iOS. Off, only the back button does, so a swipe meant for a word never leaves the page." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "左端からのスワイプで前の画面に戻ります（iOSの標準）。オフにすると「戻る」ボタンでだけ戻るようになり、言葉を選ぼうとしたスワイプでページを離れることがなくなります。"
+    "Stroke order": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "筆順"
           }
         }
       }
     },
-    "Sync failed: %@" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "同期できませんでした：%@"
+    "Stroke order, %lld strokes": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "筆順、%lld画"
           }
         }
       }
     },
-    "Sync with iCloud" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "iCloudで同期"
+    "Study": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "学習"
           }
         }
       }
     },
-    "Syncing…" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "同期中…"
+    "Swipe back": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "スワイプで戻る"
           }
         }
       }
     },
-    "System" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "システム"
+    "Swiping in from the left edge goes back a screen, as everywhere on iOS. Off, only the back button does, so a swipe meant for a word never leaves the page.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左端からのスワイプで前の画面に戻ります（iOSの標準）。オフにすると「戻る」ボタンでだけ戻るようになり、言葉を選ぼうとしたスワイプでページを離れることがなくなります。"
           }
         }
       }
     },
-    "Tags" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "タグ"
+    "Sync failed: %@": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同期できませんでした：%@"
           }
         }
       }
     },
-    "Tail-high: high to the end, the drop on what follows." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "尾高型：最後まで高く、続く助詞で下がります。"
+    "Sync with iCloud": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iCloudで同期"
           }
         }
       }
     },
-    "Take another photo" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "撮り直す"
+    "Syncing…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同期中…"
           }
         }
       }
     },
-    "Take off the shelf" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "棚から出す"
+    "System": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "システム"
           }
         }
       }
     },
-    "Take out of a collection" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "コレクションから外す"
+    "Tags": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "タグ"
           }
         }
       }
     },
-    "Take out of…" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "外す…"
+    "Tail-high: high to the end, the drop on what follows.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "尾高型：最後まで高く、続く助詞で下がります。"
           }
         }
       }
     },
-    "Take the next page." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "次のページを撮ってください。"
+    "Take another photo": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "撮り直す"
           }
         }
       }
     },
-    "Tap the character that was misread." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "読み違えた文字をタップしてください。"
+    "Take off the shelf": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "棚から出す"
           }
         }
       }
     },
-    "Tap the parts you see in the kanji." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "漢字に見える部品をタップしてください。"
+    "Take out of a collection": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コレクションから外す"
           }
         }
       }
     },
-    "Text" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "本文"
+    "Take out of…": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "外す…"
           }
         }
       }
     },
-    "That file is not a Yomidori backup." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このファイルはヨミドリのバックアップではありません。"
+    "Take the next page.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "次のページを撮ってください。"
           }
         }
       }
     },
-    "That file is not a Yomidori collection." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このファイルはヨミドリのコレクションではありません。"
+    "Tap the character that was misread.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み違えた文字をタップしてください。"
           }
         }
       }
     },
-    "The camera button takes a new page." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カメラのボタンで次のページを撮れます。"
+    "Tap the parts you see in the kanji.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "漢字に見える部品をタップしてください。"
           }
         }
       }
     },
-    "The dictionary's, until you change them." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "変えるまでは辞書のとおりです。"
+    "Text": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本文"
           }
         }
       }
     },
-    "The line runs over the high morae and falls where the accent does; the number is the mora after which it falls, 0 when it never does. Tokyo accent, from Kanjium." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "線は高い拍の上を通り、アクセントの位置で下がります。数字は何拍目のあとで下がるかで、0は下がらないことを表します。東京式アクセント、Kanjiumのデータによる。"
+    "That file is not a Yomidori backup.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このファイルはヨミドリのバックアップではありません。"
           }
         }
       }
     },
-    "The number of questions due, kept up to date while the app is closed. Only the number: no banners, no sounds." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "期日の来た問題の数を、アプリを閉じていても更新します。数だけで、バナーも音もありません。"
+    "That file is not a Yomidori collection.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このファイルはヨミドリのコレクションではありません。"
           }
         }
       }
     },
-    "The picture, or its text as read (⌘↩)" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "写真か、読み取った本文か（⌘↩）"
+    "The camera button takes a new page.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カメラのボタンで次のページを撮れます。"
           }
         }
       }
     },
-    "The share of reviews you should get right when a word comes up. At 95 % each word comes back about twice as often as at 90 %. Counts from the next answer, on this device." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "復習で正解できる割合の目安です。95 % にすると、それぞれの言葉が 90 % のときの約二倍の頻度で出てきます。次の回答から、この端末に反映されます。"
+    "The dictionary's, until you change them.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "変えるまでは辞書のとおりです。"
           }
         }
       }
     },
-    "The word as the dictionary has it" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "辞書の形"
+    "The line runs over the high morae and falls where the accent does; the number is the mora after which it falls, 0 when it never does. Tokyo accent, from Kanjium.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "線は高い拍の上を通り、アクセントの位置で下がります。数字は何拍目のあとで下がるかで、0は下がらないことを表します。東京式アクセント、Kanjiumのデータによる。"
           }
         }
       }
     },
-    "The words and the sentences they were met in, for another reader to start fresh; no photos, no cover, no reviews." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "言葉と、出会った文だけを渡します。受け取った人は一から学べます。写真、表紙、復習の記録は含みません。"
+    "The number of questions due, kept up to date while the app is closed. Only the number: no banners, no sounds.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "期日の来た問題の数を、アプリを閉じていても更新します。数だけで、バナーも音もありません。"
           }
         }
       }
     },
-    "The words on the cover are read, so the name can be picked, not typed." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "表紙の文字を読み取るので、名前は入力せず選べます。"
+    "The picture, or its text as read (⌘↩)": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真か、読み取った本文か（⌘↩）"
           }
         }
       }
     },
-    "The words themselves stay in the dictionary; only the list of what you looked up goes." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "言葉そのものは辞書に残ります。消えるのは、調べた言葉の一覧だけです。"
+    "The share of reviews you should get right when a word comes up. At 95 % each word comes back about twice as often as at 90 %. Counts from the next answer, on this device.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "復習で正解できる割合の目安です。95 % にすると、それぞれの言葉が 90 % のときの約二倍の頻度で出てきます。次の回答から、この端末に反映されます。"
           }
         }
       }
     },
-    "The zoom and the page buttons stand in one column on this side of the picture, the zoom nearest your thumb: the side of the hand that holds the phone." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ズームとページのボタンを、写真のこちら側に一列に並べます。ズームは親指に一番近い所に。端末を持つ手の側を選んでください。"
+    "The word as the dictionary has it": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "辞書の形"
           }
         }
       }
     },
-    "Their sentences and their answers go with them." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文と回答も一緒になくなります。"
+    "The words and the sentences they were met in, for another reader to start fresh; no photos, no cover, no reviews.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "言葉と、出会った文だけを渡します。受け取った人は一から学べます。写真、表紙、復習の記録は含みません。"
           }
         }
       }
     },
-    "Today" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日"
+    "The words on the cover are read, so the name can be picked, not typed.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表紙の文字を読み取るので、名前は入力せず選べます。"
           }
         }
       }
     },
-    "Tokenizer" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "分かち書きエンジン"
+    "The words themselves stay in the dictionary; only the list of what you looked up goes.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "言葉そのものは辞書に残ります。消えるのは、調べた言葉の一覧だけです。"
           }
         }
       }
     },
-    "Tomorrow" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "明日"
+    "The zoom and the page buttons stand in one column on this side of the picture, the zoom nearest your thumb: the side of the hand that holds the phone.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ズームとページのボタンを、写真のこちら側に一列に並べます。ズームは親指に一番近い所に。端末を持つ手の側を選んでください。"
           }
         }
       }
     },
-    "Type the meaning" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "意味を入力"
+    "Their sentences and their answers go with them.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文と回答も一緒になくなります。"
           }
         }
       }
     },
-    "Type the reading" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "読みを入力"
+    "Today": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今日"
           }
         }
       }
     },
-    "Up to date" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "最新です"
+    "Tokenizer": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分かち書きエンジン"
           }
         }
       }
     },
-    "Use" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "使う"
+    "Tomorrow": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "明日"
           }
         }
       }
     },
-    "Vision" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vision"
+    "Type the meaning": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "意味を入力"
           }
         }
       }
     },
-    "Waiting" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "待機中"
+    "Type the reading": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読みを入力"
           }
         }
       }
     },
-    "Waiting for a lesson" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レッスン待ち"
+    "Up to date": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最新です"
           }
         }
       }
     },
-    "What does it mean?" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "どういう意味？"
+    "Use": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使う"
           }
         }
       }
     },
-    "Which pitch?" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "アクセントは？"
+    "Vision": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vision"
           }
         }
       }
     },
-    "Whose work this bundles" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "同梱しているもの"
+    "Waiting": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "待機中"
           }
         }
       }
     },
-    "Words column edge" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "言葉の欄の端"
+    "Waiting for a lesson": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "レッスン待ち"
           }
         }
       }
     },
-    "Words started" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "始めた語"
+    "What does it mean?": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "どういう意味？"
           }
         }
       }
     },
-    "Words that fit" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "当てはまる言葉"
+    "Which pitch?": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アクセントは？"
           }
         }
       }
     },
-    "Words with %@" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@を含む言葉"
+    "Which recognizer's reading of the picture to use": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真をどちらの認識器で読むか"
           }
         }
       }
     },
-    "Words you look up gather here." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "調べた言葉がここに集まります。"
+    "Whose work this bundles": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同梱しているもの"
           }
         }
       }
     },
-    "Wrong" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "不正解"
+    "Words column edge": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "言葉の欄の端"
           }
         }
       }
     },
-    "Year" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1年"
+    "Words started": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "始めた語"
           }
         }
       }
     },
-    "Yomidori backup" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ヨミドリのバックアップ"
+    "Words that fit": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当てはまる言葉"
           }
         }
       }
     },
-    "Your cards, collections and lookup history as one file, to keep a copy wherever you like; the covers are not in it. Restoring adds what a backup has to what is here, and takes nothing away." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カード、コレクション、調べた言葉の履歴を一つのファイルにして、好きな場所に保存できます（表紙は含みません）。復元はバックアップの内容をここに加えるだけで、何も消しません。"
+    "Words with %@": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@を含む言葉"
           }
         }
       }
     },
-    "Your cards, collections with their covers, and lookup history, kept the same on your devices through your own iCloud. Nothing goes anywhere else." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カード、表紙付きのコレクション、調べた言葉の履歴を、ご自身のiCloudを通じてお使いの端末で揃えます。それ以外の場所には何も送りません。"
+    "Words you look up gather here.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "調べた言葉がここに集まります。"
           }
         }
       }
     },
-    "Your meanings" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "自分で加えた意味"
+    "Wrong": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不正解"
           }
         }
       }
     },
-    "Zoom" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ズーム"
+    "Year": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1年"
+          }
+        }
+      }
+    },
+    "Yomidori backup": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ヨミドリのバックアップ"
+          }
+        }
+      }
+    },
+    "Your cards, collections and lookup history as one file, to keep a copy wherever you like; the covers are not in it. Restoring adds what a backup has to what is here, and takes nothing away.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カード、コレクション、調べた言葉の履歴を一つのファイルにして、好きな場所に保存できます（表紙は含みません）。復元はバックアップの内容をここに加えるだけで、何も消しません。"
+          }
+        }
+      }
+    },
+    "Your cards, collections with their covers, and lookup history, kept the same on your devices through your own iCloud. Nothing goes anywhere else.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カード、表紙付きのコレクション、調べた言葉の履歴を、ご自身のiCloudを通じてお使いの端末で揃えます。それ以外の場所には何も送りません。"
+          }
+        }
+      }
+    },
+    "Your meanings": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自分で加えた意味"
+          }
+        }
+      }
+    },
+    "Zoom": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ズーム"
+          }
+        }
+      }
+    },
+    "estimated": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "推定"
           }
         }
       }
     }
   },
-  "version" : "1.1"
+  "version": "1.1"
 }
