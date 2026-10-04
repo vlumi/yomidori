@@ -1001,6 +1001,16 @@
         }
       }
     },
+    "Forget this card" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このカードを捨てる"
+          }
+        }
+      }
+    },
     "Forget this card?" : {
       "localizations" : {
         "ja" : {
@@ -1236,7 +1246,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "文と回答も一緒になくなります。"
+            "value" : "文と回答もいっしょに消えます。"
           }
         }
       }
