@@ -36,7 +36,7 @@ same Kit under an AppKit shell. UIKit-, camera- and Vision-only code sits
 behind `#if os(iOS)` / `#if canImport(UIKit)`; where the Mac needs the same
 thing its own way there is an AppKit branch (appearance-aware colors, the
 pasteboard, the Dictionary app opened on a word), and where it does not (the
-camera, the orientation lock, swipe-back, the phone's Shortcuts section) the
+camera, the orientation lock, the phone's Shortcuts section) the
 fallback does nothing and the view is hidden. On the Mac there is no camera
 and no drawer: Read is the home tab, and the page is one pane with two
 states (`MacReadView`): *Text*, a box the reader pastes into (`TextBox` over an
@@ -522,10 +522,8 @@ has what remains.
   but to the reader's own iCloud while sync is on, the pitch notation explained
   on four words, and the notices every bundled license asks for, which are the
   repository's own THIRD_PARTY_NOTICES.md bundled as a resource so there is one
-  copy to keep current. **`SettingsView`**: the swipe-back switch, on as iOS has
-  it; off, the navigation controller's pop gesture is disabled on every screen
-  through a small UIKit helper (`SwipeBack`), for a reader whose swipe meant a
-  word; the side the page's controls stand on; the look (`Appearance`: the
+  copy to keep current. **`SettingsView`**: the side the page's controls stand
+  on; the look (`Appearance`: the
   device's, light or dark, `chosenAppearance()` on every window's root) and the
   language (`AppLanguage`: the device's, English or Japanese, written to
   `AppleLanguages` for the system to read at the next start, with a notice

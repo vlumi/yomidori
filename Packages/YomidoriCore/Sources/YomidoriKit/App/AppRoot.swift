@@ -216,7 +216,7 @@ private struct TabStack<Root: View>: View {
 
     var body: some View {
         NavigationStack(path: $path) {
-            root().swipeBackSetting().appDestinations()
+            root().appDestinations()
         }
         .onTabTap(tab) { taps in
             if path.isEmpty { taps.tappedAtRoot(tab) } else { path = NavigationPath() }
