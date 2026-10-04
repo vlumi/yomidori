@@ -486,13 +486,15 @@ has what remains.
   order the counts and the icon's number are taken from; a review shuffles
   them. *Forgot it.
   Back to waiting* on a review clears the schedule and the card returns
-  through a lesson. `Rank` bands the reading's stability in birds:
-  nest 0 (shelved), egg 1 (waiting), hatchling 2 (under a week), chick 3 (under
-  a month), fledgling 4 (under four months), flying 5 (under a year), migrating
-  6; nothing retires. Study draws the ranks as bars in each rank's color with a
-  selection, and the mark everywhere is the rank's number on a dot of its
-  color, the name beside it where there is room and as the accessibility label
-  where not.
+  through a lesson. `Rank` bands the reading's stability in birds, numbered
+  from the egg: egg 0 (waiting), hatchling 1 (under a week), chick 2 (under a
+  month), fledgling 3 (under four months), flying 4 (under a year), migrating
+  5; the nest (shelved) is outside the climb, raw value −1 so it sorts first
+  and a dash where the others show their number; nothing retires. A stored
+  count (`RankSnapshot.counts`) is indexed by `Rank.index`, the nest first.
+  Study draws the ranks as bars in each rank's color with a selection, and the
+  mark everywhere is the rank's number on a dot of its color, the name beside
+  it where there is room and as the accessibility label where not.
 - **Collections** (`Collection`, `FileCollectionStore` in Core; `CollectionsView`,
   `CollectionEditor`, `CoverScanView`, `TagsEditor`, `CollectionPicker`,
   `CollectionFilter` in Kit): named groups of cards, a book usually, a card in

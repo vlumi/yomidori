@@ -22,7 +22,8 @@ struct RankName: View {
     }
 }
 
-/// A rank as its number, 0 for the nest to 6 for the migrating bird, on a dot of its color.
+/// A rank as its number, 0 for the egg to 5 for the migrating bird, on a dot of its color;
+/// the nest, outside the climb, shows a dash.
 struct RankMark: View {
     let rank: Rank
     var size: CGFloat = 26
@@ -30,11 +31,17 @@ struct RankMark: View {
 
     var body: some View {
         let side = size * scale
-        Text(verbatim: "\(rank.rawValue)")
-            .font(.system(size: side * 0.7, weight: .bold, design: .rounded))
-            .foregroundStyle(rank.markForeground)
-            .frame(width: side, height: side)
-            .background(rank.color, in: Circle())
+        Group {
+            if let number = rank.number {
+                Text(verbatim: "\(number)")
+            } else {
+                Text(verbatim: "–")
+            }
+        }
+        .font(.system(size: side * 0.7, weight: .bold, design: .rounded))
+        .foregroundStyle(rank.markForeground)
+        .frame(width: side, height: side)
+        .background(rank.color, in: Circle())
     }
 }
 
