@@ -159,6 +159,15 @@ public struct CaptureView: View {
             } else if let pasted = page.pasted {
                 TextPage(text: pasted, selection: selection)
                     .frame(height: area.height)
+                    // The camera button the picture has, so the hint under the words holds
+                    // for a pasted page too.
+                    .overlay(alignment: controlsSide.alignment) {
+                        PageButton(
+                            symbol: "camera", label: Text("Back to the camera", bundle: .module),
+                            action: retake
+                        )
+                        .padding(12)
+                    }
                     .frame(maxHeight: .infinity, alignment: .top)
                     .onTabReselect(.read) { retake() }
             } else {
