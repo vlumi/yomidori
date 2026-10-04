@@ -76,17 +76,20 @@ extension CloudSync {
             }
         }
         var incoming = Incoming()
+        // Remembered only once taken and kept, so a record this version can't read, or one
+        // the store could not write, is not held as the server's version: the next save of
+        // it then goes up without server fields, and the conflict that answers brings the
+        // server's copy back down to merge.
+        var taken: [SyncKind: [CKRecord]] = [:]
         for modification in changes.modifications {
             let record = modification.record
             // Deleted here and not yet sent: the delete goes out, the card doesn't come back.
             guard !pendingDeletes.contains(record.recordID.recordName) else { continue }
-            // Remembered only once taken, so one this version can't read is not written
-            // over by a save of the older copy.
-            if take(
+            if let kind = take(
                 record, changedHere: pendingSaves.contains(record.recordID.recordName),
                 into: &incoming)
             {
-                remember(record)
+                taken[kind, default: []].append(record)
             }
         }
         var deleted: [SyncKind: Set<String>] = [:]
@@ -101,36 +104,65 @@ extension CloudSync {
                 deleted[kind, default: []].insert(key)
             }
         }
+        keep(incoming, deleting: deleted, remembering: taken)
+    }
+
+    /// The records taken written to the stores, kind by kind, and remembered as the server's
+    /// version only where the write took; a write that failed is said.
+    private func keep(
+        _ incoming: Incoming, deleting deleted: [SyncKind: Set<String>],
+        remembering taken: [SyncKind: [CKRecord]]
+    ) {
+        var failure: Error?
+        func kept(_ kinds: [SyncKind], _ apply: () throws -> Void) {
+            do {
+                try apply()
+                for kind in kinds { taken[kind]?.forEach(remember) }
+            } catch {
+                failure = error
+            }
+        }
+        kept([.card]) {
+            try stores.cards.applyRemote(
+                saving: incoming.cards,
+                deleting: Set((deleted[.card] ?? []).compactMap(UUID.init)))
+        }
+        kept([.collection]) {
+            try stores.collections.applyRemote(
+                saving: incoming.collections,
+                deleting: Set((deleted[.collection] ?? []).compactMap(UUID.init)))
+        }
+        kept([.lookup, .historyCleared]) {
+            let local = Dictionary(
+                stores.lookups.lookups().map { ($0.id, $0) },
+                uniquingKeysWith: { first, _ in first })
+            try stores.lookups.applyRemote(
+                saving: incoming.lookups.map { remote in
+                    local[remote.id].map { $0.merged(with: remote) } ?? remote
+                },
+                deleting: deleted[.lookup] ?? [], clearedAt: incoming.clearedAt)
+        }
         saveSystemFields()
-        try? stores.cards.applyRemote(
-            saving: incoming.cards, deleting: Set((deleted[.card] ?? []).compactMap(UUID.init)))
-        try? stores.collections.applyRemote(
-            saving: incoming.collections,
-            deleting: Set((deleted[.collection] ?? []).compactMap(UUID.init)))
-        let local = Dictionary(
-            stores.lookups.lookups().map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-        try? stores.lookups.applyRemote(
-            saving: incoming.lookups.map { remote in
-                local[remote.id].map { $0.merged(with: remote) } ?? remote
-            },
-            deleting: deleted[.lookup] ?? [], clearedAt: incoming.clearedAt)
+        if let failure { onStatus?(.failed(failure.localizedDescription)) }
     }
 
     /// One record from another device; merged with the local one only where this device has
-    /// changed it too and not yet sent the change.
+    /// changed it too and not yet sent the change. Its kind when taken, nil when it can't be
+    /// read.
     @discardableResult
-    private func take(_ record: CKRecord, changedHere: Bool, into incoming: inout Incoming) -> Bool
+    private func take(_ record: CKRecord, changedHere: Bool, into incoming: inout Incoming)
+        -> SyncKind?
     {
         guard let kind = SyncName.kind(ofRecordName: record.recordID.recordName) else {
-            return false
+            return nil
         }
         switch kind {
         case .card:
-            guard let remote = decode(Card.self, record) else { return false }
+            guard let remote = decode(Card.self, record) else { return nil }
             let local = changedHere ? stores.cards.cards().first { $0.id == remote.id } : nil
             incoming.cards.append(local.map { $0.merged(with: remote) } ?? remote)
         case .collection:
-            guard let remote = decode(Collection.self, record) else { return false }
+            guard let remote = decode(Collection.self, record) else { return nil }
             if let coverID = remote.coverID, let url = (record["cover"] as? CKAsset)?.fileURL {
                 stores.saveCover(coverID, url)
             }
@@ -138,12 +170,12 @@ extension CloudSync {
                 changedHere ? stores.collections.collections().first { $0.id == remote.id } : nil
             incoming.collections.append(local.map { $0.merged(with: remote) } ?? remote)
         case .lookup:
-            guard let remote = decode(Lookup.self, record) else { return false }
+            guard let remote = decode(Lookup.self, record) else { return nil }
             incoming.lookups.append(remote)
         case .historyCleared:
             incoming.clearedAt = SyncPayload.clearDate(record["cleared"] as? Date)
         }
-        return true
+        return kind
     }
 
     /// The server's version taken into the local one; false when it can't be read.
