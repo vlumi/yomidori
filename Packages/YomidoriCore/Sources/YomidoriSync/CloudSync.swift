@@ -139,7 +139,7 @@ public final class CloudSync: CKSyncEngineDelegate, @unchecked Sendable {
         switch event {
         case .stateUpdate(let update):
             try? JSONEncoder().encode(update.stateSerialization).write(
-                to: stateURL, options: .atomic)
+                to: stateURL, options: .store)
         case .accountChange(let change):
             accountChanged(change.changeType, syncEngine)
         case .fetchedDatabaseChanges(let changes):
@@ -248,6 +248,6 @@ public final class CloudSync: CKSyncEngineDelegate, @unchecked Sendable {
 
     func saveSystemFields() {
         let fields = lock.withLock { systemFields }
-        try? JSONEncoder().encode(fields).write(to: fieldsURL, options: .atomic)
+        try? JSONEncoder().encode(fields).write(to: fieldsURL, options: .store)
     }
 }
