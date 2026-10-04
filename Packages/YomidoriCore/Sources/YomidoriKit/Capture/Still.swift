@@ -11,11 +11,6 @@ public struct Still: Identifiable {
         CGSize(width: image.width, height: image.height)
     }
 
-    /// `rect` in image coordinates, y down; at full resolution.
-    public func cropped(to rect: CGRect) -> Still? {
-        image.cropping(to: rect).map(Still.init(image:))
-    }
-
     public init(image: CGImage) {
         self.image = image
     }
