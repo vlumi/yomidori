@@ -76,9 +76,12 @@ jobs:
         with:
           files: Packages/YomidoriCore/coverage.lcov
           use_oidc: true
-          # codecov/patch is a required check: an upload that fails would leave
-          # the PR waiting for a status that never comes, so it fails here, loudly.
-          fail_ci_if_error: true
+          # codecov/patch is not a required check (that waits on the Codecov
+          # app), so an upload that fails — Codecov's CLI download refused the
+          # runner's TLS handshake for an hour on 2026-10-05 — must not hold
+          # every merge; it is a warning in the log. Back to true once the
+          # check is required, when a missing status would block anyway.
+          fail_ci_if_error: false
 
   build:
     name: Build app

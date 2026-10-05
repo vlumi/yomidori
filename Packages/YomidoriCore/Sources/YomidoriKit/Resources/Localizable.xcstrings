@@ -471,12 +471,12 @@
         }
       }
     },
-    "Back to the page" : {
+    "Back to the page already taken" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ページに戻る"
+            "value" : "撮ったページに戻る"
           }
         }
       }

@@ -33,7 +33,7 @@ struct LiveTextImage: UIViewRepresentable {
         let key = sheets.map(\.still.id.uuidString).joined(separator: " ") + " \(side)"
         if coordinator.layoutKey != key {
             coordinator.layoutKey = key
-            uiView.show(sheets.map { UIImage(cgImage: $0.still.image) }, nextOn: side)
+            uiView.show(sheets.map { UIImage(cgImage: $0.still.preview) }, nextOn: side)
             coordinator.attach(to: uiView.imageViews)
         }
         for (index, sheet) in sheets.enumerated() where index < coordinator.links.count {
@@ -282,7 +282,7 @@ struct LiveTextImage: View {
 
     var body: some View {
         if let last = sheets.last {
-            Image(decorative: last.still.image, scale: 1).resizable().scaledToFit()
+            Image(decorative: last.still.preview, scale: 1).resizable().scaledToFit()
         }
     }
 }

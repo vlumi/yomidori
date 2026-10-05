@@ -90,7 +90,7 @@ struct CoverScanView: View {
 
     private func picture(_ still: Still) -> some View {
         Section {
-            Image(decorative: still.image, scale: 1)
+            Image(decorative: still.preview, scale: 1)
                 .resizable()
                 .scaledToFit()
                 .frame(maxHeight: 260)
@@ -200,7 +200,8 @@ struct CoverScanView: View {
 
     private func loadPicked() async {
         guard let picked, let data = try? await picked.loadTransferable(type: Data.self),
-            let loaded = Still(data: data), !Task.isCancelled
+            let loaded = await Task.detached(priority: .userInitiated) { Still(data: data) }.value,
+            !Task.isCancelled
         else { return }
         camera.stop()
         still = loaded
