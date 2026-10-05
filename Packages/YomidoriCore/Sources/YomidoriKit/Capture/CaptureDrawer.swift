@@ -28,13 +28,19 @@ struct CaptureDrawer<Content: View, Buttons: View>: View {
                         .id(TabTop.id)
                     }
                     .scrollsToTopOnReselect(of: .read, with: proxy)
+                    // Under the tab bar, as a list's rows go: seen through the glass, and
+                    // there when the bar folds to its one icon on a scroll — a drawer that
+                    // stopped at the bar's edge left a bare band of its own color there.
+                    .ignoresSafeArea(edges: .bottom)
+                    .contentMargins(.bottom, 12, for: .scrollContent)
                 }
                 .frame(maxWidth: .infinity)
             }
             buttons()
         }
         .padding(.horizontal, 24)
-        .padding(.vertical, 12)
+        .padding(.top, 12)
+        .padding(.bottom, hasStill ? 0 : 12)
         .frame(maxWidth: .infinity)
         .frame(
             height: hasStill
