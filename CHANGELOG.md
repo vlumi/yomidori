@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **No more freeze after the shutter.** The screen shows the page at a size it can draw at once while the recognizers read the full frame; the camera button now stands just above the zoom, nearest the thumb; and the + has a plain *Cancel* at the top of the camera, which brings the page already taken back.
+
 ### build 34 — 2026-10-05
 
 - **A kept sentence keeps its quotation whole.** A full stop inside 「」 no longer cuts the sentence, and what follows the quote — と呟いた — stays with it; a line of dialogue on its own is a sentence by itself; a page number or running head never joins. A speech longer than 120 characters is still cut at its own full stops.
