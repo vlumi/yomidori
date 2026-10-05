@@ -11,6 +11,9 @@ public struct CaptureView: View {
     @State var recognizing = false
     @State var picked: PhotosPickerItem?
     @State private var dropping = false
+    /// Where the drawer's top edge lies in the layout, measured; the page's area ends there
+    /// while the drawer is only its button row, whose height is its own.
+    @State private var drawerTop: CGFloat?
     @StateObject private var zoomControl = ZoomControl()
     @AppStorage(TokenizerChoice.key) var tokenizerChoice: TokenizerChoice = .system
     @AppStorage(SettingsKey.pageControlsSide) private var controlsSide: PageControlsSide = .right
@@ -100,6 +103,7 @@ public struct CaptureView: View {
                 }
             }
             .animation(.easeOut(duration: 0.2), value: busy == nil)
+            .coordinateSpace(name: Self.layoutSpace)
             .onAppear {
                 OrientationLock.portrait(true)
                 if still == nil, page.pasted == nil { camera.start() }
@@ -144,8 +148,13 @@ public struct CaptureView: View {
             return CGSize(
                 width: max(0, screen.width - columnWidth(in: screen)), height: screen.height)
         }
-        // The drawer has a least height; the first layout, before the screen has a size,
+        // With the camera up the drawer is only its button row, as tall as it is: the page
+        // ends where the row was measured to begin, or whatever stood at the camera's
+        // bottom edge would lie under it. The first layout, before the screen has a size,
         // must not ask for a page below zero.
+        if still == nil, page.pasted == nil, let drawerTop {
+            return CGSize(width: screen.width, height: max(0, min(drawerTop, screen.height)))
+        }
         return CGSize(
             width: screen.width,
             height: max(
@@ -177,7 +186,11 @@ public struct CaptureView: View {
                     .frame(maxHeight: .infinity, alignment: .top)
                     .onTabReselect(.read) { retake() }
             } else {
+                // In the page's room, as the still is: unframed, the camera filled the
+                // screen and the spread's notice at its foot lay under the drawer.
                 cameraView
+                    .frame(width: area.width, height: area.height)
+                    .frame(maxHeight: .infinity, alignment: .top)
             }
         }
         // A picture dropped on the page from another app or Files, an iPad beside one; and
@@ -249,38 +262,22 @@ public struct CaptureView: View {
         .frame(maxHeight: .infinity, alignment: .top)
     }
 
-    /// The drawer comes to rest at a detent; the page follows.
-    private func settle(at fraction: Double) {
-        withAnimation(.easeOut(duration: 0.2)) {
-            readoutFraction = fraction
-            liveFraction = nil
-        }
-    }
-
-    private func toggleDrawer() {
-        let toggled = DrawerDetents.toggled(from: readoutFraction, remembered: fractionBeforeToggle)
-        fractionBeforeToggle = toggled.remember
-        settle(at: toggled.settle)
-    }
-
-    /// The slider's place: Live Text's scroll view reports its own; the other modes' zoom is
-    /// the page state's.
-    private func zoomFraction(in area: CGSize) -> Binding<Double> {
-        if mode == .liveText {
-            return Binding(get: { zoomControl.fraction }, set: { zoomControl.set($0) })
-        }
-        return Binding(
-            get: { Zoom.fraction(of: zoom.scale, in: Zoom.range) },
-            set: { zoom = zoom.scaled(to: Zoom.scale(at: $0, in: Zoom.range), in: area) })
-    }
-
     private func drawer(screenHeight: CGFloat) -> some View {
         CaptureDrawer(
             hasStill: still != nil || page.pasted != nil, screenHeight: screenHeight,
             fraction: Binding(get: { liveFraction ?? readoutFraction }, set: { liveFraction = $0 }),
             settled: { fraction in settle(at: DrawerDetents.nearest(fraction)) },
-            toggled: toggleDrawer, content: { words }, buttons: { buttons })
+            toggled: toggleDrawer, content: { words }, buttons: { buttons }
+        )
+        // Where the drawer's top edge lies, measured: the page's room ends there.
+        .onGeometryChange(for: CGFloat.self) { proxy in
+            proxy.frame(in: .named(Self.layoutSpace)).minY
+        } action: { top in
+            drawerTop = top
+        }
     }
+
+    private static let layoutSpace = "read"
 
     @ViewBuilder private var words: some View {
         if page.pasted == nil {
@@ -406,5 +403,34 @@ extension CaptureView {
                         Text("Drag to make the column wider or narrower", bundle: .module))
             }
         }
+    }
+}
+
+// MARK: The drawer's rest and the zoom's place
+
+extension CaptureView {
+    /// The drawer comes to rest at a detent; the page follows.
+    private func settle(at fraction: Double) {
+        withAnimation(.easeOut(duration: 0.2)) {
+            readoutFraction = fraction
+            liveFraction = nil
+        }
+    }
+
+    private func toggleDrawer() {
+        let toggled = DrawerDetents.toggled(from: readoutFraction, remembered: fractionBeforeToggle)
+        fractionBeforeToggle = toggled.remember
+        settle(at: toggled.settle)
+    }
+
+    /// The slider's place: Live Text's scroll view reports its own; the other modes' zoom is
+    /// the page state's.
+    private func zoomFraction(in area: CGSize) -> Binding<Double> {
+        if mode == .liveText {
+            return Binding(get: { zoomControl.fraction }, set: { zoomControl.set($0) })
+        }
+        return Binding(
+            get: { Zoom.fraction(of: zoom.scale, in: Zoom.range) },
+            set: { zoom = zoom.scaled(to: Zoom.scale(at: $0, in: Zoom.range), in: area) })
     }
 }

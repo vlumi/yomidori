@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The camera's own controls no longer hide under the drawer.** The camera was laid out over the whole screen rather than the page's room, so *Back to the page* after + sat under the button row — which is why it could not be found; *Cancel* and *Start over* now stand at the camera's top, and the live preview fills exactly the page's room.
 - **No more freeze after the shutter.** The screen shows the page at a size it can draw at once while the recognizers read the full frame; the camera button now stands just above the zoom, nearest the thumb; and the + has a plain *Cancel* at the top of the camera, which brings the page already taken back.
 
 ### build 34 — 2026-10-05
