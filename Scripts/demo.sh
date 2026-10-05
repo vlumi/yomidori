@@ -15,7 +15,7 @@
 #   DRAWER=0.2|0.5|0.8                 the drawer under the page at that share of the screen
 #   MODE=livetext|vision|closeup       the recognizer the page opens in
 #   RECOGNIZE=1                        the page read by the recognizers, not taken from its text
-#   NOPAGE=1                           Read opened at the camera, no page seeded
+#   NOPAGE=1                           Read opened at the camera, no page seeded (with SPREAD=1: after the first page)
 #   DEMO_LANG=en|ja                    the app's language (the simulator's otherwise)
 #   APPEARANCE=light|dark              the simulator's look (light unless asked)
 #   YOMIDORI_UDID_FILE=<path>          the simulator's udid written there, for shoot.sh

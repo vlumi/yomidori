@@ -88,7 +88,7 @@ public enum DemoMode {
     }
 
     /// `-yomidori-nopage`: the Read tab at the camera, no page seeded, for a look at the ways
-    /// in.
+    /// in; with `-yomidori-spread`, the first page taken and the camera up for the next.
     static var noPage: Bool {
         isRequested && CommandLine.arguments.contains("-yomidori-nopage")
     }

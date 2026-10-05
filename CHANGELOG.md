@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The camera's own controls no longer hide under the drawer.** The camera was laid out over the whole screen rather than the page's room, so *Back to the page* after + sat under the button row — which is why it could not be found; *Cancel* and *Start over* now stand at the camera's top, and the live preview fills exactly the page's room.
+
 ### build 34 — 2026-10-05
 
 - **A kept sentence keeps its quotation whole.** A full stop inside 「」 no longer cuts the sentence, and what follows the quote — と呟いた — stays with it; a line of dialogue on its own is a sentence by itself; a page number or running head never joins. A speech longer than 120 characters is still cut at its own full stops.
