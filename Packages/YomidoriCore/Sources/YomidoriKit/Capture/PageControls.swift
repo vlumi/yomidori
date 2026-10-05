@@ -24,6 +24,10 @@ struct PageControls: View {
     /// Moves the second page round the first; nil until there is a second page.
     var moveNextPage: (() -> Void)?
     @Binding var zoom: Double
+    var showsZoom = true
+
+    /// Three buttons, their gaps, the slider at its shortest and the padding round them.
+    static let heightWithZoom: CGFloat = 3 * 44 + 3 * 14 + 60 + 24
 
     var body: some View {
         VStack(alignment: side.horizontal, spacing: 14) {
@@ -43,7 +47,9 @@ struct PageControls: View {
             PageButton(
                 symbol: "camera", label: Text("Take another photo", bundle: .module),
                 action: retake)
-            ZoomSlider(fraction: $zoom)
+            if showsZoom {
+                ZoomSlider(fraction: $zoom)
+            }
         }
     }
 }

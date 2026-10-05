@@ -40,7 +40,12 @@ struct ZoomSlider: View {
                     }
                     .onEnded { _ in fractionAtStart = nil })
         }
-        .frame(width: 44, height: length)
+        // Shorter where the page's room is short, as under a drawer at its tallest, rather
+        // than the column of controls climbing into the status bar.
+        .frame(
+            minWidth: 44, maxWidth: 44, minHeight: knob * 2, idealHeight: length,
+            maxHeight: length
+        )
         .accessibilityElement()
         .accessibilityLabel(Text("Zoom", bundle: .module))
         .accessibilityValue(Text("\(Int((fraction * 100).rounded())) percent", bundle: .module))
