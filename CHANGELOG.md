@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The words run under the tab bar.** They show through the glass, and when the bar folds to its one icon on a scroll the band it leaves shows the words, not a bare strip of the drawer's color.
+
 ### build 35 — 2026-10-05
 
 - **No more freeze after the shutter.** The screen shows the page at a size it can draw at once while the recognizers read the full frame.
