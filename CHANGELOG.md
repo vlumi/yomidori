@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The page's controls stay on the page.** With the drawer at its tallest the column of buttons climbed into the status bar; it now keeps under it, the zoom slider shortening and then stepping aside where there is no room for it (the pinch zooms regardless).
+
 ### build 35 — 2026-10-05
 
 - **No more freeze after the shutter.** The screen shows the page at a size it can draw at once while the recognizers read the full frame.

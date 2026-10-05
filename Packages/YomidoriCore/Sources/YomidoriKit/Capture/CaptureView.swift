@@ -72,7 +72,9 @@ public struct CaptureView: View {
                 columns
                 ? AnyLayout(HStackLayout(spacing: 0)) : AnyLayout(ZStackLayout(alignment: .bottom))
             layout {
-                pagePane(in: pageArea(in: geometry.size), columns: columns)
+                pagePane(
+                    in: pageArea(in: geometry.size), columns: columns,
+                    topInset: columns ? 0 : geometry.safeAreaInsets.top)
                 if columns {
                     wordsColumn(in: geometry.size)
                 } else {
@@ -166,11 +168,15 @@ public struct CaptureView: View {
     /// The still, the pasted text or the camera, in its room, over black — which stays
     /// under the status bar on a phone, where the page is the whole screen, and not beside
     /// the sections' sidebar, where the bar's own color should hold.
-    @ViewBuilder private func pagePane(in area: CGSize, columns: Bool) -> some View {
+    /// `topInset` is the status bar's height where the page runs under it, which the
+    /// controls over the page must not.
+    @ViewBuilder private func pagePane(in area: CGSize, columns: Bool, topInset: CGFloat)
+        -> some View
+    {
         ZStack {
             Color.black.ignoresSafeArea(edges: columns ? .bottom : .all)
             if let still {
-                stillView(still, in: area)
+                stillView(still, in: area, topInset: topInset)
             } else if let pasted = page.pasted {
                 TextPage(text: pasted, selection: selection)
                     .frame(height: area.height)
@@ -230,7 +236,7 @@ public struct CaptureView: View {
         }
     }
 
-    private func stillView(_ still: Still, in area: CGSize) -> some View {
+    private func stillView(_ still: Still, in area: CGSize, topInset: CGFloat) -> some View {
         Group {
             switch mode {
             case .vision:
@@ -251,9 +257,13 @@ public struct CaptureView: View {
                 canAddPage: currentTranscript != nil && pages.count + 1 < Self.pagesInASpread,
                 addPage: addPage, startOver: startOver, retake: retake,
                 moveNextPage: pages.count + 1 < Self.pagesInASpread ? nil : moveNextPage,
-                zoom: zoomFraction(in: area)
+                zoom: zoomFraction(in: area),
+                // The slider only where the column has room for it under the status bar,
+                // as it has not with the drawer at its tallest; the pinch zooms regardless.
+                showsZoom: area.height - topInset >= PageControls.heightWithZoom
             )
             .padding(12)
+            .padding(.top, topInset)
         }
         // Tapping Read while a page is up is the retake.
         .onTabReselect(.read) { retake() }
