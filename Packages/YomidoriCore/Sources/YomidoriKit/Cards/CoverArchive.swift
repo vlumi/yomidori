@@ -26,7 +26,7 @@ enum CoverArchive {
                 destination as CFURL, UTType.jpeg.identifier as CFString, 1, nil)
         else { throw CocoaError(.fileWriteUnknown) }
         let scale = min(1, longestSide / CGFloat(max(image.width, image.height)))
-        let scaled = scale < 1 ? Self.scaled(image, by: scale) ?? image : image
+        let scaled = scale < 1 ? image.scaled(by: scale) ?? image : image
         CGImageDestinationAddImage(
             sink, scaled, [kCGImageDestinationLossyCompressionQuality: 0.8] as CFDictionary)
         guard CGImageDestinationFinalize(sink) else { throw CocoaError(.fileWriteUnknown) }
@@ -79,19 +79,5 @@ enum CoverArchive {
     private static func image(at url: URL) -> CGImage? {
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil) else { return nil }
         return CGImageSourceCreateImageAtIndex(source, 0, nil)
-    }
-
-    private static func scaled(_ image: CGImage, by scale: CGFloat) -> CGImage? {
-        let width = Int(CGFloat(image.width) * scale)
-        let height = Int(CGFloat(image.height) * scale)
-        guard
-            let context = CGContext(
-                data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
-                space: CGColorSpaceCreateDeviceRGB(),
-                bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)
-        else { return nil }
-        context.interpolationQuality = .high
-        context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
-        return context.makeImage()
     }
 }

@@ -10,7 +10,8 @@ enum PageControlsSide: String, CaseIterable {
 }
 
 /// Everything done to the page, in one column on the chosen side: the spread's way out on
-/// top, the next page, and the zoom at the bottom, nearest the thumb.
+/// top, the next page, then the camera for another photo and the zoom at the bottom — the
+/// two used most, nearest the thumb.
 struct PageControls: View {
     let side: PageControlsSide
     /// The page's number in a spread; nil for a single page.
@@ -26,9 +27,6 @@ struct PageControls: View {
 
     var body: some View {
         VStack(alignment: side.horizontal, spacing: 14) {
-            PageButton(
-                symbol: "camera", label: Text("Take another photo", bundle: .module),
-                action: retake)
             if let pageCount {
                 StartOverButton(pageCount: pageCount, action: startOver)
             }
@@ -42,6 +40,9 @@ struct PageControls: View {
                 )
                 .disabled(!canAddPage)
             }
+            PageButton(
+                symbol: "camera", label: Text("Take another photo", bundle: .module),
+                action: retake)
             ZoomSlider(fraction: $zoom)
         }
     }

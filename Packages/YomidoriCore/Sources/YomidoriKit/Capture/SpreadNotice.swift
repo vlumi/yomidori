@@ -1,36 +1,46 @@
 import SwiftUI
 
-/// Over the camera while the next page of a spread is awaited: take it, go back to the
-/// page already taken (the + pressed by mistake), or start the spread over.
+/// Over the camera while the next page of a spread is awaited: a Cancel at the top, where
+/// one is looked for, that brings the page already taken back (the + pressed by mistake);
+/// Start over beside it; and what to do, said once at the bottom.
 struct SpreadNotice: View {
     let backToPage: () -> Void
     let startOver: () -> Void
 
     var body: some View {
         VStack {
-            Spacer()
-            FitsOrStacks {
-                Text("Take the next page.", bundle: .module)
-                    .font(.callout)
-                    .foregroundStyle(Palette.silver)
+            HStack {
                 Button {
                     backToPage()
                 } label: {
-                    Text("Back to the page", bundle: .module)
+                    Label {
+                        Text("Cancel", bundle: .module)
+                    } icon: {
+                        Image(systemName: "xmark")
+                    }
                 }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
+                .help(Text("Back to the page already taken", bundle: .module))
+                Spacer()
                 Button {
                     startOver()
                 } label: {
-                    Text("Start over", bundle: .module)
+                    Label {
+                        Text("Start over", bundle: .module)
+                    } icon: {
+                        Image(systemName: "arrow.counterclockwise")
+                    }
                 }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
             }
+            .buttonStyle(.bordered)
+            .tint(.white)
             .padding(12)
-            .background(.black.opacity(0.5), in: RoundedRectangle(cornerRadius: 10))
-            .padding(.bottom, 16)
+            Spacer()
+            Text("Take the next page.", bundle: .module)
+                .font(.callout)
+                .foregroundStyle(Palette.silver)
+                .padding(10)
+                .background(.black.opacity(0.5), in: RoundedRectangle(cornerRadius: 10))
+                .padding(.bottom, 16)
         }
     }
 }

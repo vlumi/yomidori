@@ -6,6 +6,23 @@ import UniformTypeIdentifiers
 /// An image from outside the app (the photo library, a cover from another device) decoded
 /// with care: only real image data, of a bounded size, its pixel count read from the header
 /// before anything is decoded, and drawn upright at no more than `longestSide`.
+extension CGImage {
+    /// A copy drawn at `scale`, with high interpolation; nil when the context can't be made.
+    public func scaled(by scale: CGFloat) -> CGImage? {
+        let width = Int(CGFloat(self.width) * scale)
+        let height = Int(CGFloat(self.height) * scale)
+        guard width > 0, height > 0,
+            let context = CGContext(
+                data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
+                space: CGColorSpaceCreateDeviceRGB(),
+                bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)
+        else { return nil }
+        context.interpolationQuality = .high
+        context.draw(self, in: CGRect(x: 0, y: 0, width: width, height: height))
+        return context.makeImage()
+    }
+}
+
 public enum ImageIntake {
     /// A 48-megapixel camera frame, and room above it.
     public static let mostPixels = 100_000_000

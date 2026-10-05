@@ -61,7 +61,7 @@ struct StillView: View {
     }
 
     @ViewBuilder private func sheet(_ sheet: Sheet, at page: Int, in frame: CGRect) -> some View {
-        Image(decorative: sheet.still.image, scale: 1)
+        Image(decorative: sheet.still.preview, scale: 1)
             .resizable()
             .frame(width: frame.width, height: frame.height)
             .offset(x: frame.minX, y: frame.minY)
