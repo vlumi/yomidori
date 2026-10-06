@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 39 — 2026-10-06
+
 - **The last words in the drawer come up above the tab bar.** Since they began running under the bar, the last rows could be seen only while a finger held them up; the bar's height is a margin now. And Live Text reads a finer copy of the page, for highlights that sit closer on the word.
 
 ### build 38 — 2026-10-06
