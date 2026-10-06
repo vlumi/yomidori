@@ -372,11 +372,22 @@ private struct PhraseRow: View {
     let added: (FoundWord) -> Bool
     let open: (FoundWord) -> Void
     let keep: (FoundWord) -> Void
+    /// The phrase's entries, looked up once off the main thread, not in every render.
+    @State private var entries: [DictionaryEntry] = []
+
+    private var phrase: String { chunks.map(\.surface).joined() }
 
     var body: some View {
-        let phrase = chunks.map(\.surface).joined()
-        let entries =
-            JMdict.bundled?.entries(forAny: Deinflector.candidates(for: phrase)) ?? []
+        content
+            .task(id: phrase) {
+                let phrase = phrase
+                entries = await Task.detached(priority: .userInitiated) {
+                    JMdict.bundled?.entries(forAny: Deinflector.candidates(for: phrase)) ?? []
+                }.value
+            }
+    }
+
+    @ViewBuilder private var content: some View {
         let tokens = chunks.flatMap(\.word.tokens)
         if !entries.isEmpty, !tokens.isEmpty {
             WordReadout(
