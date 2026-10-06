@@ -15,8 +15,13 @@ public struct TranscriptLines: Sendable {
         self.starts = starts
     }
 
+    /// The end of the transcript for a line it has not, or an offset past it.
     public func index(inLine line: Int, offset: Int, in transcript: String) -> String.Index {
-        transcript.index(starts[line], offsetBy: offset)
+        guard starts.indices.contains(line), offset >= 0,
+            let index = transcript.index(
+                starts[line], offsetBy: offset, limitedBy: transcript.endIndex)
+        else { return transcript.endIndex }
+        return index
     }
 }
 

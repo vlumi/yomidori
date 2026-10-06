@@ -17,14 +17,30 @@ public enum Intake {
     public static let collectionsPerCard = 500
 }
 
+extension Intake {
+    /// No record of this app is older than its first build, and none comes from later than
+    /// tomorrow: a date outside that is a clock gone wrong or a hostile file, and is drawn
+    /// to the nearer edge rather than left to run the progress charts back to year one.
+    public static let earliest = Date(timeIntervalSince1970: 1_704_067_200)  // 2024-01-01
+
+    public static func date(_ date: Date, now: Date = Date()) -> Date {
+        min(max(date, earliest), now.addingTimeInterval(86_400))
+    }
+
+    /// Stability is in days; a hundred years is more than any schedule asks.
+    public static let longestStability: Double = 36_500
+}
+
 extension Sighting {
     public func sanitized() -> Sighting {
         let sentence = Sanitize.text(sentence, limit: Intake.sentenceLength)
         let surface = Sanitize.text(surface, limit: Intake.wordLength)
-        let fits = offset >= 0 && offset + surface.count <= sentence.count
+        // Written so that an offset near Int.max cannot overflow the sum.
+        let fits = offset >= 0 && offset <= sentence.count - surface.count
         return Sighting(
             id: id, sentence: sentence, surface: surface, offset: fits ? offset : -1,
-            source: source.map { Sanitize.text($0, limit: Intake.nameLength) }, date: date)
+            source: source.map { Sanitize.text($0, limit: Intake.nameLength) },
+            date: Intake.date(date))
     }
 }
 
@@ -33,8 +49,14 @@ extension ReviewState {
     /// or not a number would make every later interval nonsense.
     public func sanitized() -> ReviewState? {
         guard stability.isFinite, stability > 0, difficulty.isFinite else { return nil }
+        let lastReview = Intake.date(lastReview)
         return ReviewState(
-            stability: stability, difficulty: min(max(difficulty, 1), 10), due: due,
+            stability: min(stability, Intake.longestStability),
+            difficulty: min(max(difficulty, 1), 10),
+            // Due no later than the stability says, from the last review.
+            due: min(
+                max(due, Intake.earliest),
+                lastReview.addingTimeInterval(Intake.longestStability * 86_400)),
             lastReview: lastReview, reviews: max(reviews, 0), lapses: max(lapses, 0))
     }
 }
@@ -53,12 +75,17 @@ extension Card: Sanitizable {
         return Card(
             id: id, headword: headword, reading: reading, entryID: entryID,
             sightings: sightings.prefix(Intake.sightings).map { $0.sanitized() },
-            created: created, modified: modified, review: review?.sanitized(),
+            created: Intake.date(created), modified: Intake.date(modified),
+            review: review?.sanitized(),
             meaningReview: meaningReview?.sanitized(), pitchReview: pitchReview?.sanitized(),
-            log: Array(log.suffix(Intake.answers)),
+            log: log.suffix(Intake.answers).map { entry in
+                ReviewEntry(
+                    date: Intake.date(entry.date), question: entry.question, grade: entry.grade,
+                    reconciled: entry.reconciled, seconds: entry.seconds)
+            },
             acceptedMeanings: Sanitize.texts(
                 acceptedMeanings, count: Intake.meanings, limit: Intake.nameLength),
-            started: started, shelved: shelved,
+            started: started.map { Intake.date($0) }, shelved: shelved,
             collectionIDs: Array(collectionIDs.prefix(Intake.collectionsPerCard)))
     }
 }

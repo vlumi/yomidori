@@ -51,4 +51,18 @@ final class InsertionTests: XCTestCase {
         XCTAssertEqual(CharacterRange.of(5..<7, in: text), family)
         XCTAssertNil(CharacterRange.offsets(of: "花".startIndex..<"花".endIndex, in: ""))
     }
+
+    func testAnIndexOffAScalarBoundaryGivesNoOffsets() {
+        // An index into another string's grapheme interior is nil, not a garbage slice.
+        let text = "か\u{3099}き"  // か + combining dakuten, き
+        let other = "abcdef"
+        let foreign =
+            other.index(other.startIndex, offsetBy: 2)..<other.index(other.startIndex, offsetBy: 4)
+        XCTAssertNil(
+            CharacterRange.offsets(of: foreign, in: text).flatMap {
+                text.count >= $0.upperBound ? nil : $0
+            })
+        let whole = text.startIndex..<text.endIndex
+        XCTAssertEqual(CharacterRange.offsets(of: whole, in: text), 0..<2)
+    }
 }

@@ -79,4 +79,35 @@ final class IntakeTests: XCTestCase {
         XCTAssertTrue(
             FSRS.review(broken, grade: .good, at: date.addingTimeInterval(86_400)).due > date)
     }
+
+    func testTheImpossibleIsDrawnIn() {
+        let now = Date(timeIntervalSince1970: 1_760_000_000)
+        // An offset at Int.max once overflowed the fit check; now it is simply no fit.
+        let sighting = Sighting(
+            sentence: "樹皮の匂い。", surface: "樹皮", offset: Int.max, source: nil,
+            date: Date(timeIntervalSince1970: 0))
+        let cleaned = sighting.sanitized()
+        XCTAssertEqual(cleaned.offset, -1)
+        XCTAssertEqual(cleaned.date, Intake.earliest)
+        // Dates far ahead come to tomorrow; a stability of 1e308 comes to a hundred years.
+        XCTAssertEqual(Intake.date(.distantFuture, now: now), now.addingTimeInterval(86_400))
+        let state = ReviewState(
+            stability: 1e308, difficulty: 5, due: .distantFuture, lastReview: now, reviews: 1,
+            lapses: 0
+        ).sanitized()
+        XCTAssertEqual(state?.stability, Intake.longestStability)
+        XCTAssertEqual(state?.due, now.addingTimeInterval(Intake.longestStability * 86_400))
+        // A card's own dates and its log's.
+        let card = Card(
+            id: UUID(), headword: "樹皮", reading: "じゅひ", entryID: nil, sightings: [],
+            created: .distantPast,
+            log: [
+                ReviewEntry(
+                    date: .distantFuture, question: .reading, grade: .good, reconciled: false)
+            ])
+        let clean = card.sanitized()
+        XCTAssertEqual(clean?.created, Intake.earliest)
+        XCTAssertEqual(clean?.log.count, 1)
+        XCTAssertTrue(clean?.log[0].date ?? .distantFuture <= Date().addingTimeInterval(86_400))
+    }
 }
