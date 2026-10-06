@@ -21,6 +21,12 @@ public struct Still: Identifiable {
         CGSize(width: image.width, height: image.height)
     }
 
+    /// Both made already, as the camera makes them from the frame in one pass.
+    public init(image: CGImage, preview: CGImage) {
+        self.image = image
+        self.preview = preview
+    }
+
     /// Made where the frame is: off the main thread, which the drawing down would hold.
     public init(image: CGImage) {
         self.image = image

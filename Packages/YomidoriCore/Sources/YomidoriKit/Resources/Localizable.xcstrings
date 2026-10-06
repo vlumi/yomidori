@@ -3111,6 +3111,16 @@
         }
       }
     },
+    "Taking the page…" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ページを撮っています…"
+          }
+        }
+      }
+    },
     "Tap the character that was misread." : {
       "localizations" : {
         "ja" : {

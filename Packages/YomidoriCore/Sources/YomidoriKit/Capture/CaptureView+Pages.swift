@@ -21,7 +21,10 @@ extension CaptureView {
     /// A frame that arrives after the page was filled some other way (a paste, a photo, the
     /// tab left and the camera stopped) is dropped.
     func takeStill() {
+        guard !taking else { return }
+        taking = true
         Task { @MainActor in
+            defer { taking = false }
             guard let taken = await camera.takeStill(), still == nil, page.pasted == nil else {
                 return
             }

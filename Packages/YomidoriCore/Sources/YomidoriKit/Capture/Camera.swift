@@ -94,14 +94,9 @@ final class Camera: ObservableObject {
                 (rotation?.videoRotationAngleForHorizonLevelPreview ?? Self.outputAngle)
                 - Self.outputAngle
         }
-        let image: CGImage? = await withCheckedContinuation { continuation in
-            queue.async { frames.request(continuation) }
+        return await withCheckedContinuation { continuation in
+            queue.async { frames.request(continuation, turn: turn) }
         }
-        guard let image else { return nil }
-        let turned = await Task.detached(priority: .userInitiated) {
-            QuarterTurn.rotate(image, clockwise: turn) ?? image
-        }.value
-        return Still(image: turned)
         #else
         return nil
         #endif

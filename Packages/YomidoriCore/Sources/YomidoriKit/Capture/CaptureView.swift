@@ -9,6 +9,8 @@ public struct CaptureView: View {
     @StateObject var selection = LiveTextSelection()
     @EnvironmentObject var page: CaptureState
     @State var recognizing = false
+    /// The shutter pressed and the still on its way: a second or two of the camera's work.
+    @State var taking = false
     @State var picked: PhotosPickerItem?
     @State private var dropping = false
     /// Where the drawer's top edge lies in the layout, measured; the page's area ends there
@@ -135,6 +137,7 @@ public struct CaptureView: View {
     /// What the app is at while a page is on its way to its words: the recognizers, then
     /// the reading of the words; nil once the words are there, or when there is no page.
     private var busy: Text? {
+        if taking { return Text("Taking the page…", bundle: .module) }
         if recognizing { return Text("Reading the page…", bundle: .module) }
         if currentTranscript != nil, page.reading == nil {
             return Text("Reading the words…", bundle: .module)
