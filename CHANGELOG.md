@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Removing a big collection and importing a big one no longer stall.** Taking a collection off its cards is one write of the card file, not one a card; a shared collection's words find their cards in one step each; and a sentence that comes in a shared file keeps one identity on every device that imports it, so it is not twice on the synced card.
 - **The shutter never waits forever.** A frame that does not come within four seconds — the camera taken by a call or another app, or stopped under the button — lets go; the preview says the camera is busy elsewhere and comes back when it is free, and a camera session that falls over is started again.
 
 ### build 37 — 2026-10-06

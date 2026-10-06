@@ -31,9 +31,8 @@ struct CollectionsView: View {
                 }
             }
             .onDelete { offsets in
-                for index in offsets {
-                    remove(collections[index])
-                }
+                // Taken before the first removal reloads the list under the loop.
+                for collection in offsets.map({ collections[$0] }) { remove(collection) }
             }
             if collections.isEmpty {
                 Text("No collections yet. A book, say.", bundle: .module)

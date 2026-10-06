@@ -51,9 +51,8 @@ struct LookupHistoryView: View {
                 }
             }
             .onDelete { offsets in
-                for index in offsets {
-                    forget(lookups[index])
-                }
+                // Taken before the first removal reloads the list under the loop.
+                for lookup in offsets.map({ lookups[$0] }) { forget(lookup) }
             }
         }
         .task(id: generation) { reload() }
