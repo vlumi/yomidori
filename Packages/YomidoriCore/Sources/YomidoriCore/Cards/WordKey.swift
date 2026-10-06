@@ -13,8 +13,21 @@ public enum WordKey {
     /// The word's card id, the same on every device: a name-based UUID (version 5, RFC 9562)
     /// of the key in Yomidori's own namespace.
     public static func cardID(headword: String, reading: String) -> UUID {
+        nameBasedID(of(headword: headword, reading: reading))
+    }
+
+    /// A sighting's id for a sentence that came in a shared collection: the same on every
+    /// device that imports the file, so the sentence is one on the synced card, not one a
+    /// device.
+    public static func sharedSightingID(headword: String, reading: String, sentence: String)
+        -> UUID
+    {
+        nameBasedID(of(headword: headword, reading: reading) + "\n" + sentence)
+    }
+
+    private static func nameBasedID(_ name: String) -> UUID {
         var bytes = Array(namespace)
-        bytes += Array(of(headword: headword, reading: reading).utf8)
+        bytes += Array(name.utf8)
         var hash = Array(Insecure.SHA1.hash(data: bytes).prefix(16))
         hash[6] = (hash[6] & 0x0F) | 0x50
         hash[8] = (hash[8] & 0x3F) | 0x80

@@ -50,7 +50,9 @@ enum Cards {
             lookups: FileLookupHistory(url: directory.appendingPathComponent("lookups.json")),
             snapshots: FileRankSnapshots(url: directory.appendingPathComponent("progress.json")),
             settings: FileStudySettings(url: directory.appendingPathComponent("settings.json")))
-        CoverArchive.migrate(covers: stores.collections.collections().compactMap(\.coverID))
+        if !stores.collections.file.isUnreadable {
+            CoverArchive.migrate(covers: stores.collections.collections().compactMap(\.coverID))
+        }
         stores.cards.file.onChange = { changed(.card, $0, $1) }
         stores.collections.file.onChange = { changed(.collection, $0, $1) }
         stores.lookups.file.onChange = { changed(.lookup, $0, $1) }

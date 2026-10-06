@@ -6,7 +6,7 @@ final class StudySettingsTests: XCTestCase {
     private let earlier = Date(timeIntervalSince1970: 1_000)
     private let later = Date(timeIntervalSince1970: 2_000)
 
-    func testTheLaterChangeWinsAndATieKeepsThisOne() {
+    func testTheLaterChangeWinsAndATieGoesTheSameWayFromEitherSide() {
         let mine = StudySettings(
             retention: 0.9, lessonOrder: .oldest, lessonSize: 5, modified: earlier)
         let theirs = StudySettings(
@@ -15,7 +15,9 @@ final class StudySettingsTests: XCTestCase {
         XCTAssertEqual(theirs.merged(with: mine), theirs)
         let tie = StudySettings(
             retention: 0.95, lessonOrder: .common, lessonSize: 3, modified: earlier)
-        XCTAssertEqual(mine.merged(with: tie), mine)
+        // A tie goes the same way from either side, so two devices agree.
+        XCTAssertEqual(mine.merged(with: tie), tie.merged(with: mine))
+        XCTAssertEqual(mine.merged(with: mine), mine)
         XCTAssertTrue(
             mine.sameValues(
                 as: StudySettings(

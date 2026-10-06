@@ -21,9 +21,11 @@ public struct StudySettings: Codable, Equatable, Sendable {
         self.modified = modified
     }
 
-    /// The later change; this one on a tie, so a record going round does not keep changing.
+    /// The later change; on a tie, the same one on every device, else two devices seeded
+    /// alike at the epoch with different values would each keep their own for good.
     public func merged(with other: StudySettings) -> StudySettings {
-        other.modified > modified ? other : self
+        if other.modified != modified { return other.modified > modified ? other : self }
+        return SyncPayload.tieBreak(self, other)
     }
 
     /// The same values, whenever they were set.

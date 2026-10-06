@@ -91,15 +91,19 @@ public struct SharedCollection: Codable, Equatable, Sendable {
         var cards = cards
         var added = 0
         var joined = 0
+        // Each card found by its word in one step, not by a search through every card per
+        // word: twenty thousand words over thousands of cards is a long wait otherwise.
+        var indexByWord: [String: Int] = [:]
+        for (index, card) in cards.enumerated() { indexByWord[card.wordKey] = index }
         for word in words {
             let sightings = word.sentences.map {
                 Sighting(
+                    id: WordKey.sharedSightingID(
+                        headword: word.headword, reading: word.reading, sentence: $0.sentence),
                     sentence: $0.sentence, surface: $0.surface, offset: $0.offset,
                     source: $0.source, date: date)
             }
-            if let index = cards.firstIndex(where: {
-                $0.headword == word.headword && $0.reading == word.reading
-            }) {
+            if let index = indexByWord[WordKey.of(headword: word.headword, reading: word.reading)] {
                 var known = Set(cards[index].sightings.map(\.sentence))
                 for sighting in sightings
                 where !sighting.sentence.isEmpty
@@ -116,6 +120,7 @@ public struct SharedCollection: Codable, Equatable, Sendable {
                     sightings: sightings, created: date)
                 card.add(to: collection)
                 cards.append(card)
+                indexByWord[card.wordKey] = cards.count - 1
                 added += 1
             }
         }
