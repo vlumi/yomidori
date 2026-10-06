@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A store the app cannot read is never written over.** A sync push can start the app while the phone is locked, when its files are sealed; they read as empty, and the next write would have replaced them with that emptiness. Nothing is written, seeded or synced until the files can be read, and sync starts once the phone unlocks. Two copies of a card under one id, as an old build's leftovers could leave, are folded into one.
+
 ### build 37 — 2026-10-06
 
 - **A full page of small print reads better in Vision mode.** The recognizer works at a size of its own, so on a whole page the furigana melted into the kanji beside them; a dense page is now read again in four tiles, as if zoomed in, and the tiles' characters laid into the page's lines — the line context kept, the furigana dropped, lines that were only furigana gone too.

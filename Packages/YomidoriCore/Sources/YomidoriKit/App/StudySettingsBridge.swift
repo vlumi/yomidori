@@ -12,7 +12,8 @@ final class StudySettingsBridge {
     private var subscriptions: Set<AnyCancellable> = []
 
     func start() {
-        guard subscriptions.isEmpty, !DemoMode.isRequested, let store = Cards.studySettings
+        guard subscriptions.isEmpty, !DemoMode.isRequested, let store = Cards.studySettings,
+            !store.file.isUnreadable
         else { return }
         if let stored = store.settings() {
             apply(stored)
