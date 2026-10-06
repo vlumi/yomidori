@@ -23,6 +23,7 @@ struct TranscriptReadout: View {
     @State private var openedCard: Card?
     /// Where the selection goes once a fix has been read in.
     @State private var afterFix: Range<Int>?
+    @StateObject private var fixSheet = FixSheet()
 
     /// Laid straight into the drawer's lazy stack, so the recognized text's title, a section
     /// header, stays at the top while its lines scroll under it.
@@ -44,6 +45,7 @@ struct TranscriptReadout: View {
                     CardSheet(card: card)
                         .sheetSize(width: 560, height: 700)
                 }
+                .fixSheet(fixSheet)
             if page.reading == nil {
                 HStack(spacing: 10) {
                     ProgressView()
@@ -63,6 +65,7 @@ struct TranscriptReadout: View {
                 RecognizedTextStrip(reading: reading)
             }
         }
+        .environmentObject(fixSheet)
     }
 
     /// Several chunks: the phrase first, looked up whole when the dictionary knows it, then

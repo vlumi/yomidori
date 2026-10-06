@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Retyping a run of the page whole no longer leaves the screen deaf.** The fix sheet belonged to the row it was opened from; when the correction read the page again and took that row away while the sheet was still closing, nothing answered a tap afterwards. The sheet now belongs to the words' panel, which stays.
+
 ### build 36 — 2026-10-05
 
 - **The words run under the tab bar.** They show through the glass, and when the bar folds to its one icon on a scroll the band it leaves shows the words, not a bare strip of the drawer's color.
