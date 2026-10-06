@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The last words in the drawer come up above the tab bar.** Since they began running under the bar, the last rows could be seen only while a finger held them up; the bar's height is a margin now. And Live Text reads a finer copy of the page, for highlights that sit closer on the word.
+
 ### build 38 — 2026-10-06
 
 - **Sync says when something failed, and keeps saying it until it goes through.** A failed save was overwritten by *Up to date* a moment later; a save refused for a full iCloud is tried again the next time the app comes to the front; a cover changed under its upload is sent as it is now; two devices that changed a setting or a collection at the same moment settle on the same one; and turning sync off and on quickly no longer runs two engines over one state file.
