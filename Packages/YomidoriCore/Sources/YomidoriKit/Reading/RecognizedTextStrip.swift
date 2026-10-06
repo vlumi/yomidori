@@ -48,7 +48,9 @@ struct RecognizedTextStrip: View {
         @EnvironmentObject private var page: CaptureState
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 6) {
+            // Lazy: a long paste is thousands of chunks, each a view with gestures and a menu,
+            // and all of them made at once held the screen for seconds.
+            LazyVStack(alignment: .leading, spacing: 6) {
                 ForEach(reading.chunksByLine.indices, id: \.self) { line in
                     ChunkFlow(
                         chunks: reading.chunksByLine[line],
