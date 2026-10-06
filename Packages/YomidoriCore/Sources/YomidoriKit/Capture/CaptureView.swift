@@ -16,23 +16,23 @@ public struct CaptureView: View {
     /// Where the drawer's top edge lies in the layout, measured; the page's area ends there
     /// while the drawer is only its button row, whose height is its own.
     @State private var drawerTop: CGFloat?
-    @StateObject private var zoomControl = ZoomControl()
+    @StateObject var zoomControl = ZoomControl()
     @AppStorage(TokenizerChoice.key) var tokenizerChoice: TokenizerChoice = .system
     @AppStorage(SettingsKey.pageControlsSide) private var controlsSide: PageControlsSide = .right
     /// Where the drawer rests, and where the page is laid out to: it moves only when the
     /// finger lifts, so the page reaches the drawer's edge and follows on release.
-    @AppStorage(SettingsKey.readoutFraction) private var readoutFraction = DrawerDetents.all[0]
+    @AppStorage(SettingsKey.readoutFraction) var readoutFraction = DrawerDetents.all[0]
     /// The fraction under the finger; written to the stored one only on release, since a
     /// defaults write per frame is what made the drawer lag.
-    @State private var liveFraction: Double?
+    @State var liveFraction: Double?
     /// Where the drawer stood before a double tap took it to its largest.
     @State private var fractionBeforeToggle: Double?
-    @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.horizontalSizeClass) var sizeClass
 
     /// The words column's width when the page stands beside it, as the reader last dragged
     /// it; while the camera is up the column holds only the buttons and takes less.
-    @AppStorage(SettingsKey.wordsColumnWidth) private var wordsWidth: Double = 440
-    @State private var wordsWidthAtDragStart: Double?
+    @AppStorage(SettingsKey.wordsColumnWidth) var wordsWidth: Double = 440
+    @State var wordsWidthAtDragStart: Double?
     static let narrowestWordsColumn: Double = 300
     static let buttonsColumnWidth: Double = 240
 
@@ -80,7 +80,9 @@ public struct CaptureView: View {
                 if columns {
                     wordsColumn(in: geometry.size)
                 } else {
-                    drawer(screenHeight: geometry.size.height)
+                    drawer(
+                        screenHeight: geometry.size.height,
+                        bottomInset: geometry.safeAreaInsets.bottom)
                 }
             }
             // The page being read, said over the whole screen — the picture and the words'
@@ -275,9 +277,10 @@ public struct CaptureView: View {
         .frame(maxHeight: .infinity, alignment: .top)
     }
 
-    private func drawer(screenHeight: CGFloat) -> some View {
+    private func drawer(screenHeight: CGFloat, bottomInset: CGFloat) -> some View {
         CaptureDrawer(
             hasStill: still != nil || page.pasted != nil, screenHeight: screenHeight,
+            bottomInset: bottomInset,
             fraction: Binding(get: { liveFraction ?? readoutFraction }, set: { liveFraction = $0 }),
             settled: { fraction in settle(at: DrawerDetents.nearest(fraction)) },
             toggled: toggleDrawer, content: { words }, buttons: { buttons }
@@ -292,7 +295,7 @@ public struct CaptureView: View {
 
     private static let layoutSpace = "read"
 
-    @ViewBuilder private var words: some View {
+    @ViewBuilder var words: some View {
         if page.pasted == nil {
             Picker(selection: $page.mode) {
                 Text("Live Text", bundle: .module).tag(Mode.liveText)
@@ -310,7 +313,7 @@ public struct CaptureView: View {
         }
     }
 
-    @ViewBuilder private var buttons: some View {
+    @ViewBuilder var buttons: some View {
         if still == nil, page.pasted == nil {
             CameraButtons(
                 picked: $picked, ready: camera.access == .ready,
@@ -357,64 +360,6 @@ public struct CaptureView: View {
         } else {
             Text("Live Text is not available on this device.", bundle: .module)
                 .foregroundStyle(.secondary)
-        }
-    }
-}
-
-// MARK: The page beside the words, an iPad on its side
-
-extension CaptureView {
-    /// A regular width lying down: the page and the words side by side.
-    private func columns(in screen: CGSize) -> Bool {
-        sizeClass == .regular && screen.width > screen.height
-    }
-
-    /// The words column's width for the screen: what the reader set, within a third and
-    /// three fifths of the width; the buttons alone while the camera is up.
-    private func columnWidth(in screen: CGSize) -> Double {
-        if still == nil, page.pasted == nil { return Self.buttonsColumnWidth }
-        return min(max(wordsWidth, Self.narrowestWordsColumn), screen.width * 0.6)
-    }
-
-    /// The words beside the page: what the drawer holds, standing, with the buttons under,
-    /// and a handle on its left edge to drag it wider or narrower.
-    private func wordsColumn(in screen: CGSize) -> some View {
-        VStack(spacing: 12) {
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 12, pinnedViews: .sectionHeaders) {
-                    words
-                }
-            }
-            buttons
-        }
-        .padding(.horizontal, 24)
-        .padding(.vertical, 12)
-        .frame(width: columnWidth(in: screen))
-        .frame(maxHeight: .infinity, alignment: .top)
-        .background(Palette.page.ignoresSafeArea(edges: .vertical))
-        .tint(Palette.nightGreen)
-        .overlay(alignment: .leading) {
-            if still != nil || page.pasted != nil {
-                Rectangle()
-                    .fill(Palette.silver.opacity(0.35))
-                    .frame(width: 1)
-                    .frame(width: 16)
-                    .contentShape(Rectangle())
-                    .gesture(
-                        DragGesture(minimumDistance: 1, coordinateSpace: .global)
-                            .onChanged { value in
-                                let start = wordsWidthAtDragStart ?? wordsWidth
-                                wordsWidthAtDragStart = start
-                                wordsWidth = min(
-                                    max(start - value.translation.width, Self.narrowestWordsColumn),
-                                    screen.width * 0.6)
-                            }
-                            .onEnded { _ in wordsWidthAtDragStart = nil }
-                    )
-                    .accessibilityLabel(Text("Words column edge", bundle: .module))
-                    .accessibilityHint(
-                        Text("Drag to make the column wider or narrower", bundle: .module))
-            }
         }
     }
 }

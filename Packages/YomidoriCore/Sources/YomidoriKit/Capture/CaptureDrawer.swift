@@ -6,6 +6,9 @@ import YomidoriCore
 struct CaptureDrawer<Content: View, Buttons: View>: View {
     let hasStill: Bool
     let screenHeight: CGFloat
+    /// The tab bar's height under the drawer, which the words run under: the last of them
+    /// must still come up above it.
+    let bottomInset: CGFloat
     @Binding var fraction: Double
     let settled: (Double) -> Void
     let toggled: () -> Void
@@ -32,7 +35,9 @@ struct CaptureDrawer<Content: View, Buttons: View>: View {
                     // there when the bar folds to its one icon on a scroll — a drawer that
                     // stopped at the bar's edge left a bare band of its own color there.
                     .ignoresSafeArea(edges: .bottom)
-                    .contentMargins(.bottom, 12, for: .scrollContent)
+                    // The bar's height as a margin, or the last rows could be seen only
+                    // while a finger held them up from under it.
+                    .contentMargins(.bottom, 12 + bottomInset, for: .scrollContent)
                 }
                 .frame(maxWidth: .infinity)
             }

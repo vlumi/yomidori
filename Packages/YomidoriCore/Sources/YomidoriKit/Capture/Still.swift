@@ -14,8 +14,9 @@ public struct Still: Identifiable {
     /// normalized coordinates lands where it should.
     public let preview: CGImage
 
-    /// Three times a phone's width in pixels, room for the zoom a page of print wants.
-    public static let previewSide = 3072
+    /// Four times a phone's width in pixels: room for the zoom a page of print wants, and
+    /// finer boxes for Live Text, which reads this copy and draws its highlights from them.
+    public static let previewSide = 4096
 
     public var size: CGSize {
         CGSize(width: image.width, height: image.height)

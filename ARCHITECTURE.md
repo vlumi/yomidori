@@ -161,7 +161,7 @@ has what remains.
   on the side of the hand that holds the phone, chosen in Settings: the
   spread's buttons on top, then the camera for another photo and the zoom as a
   slider (`ZoomSlider`) nearest the thumb. The screen shows the still's
-  `preview`, drawn down to 3,072 pixels on the long side where the frame is
+  `preview`, drawn down to 4,096 pixels on the long side where the frame is
   made, off the main thread, since putting the full frame into an image view
   held the main thread for seconds after the shutter. Live Text analyzes that
   same preview — its overlay draws against the image it analyzed, and analyzed
