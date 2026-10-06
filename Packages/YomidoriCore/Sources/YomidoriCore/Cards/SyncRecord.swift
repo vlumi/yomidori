@@ -78,6 +78,17 @@ public struct SyncName: Equatable, Hashable, Sendable {
 
 /// A record's content as it travels: the same JSON the stores write.
 public enum SyncPayload {
+    /// Of two records changed at the same moment, the one every device picks alike: the
+    /// lesser by its encoded bytes, which say nothing of where it came from.
+    public static func tieBreak<Record: Encodable & Equatable>(_ first: Record, _ second: Record)
+        -> Record
+    {
+        guard first != second, let a = try? encode(first), let b = try? encode(second) else {
+            return first
+        }
+        return a.lexicographicallyPrecedes(b) ? first : second
+    }
+
     public static func encode<Record: Encodable>(_ record: Record) throws -> Data {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601

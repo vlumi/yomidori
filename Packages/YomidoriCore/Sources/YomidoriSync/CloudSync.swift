@@ -52,6 +52,12 @@ public final class CloudSync: CKSyncEngineDelegate, @unchecked Sendable {
     /// Each record's system fields as the server last sent them, so a save is an update of
     /// that version and not a conflict with it.
     var systemFields: [String: Data]
+    /// A save or a write failed in the last batch: "up to date" must not say otherwise
+    /// until a batch goes through whole. Under `lock`.
+    private var batchFailed = false
+    /// Saves held back for a better moment — iCloud full — and tried again on the next fetch.
+    /// Under `lock`.
+    private var heldBack: [CKSyncEngine.PendingRecordZoneChange] = []
     /// Read from whichever thread wrote a store, and let go of by `stop()`.
     private var engine: CKSyncEngine? {
         get { lock.withLock { currentEngine } }
@@ -90,9 +96,26 @@ public final class CloudSync: CKSyncEngineDelegate, @unchecked Sendable {
         await engine?.cancelOperations()
     }
 
-    /// Asks for what other devices did, as when the app comes to the front.
+    /// Asks for what other devices did, as when the app comes to the front; what was held
+    /// back goes up again with it.
     public func fetch() async {
+        let retry = lock.withLock { () -> [CKSyncEngine.PendingRecordZoneChange] in
+            defer { heldBack = [] }
+            return heldBack
+        }
+        if !retry.isEmpty { engine?.state.add(pendingRecordZoneChanges: retry) }
         try? await engine?.fetchChanges()
+    }
+
+    /// Said of a failure, and remembered until a batch goes through whole.
+    func failed(_ message: String) {
+        lock.withLock { batchFailed = true }
+        onStatus?(.failed(message))
+    }
+
+    /// A batch that went through whole clears the failure; the status says so.
+    func succeeded() {
+        lock.withLock { batchFailed = false }
     }
 
     // MARK: Local changes
@@ -163,7 +186,7 @@ public final class CloudSync: CKSyncEngineDelegate, @unchecked Sendable {
         case .willFetchChanges, .willSendChanges:
             onStatus?(.syncing)
         case .didFetchChanges, .didSendChanges:
-            onStatus?(.upToDate(Date()))
+            if !lock.withLock({ batchFailed }) { onStatus?(.upToDate(Date())) }
         default:
             break
         }
@@ -207,35 +230,53 @@ public final class CloudSync: CKSyncEngineDelegate, @unchecked Sendable {
             lock.withLock { systemFields[deleted.recordName] = nil }
         }
         var retry: [CKSyncEngine.PendingRecordZoneChange] = []
+        if sent.failedRecordSaves.isEmpty, sent.failedRecordDeletes.isEmpty { succeeded() }
         for failure in sent.failedRecordSaves {
-            let recordID = failure.record.recordID
-            switch failure.error.code {
-            case .serverRecordChanged:
-                // Another device got there first: take its version into the local one, merged,
-                // and send the merge on top of it.
-                // One this version can't read (written by a newer one) is left as it is.
-                guard let server = failure.error.serverRecord, mergeLocally(server) else {
-                    syncEngine.state.remove(pendingRecordZoneChanges: [.saveRecord(recordID)])
-                    continue
-                }
-                remember(server)
-                retry.append(.saveRecord(recordID))
-            case .zoneNotFound:
-                syncEngine.state.add(pendingDatabaseChanges: [.saveZone(zone)])
-                retry.append(.saveRecord(recordID))
-            case .unknownItem:
-                lock.withLock { systemFields[recordID.recordName] = nil }
-                retry.append(.saveRecord(recordID))
-            case .networkFailure, .networkUnavailable, .serviceUnavailable, .requestRateLimited,
-                .zoneBusy, .notAuthenticated, .quotaExceeded:
-                // The engine tries these again itself.
-                break
-            default:
-                onStatus?(.failed(failure.error.localizedDescription))
-            }
+            failedSave(failure, retry: &retry, syncEngine)
         }
         saveSystemFields()
         if !retry.isEmpty { syncEngine.state.add(pendingRecordZoneChanges: retry) }
+    }
+
+    /// One record the server would not save, by the error: merged and sent again, held
+    /// back, or given up on and said.
+    private func failedSave(
+        _ failure: CKSyncEngine.Event.SentRecordZoneChanges.FailedRecordSave,
+        retry: inout [CKSyncEngine.PendingRecordZoneChange], _ syncEngine: CKSyncEngine
+    ) {
+        let recordID = failure.record.recordID
+        switch failure.error.code {
+        case .serverRecordChanged:
+            // Another device got there first: take its version into the local one, merged,
+            // and send the merge on top of it.
+            // One this version can't read (written by a newer one) is left as it is.
+            guard let server = failure.error.serverRecord, mergeLocally(server) else {
+                syncEngine.state.remove(pendingRecordZoneChanges: [.saveRecord(recordID)])
+                return
+            }
+            remember(server)
+            retry.append(.saveRecord(recordID))
+        case .zoneNotFound:
+            syncEngine.state.add(pendingDatabaseChanges: [.saveZone(zone)])
+            retry.append(.saveRecord(recordID))
+        case .unknownItem:
+            lock.withLock { systemFields[recordID.recordName] = nil }
+            retry.append(.saveRecord(recordID))
+        case .networkFailure, .networkUnavailable, .serviceUnavailable, .requestRateLimited,
+            .zoneBusy, .notAuthenticated:
+            // The engine tries these again itself.
+            break
+        case .quotaExceeded:
+            // iCloud is full: the engine drops the save; it is held for the next fetch,
+            // when there may be room, and the status says why.
+            lock.withLock { heldBack.append(.saveRecord(recordID)) }
+            failed(failure.error.localizedDescription)
+        case .assetFileNotFound, .assetFileModified:
+            // The cover changed under the upload: sent again as it is now.
+            retry.append(.saveRecord(recordID))
+        default:
+            failed(failure.error.localizedDescription)
+        }
     }
 
     // MARK: System fields

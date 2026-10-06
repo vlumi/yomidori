@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Sync says when something failed, and keeps saying it until it goes through.** A failed save was overwritten by *Up to date* a moment later; a save refused for a full iCloud is tried again the next time the app comes to the front; a cover changed under its upload is sent as it is now; two devices that changed a setting or a collection at the same moment settle on the same one; and turning sync off and on quickly no longer runs two engines over one state file.
 - **Records from a backup, a shared collection or another device are cleaned of the impossible.** A date before 2024 or past tomorrow is drawn in (one such date ran the progress chart back to year one), an absurd offset no longer trips the app, a schedule's stability is capped at a hundred years, and a few guards keep a stray index or an empty review queue from a crash.
 - **The shutter never waits forever.** A frame that does not come within four seconds — the camera taken by a call or another app, or stopped under the button — lets go; the preview says the camera is busy elsewhere and comes back when it is free, and a camera session that falls over is started again.
 
