@@ -11,8 +11,11 @@ enum LiveText {
         ImageAnalyzer.isSupported
     }
 
+    /// Of the picture as shown, not the full frame: the overlay draws its selection against
+    /// the image it analyzed, and analyzed at one size and shown at another the highlight
+    /// landed a tenth off. Vision's boxes are normalized and read the full frame.
     static func analyze(_ still: Still) async throws -> ImageAnalysis {
         try await ImageAnalyzer().analyze(
-            still.image, orientation: .up, configuration: ImageAnalyzer.Configuration([.text]))
+            still.preview, orientation: .up, configuration: ImageAnalyzer.Configuration([.text]))
     }
 }

@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Live Text's highlight lands on the word again.** Since build 35 it sat a tenth too low: the overlay was drawing against the full frame while the screen showed a smaller copy. Live Text now reads the copy it draws on; Vision reads the full frame as before.
+
 ### build 36 — 2026-10-05
 
 - **The words run under the tab bar.** They show through the glass, and when the bar folds to its one icon on a scroll the band it leaves shows the words, not a bare strip of the drawer's color.

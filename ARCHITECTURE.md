@@ -151,9 +151,11 @@ has what remains.
   spread's buttons on top, then the camera for another photo and the zoom as a
   slider (`ZoomSlider`) nearest the thumb. The screen shows the still's
   `preview`, drawn down to 3,072 pixels on the long side where the frame is
-  made, off the main thread: the full 48-megapixel frame goes to the
-  recognizers only, since putting it into an image view held the main thread
-  for seconds after the shutter. While the page is being read a spinner lies
+  made, off the main thread, since putting the full frame into an image view
+  held the main thread for seconds after the shutter. Live Text analyzes that
+  same preview — its overlay draws against the image it analyzed, and analyzed
+  at one size and shown at another the highlight landed a tenth off — while
+  Vision reads the full 48-megapixel frame, its boxes being normalized. While the page is being read a spinner lies
   over the whole picture. The + for a spread shows the camera with *Cancel* at
   the top (`SpreadNotice`), which brings the page already taken back.
   The screen shows any of the three modes, switched at the bottom, so they can
