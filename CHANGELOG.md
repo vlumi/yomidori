@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A full page of small print reads better in Vision mode.** The recognizer works at a size of its own, so on a whole page the furigana melted into the kanji beside them; a dense page is now read again in four tiles, as if zoomed in, and the tiles' characters laid into the page's lines — the line context kept, the furigana dropped, lines that were only furigana gone too.
 - **Live Text's highlight lands on the word again.** Since build 35 it sat a tenth too low: the overlay was drawing against the full frame while the screen showed a smaller copy. Live Text now reads the copy it draws on; Vision reads the full frame as before.
 - **Retyping a run of the page whole no longer leaves the screen deaf.** The fix sheet belonged to the row it was opened from; when the correction read the page again and took that row away while the sheet was still closing, nothing answered a tap afterwards. The sheet now belongs to the words' panel, which stays.
 - **The shutter answers at once, and the still is made faster.** *Taking the page…* shows the moment the button is pressed, where there were a few seconds of nothing; and the frame is turned upright and drawn down for the screen in one pass as it is taken, not as two more 48-megapixel bitmaps afterwards.

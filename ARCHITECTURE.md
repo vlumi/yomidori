@@ -129,7 +129,18 @@ has what remains.
   included (confirmed on a paperback, 2026-09-22; the older text request, which
   never read vertical print, is gone), and with the furigana Vision reads into a
   line taken out again (`droppingRuby`: a kana well under the line's own
-  characters in size and off its axis, so っ and ゃ stay); `LiveText` wraps
+  characters in size and off its axis, so っ and ゃ stay), and lines that are
+  furigana of their own dropped. Vision works at a size of its own however
+  large the frame — the same 0.4 s for 48 megapixels as for 2,000 pixels — so
+  on a full page of small print the furigana melt into the kanji beside them
+  and the kanji come out wrong, while a crop reads right; a dense page (the
+  characters' pitch under a fortieth of the frame's long side) is therefore read
+  again in four overlapping tiles at once, and `TileStitch` (Core, tested) lays
+  the tiles' characters into the whole page's lines, each from the tile whose
+  centre is nearest so the seams echo nothing, furigana dropped as above; on a
+  rendered test page this halved Vision's misreadings and put 名前, 所, 吾輩,
+  獰悪 and 書生 right. `make demo-iphone PICTURE=<path>` reads a picture file as
+  a page for looking at this. `LiveText` wraps
   VisionKit's `ImageAnalyzer`, the Live Text engine,
   which yields a transcript and, on iOS, its own text selection over the image.
   The readout

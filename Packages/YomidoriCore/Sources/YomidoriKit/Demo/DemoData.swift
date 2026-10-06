@@ -93,26 +93,13 @@ enum DemoData {
 
     /// The page the Read tab opens on, already read.
     @MainActor static func seed(_ capture: CaptureState) {
-        if DemoMode.noPage, !DemoMode.spread { return }
-        if DemoMode.spread {
-            // Two pages, the cat's and then Melos's, as a spread — or, with no page asked,
-            // the first taken and the camera up for the second.
-            let first = DemoText.cat.lines.joined(separator: "\n")
-            let second = DemoText.melos.lines.joined(separator: "\n")
-            guard let left = DemoRenderer.verticalPage(first),
-                let right = DemoRenderer.verticalPage(second)
-            else { return }
-            capture.pages = [
-                CaptureView.Page(
-                    still: Still(image: left), lines: [], analysis: nil, transcript: first)
-            ]
-            if DemoMode.noPage { return }
-            let still = Still(image: right)
+        if let picture = DemoMode.picture, let still = Still(file: picture) {
+            if let mode = DemoMode.mode { capture.mode = mode }
             capture.still = still
-            capture.transcript = second
-            capture.recognizedStillID = still.id
             return
         }
+        if DemoMode.noPage, !DemoMode.spread { return }
+        if DemoMode.spread { return seedSpread(capture) }
         // A text picked beforehand: on the demo's page where it stands there, else a page of
         // its own, so any phrase can be looked at. The reading takes the selection up when it
         // is done.
@@ -137,6 +124,26 @@ enum DemoData {
         // Taken as read from its text, unless the recognizers are to have it.
         if !DemoMode.recognizes { capture.recognizedStillID = still.id }
     }
+
+    /// Two pages, the cat's and then Melos's, as a spread — or, with no page asked, the first
+    /// taken and the camera up for the second.
+    @MainActor private static func seedSpread(_ capture: CaptureState) {
+        let first = DemoText.cat.lines.joined(separator: "\n")
+        let second = DemoText.melos.lines.joined(separator: "\n")
+        guard let left = DemoRenderer.verticalPage(first),
+            let right = DemoRenderer.verticalPage(second)
+        else { return }
+        capture.pages = [
+            CaptureView.Page(
+                still: Still(image: left), lines: [], analysis: nil, transcript: first)
+        ]
+        if DemoMode.noPage { return }
+        let still = Still(image: right)
+        capture.still = still
+        capture.transcript = second
+        capture.recognizedStillID = still.id
+    }
+
 }
 
 /// Keeps the demo's cards and puts the reviewed ones at their ranks.
