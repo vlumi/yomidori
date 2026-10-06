@@ -16,6 +16,8 @@ final class Camera: ObservableObject {
         case ready
         case denied
         case unavailable
+        /// Taken by a call or another app for the moment; back when that ends.
+        case interrupted
     }
 
     @Published private(set) var access: Access = .undetermined
@@ -94,8 +96,16 @@ final class Camera: ObservableObject {
                 (rotation?.videoRotationAngleForHorizonLevelPreview ?? Self.outputAngle)
                 - Self.outputAngle
         }
+        let queue = queue
         return await withCheckedContinuation { continuation in
-            queue.async { frames.request(continuation, turn: turn) }
+            queue.async {
+                let ticket = frames.request(continuation, turn: turn)
+                // A frame that never comes — the session interrupted or stopped under the
+                // request — must not leave the shutter waiting forever.
+                queue.asyncAfter(deadline: .now() + Self.longestWait) {
+                    frames.cancel(ticket: ticket)
+                }
+            }
         }
         #else
         return nil
@@ -160,6 +170,8 @@ final class Camera: ObservableObject {
     #if os(iOS)
     /// The output's turn, set once: a phone held upright.
     private static let outputAngle: CGFloat = 90
+    /// How long a shutter press waits for a frame.
+    private static let longestWait: TimeInterval = 4
 
     /// One virtual device where the phone has several, so a close page goes to the ultra-wide
     /// (macro) and a pinch past the wide's reach to the telephoto, both optical.
@@ -198,7 +210,39 @@ final class Camera: ObservableObject {
             self, selector: #selector(subjectAreaChanged),
             name: AVCaptureDevice.subjectAreaDidChangeNotification,
             object: device)
+        // A call, or another app's camera: the frames stop, and so must a shutter waiting
+        // for one; the preview says so, and comes back when the camera does.
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(interrupted),
+            name: AVCaptureSession.wasInterruptedNotification,
+            object: session)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(interruptionEnded),
+            name: AVCaptureSession.interruptionEndedNotification, object: session)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(runtimeError),
+            name: AVCaptureSession.runtimeErrorNotification,
+            object: session)
         return true
+    }
+
+    @objc private func interrupted() {
+        queue.async { [self] in frames.cancel() }
+        set(.interrupted)
+    }
+
+    @objc private func interruptionEnded() {
+        set(.ready)
+    }
+
+    /// The session fell over (a media services reset, say): started again if still wanted.
+    @objc private func runtimeError() {
+        queue.async { [self] in
+            frames.cancel()
+            guard wanted.withLock({ wantsRunning }) else { return }
+            session.startRunning()
+            set(session.isRunning ? .ready : .unavailable)
+        }
     }
 
     /// The page moved after a tap to focus: back to following it.

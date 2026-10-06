@@ -11,17 +11,30 @@ import os
 final class FrameSink: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate,
     @unchecked Sendable
 {
-    private var pending: (continuation: CheckedContinuation<Still?, Never>, turn: CGFloat)?
-
-    /// `turn` is how far clockwise the frame is to be turned to stand upright.
-    func request(_ continuation: CheckedContinuation<Still?, Never>, turn: CGFloat) {
-        pending?.continuation.resume(returning: nil)
-        pending = (continuation, turn)
+    private struct Request {
+        let ticket: Int
+        let continuation: CheckedContinuation<Still?, Never>
+        let turn: CGFloat
     }
 
-    func cancel() {
+    private var pending: Request?
+    private var tickets = 0
+
+    /// `turn` is how far clockwise the frame is to be turned to stand upright. The ticket
+    /// names this request, for a timeout to give up on it and no later one.
+    @discardableResult
+    func request(_ continuation: CheckedContinuation<Still?, Never>, turn: CGFloat) -> Int {
         pending?.continuation.resume(returning: nil)
-        pending = nil
+        tickets += 1
+        pending = Request(ticket: tickets, continuation: continuation, turn: turn)
+        return tickets
+    }
+
+    /// The request still waiting is answered with nothing; with a ticket, only that request.
+    func cancel(ticket: Int? = nil) {
+        guard let pending, ticket == nil || ticket == pending.ticket else { return }
+        pending.continuation.resume(returning: nil)
+        self.pending = nil
     }
 
     func captureOutput(
