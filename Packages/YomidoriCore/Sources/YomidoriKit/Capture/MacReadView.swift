@@ -372,16 +372,14 @@ extension MacReadView {
     /// box.
     private func pasteFromPasteboard() -> Bool {
         let pasteboard = NSPasteboard.general
-        if let data = pasteboard.data(forType: .png) ?? pasteboard.data(forType: .tiff),
-            let still = Still(data: data)
-        {
-            take(still)
+        if let data = pasteboard.data(forType: .png) ?? pasteboard.data(forType: .tiff) {
+            Still.decode(data) { take($0) }
             return true
         }
         if let urls = pasteboard.readObjects(forClasses: [NSURL.self]) as? [URL],
-            let url = urls.first, let still = Still(file: url)
+            let url = urls.first, url.isFileURL
         {
-            take(still)
+            Still.decode(file: url) { take($0) }
             return true
         }
         if let text = pasteboard.string(forType: .string), !text.isEmpty {

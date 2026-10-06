@@ -27,18 +27,24 @@ final class Speaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
 
     private func speak(_ text: String) {
         synthesizer.stopSpeaking(at: .immediate)
-        #if os(iOS)
-        // Asked for by a press, so heard with the ring switch off too, over whatever plays.
-        let session = AVAudioSession.sharedInstance()
-        try? session.setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
-        try? session.setActive(true)
-        #endif
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = Self.voice
         // A little under the usual pace, for a learner's ear.
         utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.9
         speaking = text
+        #if os(iOS)
+        // Asked for by a press, so heard with the ring switch off too, over whatever plays.
+        // The session's setup takes tens of milliseconds and more: off the main thread.
+        let synthesizer = synthesizer
+        DispatchQueue.global(qos: .userInitiated).async {
+            let session = AVAudioSession.sharedInstance()
+            try? session.setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
+            try? session.setActive(true)
+            DispatchQueue.main.async { synthesizer.speak(utterance) }
+        }
+        #else
         synthesizer.speak(utterance)
+        #endif
     }
 
     /// The best Japanese voice installed.

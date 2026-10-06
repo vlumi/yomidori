@@ -150,6 +150,8 @@ extension CaptureView {
         analysis = read.analysis
         page.recognizedStillID = still.id
         recognizing = false
+        // Both recognizers have had the full frame: the preview is all the screen needs.
+        self.still = still.lightened()
         // The demo's pick, found again in the text as recognized: the reading keeps a
         // selection that stands when it is made, and the picture shows it.
         if let pick = DemoMode.pick {
