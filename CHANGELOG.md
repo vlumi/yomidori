@@ -14,9 +14,13 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Sync says when something failed, and keeps saying it until it goes through.** A failed save was overwritten by *Up to date* a moment later; a save refused for a full iCloud is tried again the next time the app comes to the front; a cover changed under its upload is sent as it is now; two devices that changed a setting or a collection at the same moment settle on the same one; and turning sync off and on quickly no longer runs two engines over one state file.
 - **The camera is only called ready when it runs.** A camera that was not there at one start was taken as there at the next; the notifications that tell a flat phone from one held up were ended more often than begun, which could leave the page's turn unknown; the cover scanner's shutter now waits for its frame as the page's does, and a frame that comes after a photo was picked meanwhile is let go.
 - **Records from a backup, a shared collection or another device are cleaned of the impossible.** A date before 2024 or past tomorrow is drawn in (one such date ran the progress chart back to year one), an absurd offset no longer trips the app, a schedule's stability is capped at a hundred years, and a few guards keep a stray index or an empty review queue from a crash.
+- **A long text reads in time.** A pasted chapter without line breaks took seconds to read into words and seconds more to show, growing with the square of its length; both are linear now, and MeCab's dictionary, when chosen, loads at launch rather than at the first glance.
+- **Removing a big collection and importing a big one no longer stall.** Taking a collection off its cards is one write of the card file, not one a card; a shared collection's words find their cards in one step each; and a sentence that comes in a shared file keeps one identity on every device that imports it, so it is not twice on the synced card.
 - **The shutter never waits forever.** A frame that does not come within four seconds — the camera taken by a call or another app, or stopped under the button — lets go; the preview says the camera is busy elsewhere and comes back when it is free, and a camera session that falls over is started again.
+- **A store the app cannot read is never written over.** A sync push can start the app while the phone is locked, when its files are sealed; they read as empty, and the next write would have replaced them with that emptiness. Nothing is written, seeded or synced until the files can be read, and sync starts once the phone unlocks. Two copies of a card under one id, as an old build's leftovers could leave, are folded into one.
 
 ### build 37 — 2026-10-06
 

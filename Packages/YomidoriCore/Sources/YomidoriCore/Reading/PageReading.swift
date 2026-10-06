@@ -45,11 +45,16 @@ public struct PageReading: Sendable {
             let lineStart =
                 counted.offset + text.distance(from: counted.index, to: lines.starts[line])
             counted = (lines.starts[line], lineStart)
+            // Along the line too, from the segment before, not from its start each time: a
+            // page without line breaks is one long line, and counting from its start per
+            // segment grew with the square of its length.
+            var along = (index: lineText.startIndex, offset: lineStart)
             for segment in WordFinder.segments(in: lineTokens, dictionary: dictionary) {
                 let first = segment.word.tokens[0].range.lowerBound
                 let last = segment.word.tokens[segment.word.tokens.count - 1].range.upperBound
-                let start = lineStart + lineText.distance(from: lineText.startIndex, to: first)
-                let end = lineStart + lineText.distance(from: lineText.startIndex, to: last)
+                let start = along.offset + lineText.distance(from: along.index, to: first)
+                let end = start + lineText.distance(from: first, to: last)
+                along = (last, end)
                 chunks.append(
                     Chunk(
                         id: chunks.count, line: line, range: start..<end, word: segment.word,

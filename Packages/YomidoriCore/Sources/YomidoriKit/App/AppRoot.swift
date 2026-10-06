@@ -181,6 +181,13 @@ public struct AppRoot: View {
                 Sync.shared.fetch()
                 Cards.snapshotRanks()
             }
+            // And when the phone unlocks, should a push have launched the app while it was
+            // locked and the stores unreadable.
+            #if os(iOS)
+            if phase == .active, UIApplication.shared.isProtectedDataAvailable {
+                StudySettingsBridge.shared.start()
+            }
+            #endif
             // Leaving, the icon's count is set for the hours the app is away.
             if phase == .background { AppBadge.refresh() }
         }

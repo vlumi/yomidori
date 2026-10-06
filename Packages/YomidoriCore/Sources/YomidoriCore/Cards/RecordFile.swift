@@ -36,30 +36,55 @@ public struct RecordChange: Equatable, Sendable {
 public final class RecordFile<Record: Codable & Equatable>: @unchecked Sendable {
     public let url: URL
     private let key: (Record) -> String
+    /// Two records under one key, as a file written back with a record this build could not
+    /// read and then read by one that can: folded into one.
+    private let merging: (Record, Record) -> Record
     private let queue: DispatchQueue
     private var loaded: [Record]?
     /// Records this build could not read (written by a newer one, say), kept as they were and
     /// written back untouched, so a file is never shrunk by what cannot be decoded.
     private var unreadable: [Any] = []
+    /// The file is there but could not be read — on a phone, locked, with the stores under
+    /// file protection, as a silent push can find it. Nothing is written until it can be.
+    private var readFailed = false
     public var onChange: ((RecordChange, ChangeOrigin) -> Void)?
 
-    public init(url: URL, label: String, key: @escaping (Record) -> String) {
+    /// `merging` folds two records found under one key, the earlier in the file first; the
+    /// later stands by default.
+    public init(
+        url: URL, label: String, key: @escaping (Record) -> String,
+        merging: @escaping (Record, Record) -> Record = { _, later in later }
+    ) {
         self.url = url
         self.key = key
+        self.merging = merging
         queue = DispatchQueue(label: label)
     }
 
+    /// The records; none while the file is there but cannot be read.
     public func records() -> [Record] {
         queue.sync { all() }
     }
 
+    /// The file is there but cannot be read now; `records()` is empty and `write` throws.
+    public var isUnreadable: Bool {
+        queue.sync {
+            _ = all()
+            return readFailed
+        }
+    }
+
+    public struct Unreadable: Error {}
+
     /// Changes the records in one write; nothing is written, or reported, when nothing changed.
+    /// A file that could not be read is never written over: the write throws.
     @discardableResult
     public func write<Result>(
         _ origin: ChangeOrigin = .local, _ transform: (inout [Record]) throws -> Result
     ) throws -> Result {
         let (result, change) = try queue.sync { () -> (Result, RecordChange) in
             let old = all()
+            if readFailed { throw Unreadable() }
             var records = old
             let result = try transform(&records)
             let change = RecordChange.between(old, records, key: key)
@@ -76,7 +101,13 @@ public final class RecordFile<Record: Codable & Equatable>: @unchecked Sendable 
         if let loaded { return loaded }
         var records: [Record] = []
         unreadable = []
-        if let data = try? Data(contentsOf: url) {
+        readFailed = false
+        if FileManager.default.fileExists(atPath: url.path) {
+            // Tried again at the next call: a locked phone unlocks.
+            guard let data = try? Data(contentsOf: url) else {
+                readFailed = true
+                return []
+            }
             if let elements = (try? JSONSerialization.jsonObject(with: data)) as? [Any] {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
@@ -93,8 +124,24 @@ public final class RecordFile<Record: Codable & Equatable>: @unchecked Sendable 
                 setAside()
             }
         }
-        loaded = records
-        return records
+        loaded = folded(records)
+        return loaded ?? []
+    }
+
+    /// One record a key, in the order of first appearance.
+    private func folded(_ records: [Record]) -> [Record] {
+        var byKey: [String: Int] = [:]
+        var result: [Record] = []
+        for record in records {
+            let name = key(record)
+            if let index = byKey[name] {
+                result[index] = merging(result[index], record)
+            } else {
+                byKey[name] = result.count
+                result.append(record)
+            }
+        }
+        return result
     }
 
     private func save(_ records: [Record]) throws {

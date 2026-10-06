@@ -71,4 +71,26 @@ final class SharedCollectionTests: XCTestCase {
         XCTAssertEqual(writes, 1)
         XCTAssertEqual(FileCardStore(url: url).cards().map(\.headword), ["樹皮"])
     }
+
+    func testImportingTheSameFileTwiceGivesTheSameSentenceIds() throws {
+        let json = """
+            {"format":"yomidori-collection","version":1,"name":"羊","note":"","tags":[],
+             "words":[
+               {"headword":"樹皮","reading":"じゅひ","sentences":[
+                 {"sentence":"樹皮の匂い。","surface":"樹皮","offset":0}]},
+               {"headword":"樹皮","reading":"じゅひ","sentences":[
+                 {"sentence":"樹皮が剥がれた。","surface":"樹皮","offset":0}]}
+             ]}
+            """
+        let shared = try SharedCollection.decoded(from: Data(json.utf8))
+        let collection = UUID()
+        let here = shared.merge(into: [], collection: collection, at: Date())
+        let there = shared.merge(
+            into: [], collection: collection, at: Date().addingTimeInterval(60))
+        // The word twice in the file is one card, with both sentences.
+        XCTAssertEqual(here.cards.count, 1)
+        XCTAssertEqual(here.cards[0].sightings.count, 2)
+        XCTAssertEqual(here.cards[0].sightings.map(\.id), there.cards[0].sightings.map(\.id))
+        XCTAssertEqual(here.cards[0].id, there.cards[0].id)
+    }
 }

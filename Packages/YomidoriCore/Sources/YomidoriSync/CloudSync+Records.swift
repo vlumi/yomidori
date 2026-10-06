@@ -153,7 +153,7 @@ extension CloudSync {
             kept([.settings]) { try stores.settings.applyRemote(settings) }
         }
         saveSystemFields()
-        if let failure { onStatus?(.failed(failure.localizedDescription)) }
+        if let failure { failed(failure.localizedDescription) } else { succeeded() }
     }
 
     /// One record from another device; merged with the local one only where this device has
