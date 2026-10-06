@@ -66,7 +66,12 @@ final class Sync: ObservableObject {
             status = .noAccount
             return
         }
-        guard let stores = Cards.syncStores, let directory = try? Cards.directory() else { return }
+        guard let stores = Cards.syncStores, let directory = try? Cards.directory(),
+            // Launched by a push while the phone is locked, the stores cannot be read; what
+            // arrived would be laid over nothing. Started again when the phone unlocks.
+            !stores.cards.file.isUnreadable, !stores.collections.file.isUnreadable,
+            !stores.lookups.file.isUnreadable, !stores.settings.file.isUnreadable
+        else { return }
         let engine = CloudSync(
             containerIdentifier: Self.containerIdentifier, stores: stores, directory: directory)
         engine.onStatus = { [weak engine] status in

@@ -92,7 +92,9 @@ public final class FileCardStore: CardStore {
     public var url: URL { file.url }
 
     public init(url: URL) {
-        file = RecordFile(url: url, label: "fi.misaki.yomidori.cards") { $0.id.uuidString }
+        file = RecordFile(
+            url: url, label: "fi.misaki.yomidori.cards", key: { $0.id.uuidString },
+            merging: { $0.merged(with: $1) })
     }
 
     public func cards() -> [Card] {
