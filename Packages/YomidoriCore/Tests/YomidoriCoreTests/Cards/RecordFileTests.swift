@@ -135,3 +135,46 @@ final class RecordFileTests: XCTestCase {
             "not json at all")
     }
 }
+
+extension RecordFileTests {
+    private struct Note: Codable, Equatable {
+        let key: String
+        var text: String
+    }
+
+    func testAFileThatCannotBeReadIsNeverWrittenOverAndReadsOnceItCan() throws {
+        let url = directory.appendingPathComponent("notes.json")
+        try JSONEncoder().encode([Note(key: "a", text: "kept")]).write(to: url)
+        // Unreadable for now, as a locked phone's store is: no permission to read.
+        try FileManager.default.setAttributes([.posixPermissions: 0o000], ofItemAtPath: url.path)
+        defer {
+            try? FileManager.default.setAttributes(
+                [.posixPermissions: 0o644], ofItemAtPath: url.path)
+        }
+        let file = RecordFile<Note>(url: url, label: "test.notes") { $0.key }
+        XCTAssertTrue(file.isUnreadable)
+        XCTAssertEqual(file.records(), [])
+        XCTAssertThrowsError(try file.write { $0.append(Note(key: "b", text: "new")) })
+        // Readable again: the record is still there, and a write goes through.
+        try FileManager.default.setAttributes([.posixPermissions: 0o644], ofItemAtPath: url.path)
+        XCTAssertFalse(file.isUnreadable)
+        XCTAssertEqual(file.records().map(\.key), ["a"])
+        try file.write { $0.append(Note(key: "b", text: "new")) }
+        XCTAssertEqual(file.records().map(\.key), ["a", "b"])
+    }
+
+    func testTwoRecordsUnderOneKeyAreFoldedOnLoad() throws {
+        let url = directory.appendingPathComponent("notes.json")
+        try JSONEncoder().encode([
+            Note(key: "a", text: "first"), Note(key: "b", text: "other"),
+            Note(key: "a", text: "second"),
+        ]).write(to: url)
+        let later = RecordFile<Note>(url: url, label: "test.later") { $0.key }
+        XCTAssertEqual(
+            later.records(), [Note(key: "a", text: "second"), Note(key: "b", text: "other")])
+        let joined = RecordFile<Note>(
+            url: url, label: "test.joined", key: { $0.key },
+            merging: { Note(key: $0.key, text: $0.text + "+" + $1.text) })
+        XCTAssertEqual(joined.records().first?.text, "first+second")
+    }
+}
