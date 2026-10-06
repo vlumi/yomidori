@@ -67,4 +67,21 @@ final class ReviewQueueTests: XCTestCase {
         XCTAssertEqual(queue.items.map(\.card.headword), ["二"])
         XCTAssertEqual(queue.count, 1)
     }
+
+    func testAnsweringWhatIsNotUpDoesNothing() {
+        let now = Date()
+        var first = Card(headword: "一", reading: "いち", entryID: nil, sightings: [], created: now)
+        var second = Card(headword: "二", reading: "に", entryID: nil, sightings: [], created: now)
+        first.start(at: now)
+        second.start(at: now)
+        var queue = ReviewQueue([
+            ReviewItem(card: first, question: .reading),
+            ReviewItem(card: second, question: .reading),
+        ])
+        queue.answered(ReviewItem(card: second, question: .reading), grade: .good, card: nil)
+        XCTAssertEqual(queue.count, 2)
+        var empty = ReviewQueue([])
+        empty.answered(ReviewItem(card: first, question: .reading), grade: .good, card: nil)
+        XCTAssertEqual(empty.count, 0)
+    }
 }

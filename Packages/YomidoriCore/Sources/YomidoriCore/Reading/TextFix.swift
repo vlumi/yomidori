@@ -23,7 +23,9 @@ public struct TextFix: Equatable, Sendable {
 
     public static func apply(_ fixes: [TextFix], to text: String) -> String {
         fixes.reduce(text) { text, fix in
-            guard fix.offset >= 0, fix.offset + fix.length <= text.count else { return text }
+            guard fix.offset >= 0, fix.length >= 0, fix.offset + fix.length <= text.count else {
+                return text
+            }
             let start = text.index(text.startIndex, offsetBy: fix.offset)
             let end = text.index(start, offsetBy: fix.length)
             return text.replacingCharacters(in: start..<end, with: fix.replacement)
