@@ -48,9 +48,10 @@ struct PictureView: NSViewRepresentable {
         guard let container = context.coordinator.container else { return }
         if container.stillID != still.id {
             container.stillID = still.id
+            // The picture Live Text analyzed, so its selection lands where it should.
             container.imageView.image = NSImage(
-                cgImage: still.image,
-                size: NSSize(width: still.image.width, height: still.image.height)
+                cgImage: still.preview,
+                size: NSSize(width: still.preview.width, height: still.preview.height)
             )
             container.fit(in: scroll)
         }
