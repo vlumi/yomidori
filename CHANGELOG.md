@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Live Text's highlight lands on the word again.** Since build 35 it sat a tenth too low: the overlay was drawing against the full frame while the screen showed a smaller copy. Live Text now reads the copy it draws on; Vision reads the full frame as before.
 - **Retyping a run of the page whole no longer leaves the screen deaf.** The fix sheet belonged to the row it was opened from; when the correction read the page again and took that row away while the sheet was still closing, nothing answered a tap afterwards. The sheet now belongs to the words' panel, which stays.
 
 ### build 36 — 2026-10-05
