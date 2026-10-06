@@ -3181,6 +3181,16 @@
         }
       }
     },
+    "The camera is busy elsewhere for the moment." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カメラはいま別のところで使われています。"
+          }
+        }
+      }
+    },
     "The dictionary's, until you change them." : {
       "localizations" : {
         "ja" : {

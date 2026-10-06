@@ -9,6 +9,8 @@ struct CameraNotice: View {
             notice("Camera access is off. Turn it on in Settings to frame a page.")
         case .unavailable:
             notice("No camera here. Choose a photo instead.")
+        case .interrupted:
+            notice("The camera is busy elsewhere for the moment.")
         case .undetermined, .ready:
             EmptyView()
         }
