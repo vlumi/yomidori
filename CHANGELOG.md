@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The card list and a selected phrase look the dictionary up off the main thread.** Opening Cards with a thousand cards no longer pauses while each is classed, and a phrase's entry is looked up once, not at every redraw.
 - **Records from a backup, a shared collection or another device are cleaned of the impossible.** A date before 2024 or past tomorrow is drawn in (one such date ran the progress chart back to year one), an absurd offset no longer trips the app, a schedule's stability is capped at a hundred years, and a few guards keep a stray index or an empty review queue from a crash.
 - **The shutter never waits forever.** A frame that does not come within four seconds — the camera taken by a call or another app, or stopped under the button — lets go; the preview says the camera is busy elsewhere and comes back when it is free, and a camera session that falls over is started again.
 

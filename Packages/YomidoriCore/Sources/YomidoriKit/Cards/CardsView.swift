@@ -161,24 +161,6 @@ struct CardsView: View {
     }
     #endif
 
-    private func reload() {
-        cards = (Cards.store?.cards() ?? []).sorted { $0.created > $1.created }
-        collections = Cards.collections?.collections() ?? []
-        // The kinds of word of cards not seen before, from the first sense of each entry;
-        // a card kept without its entry's id is looked up by its word.
-        for card in cards where classes[card.id] == nil {
-            guard let dictionary = JMdict.bundled else { break }
-            let entry =
-                card.entryID.flatMap(dictionary.entry(withID:))
-                ?? dictionary.entry(headword: card.headword, reading: card.reading)
-            classes[card.id] = WordClass.of(partsOfSpeech: entry?.senses.first?.partsOfSpeech ?? [])
-        }
-        // A card gone, here or on another device, is no longer picked.
-        picked.formIntersection(Set(cards.map(\.id)))
-        // The last loose card filed: all cards again, not an empty list.
-        if unfiled, loose.isEmpty { unfiled = false }
-    }
-
     #if os(iOS)
     @State private var editMode: EditMode = .inactive
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -354,6 +336,36 @@ struct CardsView: View {
         } icon: {
             Image(systemName: "books.vertical")
         }
+    }
+}
+
+// MARK: The cards and their kinds, loaded
+
+extension CardsView {
+    func reload() {
+        cards = (Cards.store?.cards() ?? []).sorted { $0.created > $1.created }
+        collections = Cards.collections?.collections() ?? []
+        // The kinds of word of cards not seen before, from the first sense of each entry; a
+        // card kept without its entry's id is looked up by its word. Off the main thread: a
+        // thousand cards are a thousand dictionary queries, a second's worth.
+        let unknown = cards.filter { classes[$0.id] == nil }
+        guard !unknown.isEmpty, let dictionary = JMdict.bundled else { return }
+        Task.detached(priority: .userInitiated) {
+            var found: [UUID: Set<WordClass>] = [:]
+            for card in unknown {
+                let entry =
+                    card.entryID.flatMap(dictionary.entry(withID:))
+                    ?? dictionary.entry(headword: card.headword, reading: card.reading)
+                found[card.id] = WordClass.of(
+                    partsOfSpeech: entry?.senses.first?.partsOfSpeech ?? [])
+            }
+            let classes = found
+            await MainActor.run { self.classes.merge(classes) { _, new in new } }
+        }
+        // A card gone, here or on another device, is no longer picked.
+        picked.formIntersection(Set(cards.map(\.id)))
+        // The last loose card filed: all cards again, not an empty list.
+        if unfiled, loose.isEmpty { unfiled = false }
     }
 }
 
