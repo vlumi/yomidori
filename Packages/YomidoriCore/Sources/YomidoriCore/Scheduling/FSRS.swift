@@ -83,7 +83,8 @@ public enum FSRS {
                         * (exp(weights[10] * (1 - retrievability)) - 1) + 1)
             }
             next = state
-            next.stability = max(stability, 0.01)
+            // Not a number, from a state at the edge of what the maths bears: the old one.
+            next.stability = stability.isFinite ? max(stability, 0.01) : state.stability
             next.difficulty = nextDifficulty(state.difficulty, rating: rating)
             next.reviews += 1
             if grade == .again { next.lapses += 1 }

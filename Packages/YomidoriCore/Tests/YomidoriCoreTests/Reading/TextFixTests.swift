@@ -35,4 +35,9 @@ final class TextFixTests: XCTestCase {
         // What came after the run follows it.
         XCTAssertEqual(TextFix.map(offset: 7, through: [fix]), 6)
     }
+
+    func testANegativeLengthIsNoFix() {
+        XCTAssertEqual(
+            TextFix.apply([TextFix(offset: 0, length: -1, replacement: "X")], to: "abc"), "abc")
+    }
 }

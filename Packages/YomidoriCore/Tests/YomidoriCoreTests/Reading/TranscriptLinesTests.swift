@@ -26,4 +26,12 @@ final class TranscriptLinesTests: XCTestCase {
         XCTAssertEqual(found.sentence.text, "樹皮の匂いが部屋に漂っていた。")
         XCTAssertEqual(found.sentence.offset(of: found.start, in: transcript), 9)
     }
+
+    func testALineOrOffsetThePageHasNotEndsAtTheTranscriptsEnd() {
+        let text = "一行目\n二行目"
+        let lines = TranscriptLines(text)
+        XCTAssertEqual(lines.index(inLine: 5, offset: 0, in: text), text.endIndex)
+        XCTAssertEqual(lines.index(inLine: 0, offset: 99, in: text), text.endIndex)
+        XCTAssertEqual(lines.index(inLine: 1, offset: -1, in: text), text.endIndex)
+    }
 }
