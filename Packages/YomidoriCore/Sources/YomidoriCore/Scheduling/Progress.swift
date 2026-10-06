@@ -42,8 +42,10 @@ public enum Progress {
     public static func tallies(
         of cards: [Card], from: Date, to: Date, calendar: Calendar = .current
     ) -> [DayTally] {
-        let first = calendar.startOfDay(for: from)
         let last = calendar.startOfDay(for: to)
+        // A date gone wrong on one card must not run the chart back to year one.
+        let floor = calendar.date(byAdding: .year, value: -30, to: last) ?? from
+        let first = calendar.startOfDay(for: max(from, floor))
         guard first <= last else { return [] }
         var byDay: [Date: DayTally] = [:]
         var day = first

@@ -16,7 +16,8 @@ extension Card {
         let known = Set(newer.sightings.map(\.id))
         let sightings = newer.sightings + older.sightings.filter { !known.contains($0.id) }
         var log = newer.log
-        for entry in older.log where !log.contains(entry) { log.append(entry) }
+        var seen = Set(log)
+        for entry in older.log where seen.insert(entry).inserted { log.append(entry) }
         log.sort { $0.date < $1.date }
         let waiting = newer.started == nil
         func later(_ question: Question) -> ReviewState? {

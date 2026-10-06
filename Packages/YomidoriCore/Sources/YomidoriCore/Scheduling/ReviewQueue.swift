@@ -41,6 +41,7 @@ public struct ReviewQueue: Equatable, Sendable {
     /// the answer left it, replaces the card in every question still queued; a miss comes
     /// back `missComesBackAfter` questions on.
     public mutating func answered(_ item: ReviewItem, grade: Grade, card reviewed: Card?) {
+        guard isCurrent(item) else { return }
         asked.insert(Asked(card: item.card.id, question: item.question))
         items.removeFirst()
         if let reviewed { replace(card: reviewed) }
