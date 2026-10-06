@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A long text reads in time.** A pasted chapter without line breaks took seconds to read into words and seconds more to show, growing with the square of its length; both are linear now, and MeCab's dictionary, when chosen, loads at launch rather than at the first glance.
 - **The shutter never waits forever.** A frame that does not come within four seconds — the camera taken by a call or another app, or stopped under the button — lets go; the preview says the camera is busy elsewhere and comes back when it is free, and a camera session that falls over is started again.
 
 ### build 37 — 2026-10-06

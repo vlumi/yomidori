@@ -92,4 +92,19 @@ final class PageReadingTests: XCTestCase {
         XCTAssertEqual(segments.map(\.word.surface), ["樹皮", "の", "匂い", "。"])
         XCTAssertEqual(segments.map(\.isShown), [true, false, true, false])
     }
+
+    func testAPageWithoutLineBreaksReadsInTime() {
+        // One long line: counting each segment's place from the line's start grew with the
+        // square of the length, and twenty thousand characters took over a second.
+        var text = ""
+        while text.count < 20_000 { text += "吾輩は猫である。名前はまだ無い。どこで生まれたかとんと見当がつかぬ。" }
+        let tokenizer = SystemTokenizer()
+        let started = Date()
+        let reading = PageReading(text: text, tokens: { tokenizer.tokens(in: $0) }, dictionary: nil)
+        let took = Date().timeIntervalSince(started)
+        XCTAssertGreaterThan(reading.chunks.count, 1_000)
+        XCTAssertLessThan(took, 1.0, "read in \(took) s")
+        // The ranges still index the text: the last chunk ends where the text does.
+        XCTAssertEqual(reading.chunks.last?.range.upperBound, text.count)
+    }
 }

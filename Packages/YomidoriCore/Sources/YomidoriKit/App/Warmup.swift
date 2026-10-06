@@ -2,6 +2,7 @@ import CoreGraphics
 import Foundation
 import YomidoriCore
 import YomidoriDictionary
+import YomidoriMeCab
 
 /// What is slow the first time and never again, done once at launch so the first page reads
 /// as fast as the second: the recognizers' text models, which load only once there is text
@@ -21,6 +22,12 @@ enum Warmup {
             async let words = PageReader.shared.read(text, with: .system)
             _ = await (read, words)
             _ = JMdict.bundled?.entries(matching: "本")
+            // MeCab's dictionary is tens of megabytes; loaded here, off the main thread,
+            // rather than at the first glance at a readout that asks for it.
+            if Cards.defaults.string(forKey: TokenizerChoice.key) == TokenizerChoice.mecab.rawValue
+            {
+                _ = MeCabTokenizer.shared
+            }
         }
     }
 }
