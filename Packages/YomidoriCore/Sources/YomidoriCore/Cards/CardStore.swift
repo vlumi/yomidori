@@ -154,6 +154,16 @@ public final class FileCardStore: CardStore {
         }
     }
 
+    /// Takes the collection off every card in it in one write, not one a card: a collection
+    /// of thousands rewrote the file thousands of times, on the main thread.
+    public func forget(collection: UUID) throws {
+        try file.write { cards in
+            for index in cards.indices where cards[index].collectionIDs.contains(collection) {
+                cards[index].remove(from: collection)
+            }
+        }
+    }
+
     /// Many cards taken out of a collection in one write; the number that were in it.
     @discardableResult
     public func remove(_ ids: Set<UUID>, from collection: UUID) throws -> Int {
