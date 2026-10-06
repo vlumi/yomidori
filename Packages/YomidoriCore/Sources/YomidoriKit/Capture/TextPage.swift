@@ -115,16 +115,15 @@ struct TextBox: NSViewRepresentable {
 
         override func paste(_ sender: Any?) {
             let pasteboard = NSPasteboard.general
-            if let data = pasteboard.data(forType: .png) ?? pasteboard.data(forType: .tiff),
-                let still = Still(data: data)
-            {
-                onPasteImage(still)
+            let onPasteImage = onPasteImage
+            if let data = pasteboard.data(forType: .png) ?? pasteboard.data(forType: .tiff) {
+                Still.decode(data) { onPasteImage($0) }
                 return
             }
             if let urls = pasteboard.readObjects(forClasses: [NSURL.self]) as? [URL],
-                let url = urls.first, let still = Still(file: url)
+                let url = urls.first, url.isFileURL
             {
-                onPasteImage(still)
+                Still.decode(file: url) { onPasteImage($0) }
                 return
             }
             super.paste(sender)

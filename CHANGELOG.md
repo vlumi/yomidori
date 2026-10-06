@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Pictures are decoded off the main thread wherever they come in** — a file opened, a picture pasted on the Mac, a shortcut's screenshot — where a big one held the screen for a second or two; the full frame is let go once both recognizers have read it, which halves what a spread keeps in memory; the sound setup before *Hear the sentence* is off the main thread too; and the note that badges were refused in Settings can now actually show.
 - **Records from a backup, a shared collection or another device are cleaned of the impossible.** A date before 2024 or past tomorrow is drawn in (one such date ran the progress chart back to year one), an absurd offset no longer trips the app, a schedule's stability is capped at a hundred years, and a few guards keep a stray index or an empty review queue from a crash.
 - **The shutter never waits forever.** A frame that does not come within four seconds — the camera taken by a call or another app, or stopped under the button — lets go; the preview says the camera is busy elsewhere and comes back when it is free, and a camera session that falls over is started again.
 

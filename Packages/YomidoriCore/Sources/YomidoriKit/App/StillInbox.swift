@@ -1,4 +1,5 @@
 import Foundation
+import ImageIO
 import SwiftUI
 
 /// An image handed to the app from outside, a shortcut's screenshot for one: checked and
@@ -9,11 +10,14 @@ public final class StillInbox: ObservableObject {
 
     @Published private(set) var arrival: Still?
 
-    /// False for what is no image, or one too large to be a photo.
+    /// False for what is no image at all; the decoding, which a big screenshot makes a
+    /// second's work, is off the main thread, and the still arrives when it is done.
     @discardableResult
     public func receive(_ data: Data) -> Bool {
-        guard let still = Still(data: data) else { return false }
-        arrival = still
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil),
+            CGImageSourceGetCount(source) > 0
+        else { return false }
+        Still.decode(data) { [weak self] still in self?.arrival = still }
         return true
     }
 
