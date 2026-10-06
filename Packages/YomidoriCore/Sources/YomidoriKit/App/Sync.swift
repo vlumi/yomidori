@@ -58,7 +58,18 @@ final class Sync: ObservableObject {
         try? Cards.directory().appendingPathComponent("sync-unsent.json")
     }
 
+    /// The engine being stopped, awaited by the next start, so two never share the state file.
+    private var stopping: Task<Void, Never>?
+
     func start() {
+        if let stopping {
+            Task { @MainActor in
+                await stopping.value
+                self.stopping = nil
+                start()
+            }
+            return
+        }
         guard Self.engine == nil, !DemoMode.isRequested,
             Cards.defaults.object(forKey: SettingsKey.iCloudSync) as? Bool ?? true
         else { return }
@@ -102,7 +113,7 @@ final class Sync: ObservableObject {
             return Self.current
         }
         status = .off
-        Task { await engine?.stop() }
+        stopping = Task { await engine?.stop() }
     }
 
     func fetch() {

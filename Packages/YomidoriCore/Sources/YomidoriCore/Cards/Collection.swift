@@ -40,8 +40,10 @@ public struct Collection: Identifiable, Hashable, Codable, Sendable {
         modified = try c.decodeIfPresent(Date.self, forKey: .modified) ?? created
     }
 
+    /// The later change; on a tie, the same one on every device.
     public func merged(with other: Collection) -> Collection {
-        other.modified > modified ? other : self
+        if other.modified != modified { return other.modified > modified ? other : self }
+        return SyncPayload.tieBreak(self, other)
     }
 
     /// Tags as typed, comma-separated, each once, empties dropped.
