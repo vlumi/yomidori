@@ -87,6 +87,15 @@ public enum DemoMode {
         isRequested && CommandLine.arguments.contains("-yomidori-recognize")
     }
 
+    /// `-yomidori-picture <path>`: a picture file of this machine's as the page, read by the
+    /// recognizers as a photo is, for a look at what they make of a real page.
+    static var picture: URL? {
+        guard isRequested, let index = CommandLine.arguments.firstIndex(of: "-yomidori-picture"),
+            index + 1 < CommandLine.arguments.count
+        else { return nil }
+        return URL(fileURLWithPath: CommandLine.arguments[index + 1])
+    }
+
     /// `-yomidori-nopage`: the Read tab at the camera, no page seeded, for a look at the ways
     /// in; with `-yomidori-spread`, the first page taken and the camera up for the next.
     static var noPage: Bool {
