@@ -7,7 +7,7 @@ import YomidoriCore
 /// holds the main thread for seconds while it is copied for the display, which is what made
 /// the app seem to hang after the shutter. The recognizers read the full frame.
 public struct Still: Identifiable {
-    public let id = UUID()
+    public let id: UUID
     public let image: CGImage
     /// The picture for the screen, no longer than `previewSide` on its long side; the full
     /// one where it is no larger than that. The same shape, so what is drawn over it by
@@ -23,12 +23,45 @@ public struct Still: Identifiable {
 
     /// Both made already, as the camera makes them from the frame in one pass.
     public init(image: CGImage, preview: CGImage) {
+        id = UUID()
         self.image = image
         self.preview = preview
     }
 
+    private init(id: UUID, image: CGImage, preview: CGImage) {
+        self.id = id
+        self.image = image
+        self.preview = preview
+    }
+
+    /// The same still, the full frame let go once both recognizers have read it: the screen
+    /// shows the preview, and a spread of two 48-megapixel frames is a quarter of a gigabyte.
+    public func lightened() -> Still {
+        Still(id: id, image: preview, preview: preview)
+    }
+
+    /// Decoded off the main thread, which a 48-megapixel HEIC held for a second or two,
+    /// and handed over on it. Nothing for data that is no image.
+    public static func decode(_ data: Data, then take: @escaping @MainActor (Still) -> Void) {
+        Task.detached(priority: .userInitiated) {
+            guard let still = Still(data: data) else { return }
+            await take(still)
+        }
+    }
+
+    /// The same for a file on this machine, read under its security scope.
+    public static func decode(file url: URL, then take: @escaping @MainActor (Still) -> Void) {
+        Task.detached(priority: .userInitiated) {
+            let accessing = url.startAccessingSecurityScopedResource()
+            defer { if accessing { url.stopAccessingSecurityScopedResource() } }
+            guard let still = Still(file: url) else { return }
+            await take(still)
+        }
+    }
+
     /// Made where the frame is: off the main thread, which the drawing down would hold.
     public init(image: CGImage) {
+        id = UUID()
         self.image = image
         let longest = max(image.width, image.height)
         preview =

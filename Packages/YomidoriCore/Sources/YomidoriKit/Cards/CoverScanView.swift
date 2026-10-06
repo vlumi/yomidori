@@ -18,6 +18,8 @@ struct CoverScanView: View {
     @State private var picked: PhotosPickerItem?
     @State private var opening = false
     @State private var dropping = false
+    /// The shutter pressed and the still on its way.
+    @State private var taking = false
 
     var body: some View {
         NavigationStack {
@@ -190,11 +192,14 @@ struct CoverScanView: View {
     #endif
 
     private func takeStill() {
+        guard !taking else { return }
+        taking = true
         Task { @MainActor in
-            if let taken = await camera.takeStill() {
-                camera.stop()
-                still = taken
-            }
+            defer { taking = false }
+            // A frame that comes after a photo was picked meanwhile is let go.
+            guard let taken = await camera.takeStill(), still == nil else { return }
+            camera.stop()
+            still = taken
         }
     }
 

@@ -58,7 +58,18 @@ final class Sync: ObservableObject {
         try? Cards.directory().appendingPathComponent("sync-unsent.json")
     }
 
+    /// The engine being stopped, awaited by the next start, so two never share the state file.
+    private var stopping: Task<Void, Never>?
+
     func start() {
+        if let stopping {
+            Task { @MainActor in
+                await stopping.value
+                self.stopping = nil
+                start()
+            }
+            return
+        }
         guard Self.engine == nil, !DemoMode.isRequested,
             Cards.defaults.object(forKey: SettingsKey.iCloudSync) as? Bool ?? true
         else { return }
@@ -66,7 +77,12 @@ final class Sync: ObservableObject {
             status = .noAccount
             return
         }
-        guard let stores = Cards.syncStores, let directory = try? Cards.directory() else { return }
+        guard let stores = Cards.syncStores, let directory = try? Cards.directory(),
+            // Launched by a push while the phone is locked, the stores cannot be read; what
+            // arrived would be laid over nothing. Started again when the phone unlocks.
+            !stores.cards.file.isUnreadable, !stores.collections.file.isUnreadable,
+            !stores.lookups.file.isUnreadable, !stores.settings.file.isUnreadable
+        else { return }
         let engine = CloudSync(
             containerIdentifier: Self.containerIdentifier, stores: stores, directory: directory)
         engine.onStatus = { [weak engine] status in
@@ -97,7 +113,7 @@ final class Sync: ObservableObject {
             return Self.current
         }
         status = .off
-        Task { await engine?.stop() }
+        stopping = Task { await engine?.stop() }
     }
 
     func fetch() {

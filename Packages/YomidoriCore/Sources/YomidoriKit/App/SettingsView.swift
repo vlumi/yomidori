@@ -92,12 +92,15 @@ public struct SettingsView: View {
                     Text("Reviews due on the app icon", bundle: .module)
                 }
                 .onChange(of: appBadge) { _, on in
+                    // Only a turn on asks, and only a refusal is said: the turn off that a
+                    // refusal makes must not clear what it says.
+                    guard on else { return AppBadge.refresh() }
                     Task { @MainActor in
-                        if on, !(await AppBadge.requestPermission()) {
+                        if await AppBadge.requestPermission() {
+                            badgeRefused = false
+                        } else {
                             appBadge = false
                             badgeRefused = true
-                        } else {
-                            badgeRefused = false
                         }
                         AppBadge.refresh()
                     }

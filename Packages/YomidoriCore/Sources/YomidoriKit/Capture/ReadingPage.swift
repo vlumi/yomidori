@@ -18,7 +18,9 @@ struct ReadingPage: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 10) {
+            // Lazy: a chapter pasted is thousands of chunks, each a view with gestures and
+            // a menu, and all of them made at once held the window for seconds.
+            LazyVStack(alignment: .leading, spacing: 10) {
                 ForEach(reading.chunksByLine.indices, id: \.self) { line in
                     ChunkFlow(
                         chunks: reading.chunksByLine[line],

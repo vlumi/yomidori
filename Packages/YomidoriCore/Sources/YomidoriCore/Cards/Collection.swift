@@ -40,8 +40,10 @@ public struct Collection: Identifiable, Hashable, Codable, Sendable {
         modified = try c.decodeIfPresent(Date.self, forKey: .modified) ?? created
     }
 
+    /// The later change; on a tie, the same one on every device.
     public func merged(with other: Collection) -> Collection {
-        other.modified > modified ? other : self
+        if other.modified != modified { return other.modified > modified ? other : self }
+        return SyncPayload.tieBreak(self, other)
     }
 
     /// Tags as typed, comma-separated, each once, empties dropped.
@@ -73,7 +75,9 @@ public final class FileCollectionStore: CollectionStore {
     private let now: () -> Date
 
     public init(url: URL, now: @escaping () -> Date = Date.init) {
-        file = RecordFile(url: url, label: "fi.misaki.yomidori.collections") { $0.id.uuidString }
+        file = RecordFile(
+            url: url, label: "fi.misaki.yomidori.collections", key: { $0.id.uuidString },
+            merging: { $0.merged(with: $1) })
         self.now = now
     }
 

@@ -92,7 +92,9 @@ public final class FileCardStore: CardStore {
     public var url: URL { file.url }
 
     public init(url: URL) {
-        file = RecordFile(url: url, label: "fi.misaki.yomidori.cards") { $0.id.uuidString }
+        file = RecordFile(
+            url: url, label: "fi.misaki.yomidori.cards", key: { $0.id.uuidString },
+            merging: { $0.merged(with: $1) })
     }
 
     public func cards() -> [Card] {
@@ -149,6 +151,16 @@ public final class FileCardStore: CardStore {
                 changed += 1
             }
             return changed
+        }
+    }
+
+    /// Takes the collection off every card in it in one write, not one a card: a collection
+    /// of thousands rewrote the file thousands of times, on the main thread.
+    public func forget(collection: UUID) throws {
+        try file.write { cards in
+            for index in cards.indices where cards[index].collectionIDs.contains(collection) {
+                cards[index].remove(from: collection)
+            }
         }
     }
 

@@ -39,23 +39,31 @@ final class Camera: ObservableObject {
     /// stop that overtakes a start still waiting on the permission leaves the camera off.
     private let wanted = NSLock()
     private nonisolated(unsafe) var wantsRunning = false
+    /// Whether this camera began the device's orientation notifications; main thread only.
+    private var generatingOrientation = false
     #endif
 
     func start() {
         #if os(iOS)
         wanted.withLock { wantsRunning = true }
-        // For `takeStill` to know a flat phone from one held up; paired in `stop`.
-        UIDevice.current.beginGeneratingDeviceOrientationNotifications()
+        // For `takeStill` to know a flat phone from one held up; ended in `stop`, once for
+        // each beginning — the count is the device's, shared with HeldOrientation.
+        if !generatingOrientation {
+            generatingOrientation = true
+            UIDevice.current.beginGeneratingDeviceOrientationNotifications()
+        }
         AVCaptureDevice.requestAccess(for: .video) { [self] granted in
             guard granted else { return set(.denied) }
             queue.async { [self] in
                 guard wanted.withLock({ wantsRunning }) else { return }
+                // Configured once it has been, so a camera that was not there is asked
+                // for again at the next start, not taken as there.
                 if !configured {
-                    configured = true
                     guard configure() else { return set(.unavailable) }
+                    configured = true
                 }
                 session.startRunning()
-                set(.ready)
+                set(session.isRunning ? .ready : .unavailable)
             }
         }
         #else
@@ -67,13 +75,28 @@ final class Camera: ObservableObject {
     func stop() {
         #if os(iOS)
         wanted.withLock { wantsRunning = false }
-        UIDevice.current.endGeneratingDeviceOrientationNotifications()
+        if generatingOrientation {
+            generatingOrientation = false
+            UIDevice.current.endGeneratingDeviceOrientationNotifications()
+        }
         queue.async { [self] in
             frames.cancel()
             session.stopRunning()
         }
         #endif
     }
+
+    #if os(iOS)
+    /// The screen gone with the camera running: the session is let go of with it.
+    deinit {
+        let session = session
+        let frames = frames
+        queue.async {
+            frames.cancel()
+            if session.isRunning { session.stopRunning() }
+        }
+    }
+    #endif
 
     /// The frame comes as the output delivers it, upright for a phone held upright, and is
     /// turned after the way the phone is held: on a phone, whose screen is locked upright, as

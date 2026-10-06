@@ -30,11 +30,11 @@ extension Still {
         return false
     }
 
-    /// A picture file picked by the reader, read under its security scope.
-    static func take(picked result: Result<URL, Error>, _ take: (Still) -> Void) {
+    /// A picture file picked by the reader, decoded off the main thread.
+    static func take(
+        picked result: Result<URL, Error>, _ take: @escaping @MainActor (Still) -> Void
+    ) {
         guard let url = try? result.get() else { return }
-        let accessing = url.startAccessingSecurityScopedResource()
-        defer { if accessing { url.stopAccessingSecurityScopedResource() } }
-        if let still = Still(file: url) { take(still) }
+        decode(file: url, then: take)
     }
 }
