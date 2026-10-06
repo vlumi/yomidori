@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The shutter answers at once, and the still is made faster.** *Taking the page…* shows the moment the button is pressed, where there were a few seconds of nothing; and the frame is turned upright and drawn down for the screen in one pass as it is taken, not as two more 48-megapixel bitmaps afterwards.
+
 ### build 36 — 2026-10-05
 
 - **The words run under the tab bar.** They show through the glass, and when the bar folds to its one icon on a scroll the band it leaves shows the words, not a bare strip of the drawer's color.
