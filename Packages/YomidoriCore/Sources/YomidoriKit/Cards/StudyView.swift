@@ -83,6 +83,15 @@ struct StudyView: View {
             if !cards.isEmpty {
                 Section {
                     RankChart(cards: cards, question: question)
+                } header: {
+                    Text("Ranks", bundle: .module)
+                }
+            }
+        }
+        .navigationTitle(Text("Study", bundle: .module))
+        .toolbar {
+            if !cards.isEmpty {
+                ToolbarItem(placement: .primaryAction) {
                     NavigationLink(value: Screen.progress) {
                         Label {
                             Text("Progress", bundle: .module)
@@ -90,12 +99,9 @@ struct StudyView: View {
                             Image(systemName: "chart.xyaxis.line")
                         }
                     }
-                } header: {
-                    Text("Ranks", bundle: .module)
                 }
             }
         }
-        .navigationTitle(Text("Study", bundle: .module))
         .onAppear(perform: reload)
         .onChange(of: question) { reload() }
         .onReceive(Cards.changes(of: [.card])) { _ in reload() }

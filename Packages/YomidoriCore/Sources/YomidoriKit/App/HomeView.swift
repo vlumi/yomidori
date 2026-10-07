@@ -62,6 +62,15 @@ struct HomeView: View {
                         StudyLabel.lesson(waiting: waitingCount)
                     }
                 }
+                Button {
+                    study(.progress)
+                } label: {
+                    Label {
+                        Text("Progress", bundle: .module)
+                    } icon: {
+                        Image(systemName: "chart.xyaxis.line")
+                    }
+                }
             } header: {
                 Text("Study", bundle: .module)
             }
