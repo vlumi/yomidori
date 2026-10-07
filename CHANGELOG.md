@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 40 — 2026-10-07
+
 - **In a review, the question's name and the count stand right above the answer**, where the eyes are, and the title is back in the bar.
 - **Counts of one read right in English.** A lesson of one is "1 card", not "1 cards"; the same for collections, strokes, words started, answers, and the import and forget summaries.
 - **A card shows each question's rank** beside its good and again counts, under the card's own.
