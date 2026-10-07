@@ -38,8 +38,14 @@ extension Card {
     /// Waiting is the egg, shelved the nest; a started card ranks by its reading's stability,
     /// a hatchling until the first answer.
     public var rank: Rank {
+        rank(for: .reading)
+    }
+
+    /// The rank of one of the card's questions: the reading's is the card's own; the
+    /// meaning's and the pitch's climb at their own pace, a hatchling until first answered.
+    public func rank(for question: Question) -> Rank {
         if shelved { return .nest }
         guard started != nil else { return .egg }
-        return review.map { Rank(stability: $0.stability) } ?? .hatchling
+        return state(for: question).map { Rank(stability: $0.stability) } ?? .hatchling
     }
 }

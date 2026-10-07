@@ -8,18 +8,43 @@ import YomidoriCore
 /// there otherwise. What is overdue is in now's bar. Below, how many lie beyond.
 struct UpcomingReviews: View {
     let upcoming: Upcoming
+    /// What colors the bars: the cards' ranks, or what each question asks.
+    var stacking: Stacking = .rank
     @State private var selected: Date?
     @ScaledMetric(relativeTo: .body) private var height: CGFloat = 132
 
-    /// One rank's part of one slot's bar, as the chart draws it.
+    enum Stacking {
+        case rank
+        case question
+    }
+
+    /// One part of one slot's bar, as the chart draws it: a rank's or a question's.
     private struct Share: Identifiable {
         let slot: Date
-        let part: Upcoming.Share
-        var id: String { "\(slot.timeIntervalSinceReferenceDate).\(part.rank.rawValue)" }
+        let from: Int
+        let to: Int
+        let color: Color
+        let key: String
+        var id: String { "\(slot.timeIntervalSinceReferenceDate).\(key)" }
     }
 
     private var shares: [Share] {
-        upcoming.slots.flatMap { slot in slot.shares.map { Share(slot: slot.start, part: $0) } }
+        upcoming.slots.flatMap { slot -> [Share] in
+            switch stacking {
+            case .rank:
+                return slot.shares.map {
+                    Share(
+                        slot: slot.start, from: $0.from, to: $0.to, color: $0.rank.color,
+                        key: "\($0.rank.rawValue)")
+                }
+            case .question:
+                return slot.questionShares.map {
+                    Share(
+                        slot: slot.start, from: $0.from, to: $0.to, color: $0.question.color,
+                        key: "q\($0.question.rawValue)")
+                }
+            }
+        }
     }
 
     private var chosen: Upcoming.Slot? {
@@ -54,7 +79,10 @@ struct UpcomingReviews: View {
             Text(verbatim: "\(chosen?.questions ?? upcoming.questions)")
                 .fontWeight(.semibold)
             Spacer(minLength: 0)
-            ranks(of: chosen?.counts ?? upcoming.counts)
+            switch stacking {
+            case .rank: ranks(of: chosen?.counts ?? upcoming.counts)
+            case .question: questions(of: chosen?.questionCounts ?? upcoming.questionCounts)
+            }
         }
         .font(.callout.monospacedDigit())
         .frame(minHeight: 24)
@@ -67,6 +95,20 @@ struct UpcomingReviews: View {
                 HStack(spacing: 2) {
                     RankMark(rank: rank, size: 14)
                     Text(verbatim: "\(counts[rank] ?? 0)")
+                        .font(.subheadline.monospacedDigit())
+                }
+            }
+        }
+    }
+
+    /// The questions that come up, each as a dot of its color and its number.
+    private func questions(of counts: [Question: Int]) -> some View {
+        HStack(spacing: 6) {
+            ForEach(Question.allCases.filter { (counts[$0] ?? 0) > 0 }, id: \.self) { question in
+                HStack(spacing: 2) {
+                    Circle().fill(question.color).frame(width: 10, height: 10)
+                        .accessibilityLabel(Text(verbatim: question.name))
+                    Text(verbatim: "\(counts[question] ?? 0)")
                         .font(.subheadline.monospacedDigit())
                 }
             }
@@ -111,16 +153,14 @@ struct UpcomingReviews: View {
     private func bar(_ share: Share, dimmed: Bool) -> some ChartContent {
         let from: Date = share.slot.addingTimeInterval(gap)
         let to: Date = slotEnd(share.slot).addingTimeInterval(-gap)
-        let color: Color = share.part.rank.color.opacity(dimmed ? 0.4 : 1)
+        let color: Color = share.color.opacity(dimmed ? 0.4 : 1)
         // A rectangle, not a bar: a bar has its width in points or in units of an axis,
         // and six hours is neither.
         let mark = RectangleMark(
             xStart: PlottableValue.value(String(localized: "From", bundle: .module), from),
             xEnd: PlottableValue.value(String(localized: "To", bundle: .module), to),
-            yStart: PlottableValue.value(
-                String(localized: "Stacked", bundle: .module), share.part.from),
-            yEnd: PlottableValue.value(
-                String(localized: "Questions", bundle: .module), share.part.to))
+            yStart: PlottableValue.value(String(localized: "Stacked", bundle: .module), share.from),
+            yEnd: PlottableValue.value(String(localized: "Questions", bundle: .module), share.to))
         return mark.foregroundStyle(color)
     }
 

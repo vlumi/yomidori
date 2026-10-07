@@ -681,6 +681,16 @@
         }
       }
     },
+    "Colors" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "色分け"
+          }
+        }
+      }
+    },
     "Coming up" : {
       "localizations" : {
         "ja" : {
@@ -2301,6 +2311,16 @@
         }
       }
     },
+    "Questions due by quarter day, in the colors of what they ask; now's with what is overdue. Touch a bar for its numbers." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6時間ごとに期限が来る問いを、問いの種類の色で。いまの棒には期限切れの分も入ります。棒に触れると数が見られます。"
+          }
+        }
+      }
+    },
     "Questions due by quarter day, in their ranks' colors; now's with what is overdue. Touch a bar for its numbers." : {
       "localizations" : {
         "ja" : {
@@ -3227,6 +3247,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "写真か、読み取った本文か（⌘↩）"
+          }
+        }
+      }
+    },
+    "The ranks of each question are kept apart from now on; the chart fills in over the days." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問いごとのランクは今日から記録します。日を追ってグラフが埋まっていきます。"
           }
         }
       }
