@@ -40,7 +40,7 @@ DEFAULT_KANJIDIC = "https://www.edrdg.org/kanjidic/kanjidic2.xml.gz"
 DEFAULT_KRADFILE = "https://www.edrdg.org/pub/Nihongo/kradfile.gz"
 # Pinned to a release: the "latest" lookup needs GitHub's API, whose unauthenticated
 # rate limit CI runners share and exhaust.
-DEFAULT_KANJIVG = "https://github.com/KanjiVG/kanjivg/releases/download/r20250816/kanjivg-20250816-main.zip"
+DEFAULT_KANJIVG = "https://github.com/KanjiVG/kanjivg/releases/download/r20260714/kanjivg-20260714-main.zip"
 CACHE_DIR = ".build-data"
 # The most any one download may expand to: JMdict_e is ~100 MB unpacked, KanjiVG's zip
 # ~60 MB; a bomb in either's place stops here instead of filling the build machine.
