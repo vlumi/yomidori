@@ -522,7 +522,8 @@ has what remains.
   5; the nest (shelved) is outside the climb, raw value −1 so it sorts first
   and a dash where the others show their number; nothing retires. Each
   question has a rank of its own (`Card.rank(for:)`, from that question's
-  stability; the card's is the reading's), and Study and Progress carry one
+  stability; the card's own is its weakest question's — the reading's and
+  the meaning's, and the pitch's once asked), and Study and Progress carry one
   question picker over their charts: Coming up and the rank bars follow it,
   and with all questions shown Coming up can be colored by rank or by what the
   questions ask. A stored count (`RankSnapshot.counts`) is indexed by
