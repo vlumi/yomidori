@@ -330,18 +330,28 @@ private struct RankHistoryChart: View {
         let shown =
             ProgressSpan.period(under: selected, in: snapshots, start: \.day) ?? snapshots.last
         VStack(alignment: .leading, spacing: 8) {
-            ChartCaption {
-                if let shown {
-                    Text(verbatim: Period.label(shown.day, unit: .day)).fontWeight(.semibold)
-                    Text("\(shown.total) cards", bundle: .module)
-                    Spacer()
-                    ForEach(Rank.allCases.filter { count(shown, $0) > 0 }, id: \.self) { rank in
-                        HStack(spacing: 2) {
-                            RankMark(rank: rank, size: 18)
-                            Text(verbatim: "\(count(shown, rank))").font(.subheadline)
+            // The day and its total, and the ranks' numbers: on one line where they fit, on
+            // two where seven ranks and a phone's width would wrap every word.
+            if let shown {
+                FitsOrStacks(spacing: 8, trailingLast: true) {
+                    HStack(spacing: 8) {
+                        Text(verbatim: Period.label(shown.day, unit: .day)).fontWeight(.semibold)
+                        Text("\(shown.total) cards", bundle: .module)
+                    }
+                    .fixedSize()
+                    HStack(spacing: 6) {
+                        ForEach(Rank.allCases.filter { count(shown, $0) > 0 }, id: \.self) { rank in
+                            HStack(spacing: 2) {
+                                RankMark(rank: rank, size: 18)
+                                Text(verbatim: "\(count(shown, rank))").font(.subheadline)
+                            }
                         }
                     }
+                    .fixedSize()
                 }
+                .font(.callout)
+                .frame(minHeight: 30)
+                .accessibilityElement(children: .combine)
             }
             Chart {
                 ForEach(snapshots, id: \.day) { snapshot in
