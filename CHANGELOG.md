@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A card shows each question's rank** beside its good and again counts, under the card's own.
 - **Progress is easier to find and to filter.** It has a button in Study's toolbar and a row in Home's Study list, not only a link under the ranks chart; and its two filters, the span and the question, stand together in a bar under the title that stays while the charts scroll.
 - **The reading, the meaning and the pitch each have a rank of their own to look at, and a card's rank is its weakest question's.** A question picker over Study's and Progress's charts shows one question's ranks and what is coming up for it, or all; with all shown, Coming up colors its bars by rank or by what the questions ask, as you choose. The per-question history fills in from this build on.
 - **The chart captions no longer wrap word by word.** The day and its count, and the ranks' numbers, go on one line where they fit and on two where seven ranks and a phone's width would break every word.
