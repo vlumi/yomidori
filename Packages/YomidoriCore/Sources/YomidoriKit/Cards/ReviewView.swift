@@ -47,22 +47,9 @@ struct ReviewView: View {
         .navigationTitle(
             practicing == nil ? Text("Review", bundle: .module) : Text("Practice", bundle: .module)
         )
-        // The title at the system's size, the question's name and what remains at the
-        // right of it.
-        .toolbar {
-            if let item = queue.current {
-                ToolbarItem(placement: .primaryAction) {
-                    HStack(spacing: 8) {
-                        Text(verbatim: "\(queue.count)")
-                            .font(.body.monospacedDigit())
-                            .foregroundStyle(.secondary)
-                            .accessibilityLabel(Text("\(queue.count) remaining", bundle: .module))
-                        QuestionTag(question: item.question)
-                    }
-                }
-                .sharedBackgroundVisibility(.hidden)
-            }
-        }
+        // A small title in the bar; the question's name and what remains stand down by the
+        // answer, where the eyes are.
+        .navigationBarTitleDisplayModeInline()
         .onAppear(perform: reload)
         .onChange(of: queue.current) { shown = Date() }
     }
@@ -96,6 +83,14 @@ struct ReviewView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .scrollBounceBehavior(.basedOnSize)
+            // Which question this is and how many remain, right above the answer.
+            HStack(spacing: 8) {
+                QuestionTag(question: item.question)
+                Spacer()
+                Text("\(queue.count) remaining", bundle: .module)
+                    .font(.callout.monospacedDigit())
+                    .foregroundStyle(.secondary)
+            }
             if revealed {
                 answered(item)
             } else {
