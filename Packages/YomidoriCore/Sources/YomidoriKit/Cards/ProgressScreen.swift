@@ -23,21 +23,6 @@ struct ProgressScreen: View {
             } else {
                 stats
                 Section {
-                    Picker(selection: $span) {
-                        ForEach(ProgressSpan.allCases) { span in span.title.tag(span) }
-                    } label: {
-                        Text("Span", bundle: .module)
-                    }
-                    .pickerStyle(.segmented)
-                    .listRowBackground(Color.clear)
-                    .listRowInsets(EdgeInsets())
-                }
-                Section {
-                    QuestionPicker(question: $question)
-                        .listRowBackground(Color.clear)
-                        .listRowInsets(EdgeInsets())
-                }
-                Section {
                     AnswersChart(buckets: buckets, unit: span.unit, question: question)
                 } header: {
                     Text("Reviews", bundle: .module)
@@ -64,6 +49,26 @@ struct ProgressScreen: View {
             }
         }
         .navigationTitle(Text("Progress", bundle: .module))
+        // A small title, with the span and the question in a bar under it, together and
+        // staying put while the charts scroll under them; a large title would hide below it.
+        .navigationBarTitleDisplayModeInline()
+
+        .safeAreaInset(edge: .top) {
+            if total.answered > 0 || snapshots.count >= 2 {
+                VStack(spacing: 8) {
+                    Picker(selection: $span) {
+                        ForEach(ProgressSpan.allCases) { span in span.title.tag(span) }
+                    } label: {
+                        Text("Span", bundle: .module)
+                    }
+                    .pickerStyle(.segmented)
+                    QuestionPicker(question: $question)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(.bar)
+            }
+        }
         .onAppear(perform: reload)
         .onChange(of: span) { reload() }
         .onReceive(Cards.changes(of: [.card])) { _ in reload() }
