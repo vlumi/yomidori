@@ -33,24 +33,27 @@ struct ProgressScreen: View {
                     .listRowInsets(EdgeInsets())
                 }
                 Section {
-                    Picker(selection: $question) {
-                        Text("All", bundle: .module).tag(Question?.none)
-                        ForEach(Question.allCases, id: \.self) { question in
-                            Text(verbatim: question.name).tag(Question?.some(question))
-                        }
-                    } label: {
-                        Text("Question", bundle: .module)
-                    }
-                    .pickerStyle(.segmented)
+                    QuestionPicker(question: $question)
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets())
+                }
+                Section {
                     AnswersChart(buckets: buckets, unit: span.unit, question: question)
                 } header: {
                     Text("Reviews", bundle: .module)
                 }
                 if snapshots.count >= 2 {
                     Section {
-                        RankHistoryChart(snapshots: snapshots, unit: span.unit)
+                        RankHistoryChart(snapshots: snapshots, unit: span.unit, question: question)
                     } header: {
                         Text("Ranks", bundle: .module)
+                    } footer: {
+                        if question != nil, snapshots.filter(\.hasQuestions).count < 2 {
+                            Text(
+                                // swiftlint:disable:next line_length
+                                "The ranks of each question are kept apart from now on; the chart fills in over the days.",
+                                bundle: .module)
+                        }
                     }
                 }
                 Section {
@@ -200,6 +203,24 @@ private struct ChartCaption<Content: View>: View {
     }
 }
 
+/// All the questions or one of them, for the charts to follow: the reading's, the meaning's
+/// and the pitch's ranks climb apart.
+struct QuestionPicker: View {
+    @Binding var question: Question?
+
+    var body: some View {
+        Picker(selection: $question) {
+            Text("All", bundle: .module).tag(Question?.none)
+            ForEach(Question.allCases, id: \.self) { question in
+                Text(verbatim: question.name).tag(Question?.some(question))
+            }
+        } label: {
+            Text("Question", bundle: .module)
+        }
+        .pickerStyle(.segmented)
+    }
+}
+
 extension Question {
     /// The question's name, for a picker or a legend.
     var name: String {
@@ -292,9 +313,20 @@ private struct AnswersChart: View {
 private struct RankHistoryChart: View {
     let snapshots: [RankSnapshot]
     let unit: Calendar.Component
+    /// One question's ranks, from the snapshots that count them apart; nil for the cards'.
+    var question: Question?
     @State private var selected: Date?
 
+    private var counted: [RankSnapshot] {
+        question == nil ? snapshots : snapshots.filter(\.hasQuestions)
+    }
+
+    private func count(_ snapshot: RankSnapshot, _ rank: Rank) -> Int {
+        question.flatMap { snapshot.count(of: rank, for: $0) } ?? snapshot.count(of: rank)
+    }
+
     var body: some View {
+        let snapshots = counted
         let shown =
             ProgressSpan.period(under: selected, in: snapshots, start: \.day) ?? snapshots.last
         VStack(alignment: .leading, spacing: 8) {
@@ -303,10 +335,10 @@ private struct RankHistoryChart: View {
                     Text(verbatim: Period.label(shown.day, unit: .day)).fontWeight(.semibold)
                     Text("\(shown.total) cards", bundle: .module)
                     Spacer()
-                    ForEach(Rank.allCases.filter { shown.count(of: $0) > 0 }, id: \.self) { rank in
+                    ForEach(Rank.allCases.filter { count(shown, $0) > 0 }, id: \.self) { rank in
                         HStack(spacing: 2) {
                             RankMark(rank: rank, size: 18)
-                            Text(verbatim: "\(shown.count(of: rank))").font(.subheadline)
+                            Text(verbatim: "\(count(shown, rank))").font(.subheadline)
                         }
                     }
                 }
@@ -318,7 +350,7 @@ private struct RankHistoryChart: View {
                             x: .value(String(localized: "Day", bundle: .module), snapshot.day),
                             y: .value(
                                 String(localized: "Cards", bundle: .module),
-                                snapshot.count(of: rank))
+                                count(snapshot, rank))
                         )
                         .foregroundStyle(
                             by: .value(

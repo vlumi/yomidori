@@ -7,21 +7,44 @@ public struct RankSnapshot: Codable, Equatable, Sendable {
     public let day: Date
     /// By `Rank.index`: the nest first, then the egg and the climb.
     public let counts: [Int]
+    /// The same for each question, by its raw value; nil in a snapshot taken before the
+    /// questions were counted apart.
+    public let byQuestion: [Int: [Int]]?
 
-    public init(day: Date, counts: [Int]) {
+    public init(day: Date, counts: [Int], byQuestion: [Int: [Int]]? = nil) {
         self.day = day
         self.counts = counts
+        self.byQuestion = byQuestion
     }
 
     public static func of(_ cards: [Card], day: Date) -> RankSnapshot {
         var counts = Array(repeating: 0, count: Rank.allCases.count)
-        for card in cards { counts[card.rank.index] += 1 }
-        return RankSnapshot(day: day, counts: counts)
+        var byQuestion: [Int: [Int]] = [:]
+        for question in Question.allCases {
+            byQuestion[question.rawValue] = Array(repeating: 0, count: Rank.allCases.count)
+        }
+        for card in cards {
+            counts[card.rank.index] += 1
+            for question in Question.allCases {
+                byQuestion[question.rawValue]?[card.rank(for: question).index] += 1
+            }
+        }
+        return RankSnapshot(day: day, counts: counts, byQuestion: byQuestion)
     }
 
     public func count(of rank: Rank) -> Int {
         counts.indices.contains(rank.index) ? counts[rank.index] : 0
     }
+
+    /// The count for one question; nil where the snapshot has none for it.
+    public func count(of rank: Rank, for question: Question) -> Int? {
+        guard let counts = byQuestion?[question.rawValue], counts.indices.contains(rank.index)
+        else { return nil }
+        return counts[rank.index]
+    }
+
+    /// Whether the snapshot counts the questions apart.
+    public var hasQuestions: Bool { byQuestion != nil }
 
     public var total: Int { counts.reduce(0, +) }
 

@@ -6,6 +6,10 @@ struct StudyView: View {
     @State private var cards: [Card] = []
     @State private var dueCount = 0
     @State private var upcoming = Upcoming()
+    /// All the questions, or one: what Coming up and Ranks show.
+    @State private var question: Question?
+    /// Coming up's bars colored by the cards' ranks, or by what each question asks.
+    @AppStorage(SettingsKey.upcomingByQuestion) private var byQuestion = false
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -33,21 +37,52 @@ struct StudyView: View {
                 .disabled(waiting == 0)
             }
             .id(TabTop.id)
+            if !cards.isEmpty {
+                Section {
+                    QuestionPicker(question: $question)
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets())
+                }
+            }
             if !upcoming.isEmpty {
                 Section {
-                    UpcomingReviews(upcoming: upcoming)
+                    UpcomingReviews(
+                        upcoming: upcoming,
+                        stacking: question == nil && byQuestion ? .question : .rank)
                 } header: {
-                    Text("Coming up", bundle: .module)
+                    HStack {
+                        Text("Coming up", bundle: .module)
+                        Spacer()
+                        if question == nil {
+                            Picker(selection: $byQuestion) {
+                                Text("Ranks", bundle: .module).tag(false)
+                                Text("Questions", bundle: .module).tag(true)
+                            } label: {
+                                Text("Colors", bundle: .module)
+                            }
+                            .pickerStyle(.segmented)
+                            .controlSize(.mini)
+                            .fixedSize()
+                            .textCase(nil)
+                        }
+                    }
                 } footer: {
-                    Text(
-                        // swiftlint:disable:next line_length
-                        "Questions due by quarter day, in their ranks' colors; now's with what is overdue. Touch a bar for its numbers.",
-                        bundle: .module)
+                    if question == nil && byQuestion {
+                        Text(
+                            // swiftlint:disable:next line_length
+                            "Questions due by quarter day, in the colors of what they ask; now's with what is overdue. Touch a bar for its numbers.",
+                            bundle: .module)
+                    } else {
+                        Text(
+                            // swiftlint:disable:next line_length
+                            "Questions due by quarter day, in their ranks' colors; now's with what is overdue. Touch a bar for its numbers.",
+                            bundle: .module)
+                    }
                 }
             }
             if !cards.isEmpty {
                 Section {
-                    RankChart(cards: cards)
+                    RankChart(cards: cards, question: question)
                     NavigationLink(value: Screen.progress) {
                         Label {
                             Text("Progress", bundle: .module)
@@ -62,6 +97,7 @@ struct StudyView: View {
         }
         .navigationTitle(Text("Study", bundle: .module))
         .onAppear(perform: reload)
+        .onChange(of: question) { reload() }
         .onReceive(Cards.changes(of: [.card])) { _ in reload() }
     }
 
@@ -70,6 +106,7 @@ struct StudyView: View {
         cards = Cards.store?.cards() ?? []
         dueCount = Cards.dueItems(at: Date()).count
         upcoming = Upcoming.of(
-            cards, from: Date(), days: 7, asksPitch: { !Cards.accents(of: $0).isEmpty })
+            cards, from: Date(), days: 7, question: question,
+            asksPitch: { !Cards.accents(of: $0).isEmpty })
     }
 }

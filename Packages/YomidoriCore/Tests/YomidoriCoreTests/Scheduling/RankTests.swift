@@ -39,4 +39,33 @@ final class RankTests: XCTestCase {
         XCTAssertEqual(snapshot.count(of: .egg), 2)
         XCTAssertEqual(snapshot.count(of: .migrating), 7)
     }
+
+    func testEachQuestionHasARankOfItsOwn() {
+        var card = Card(
+            headword: "樹皮", reading: "じゅひ", entryID: nil, sightings: [], created: Date())
+        XCTAssertEqual(card.rank(for: .meaning), .egg)
+        card.start(at: Date())
+        XCTAssertEqual(card.rank(for: .meaning), .hatchling)
+        card.meaningReview = ReviewState(
+            stability: 40, difficulty: 5, due: Date(), lastReview: Date(), reviews: 3, lapses: 0)
+        XCTAssertEqual(card.rank(for: .meaning), .fledgling)
+        XCTAssertEqual(card.rank(for: .reading), .hatchling)
+        XCTAssertEqual(card.rank, card.rank(for: .reading))
+        let snapshot = RankSnapshot.of([card], day: Date())
+        XCTAssertEqual(snapshot.count(of: .fledgling, for: .meaning), 1)
+        XCTAssertEqual(snapshot.count(of: .hatchling, for: .reading), 1)
+        XCTAssertEqual(snapshot.count(of: .hatchling), 1)
+        // An old snapshot, without the questions apart.
+        let old = RankSnapshot(day: Date(), counts: [0, 0, 1, 0, 0, 0, 0])
+        XCTAssertFalse(old.hasQuestions)
+        XCTAssertNil(old.count(of: .hatchling, for: .reading))
+        let upcoming = Upcoming.of([card], from: Date(), days: 1, question: .meaning)
+        XCTAssertEqual(upcoming.questions, 1)
+        XCTAssertEqual(upcoming.counts[.fledgling], 1)
+        XCTAssertEqual(upcoming.questionCounts[.meaning], 1)
+        let all = Upcoming.of([card], from: Date(), days: 1)
+        XCTAssertEqual(all.questionCounts[.reading], 1)
+        XCTAssertEqual(all.questionCounts[.meaning], 1)
+        XCTAssertEqual(all.slots.first { $0.questions > 0 }?.questionShares.count, 2)
+    }
 }

@@ -12,17 +12,33 @@ public struct Upcoming: Equatable, Sendable {
         public let start: Date
         public let end: Date
         public var counts: [Rank: Int]
+        /// The same questions by what they ask, for a bar stacked by question instead.
+        public var questionCounts: [Question: Int]
 
-        public init(start: Date, end: Date, counts: [Rank: Int] = [:]) {
+        public init(
+            start: Date, end: Date, counts: [Rank: Int] = [:],
+            questionCounts: [Question: Int] = [:]
+        ) {
             self.start = start
             self.end = end
             self.counts = counts
+            self.questionCounts = questionCounts
         }
 
         public var id: Date { start }
         public var questions: Int { counts.values.reduce(0, +) }
 
         public func contains(_ date: Date) -> Bool { start <= date && date < end }
+
+        /// The questions that come up in the slot by what they ask, each with its part.
+        public var questionShares: [QuestionShare] {
+            var stacked = 0
+            return Question.allCases.compactMap { question in
+                guard let count = questionCounts[question], count > 0 else { return nil }
+                defer { stacked += count }
+                return QuestionShare(question: question, from: stacked, to: stacked + count)
+            }
+        }
 
         /// The ranks that come up in the slot, each with where its part of the bar lies.
         public var shares: [Share] {
@@ -38,6 +54,13 @@ public struct Upcoming: Equatable, Sendable {
     /// A rank's part of a slot's bar, stacked from the lowest rank up.
     public struct Share: Equatable, Sendable {
         public let rank: Rank
+        public let from: Int
+        public let to: Int
+    }
+
+    /// A question's part of a slot's bar, the reading at the bottom.
+    public struct QuestionShare: Equatable, Sendable {
+        public let question: Question
         public let from: Int
         public let to: Int
     }
@@ -83,15 +106,23 @@ public struct Upcoming: Equatable, Sendable {
 
     public var questions: Int { counts.values.reduce(0, +) }
 
+    /// Every question in the days counted, by what it asks.
+    public var questionCounts: [Question: Int] {
+        slots.reduce(into: [:]) { total, slot in
+            total.merge(slot.questionCounts, uniquingKeysWith: +)
+        }
+    }
+
     /// Nothing comes due, in the days counted or after.
     public var isEmpty: Bool { questions < 1 && later < 1 }
 
     /// Every question of the cards in review, placed in the quarter day it comes due: one
     /// never answered is due now, one overdue counts as now's. `asksPitch` says which cards
-    /// have a pitch to ask, as the review's own queue is told.
+    /// have a pitch to ask, as the review's own queue is told. With `question`, that
+    /// question's alone, each at the rank of that question.
     public static func of(
         _ cards: [Card], from now: Date, days: Int, calendar: Calendar = .current,
-        asksPitch: (Card) -> Bool = { _ in false }
+        question only: Question? = nil, asksPitch: (Card) -> Bool = { _ in false }
     ) -> Upcoming {
         let today = calendar.startOfDay(for: now)
         let starts = (0..<max(days, 0)).map { offset in
@@ -111,11 +142,13 @@ public struct Upcoming: Equatable, Sendable {
         }
         var later = 0
         for card in cards where card.isInReview {
-            let rank = card.rank
             for question in Question.allCases where question != .pitch || asksPitch(card) {
+                if let only, question != only { continue }
+                let rank = only == nil ? card.rank : card.rank(for: question)
                 let due = max(card.state(for: question)?.due ?? now, now)
                 if let index = slots.firstIndex(where: { $0.contains(due) }) {
                     slots[index].counts[rank, default: 0] += 1
+                    slots[index].questionCounts[question, default: 0] += 1
                 } else {
                     later += 1
                 }

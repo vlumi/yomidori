@@ -21,4 +21,6 @@ enum SettingsKey {
     /// name or nothing for every kind.
     static let cardSort = "cardSort"
     static let cardWordClass = "cardWordClass"
+    /// Study's Coming up bars colored by what each question asks, not by rank.
+    static let upcomingByQuestion = "upcomingByQuestion"
 }

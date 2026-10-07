@@ -520,8 +520,15 @@ has what remains.
   from the egg: egg 0 (waiting), hatchling 1 (under a week), chick 2 (under a
   month), fledgling 3 (under four months), flying 4 (under a year), migrating
   5; the nest (shelved) is outside the climb, raw value −1 so it sorts first
-  and a dash where the others show their number; nothing retires. A stored
-  count (`RankSnapshot.counts`) is indexed by `Rank.index`, the nest first.
+  and a dash where the others show their number; nothing retires. Each
+  question has a rank of its own (`Card.rank(for:)`, from that question's
+  stability; the card's is the reading's), and Study and Progress carry one
+  question picker over their charts: Coming up and the rank bars follow it,
+  and with all questions shown Coming up can be colored by rank or by what the
+  questions ask. A stored count (`RankSnapshot.counts`) is indexed by
+  `Rank.index`, the nest first, with the same per question in `byQuestion`
+  from 2026-10-07 on (older snapshots have none, and the per-question history
+  starts where they begin).
   Study draws the ranks as bars in each rank's color with a selection, and the
   mark everywhere is the rank's number on a dot of its color, the name beside
   it where there is room and as the accessibility label where not.

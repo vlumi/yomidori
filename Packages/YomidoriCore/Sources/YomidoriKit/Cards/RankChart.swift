@@ -6,6 +6,8 @@ import YomidoriCore
 /// its color; a finger on a bar shows its number and name.
 struct RankChart: View {
     let cards: [Card]
+    /// One question's ranks, or the cards' own.
+    var question: Question?
     @State private var selected: String?
 
     private struct Bar: Identifiable {
@@ -16,7 +18,9 @@ struct RankChart: View {
     }
 
     private var bars: [Bar] {
-        let counts = Dictionary(grouping: cards, by: \.rank).mapValues(\.count)
+        let counts = Dictionary(grouping: cards) { card in
+            question.map { card.rank(for: $0) } ?? card.rank
+        }.mapValues(\.count)
         return Rank.allCases.map { Bar(rank: $0, count: counts[$0] ?? 0) }
     }
 
