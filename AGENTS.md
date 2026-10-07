@@ -232,7 +232,7 @@ not the config file — run it elsewhere and it lints the build dirs, drowning
 you in noise from generated sources.
 
 **SwiftLint is pinned to a specific version** (`SWIFTLINT_VERSION` in
-`.github/workflows/ci.yml`, currently **0.65.0**) so CI and local runs agree —
+`.github/workflows/ci.yml`, currently **0.65.1**) so CI and local runs agree —
 an unpinned `brew install` follows the rolling latest, so a new release can
 turn CI red on untouched code. Match it locally where possible (a patch release
 ahead is usually fine; a minor one isn't). Bump the CI version deliberately and

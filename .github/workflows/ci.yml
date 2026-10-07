@@ -31,7 +31,7 @@ jobs:
         # release could turn CI red on untouched code). Bump deliberately;
         # keep AGENTS.md's documented version in step.
         env:
-          SWIFTLINT_VERSION: 0.65.0
+          SWIFTLINT_VERSION: 0.65.1
         run: |
           curl -sSL -o swiftlint.zip \
             "https://github.com/realm/SwiftLint/releases/download/${SWIFTLINT_VERSION}/portable_swiftlint.zip"
