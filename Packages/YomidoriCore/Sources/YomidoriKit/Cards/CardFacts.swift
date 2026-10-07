@@ -1,7 +1,8 @@
 import SwiftUI
 import YomidoriCore
 
-/// When the card came and last changed, and how each question has gone.
+/// When the card came and last changed, and how each question has gone: its rank, which
+/// climbs on its own, and its answers.
 struct CardFacts: View {
     let card: Card
 
@@ -30,7 +31,11 @@ struct CardFacts: View {
                     let good = card.answers(to: question, graded: .good)
                     let again = card.answers(to: question, graded: .again)
                     LabeledContent {
-                        Text("\(good) good · \(again) again", bundle: .module)
+                        HStack(spacing: 6) {
+                            RankMark(rank: card.rank(for: question), size: 22)
+                                .accessibilityLabel(RankName.text(for: card.rank(for: question)))
+                            Text("\(good) good · \(again) again", bundle: .module)
+                        }
                     } label: {
                         QuestionName(question: question)
                     }
