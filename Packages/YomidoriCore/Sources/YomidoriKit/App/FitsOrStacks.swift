@@ -5,6 +5,9 @@ import SwiftUI
 /// stacked height while showing the row side by side, leaving the row tall and half empty.
 struct FitsOrStacks: Layout {
     var spacing: CGFloat = 12
+    /// The last view flush with the right edge, in the row and stacked alike: a legend
+    /// beside a caption, a row of marks under it.
+    var trailingLast = false
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         let width = proposal.width ?? .infinity
@@ -24,19 +27,23 @@ struct FitsOrStacks: Layout {
         if let row = row(subviews, width: bounds.width) {
             var x = bounds.minX
             for (index, subview) in subviews.enumerated() {
+                let last = trailingLast && index == subviews.count - 1
                 subview.place(
-                    at: CGPoint(x: x, y: bounds.minY + row.tops[index]),
+                    at: CGPoint(
+                        x: last ? bounds.maxX - row.widths[index] : x,
+                        y: bounds.minY + row.tops[index]),
                     proposal: ProposedViewSize(width: row.widths[index], height: nil))
                 x += row.widths[index] + spacing
             }
             return
         }
         var y = bounds.minY
-        for subview in subviews {
+        for (index, subview) in subviews.enumerated() {
             let size = subview.sizeThatFits(ProposedViewSize(width: bounds.width, height: nil))
+            let last = trailingLast && index == subviews.count - 1
             subview.place(
-                at: CGPoint(x: bounds.minX, y: y),
-                proposal: ProposedViewSize(width: bounds.width, height: nil))
+                at: CGPoint(x: last ? bounds.maxX - size.width : bounds.minX, y: y),
+                proposal: ProposedViewSize(width: last ? size.width : bounds.width, height: nil))
             y += size.height + spacing / 2
         }
     }

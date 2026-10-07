@@ -68,7 +68,7 @@ struct UpcomingReviews: View {
     /// The bar under the finger, else the week: its span, its count and its ranks.
     private var readout: some View {
         // On one line where it fits, on two where the ranks' numbers would wrap every word.
-        FitsOrStacks(spacing: 8) {
+        FitsOrStacks(spacing: 8, trailingLast: true) {
             HStack(spacing: 10) {
                 Group {
                     if let chosen {

@@ -333,7 +333,7 @@ private struct RankHistoryChart: View {
             // The day and its total, and the ranks' numbers: on one line where they fit, on
             // two where seven ranks and a phone's width would wrap every word.
             if let shown {
-                FitsOrStacks(spacing: 8) {
+                FitsOrStacks(spacing: 8, trailingLast: true) {
                     HStack(spacing: 8) {
                         Text(verbatim: Period.label(shown.day, unit: .day)).fontWeight(.semibold)
                         Text("\(shown.total) cards", bundle: .module)
