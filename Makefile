@@ -35,6 +35,18 @@ $(DICTIONARY): Scripts/data/build-jmdict.py
 .PHONY: dictionary
 dictionary: $(DICTIONARY)  ## Build the bundled JMdict database (downloads JMdict_e once into .build-data/)
 
+# EDRDG rebuilds JMdict, KANJIDIC2 and KRADFILE nightly, but the downloads above are fetched
+# once and kept, so the bundle ages until someone throws them away. This does that and
+# builds again — with the pitch estimates, when the venv is there. Kanjium's accents and
+# KanjiVG stay: the one has not moved in years, the other is a release pinned in the script.
+EDRDG_DOWNLOADS := $(addprefix .build-data/,JMdict_e.gz kanjidic2.xml.gz kradfile.gz)
+
+.PHONY: dictionary-fresh
+dictionary-fresh:  ## Refetch JMdict, KANJIDIC2 and KRADFILE from EDRDG and rebuild the dictionary (do this before a release)
+	@rm -f $(EDRDG_DOWNLOADS) $(DICTIONARY)
+	@$(MAKE) --no-print-directory dictionary
+	@sqlite3 $(DICTIONARY) "SELECT 'JMdict of ' || value FROM meta WHERE key = 'created'"
+
 # The pitch of the words Kanjium has none for, estimated into the dictionary by Open JTalk
 # and the habits of Kanjium's own compounds. Optional: the app shows no estimates without
 # it. pyopenjtalk builds from source, with a CMake from PyPI and the policy floor its old

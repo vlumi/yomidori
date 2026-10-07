@@ -98,10 +98,11 @@ between them is the merged commit on the base — no state file:
    **opaque app icon** (ASC silently rejects a transparent icon; `make icon`
    flattens it). **What the
    release bundles is what this Mac has built:** the dictionary as `make
-   dictionary` last built it (from the downloads cached in `.build-data/`;
-   delete the cached JMdict and run it again for fresh data), with estimated
-   pitch only if `make pitch` has been run here, and the models only if `make
-   models` has.
+   dictionary` last built it, from downloads cached in `.build-data/` that
+   are fetched once and kept — run `make dictionary-fresh` before a release
+   to refetch EDRDG's nightly files and rebuild (it reports the JMdict date it
+   got), with estimated pitch only if the pitch venv is there (`make pitch`
+   once).
 2. **publish** — the interactive, stateful step. Prompts to bump
    `MARKETING_VERSION` on **every** release (blank = keep, `p` = patch, `m` =
    minor, or type `X.Y.Z`); always bumps the build number to one past the
