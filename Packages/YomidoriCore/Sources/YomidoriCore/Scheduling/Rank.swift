@@ -37,12 +37,17 @@ public enum Rank: Int, CaseIterable, Comparable, Sendable {
 extension Card {
     /// Waiting is the egg, shelved the nest; a started card ranks by its reading's stability,
     /// a hatchling until the first answer.
+    /// The card stands where its weakest question stands: the lowest of the reading's and
+    /// the meaning's ranks, and the pitch's once it has been asked — a card with no pitch
+    /// to ask is not held to a question it never gets.
     public var rank: Rank {
-        rank(for: .reading)
+        var asked: [Question] = [.reading, .meaning]
+        if pitchReview != nil { asked.append(.pitch) }
+        return asked.map(rank(for:)).min() ?? rank(for: .reading)
     }
 
-    /// The rank of one of the card's questions: the reading's is the card's own; the
-    /// meaning's and the pitch's climb at their own pace, a hatchling until first answered.
+    /// The rank of one of the card's questions, each climbing at its own pace, a hatchling
+    /// until first answered.
     public func rank(for question: Question) -> Rank {
         if shelved { return .nest }
         guard started != nil else { return .egg }

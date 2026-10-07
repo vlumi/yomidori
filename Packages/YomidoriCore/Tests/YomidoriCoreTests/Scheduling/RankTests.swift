@@ -50,10 +50,19 @@ final class RankTests: XCTestCase {
             stability: 40, difficulty: 5, due: Date(), lastReview: Date(), reviews: 3, lapses: 0)
         XCTAssertEqual(card.rank(for: .meaning), .fledgling)
         XCTAssertEqual(card.rank(for: .reading), .hatchling)
-        XCTAssertEqual(card.rank, card.rank(for: .reading))
+        // The card's own rank is its weakest question's.
+        XCTAssertEqual(card.rank, .hatchling)
+        card.review = card.meaningReview
+        XCTAssertEqual(card.rank, .fledgling)
+        // A pitch never asked does not hold the card back; one asked and young does.
+        card.pitchReview = ReviewState(
+            stability: 1, difficulty: 5, due: Date(), lastReview: Date(), reviews: 1, lapses: 0)
+        XCTAssertEqual(card.rank, .hatchling)
         let snapshot = RankSnapshot.of([card], day: Date())
         XCTAssertEqual(snapshot.count(of: .fledgling, for: .meaning), 1)
-        XCTAssertEqual(snapshot.count(of: .hatchling, for: .reading), 1)
+        XCTAssertEqual(snapshot.count(of: .fledgling, for: .reading), 1)
+        XCTAssertEqual(snapshot.count(of: .hatchling, for: .pitch), 1)
+        // The card's own count follows its weakest question.
         XCTAssertEqual(snapshot.count(of: .hatchling), 1)
         // An old snapshot, without the questions apart.
         let old = RankSnapshot(day: Date(), counts: [0, 0, 1, 0, 0, 0, 0])
