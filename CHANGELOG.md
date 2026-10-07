@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A repeated question says so in a word beside its tag**, not in a sentence over the word that pushed the page down.
+
 ### build 40 — 2026-10-07
 
 - **In a review, the question's name and the count stand right above the answer**, where the eyes are, and the title is back in the bar.
