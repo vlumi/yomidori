@@ -13,6 +13,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 ## v0.1.0
 
 ### Unreleased (next build)
+- **Counts of one read right in English.** A lesson of one is "1 card", not "1 cards"; the same for collections, strokes, words started, answers, and the import and forget summaries.
 
 - **A card shows each question's rank** beside its good and again counts, under the card's own.
 - **Progress is easier to find and to filter.** It has a button in Study's toolbar and a row in Home's Study list, not only a link under the ranks chart; and its two filters, the span and the question, stand together in a bar under the title that stays while the charts scroll.
