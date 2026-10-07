@@ -54,22 +54,37 @@ struct ReviewView: View {
         .onChange(of: queue.current) { shown = Date() }
     }
 
+    /// The question's tag, a word when it is a repeat, and how many remain.
+    private func tagRow(_ item: ReviewItem) -> some View {
+        HStack(spacing: 8) {
+            QuestionTag(question: item.question)
+            if practicing == nil, queue.isRepeat(item) {
+                // A repeat, said in a word beside the tag rather than a banner over the
+                // word that pushed it down the page.
+                Label {
+                    Text("Once more", bundle: .module)
+                } icon: {
+                    Image(systemName: "arrow.counterclockwise")
+                }
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .accessibilityLabel(
+                    Text(
+                        "Once more, to get it right. This one no longer counts.",
+                        bundle: .module))
+            }
+            Spacer()
+            Text("\(queue.count) remaining", bundle: .module)
+                .font(.callout.monospacedDigit())
+                .foregroundStyle(.secondary)
+        }
+    }
+
     /// The question scrolls, so a long sentence shows whole; the answer stays put below.
     private func review(_ item: ReviewItem) -> some View {
         VStack(alignment: .leading, spacing: 20) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    if practicing == nil, queue.isRepeat(item) {
-                        Label {
-                            Text(
-                                "Once more, to get it right. This one no longer counts.",
-                                bundle: .module)
-                        } icon: {
-                            Image(systemName: "arrow.counterclockwise")
-                        }
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                    }
                     ReviewFront(
                         card: item.card, sightingID: picked[Self.key(item)],
                         showsForm: item.question == .reading
@@ -84,13 +99,7 @@ struct ReviewView: View {
             }
             .scrollBounceBehavior(.basedOnSize)
             // Which question this is and how many remain, right above the answer.
-            HStack(spacing: 8) {
-                QuestionTag(question: item.question)
-                Spacer()
-                Text("\(queue.count) remaining", bundle: .module)
-                    .font(.callout.monospacedDigit())
-                    .foregroundStyle(.secondary)
-            }
+            tagRow(item)
             if revealed {
                 answered(item)
             } else {
