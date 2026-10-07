@@ -67,22 +67,28 @@ struct UpcomingReviews: View {
 
     /// The bar under the finger, else the week: its span, its count and its ranks.
     private var readout: some View {
-        HStack(spacing: 10) {
+        // On one line where it fits, on two where the ranks' numbers would wrap every word.
+        FitsOrStacks(spacing: 8, trailingLast: true) {
+            HStack(spacing: 10) {
+                Group {
+                    if let chosen {
+                        Text(verbatim: "\(dayName(of: chosen.start)) \(hours(of: chosen))")
+                    } else {
+                        Text("Next \(upcoming.days.count) days", bundle: .module)
+                    }
+                }
+                .foregroundStyle(.secondary)
+                Text(verbatim: "\(chosen?.questions ?? upcoming.questions)")
+                    .fontWeight(.semibold)
+            }
+            .fixedSize()
             Group {
-                if let chosen {
-                    Text(verbatim: "\(dayName(of: chosen.start)) \(hours(of: chosen))")
-                } else {
-                    Text("Next \(upcoming.days.count) days", bundle: .module)
+                switch stacking {
+                case .rank: ranks(of: chosen?.counts ?? upcoming.counts)
+                case .question: questions(of: chosen?.questionCounts ?? upcoming.questionCounts)
                 }
             }
-            .foregroundStyle(.secondary)
-            Text(verbatim: "\(chosen?.questions ?? upcoming.questions)")
-                .fontWeight(.semibold)
-            Spacer(minLength: 0)
-            switch stacking {
-            case .rank: ranks(of: chosen?.counts ?? upcoming.counts)
-            case .question: questions(of: chosen?.questionCounts ?? upcoming.questionCounts)
-            }
+            .fixedSize()
         }
         .font(.callout.monospacedDigit())
         .frame(minHeight: 24)
