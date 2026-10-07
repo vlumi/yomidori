@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A card shows each question's rank** beside its good and again counts, under the card's own.
 - **The reading, the meaning and the pitch each have a rank of their own to look at, and a card's rank is its weakest question's.** A question picker over Study's and Progress's charts shows one question's ranks and what is coming up for it, or all; with all shown, Coming up colors its bars by rank or by what the questions ask, as you choose. The per-question history fills in from this build on.
 
 ### build 39 — 2026-10-06
