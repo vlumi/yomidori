@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The dictionary is current again.** JMdict, KANJIDIC2 and KRADFILE as of October 2026, where the last builds carried September's; a `make dictionary-fresh` target refetches them so a release starts from the night's files.
 - **A repeated question says so in a word beside its tag**, not in a sentence over the word that pushed the page down.
 
 ### build 40 — 2026-10-07
