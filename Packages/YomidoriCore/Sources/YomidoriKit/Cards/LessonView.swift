@@ -112,6 +112,10 @@ struct LessonView: View {
         .scrollPosition(id: $current)
         .scrollIndicators(.hidden)
         .readingWidth()
+        // A small title over the pages: a large one collapses and grows with the card's own
+        // scrolling, resizing the pages under the finger, and the card's list and the title
+        // bounce each other at the top without end.
+        .navigationBarTitleDisplayModeInline()
         .safeAreaInset(edge: .bottom) { bar(cards) }
         .onAppear { if current == nil { current = cards.first?.id } }
     }
