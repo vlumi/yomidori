@@ -173,6 +173,16 @@
         }
       }
     },
+    "%lld due" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 問"
+          }
+        }
+      }
+    },
     "%lld good · %lld again" : {
       "localizations" : {
         "ja" : {
@@ -2135,6 +2145,16 @@
         }
       }
     },
+    "None waiting" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "待機中はありません"
+          }
+        }
+      }
+    },
     "Not answered" : {
       "localizations" : {
         "ja" : {
@@ -2181,6 +2201,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "メモ（著者など）"
+          }
+        }
+      }
+    },
+    "Nothing due" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "復習はありません"
           }
         }
       }

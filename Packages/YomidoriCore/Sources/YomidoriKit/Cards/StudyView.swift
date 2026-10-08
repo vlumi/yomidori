@@ -10,6 +10,9 @@ struct StudyView: View {
     @State private var question: Question?
     /// Coming up's bars colored by the cards' ranks, or by what each question asks.
     @AppStorage(SettingsKey.upcomingByQuestion) private var byQuestion = false
+    /// Opens a screen over this tab's root: a button, not a link, so a list row doesn't
+    /// turn the fat button back into a row with a chevron.
+    @EnvironmentObject private var taps: TabTaps
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -20,21 +23,25 @@ struct StudyView: View {
     private var list: some View {
         List {
             Section {
-                if dueCount > 0 {
-                    NavigationLink(value: Screen.review) {
-                        StudyLabel.review(dueCount)
-                            .font(.title3.weight(.semibold))
-                            .foregroundStyle(Palette.nightGreen)
-                    }
-                } else {
-                    StudyLabel.nothingDue
-                }
                 let waiting = cards.filter(\.isWaiting).count
-                NavigationLink(value: Screen.lesson) {
-                    StudyLabel.lesson(waiting: waiting)
-                        .font(.title3)
+                HStack(spacing: 12) {
+                    Button {
+                        taps.open(.review, in: .study)
+                    } label: {
+                        StudyButtons.review(due: dueCount)
+                    }
+                    .buttonStyle(FatButtonStyle(color: StudyButtons.reviewColor))
+                    .disabled(dueCount == 0)
+                    Button {
+                        taps.open(.lesson, in: .study)
+                    } label: {
+                        StudyButtons.lesson(waiting: waiting)
+                    }
+                    .buttonStyle(FatButtonStyle(color: StudyButtons.lessonColor))
+                    .disabled(waiting == 0)
                 }
-                .disabled(waiting == 0)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets())
             }
             .id(TabTop.id)
             if !cards.isEmpty {
