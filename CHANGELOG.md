@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **On the Mac and the iPad, a card stays chosen and where it was scrolled when you come back** from a related word, a kanji or the Collections screen; before, the way back landed on "Select a card".
 - **On the Mac, each pitch choice shows the key that picks it**: the downstep's number, 0 for flat, as the choices are laid out.
 
 ### build 43 — 2026-10-08
