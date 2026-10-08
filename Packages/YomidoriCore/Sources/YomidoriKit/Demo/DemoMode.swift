@@ -21,6 +21,11 @@ public enum DemoMode {
         return AppTab(rawValue: CommandLine.arguments[index + 1])
     }
 
+    /// `-yomidori-begin` begins the lesson at once, past its setup, for a look at its pages.
+    static var beginsLesson: Bool {
+        isRequested && CommandLine.arguments.contains("-yomidori-begin")
+    }
+
     /// `-yomidori-screen progress` pushes that screen on the tab shown, for the same reason.
     static var screen: Screen? {
         guard isRequested, let index = CommandLine.arguments.firstIndex(of: "-yomidori-screen"),
