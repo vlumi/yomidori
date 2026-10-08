@@ -12,6 +12,10 @@ public final class AppCommands: ObservableObject {
     @Published public var openAsked = 0
     /// Bumped by ⌘, on an iPad, whose Settings is a screen on Home and not a window.
     @Published public var settingsAsked = 0
+    /// The Study menu's ask: Review, Lesson or Progress, opened on the Study tab.
+    @Published var screenAsked: Screen?
+    /// Bumped by ⌘[: the tab showing pops the screen on top of its stack.
+    @Published public var backAsked = 0
 
     private init() {}
 }
@@ -54,7 +58,31 @@ public struct SectionCommands: Commands {
             section(Text("Cards", bundle: .module), .cards, "3")
             section(Text("Dictionary", bundle: .module), .search, "4")
             Divider()
+            // ⌘[ as in Safari and the Finder: the screen on top of the tab's stack goes.
+            Button {
+                AppCommands.shared.backAsked += 1
+            } label: {
+                Text("Back", bundle: .module)
+            }
+            .keyboardShortcut("[", modifiers: .command)
+            Divider()
         }
+        // The study's three doors, from anywhere: ⇧ with the letter, since ⌘R, ⌘L and ⌘P
+        // are the system's.
+        CommandMenu(Text("Study", bundle: .module)) {
+            study(Text("Review", bundle: .module), .review, "r")
+            study(Text("Lesson", bundle: .module), .lesson, "l")
+            study(Text("Progress", bundle: .module), .progress, "p")
+        }
+    }
+
+    private func study(_ title: Text, _ screen: Screen, _ key: KeyEquivalent) -> some View {
+        Button {
+            AppCommands.shared.screenAsked = screen
+        } label: {
+            title
+        }
+        .keyboardShortcut(key, modifiers: [.command, .shift])
     }
 
     private func section(_ title: Text, _ tab: AppTab, _ key: KeyEquivalent) -> some View {

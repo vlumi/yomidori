@@ -126,6 +126,11 @@ public struct AppRoot: View {
             tab = asked
             AppCommands.shared.requestedTab = nil
         }
+        .onReceive(AppCommands.shared.$screenAsked.compactMap { $0 }) { screen in
+            tab = .study
+            taps.open(screen, in: .study)
+            AppCommands.shared.screenAsked = nil
+        }
         #if os(iOS)
         .onReceive(AppCommands.shared.$settingsAsked.dropFirst()) { _ in
             tab = .home
@@ -234,6 +239,11 @@ private struct TabStack<Root: View>: View {
         }
         .onTabTap(tab) { taps in
             if path.isEmpty { taps.tappedAtRoot(tab) } else { path = NavigationPath() }
+        }
+        // ⌘[: the screen on top goes, on the tab showing.
+        .onReceive(AppCommands.shared.$backAsked.dropFirst()) { _ in
+            guard taps.shown == tab, !path.isEmpty else { return }
+            path.removeLast()
         }
         // A screen asked for on this tab from another; `initial` for a stack made by the
         // switch itself, after the ask.

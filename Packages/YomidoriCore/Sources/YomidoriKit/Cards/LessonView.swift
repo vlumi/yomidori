@@ -72,6 +72,7 @@ struct LessonView: View {
                     Text("Begin", bundle: .module).frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.defaultAction)
                 .controlSize(.large)
                 .disabled(candidates.isEmpty)
             }
