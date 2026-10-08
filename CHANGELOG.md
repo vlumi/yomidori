@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 44 — 2026-10-08
+
 - **On the iPad, Cards and the Dictionary are two plain columns**, as on the Mac, so the top of each column no longer slips under the tab bar or leaves a blank band after the columns are hidden and shown or the iPad turns.
 - **A lesson's collections are ticked rows, all ticked to begin with**, with All and None over them; cards in no collection are always in, so None means those alone.
 - **On the Mac, a lesson's setup is a grouped form no wider than a page, and a review's answer sits right under its question** rather than at the window's bottom.
