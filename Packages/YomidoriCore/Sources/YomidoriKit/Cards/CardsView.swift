@@ -38,6 +38,7 @@ struct CardsView: View {
     @State private var detailDepth = 0
     /// The selection as it last stood, for the frame a pop empties it.
     @State private var pickedBefore: Set<UUID> = []
+    @EnvironmentObject private var taps: TabTaps
 
     var body: some View {
         #if os(macOS)
@@ -56,6 +57,7 @@ struct CardsView: View {
             }
             .onChange(of: picked) { old, new in cardChosen(from: old, to: new) }
             .onChange(of: detailPath.count) { _, depth in detailDepth = depth }
+            .onReceive(AppCommands.shared.$backAsked.dropFirst()) { _ in back() }
         } else {
             ScrollViewReader { proxy in
                 list.scrollsToTopOnReselect(of: .cards, with: proxy)
@@ -315,25 +317,13 @@ struct CardsView: View {
         .navigationTitle(Text("Cards", bundle: .module))
         .onChange(of: picked) { old, new in cardChosen(from: old, to: new) }
         .onChange(of: detailPath.count) { _, depth in detailDepth = depth }
+        .onReceive(AppCommands.shared.$backAsked.dropFirst()) { _ in back() }
         .onAppear(perform: reload)
         .onReceive(Cards.changes(of: [.card, .collection])) { _ in reload() }
     }
 
     #endif
 
-    /// A card chosen: the stack shows it, over whatever was pushed. A selection emptied by
-    /// the stack's own pop — the path already empty, its last word still a depth — is the
-    /// reader's card still, and stays.
-    private func cardChosen(from old: Set<UUID>, to new: Set<UUID>) {
-        if new.isEmpty, !old.isEmpty, detailPath.isEmpty, detailDepth > 0 {
-            picked = old
-            return
-        }
-        pickedBefore = new
-        detailPath = NavigationPath()
-    }
-
-    /// A split's detail: the one card picked, what is done to several, or a word to pick one.
     /// What the detail shows: the cards picked — or, for the one frame in which a pop has
     /// emptied the selection and the stack has not yet said so, the cards picked before,
     /// so the card stays put, scrolled as it was, rather than going and coming back.
@@ -368,6 +358,26 @@ struct CardsView: View {
 // MARK: The cards and their kinds, loaded
 
 extension CardsView {
+    /// ⌘[ while Cards shows: the screen over the card goes.
+    private func back() {
+        guard taps.shown == .cards, !detailPath.isEmpty else { return }
+        detailPath.removeLast()
+    }
+
+    /// A card chosen: the stack shows it, over whatever was pushed. A selection emptied by
+    /// the stack's own pop — the path already empty, its last word still a depth — is the
+    /// reader's card still, and stays.
+    private func cardChosen(from old: Set<UUID>, to new: Set<UUID>) {
+        if new.isEmpty, !old.isEmpty, detailPath.isEmpty, detailDepth > 0 {
+            picked = old
+            return
+        }
+        pickedBefore = new
+        detailPath = NavigationPath()
+    }
+
+    /// A split's detail: the one card picked, what is done to several, or a word to pick one.
+
     func reload() {
         cards = (Cards.store?.cards() ?? []).sorted { $0.created > $1.created }
         collections = Cards.collections?.collections() ?? []

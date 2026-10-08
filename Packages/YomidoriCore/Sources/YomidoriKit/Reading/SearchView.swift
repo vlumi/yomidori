@@ -55,6 +55,7 @@ struct SearchView: View {
                 }
             }
             .onChange(of: pickedResult) { _, id in pick(result: id) }
+            .onReceive(AppCommands.shared.$backAsked.dropFirst()) { _ in back() }
         } else {
             ScrollViewReader { proxy in
                 list.scrollsToTopOnReselect(of: .search, with: proxy)
@@ -181,9 +182,16 @@ struct SearchView: View {
             .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity)
         }
         .onChange(of: pickedResult) { _, id in pick(result: id) }
+        .onReceive(AppCommands.shared.$backAsked.dropFirst()) { _ in back() }
     }
 
     #endif
+
+    /// ⌘[ while the dictionary shows: the screen over the entry goes.
+    private func back() {
+        guard taps.shown == .search, !detailPath.isEmpty else { return }
+        detailPath.removeLast()
+    }
 
     /// A result picked: the entry column shows it, over whatever it had opened.
     private func pick(result id: Int?) {

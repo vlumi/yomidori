@@ -69,6 +69,8 @@ struct CardActions: View {
                     Image(systemName: "trash")
                 }
             }
+            .keyboardShortcut(.delete, modifiers: .command)
+            .help(Text("Forget the card (⌘⌫)", bundle: .module))
             .confirmationDialog(
                 Text("Forget this card?", bundle: .module), isPresented: $forgetting
             ) {

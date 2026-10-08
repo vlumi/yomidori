@@ -62,6 +62,7 @@ struct SessionSummary: View {
                 Text("Done", bundle: .module).frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
+            .keyboardShortcut(.defaultAction)
             .controlSize(.large)
             .padding(16)
             .background(Palette.page)

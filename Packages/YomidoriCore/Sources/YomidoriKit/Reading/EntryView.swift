@@ -12,6 +12,8 @@ struct EntryView: View {
         List {
             WordHeader(headword: entry.headword, reading: entry.hiraganaReading, details: details) {
                 keepButton
+                    .keyboardShortcut("k", modifiers: .command)
+                    .help(Text("Keep the word (⌘K)", bundle: .module))
             }
             WordSections(headword: entry.headword, details: details)
         }

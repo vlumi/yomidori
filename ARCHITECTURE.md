@@ -51,7 +51,9 @@ recognizers as on the phone and shown with Live Text's own selection over it
 (`PictureView`, the Mac's `ImageAnalysisOverlayView` tracking an image view in
 a magnifying scroll view); *Reading* shows its transcript as the page instead,
 *Clear* (⌘⌫) puts it away. The words of the selection stand beside. The
-sections are a sidebar with ⌘1 … ⌘4 (`SectionCommands`), and switching to
+sections are a sidebar with ⌘1 … ⌘4 (`SectionCommands`, which also holds the
+Study menu — Review ⌘⇧R, Lesson ⌘⇧L, Progress ⌘⇧P — and Back, ⌘[, which pops
+the showing tab's stack, a split's detail stack included), and switching to
 Read or Search puts the focus in the box or the field. The dictionary (the
 search tab, named for what it is) with room is three columns: the history,
 which folds away; the results under the field, which is the column's own (⌘F)

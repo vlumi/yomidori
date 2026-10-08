@@ -637,6 +637,16 @@
         }
       }
     },
+    "Back" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "戻る"
+          }
+        }
+      }
+    },
     "Back to the camera" : {
       "localizations" : {
         "ja" : {
@@ -1375,6 +1385,16 @@
         }
       }
     },
+    "Forget the card (⌘⌫)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードを忘れる (⌘⌫)"
+          }
+        }
+      }
+    },
     "Forget the cards" : {
       "localizations" : {
         "ja" : {
@@ -1751,6 +1771,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "残す"
+          }
+        }
+      }
+    },
+    "Keep the word (⌘K)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "単語を保存 (⌘K)"
           }
         }
       }
