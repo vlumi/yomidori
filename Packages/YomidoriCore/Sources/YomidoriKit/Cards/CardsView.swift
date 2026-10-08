@@ -32,6 +32,12 @@ struct CardsView: View {
 
     /// The card opened in a split's detail column, over whatever was pushed there.
     @State private var detailPath = NavigationPath()
+    /// How deep the detail's stack stood when it last said: a pop empties the list's
+    /// selection on its way out, before the stack reports the pop, and that selection is
+    /// put back, or the reader came back to no card at all.
+    @State private var detailDepth = 0
+    /// The selection as it last stood, for the frame a pop empties it.
+    @State private var pickedBefore: Set<UUID> = []
 
     var body: some View {
         #if os(macOS)
@@ -48,8 +54,8 @@ struct CardsView: View {
                     detail.appDestinations()
                 }
             }
-            // A card chosen: the stack shows it, over whatever was pushed.
-            .onChange(of: picked) { _, _ in detailPath = NavigationPath() }
+            .onChange(of: picked) { old, new in cardChosen(from: old, to: new) }
+            .onChange(of: detailPath.count) { _, depth in detailDepth = depth }
         } else {
             ScrollViewReader { proxy in
                 list.scrollsToTopOnReselect(of: .cards, with: proxy)
@@ -307,16 +313,36 @@ struct CardsView: View {
         }
         .fittingWindow()
         .navigationTitle(Text("Cards", bundle: .module))
-        // A card chosen: the stack shows it, over whatever was pushed.
-        .onChange(of: picked) { _, _ in detailPath = NavigationPath() }
+        .onChange(of: picked) { old, new in cardChosen(from: old, to: new) }
+        .onChange(of: detailPath.count) { _, depth in detailDepth = depth }
         .onAppear(perform: reload)
         .onReceive(Cards.changes(of: [.card, .collection])) { _ in reload() }
     }
 
     #endif
 
+    /// A card chosen: the stack shows it, over whatever was pushed. A selection emptied by
+    /// the stack's own pop — the path already empty, its last word still a depth — is the
+    /// reader's card still, and stays.
+    private func cardChosen(from old: Set<UUID>, to new: Set<UUID>) {
+        if new.isEmpty, !old.isEmpty, detailPath.isEmpty, detailDepth > 0 {
+            picked = old
+            return
+        }
+        pickedBefore = new
+        detailPath = NavigationPath()
+    }
+
     /// A split's detail: the one card picked, what is done to several, or a word to pick one.
+    /// What the detail shows: the cards picked — or, for the one frame in which a pop has
+    /// emptied the selection and the stack has not yet said so, the cards picked before,
+    /// so the card stays put, scrolled as it was, rather than going and coming back.
+    private var shownSelection: Set<UUID> {
+        picked.isEmpty && detailPath.isEmpty && detailDepth > 0 ? pickedBefore : picked
+    }
+
     @ViewBuilder private var detail: some View {
+        let picked = shownSelection
         if picked.count == 1, let card = cards.first(where: { picked.contains($0.id) }) {
             CardView(card: card).id(card.id)
         } else if picked.count > 1 {
