@@ -136,17 +136,6 @@ public struct CaptureView: View {
         }
     }
 
-    /// What the app is at while a page is on its way to its words: the recognizers, then
-    /// the reading of the words; nil once the words are there, or when there is no page.
-    private var busy: Text? {
-        if taking { return Text("Taking the page…", bundle: .module) }
-        if recognizing { return Text("Reading the page…", bundle: .module) }
-        if currentTranscript != nil, page.reading == nil {
-            return Text("Reading the words…", bundle: .module)
-        }
-        return nil
-    }
-
     /// The page's room: beside the words column, or above the drawer where it settled; while
     /// a drag is on, the drawer lies over the page or leaves a gap, and the page follows on
     /// release.
@@ -181,18 +170,21 @@ public struct CaptureView: View {
         ZStack {
             Color.black.ignoresSafeArea(edges: columns ? .bottom : .all)
             if let still {
-                stillView(still, in: area, topInset: topInset)
+                stillView(still, in: area, columns: columns, topInset: topInset)
             } else if let pasted = page.pasted {
                 TextPage(text: pasted, selection: selection)
                     .frame(height: area.height)
                     // The camera button the picture has, so the hint under the words holds
-                    // for a pasted page too.
+                    // for a pasted page too; on a phone it stands on the drawer's edge.
                     .overlay(alignment: controlsSide.alignment) {
-                        PageButton(
-                            symbol: "camera", label: Text("Back to the camera", bundle: .module),
-                            action: retake
-                        )
-                        .padding(12)
+                        if columns {
+                            PageButton(
+                                symbol: "camera",
+                                label: Text("Back to the camera", bundle: .module),
+                                action: retake
+                            )
+                            .padding(12)
+                        }
                     }
                     .frame(maxHeight: .infinity, alignment: .top)
                     .onTabReselect(.read) { retake() }
@@ -241,7 +233,9 @@ public struct CaptureView: View {
         }
     }
 
-    private func stillView(_ still: Still, in area: CGSize, topInset: CGFloat) -> some View {
+    private func stillView(_ still: Still, in area: CGSize, columns: Bool, topInset: CGFloat)
+        -> some View
+    {
         Group {
             switch mode {
             case .vision:
@@ -265,7 +259,9 @@ public struct CaptureView: View {
                 zoom: zoomFraction(in: area),
                 // The slider only where the column has room for it under the status bar,
                 // as it has not with the drawer at its tallest; the pinch zooms regardless.
-                showsZoom: area.height - topInset >= PageControls.heightWithZoom
+                showsZoom: area.height - topInset
+                    >= PageControls.heightWithZoom(pageButtons: columns),
+                showsPageButtons: columns
             )
             .padding(12)
             .padding(.top, topInset)
@@ -280,10 +276,11 @@ public struct CaptureView: View {
     private func drawer(screenHeight: CGFloat, bottomInset: CGFloat) -> some View {
         CaptureDrawer(
             hasStill: still != nil || page.pasted != nil, screenHeight: screenHeight,
-            bottomInset: bottomInset,
+            bottomInset: bottomInset, side: controlsSide,
             fraction: Binding(get: { liveFraction ?? readoutFraction }, set: { liveFraction = $0 }),
             settled: { fraction in settle(at: DrawerDetents.nearest(fraction)) },
-            toggled: toggleDrawer, content: { words }, buttons: { buttons }
+            toggled: toggleDrawer, content: { words }, buttons: { buttons },
+            near: { drawerNear }, far: { drawerFar }
         )
         // Where the drawer's top edge lies, measured: the page's room ends there.
         .onGeometryChange(for: CGFloat.self) { proxy in

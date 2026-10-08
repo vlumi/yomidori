@@ -57,4 +57,38 @@ extension CaptureView {
             }
         }
     }
+
+    // MARK: The drawer's edge
+
+    /// The camera at the thumb's side of the drawer's edge: another photo, or back to the
+    /// camera from a pasted page.
+    var drawerNear: some View {
+        PageButton(
+            symbol: "camera",
+            label: still == nil
+                ? Text("Back to the camera", bundle: .module)
+                : Text("Take another photo", bundle: .module),
+            action: retake)
+    }
+
+    /// The next page at the far side: wanted far less often than the camera.
+    @ViewBuilder var drawerFar: some View {
+        if still != nil {
+            NextPageButton(
+                canAddPage: currentTranscript != nil && pages.count + 1 < Self.pagesInASpread,
+                addPage: addPage,
+                moveNextPage: pages.count + 1 < Self.pagesInASpread ? nil : moveNextPage)
+        }
+    }
+
+    /// What the app is at while a page is on its way to its words: the recognizers, then
+    /// the reading of the words; nil once the words are there, or when there is no page.
+    var busy: Text? {
+        if taking { return Text("Taking the page…", bundle: .module) }
+        if recognizing { return Text("Reading the page…", bundle: .module) }
+        if currentTranscript != nil, page.reading == nil {
+            return Text("Reading the words…", bundle: .module)
+        }
+        return nil
+    }
 }
