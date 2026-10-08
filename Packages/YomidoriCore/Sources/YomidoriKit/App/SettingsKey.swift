@@ -23,4 +23,6 @@ enum SettingsKey {
     static let cardWordClass = "cardWordClass"
     /// Study's Coming up bars colored by what each question asks, not by rank.
     static let upcomingByQuestion = "upcomingByQuestion"
+    /// How many days Study's Coming up looks ahead, 7 or 30.
+    static let upcomingDays = "upcomingDays"
 }
