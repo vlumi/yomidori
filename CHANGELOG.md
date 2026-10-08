@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 42 — 2026-10-08
+
 - **A lesson's pages keep a small title**, so scrolling a card near the top no longer fights the growing title.
 - **Coming up looks a month ahead too**: 7 days by quarter day as before, or 30 days by the day, with a week's name under each; the Ranks/Questions colors switch moved under the chart.
 - **A lesson is pages to swipe through.** Back and forth between its cards; Drop or Later takes a card out and the next waiting one joins at the tail; the last page's Start practice starts them all and goes straight to the practice, no screen between. ⌘← and ⌘→ turn the pages on a keyboard.
