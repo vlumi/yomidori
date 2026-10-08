@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A lesson's collections are ticked rows, all ticked to begin with**, with All and None over them; cards in no collection are always in, so None means those alone.
 - **On the Mac, a lesson's setup is a grouped form no wider than a page, and a review's answer sits right under its question** rather than at the window's bottom.
 - **More of the app from the keyboard.** A Study menu with Review ⌘⇧R, Lesson ⌘⇧L and Progress ⌘⇧P; ⌘[ goes back a screen; ↩ begins a lesson and closes a session's summary; ⌘⌫ forgets a card from its page; ⌘K keeps a dictionary entry.
 - **On the Mac and the iPad, a card stays chosen and where it was scrolled when you come back** from a related word, a kanji or the Collections screen; before, the way back landed on "Select a card".
