@@ -116,18 +116,21 @@ public struct Upcoming: Equatable, Sendable {
     /// Nothing comes due, in the days counted or after.
     public var isEmpty: Bool { questions < 1 && later < 1 }
 
-    /// Every question of the cards in review, placed in the quarter day it comes due: one
-    /// never answered is due now, one overdue counts as now's. `asksPitch` says which cards
-    /// have a pitch to ask, as the review's own queue is told. With `question`, that
-    /// question's alone, each at the rank of that question.
+    /// Every question of the cards in review, placed in the quarter day it comes due — or
+    /// the day, with one slot a day for a longer look ahead: one never answered is due now,
+    /// one overdue counts as now's. `asksPitch` says which cards have a pitch to ask, as the
+    /// review's own queue is told. With `question`, that question's alone, each at the rank
+    /// of that question.
     public static func of(
-        _ cards: [Card], from now: Date, days: Int, calendar: Calendar = .current,
-        question only: Question? = nil, asksPitch: (Card) -> Bool = { _ in false }
+        _ cards: [Card], from now: Date, days: Int, slotsPerDay: Int = Upcoming.slotsPerDay,
+        calendar: Calendar = .current, question only: Question? = nil,
+        asksPitch: (Card) -> Bool = { _ in false }
     ) -> Upcoming {
         let today = calendar.startOfDay(for: now)
         let starts = (0..<max(days, 0)).map { offset in
             calendar.date(byAdding: .day, value: offset, to: today) ?? today
         }
+        let slotsPerDay = min(max(slotsPerDay, 1), 24)
         var slots: [Slot] = starts.flatMap { day -> [Slot] in
             let next = calendar.date(byAdding: .day, value: 1, to: day) ?? day
             let hours = 24 / slotsPerDay

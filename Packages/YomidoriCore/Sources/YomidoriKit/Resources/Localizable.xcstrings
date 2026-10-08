@@ -163,16 +163,6 @@
         }
       }
     },
-    "%lld dropped" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld枚を捨てました"
-          }
-        }
-      }
-    },
     "%lld due" : {
       "localizations" : {
         "ja" : {
@@ -251,16 +241,6 @@
         }
       }
     },
-    "%lld put back for later" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld枚を後回しにしました"
-          }
-        }
-      }
-    },
     "%lld remaining" : {
       "localizations" : {
         "ja" : {
@@ -277,16 +257,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld 件を選択中"
-          }
-        }
-      }
-    },
-    "%lld started" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld枚を始めました"
           }
         }
       }
@@ -373,6 +343,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "4週間"
+          }
+        }
+      }
+    },
+    "7 days" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7日"
+          }
+        }
+      }
+    },
+    "30 days" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30日"
           }
         }
       }
@@ -747,6 +737,16 @@
         }
       }
     },
+    "Card %lld of %lld" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%2$lld 枚中 %1$lld 枚目"
+          }
+        }
+      }
+    },
     "Cards" : {
       "localizations" : {
         "ja" : {
@@ -1023,6 +1023,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "日"
+          }
+        }
+      }
+    },
+    "Days ahead" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "先の日数"
           }
         }
       }
@@ -1835,16 +1845,6 @@
         }
       }
     },
-    "Lesson done" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レッスン終了"
-          }
-        }
-      }
-    },
     "Licenses and notices" : {
       "localizations" : {
         "ja" : {
@@ -2055,12 +2055,32 @@
         }
       }
     },
+    "Next" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次へ"
+          }
+        }
+      }
+    },
     "Next %lld days" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "これから %lld 日間"
+          }
+        }
+      }
+    },
+    "Next card" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次のカード"
           }
         }
       }
@@ -2241,6 +2261,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "今日の分はありません。読書を続けてください。"
+          }
+        }
+      }
+    },
+    "Nothing left to start." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "始めるカードは残っていません。"
           }
         }
       }
@@ -2505,12 +2535,12 @@
         }
       }
     },
-    "Practice them now" : {
+    "Previous card" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今すぐ練習する"
+            "value" : "前のカード"
           }
         }
       }
@@ -2535,12 +2565,12 @@
         }
       }
     },
-    "Put it back for later (⌘→)" : {
+    "Put it back for later (⌘L)" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "後回しにする（⌘→）"
+            "value" : "後回しにする (⌘L)"
           }
         }
       }
@@ -2571,6 +2601,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "問題"
+          }
+        }
+      }
+    },
+    "Questions due by day; today's with what is overdue. Touch a bar for its numbers." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日ごとの出題数。今日の分には期限切れも含みます。棒に触れると数が出ます。"
           }
         }
       }
@@ -3195,16 +3235,6 @@
         }
       }
     },
-    "Start" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "始める"
-          }
-        }
-      }
-    },
     "Start now" : {
       "localizations" : {
         "ja" : {
@@ -3225,12 +3255,22 @@
         }
       }
     },
-    "Start the card (↩)" : {
+    "Start practice" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カードを始める（↩）"
+            "value" : "練習を始める"
+          }
+        }
+      }
+    },
+    "Start the cards and practice them (↩)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードを始めて練習する (↩)"
           }
         }
       }
@@ -3519,6 +3559,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "線は高い拍の上を通り、アクセントの位置で下がります。数字は何拍目のあとで下がるかで、0は下がらないことを表します。東京式アクセント、Kanjiumのデータによる。"
+          }
+        }
+      }
+    },
+    "The next card (↩)" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次のカード (↩)"
           }
         }
       }

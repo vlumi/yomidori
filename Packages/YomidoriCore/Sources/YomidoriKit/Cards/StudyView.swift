@@ -10,6 +10,8 @@ struct StudyView: View {
     @State private var question: Question?
     /// Coming up's bars colored by the cards' ranks, or by what each question asks.
     @AppStorage(SettingsKey.upcomingByQuestion) private var byQuestion = false
+    /// How far Coming up looks: a week by quarter days, or a month by days.
+    @AppStorage(SettingsKey.upcomingDays) private var days = 7
     /// Opens a screen over this tab's root: a button, not a link, so a list row doesn't
     /// turn the fat button back into a row with a chevron.
     @EnvironmentObject private var taps: TabTaps
@@ -56,11 +58,9 @@ struct StudyView: View {
                     UpcomingReviews(
                         upcoming: upcoming,
                         stacking: question == nil && byQuestion ? .question : .rank)
-                } header: {
-                    HStack {
-                        Text("Coming up", bundle: .module)
-                        Spacer()
-                        if question == nil {
+                    if question == nil {
+                        HStack {
+                            Spacer()
                             Picker(selection: $byQuestion) {
                                 Text("Ranks", bundle: .module).tag(false)
                                 Text("Questions", bundle: .module).tag(true)
@@ -70,11 +70,30 @@ struct StudyView: View {
                             .pickerStyle(.segmented)
                             .controlSize(.mini)
                             .fixedSize()
-                            .textCase(nil)
                         }
                     }
+                } header: {
+                    HStack {
+                        Text("Coming up", bundle: .module)
+                        Spacer()
+                        Picker(selection: $days) {
+                            Text("7 days", bundle: .module).tag(7)
+                            Text("30 days", bundle: .module).tag(30)
+                        } label: {
+                            Text("Days ahead", bundle: .module)
+                        }
+                        .pickerStyle(.segmented)
+                        .controlSize(.mini)
+                        .fixedSize()
+                        .textCase(nil)
+                    }
                 } footer: {
-                    if question == nil && byQuestion {
+                    if days > 7 {
+                        Text(
+                            // swiftlint:disable:next line_length
+                            "Questions due by day; today's with what is overdue. Touch a bar for its numbers.",
+                            bundle: .module)
+                    } else if question == nil && byQuestion {
                         Text(
                             // swiftlint:disable:next line_length
                             "Questions due by quarter day, in the colors of what they ask; now's with what is overdue. Touch a bar for its numbers.",
@@ -111,6 +130,7 @@ struct StudyView: View {
         }
         .onAppear(perform: reload)
         .onChange(of: question) { reload() }
+        .onChange(of: days) { reload() }
         .onReceive(Cards.changes(of: [.card])) { _ in reload() }
     }
 
@@ -119,7 +139,7 @@ struct StudyView: View {
         cards = Cards.store?.cards() ?? []
         dueCount = Cards.dueItems(at: Date()).count
         upcoming = Upcoming.of(
-            cards, from: Date(), days: 7, question: question,
-            asksPitch: { !Cards.accents(of: $0).isEmpty })
+            cards, from: Date(), days: days, slotsPerDay: days > 7 ? 1 : Upcoming.slotsPerDay,
+            question: question, asksPitch: { !Cards.accents(of: $0).isEmpty })
     }
 }
