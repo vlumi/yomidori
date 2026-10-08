@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 43 — 2026-10-08
+
 - **On a phone the camera stands on the drawer's edge, at the thumb's side**, and the next-page button at the other end; the page's own column is the spread's way out and the zoom, so a reach for the zoom can't take a photo.
 - **A tap beside the text lets the selection go**: in Vision, a tap on the page clear of any recognized text; in Live Text, the tap outside the selection that already cleared it on the picture now clears the words too.
 - **Home stands still.** The bird, large, on a faint round of its green up top, the name under it, and Read, Review and Lesson down by the thumb, just over the tab bar; nothing to scroll.
