@@ -46,33 +46,24 @@ struct HomeView: View {
                 .listRowInsets(EdgeInsets())
             }
             Section {
-                if dueCount > 0 {
+                HStack(spacing: 12) {
                     Button {
                         study(.review)
                     } label: {
-                        StudyLabel.review(dueCount)
+                        StudyButtons.review(due: dueCount)
                     }
-                } else {
-                    StudyLabel.nothingDue
-                }
-                if waitingCount > 0 {
+                    .buttonStyle(FatButtonStyle(color: StudyButtons.reviewColor))
+                    .disabled(dueCount == 0)
                     Button {
                         study(.lesson)
                     } label: {
-                        StudyLabel.lesson(waiting: waitingCount)
+                        StudyButtons.lesson(waiting: waitingCount)
                     }
+                    .buttonStyle(FatButtonStyle(color: StudyButtons.lessonColor))
+                    .disabled(waitingCount == 0)
                 }
-                Button {
-                    study(.progress)
-                } label: {
-                    Label {
-                        Text("Progress", bundle: .module)
-                    } icon: {
-                        Image(systemName: "chart.xyaxis.line")
-                    }
-                }
-            } header: {
-                Text("Study", bundle: .module)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets())
             }
         }
         .navigationTitle(Text(verbatim: ""))
