@@ -83,7 +83,9 @@ struct ReviewView: View {
         }
     }
 
-    /// The question scrolls, so a long sentence shows whole; the answer stays put below.
+    /// The question scrolls, so a long sentence shows whole; the answer stays put below,
+    /// at the bottom on a phone, where the thumb and the keyboard are, and right under the
+    /// question on a Mac, where the bottom of a window is nowhere in particular.
     private func review(_ item: ReviewItem) -> some View {
         VStack(alignment: .leading, spacing: 20) {
             ScrollView {
@@ -101,6 +103,7 @@ struct ReviewView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .scrollBounceBehavior(.basedOnSize)
+            .questionHeight()
             // Which question this is and how many remain, right above the answer.
             tagRow(item)
             if revealed {
@@ -108,6 +111,9 @@ struct ReviewView: View {
             } else {
                 prompt(item)
             }
+            #if os(macOS)
+            Spacer(minLength: 0)
+            #endif
         }
         .padding(24)
         .tint(Palette.nightGreen)
@@ -381,5 +387,17 @@ extension ReviewView {
             }
         }
         .buttonStyle(.bordered)
+    }
+}
+
+extension View {
+    /// The question's room: whatever is left over the answer on a phone; its own height on
+    /// a Mac, so the answer follows it rather than the window's bottom.
+    fileprivate func questionHeight() -> some View {
+        #if os(macOS)
+        fixedSize(horizontal: false, vertical: true)
+        #else
+        self
+        #endif
     }
 }
