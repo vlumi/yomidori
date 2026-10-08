@@ -55,14 +55,50 @@ struct LessonView: View {
             if !collections.isEmpty {
                 Section {
                     ForEach(collections) { collection in
-                        Toggle(isOn: membership(of: collection)) {
-                            Text(verbatim: collection.name)
+                        Button {
+                            if chosen.contains(collection.id) {
+                                chosen.remove(collection.id)
+                            } else {
+                                chosen.insert(collection.id)
+                            }
+                        } label: {
+                            HStack {
+                                Text(verbatim: collection.name)
+                                    .foregroundStyle(.primary)
+                                Spacer()
+                                if chosen.contains(collection.id) {
+                                    Image(systemName: "checkmark")
+                                        .fontWeight(.semibold)
+                                        .foregroundStyle(Palette.nightGreen)
+                                }
+                            }
+                            .contentShape(Rectangle())
                         }
+                        .buttonStyle(.plain)
+                        .accessibilityAddTraits(chosen.contains(collection.id) ? .isSelected : [])
                     }
                 } header: {
-                    Text("Collections", bundle: .module)
+                    // All of them ticked to begin with; All and None flip them at once.
+                    HStack {
+                        Text("Collections", bundle: .module)
+                        Spacer()
+                        Button {
+                            chosen = Set(collections.map(\.id))
+                        } label: {
+                            Text("All", bundle: .module)
+                        }
+                        .disabled(chosen.count == collections.count)
+                        Button {
+                            chosen = []
+                        } label: {
+                            Text("None", bundle: .module)
+                        }
+                        .disabled(chosen.isEmpty)
+                    }
+                    .textCase(nil)
+                    .font(.subheadline)
                 } footer: {
-                    Text("None chosen means all of them.", bundle: .module)
+                    Text("Cards in no collection are always in.", bundle: .module)
                 }
             }
             Section {
@@ -84,19 +120,17 @@ struct LessonView: View {
         .readingWidth()
         .onAppear {
             collections = Cards.collections?.collections() ?? []
+            chosen = Set(collections.map(\.id))
             if DemoMode.beginsLesson { begin() }
         }
     }
 
+    /// The waiting cards of the collections ticked, and the ones in no collection at all,
+    /// which no tick could stand for: with every collection unticked, those alone.
     private var candidates: [Card] {
-        (Cards.store?.waiting() ?? []).filter { $0.isIn(anyOf: chosen) }
-    }
-
-    private func membership(of collection: Collection) -> Binding<Bool> {
-        Binding {
-            chosen.contains(collection.id)
-        } set: { on in
-            if on { chosen.insert(collection.id) } else { chosen.remove(collection.id) }
+        let existing = Set(collections.map(\.id))
+        return (Cards.store?.waiting() ?? []).filter { card in
+            card.isInNone(of: existing) || !chosen.isDisjoint(with: card.collectionIDs)
         }
     }
 

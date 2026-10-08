@@ -767,6 +767,16 @@
         }
       }
     },
+    "Cards in no collection are always in." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どのコレクションにも入っていないカードは常に含まれます。"
+          }
+        }
+      }
+    },
     "Change the text (⌘E)" : {
       "localizations" : {
         "ja" : {
