@@ -54,29 +54,16 @@ struct LessonView: View {
             }
             if !collections.isEmpty {
                 Section {
-                    ForEach(collections) { collection in
-                        Button {
-                            if chosen.contains(collection.id) {
-                                chosen.remove(collection.id)
-                            } else {
-                                chosen.insert(collection.id)
-                            }
-                        } label: {
-                            HStack {
-                                Text(verbatim: collection.name)
-                                    .foregroundStyle(.primary)
-                                Spacer()
-                                if chosen.contains(collection.id) {
-                                    Image(systemName: "checkmark")
-                                        .fontWeight(.semibold)
-                                        .foregroundStyle(Palette.nightGreen)
-                                }
-                            }
-                            .contentShape(Rectangle())
+                    // One cell for all the rows, a hairline between, each row a button as
+                    // tall and wide as the row: the Mac's grouped form pads every cell of
+                    // its own, which left dead space between rows that were cells.
+                    VStack(spacing: 0) {
+                        ForEach(Array(collections.enumerated()), id: \.element.id) { item in
+                            if item.offset > 0 { Divider().padding(.leading, 16) }
+                            collectionRow(item.element)
                         }
-                        .buttonStyle(.plain)
-                        .accessibilityAddTraits(chosen.contains(collection.id) ? .isSelected : [])
                     }
+                    .listRowInsets(EdgeInsets())
                 } header: {
                     // All of them ticked to begin with; All and None flip them at once.
                     HStack {
@@ -123,6 +110,32 @@ struct LessonView: View {
             chosen = Set(collections.map(\.id))
             if DemoMode.beginsLesson { begin() }
         }
+    }
+
+    private func collectionRow(_ collection: Collection) -> some View {
+        Button {
+            if chosen.contains(collection.id) {
+                chosen.remove(collection.id)
+            } else {
+                chosen.insert(collection.id)
+            }
+        } label: {
+            HStack {
+                Text(verbatim: collection.name)
+                    .foregroundStyle(.primary)
+                Spacer()
+                if chosen.contains(collection.id) {
+                    Image(systemName: "checkmark")
+                        .fontWeight(.semibold)
+                        .foregroundStyle(Palette.nightGreen)
+                }
+            }
+            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(chosen.contains(collection.id) ? .isSelected : [])
     }
 
     /// The waiting cards of the collections ticked, and the ones in no collection at all,
