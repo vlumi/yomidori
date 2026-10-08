@@ -18,28 +18,3 @@ struct Wordmark: View {
             .accessibilityLabel(Text(japanese: "よみどり"))
     }
 }
-
-/// What the Study and Home screens offer: the review with its count, the lesson with how
-/// many wait. The same words and icons on both, in whatever the screen wraps them in.
-enum StudyLabel {
-    static func review(_ due: Int) -> some View {
-        Label {
-            Text("Review \(due)", bundle: .module)
-        } icon: {
-            Image(systemName: "checkmark.rectangle.stack")
-        }
-    }
-
-    static func lesson(waiting: Int) -> some View {
-        Label {
-            Text("Lesson · \(waiting) waiting", bundle: .module)
-        } icon: {
-            Image(systemName: "book")
-        }
-    }
-
-    static var nothingDue: some View {
-        Text("Nothing due. Read on.", bundle: .module)
-            .foregroundStyle(.secondary)
-    }
-}
