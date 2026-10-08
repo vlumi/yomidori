@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **An expression read inflected shows its dictionary form**: 目が眩んで on the page is titled 目が眩ん with 目が眩む beside it, as a verb alone always was.
+
 ### build 41 — 2026-10-07
 
 - **Stroke order from KanjiVG's July 2026 release**, a year newer than the one bundled before: one more kanji, and a year of corrected strokes.

@@ -39,6 +39,29 @@ final class WordFinderTests: XCTestCase {
         }
     }
 
+    func testAJoinedStemKnowsTheFormItWasLookedUpUnder() {
+        // 目が眩んで: the expression is found by deinflecting the joined stem, and the word
+        // says which form that was, as a one-token verb says its tokenizer's.
+        let dictionary = Stub(headwords: ["目が眩む", "眩む", "目"])
+        let inflected = tokens(
+            "目が眩んで",
+            [
+                Cut(surface: "目", reading: "め"), Cut(surface: "が", reading: "が"),
+                Cut(surface: "眩ん", reading: "くらん"), Cut(surface: "で", reading: "で"),
+            ])
+        let words = WordFinder.words(in: inflected, dictionary: dictionary)
+        XCTAssertEqual(words.map(\.surface), ["目が眩ん"])
+        XCTAssertEqual(words.first?.dictionaryForm, "目が眩む")
+        // Spelled as the dictionary has it, there is no other form to show.
+        let plain = tokens(
+            "目が眩む",
+            [
+                Cut(surface: "目", reading: "め"), Cut(surface: "が", reading: "が"),
+                Cut(surface: "眩む", reading: "くらむ"),
+            ])
+        XCTAssertNil(WordFinder.words(in: plain, dictionary: dictionary).first?.dictionaryForm)
+    }
+
     func testKanaPiecesJoinOnlyIntoAnExpression() {
         struct Kana: WordDictionary {
             func entries(matching text: String) -> [DictionaryEntry] {
