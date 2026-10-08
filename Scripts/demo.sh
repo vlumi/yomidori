@@ -55,7 +55,7 @@ xcrun simctl install "$udid" "$app"
 xcrun simctl launch "$udid" "$BUNDLE" -yomidori-demo ${TAB:+-yomidori-tab "$TAB"} ${SCREEN:+-yomidori-screen "$SCREEN"} \
   ${SEARCH:+-yomidori-search "$SEARCH"} ${SPREAD:+-yomidori-spread} \
   ${SELECT:+-yomidori-select} ${PICK:+-yomidori-pick "$PICK"} ${DRAWER:+-yomidori-drawer "$DRAWER"} \
-  ${MODE:+-yomidori-mode "$MODE"} ${RECOGNIZE:+-yomidori-recognize} ${NOPAGE:+-yomidori-nopage} ${PICTURE:+-yomidori-picture "$PICTURE"} \
+  ${MODE:+-yomidori-mode "$MODE"} ${RECOGNIZE:+-yomidori-recognize} ${NOPAGE:+-yomidori-nopage} ${BEGIN:+-yomidori-begin} ${PICTURE:+-yomidori-picture "$PICTURE"} \
   ${DEMO_LANG:+-AppleLanguages "($DEMO_LANG)"} >/dev/null
 [ -n "${YOMIDORI_UDID_FILE:-}" ] && echo "$udid" > "$YOMIDORI_UDID_FILE"
 echo "Demo launched on $udid — seeded cards, collections and a page; nothing persists."
