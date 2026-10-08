@@ -37,7 +37,7 @@ struct SearchView: View {
         if sizeClass == .regular {
             // Room for two columns: the history or the results stay, the entry opens beside,
             // picked as on the Mac, since a list that selects takes the taps a link would.
-            NavigationSplitView {
+            PadColumns {
                 ScrollViewReader { proxy in
                     searching(pickingList).scrollsToTopOnReselect(of: .search, with: proxy)
                 }
