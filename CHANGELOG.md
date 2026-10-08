@@ -16,6 +16,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 - **More of the app from the keyboard.** A Study menu with Review ⌘⇧R, Lesson ⌘⇧L and Progress ⌘⇧P; ⌘[ goes back a screen; ↩ begins a lesson and closes a session's summary; ⌘⌫ forgets a card from its page; ⌘K keeps a dictionary entry.
 - **On the Mac and the iPad, a card stays chosen and where it was scrolled when you come back** from a related word, a kanji or the Collections screen; before, the way back landed on "Select a card".
+- **On the Mac, each pitch choice shows the key that picks it**: the downstep's number, 0 for flat, as the choices are laid out.
 
 ### build 43 — 2026-10-08
 
