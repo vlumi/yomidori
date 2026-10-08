@@ -1485,6 +1485,16 @@
         }
       }
     },
+    "From rank %lld to rank %lld" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ランク %lld からランク %lld へ"
+          }
+        }
+      }
+    },
     "Full entry" : {
       "localizations" : {
         "ja" : {
@@ -1531,6 +1541,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "文を聞く"
+          }
+        }
+      }
+    },
+    "Held" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "据え置き"
           }
         }
       }
@@ -2535,6 +2555,16 @@
         }
       }
     },
+    "Promoted" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "昇格"
+          }
+        }
+      }
+    },
     "Put it back for later (⌘L)" : {
       "localizations" : {
         "ja" : {
@@ -3141,6 +3171,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "同期するには、システム設定でiCloudにサインインしてください。"
+          }
+        }
+      }
+    },
+    "Slipped" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "降格"
           }
         }
       }
