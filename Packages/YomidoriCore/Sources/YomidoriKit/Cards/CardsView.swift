@@ -46,7 +46,7 @@ struct CardsView: View {
         #else
         if sizeClass == .regular {
             // Room for two columns: the list stays, the card opens beside it.
-            NavigationSplitView {
+            PadColumns {
                 ScrollViewReader { proxy in
                     list.scrollsToTopOnReselect(of: .cards, with: proxy)
                 }
