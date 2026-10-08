@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Coming up looks a month ahead too**: 7 days by quarter day as before, or 30 days by the day, with a week's name under each; the Ranks/Questions colors switch moved under the chart.
 - **Review and Lesson are two fat buttons side by side**, on Home and on Study, each in its own color with its count under its name, gray when nothing is due or waiting; Home's Progress row is gone, Progress stays a step from Study.
 - **An expression read inflected shows its dictionary form**: 目が眩んで on the page is titled 目が眩ん with 目が眩む beside it, as a verb alone always was.
 
