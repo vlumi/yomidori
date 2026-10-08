@@ -6,7 +6,9 @@
 // reading of ヨミドリ), flattened opaque because App Store Connect silently rejects
 // a transparent icon. To change the icon, change the numbers below and re-run.
 //   swift Scripts/assets/make-icon.swift <outDir>
-// writes <outDir>/icon-1024.png.
+// writes <outDir>/icon-1024.png and the Mac's sizes;
+//   swift Scripts/assets/make-icon.swift <outDir> --bird
+// writes <outDir>/bird-1024.png: the bird alone on a transparent canvas, for the Home screen.
 
 import CoreGraphics
 import Foundation
@@ -14,6 +16,7 @@ import ImageIO
 import UniformTypeIdentifiers
 
 let outDir = CommandLine.arguments.count > 1 ? CommandLine.arguments[1] : "."
+let birdOnly = CommandLine.arguments.contains("--bird")
 let size: CGFloat = 1024
 
 func rgb(_ r: CGFloat, _ g: CGFloat, _ b: CGFloat, _ a: CGFloat = 1) -> CGColor {
@@ -124,20 +127,24 @@ func beak() -> CGPath {
 let space = CGColorSpace(name: CGColorSpace.sRGB)!
 let ctx = CGContext(
     data: nil, width: Int(size), height: Int(size), bitsPerComponent: 8, bytesPerRow: 0,
-    space: space, bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)!
+    space: space,
+    bitmapInfo: (birdOnly ? CGImageAlphaInfo.premultipliedLast : .noneSkipLast).rawValue)!
 
 func gradient(_ colors: [CGColor], _ locations: [CGFloat]) -> CGGradient {
     CGGradient(colorsSpace: space, colors: colors as CFArray, locations: locations)!
 }
 
-// Plate: darker at the foot, like a lamp over a page at night.
-ctx.drawLinearGradient(
-    gradient([nightGreenTop, nightGreenBottom], [0, 1]),
-    start: CGPoint(x: 0, y: size), end: .zero, options: [])
+// Plate: darker at the foot, like a lamp over a page at night. None under the bird alone.
+if !birdOnly {
+    ctx.drawLinearGradient(
+        gradient([nightGreenTop, nightGreenBottom], [0, 1]),
+        start: CGPoint(x: 0, y: size), end: .zero, options: [])
+}
 
-// Perch: a silver rule, the reading mark under a word.
+// Perch: a silver rule, the reading mark under a word; on a page rather than the plate,
+// silver would vanish, so the bird alone perches on the gray of its own crown.
 let rule = CGRect(x: size * 0.18, y: perchY - size * 0.05, width: size * 0.64, height: size * 0.042)
-ctx.setFillColor(silver)
+ctx.setFillColor(birdOnly ? hood : silver)
 ctx.addPath(rounded(rule, rule.height / 2))
 ctx.fillPath()
 
@@ -249,6 +256,10 @@ func write(_ image: CGImage, _ name: String) {
     CGImageDestinationAddImage(dest, image, nil)
     guard CGImageDestinationFinalize(dest) else { fatalError("could not write \(url.path)") }
     print("wrote \(url.path)")
+}
+if birdOnly {
+    write(image, "bird-1024.png")
+    exit(0)
 }
 write(image, "icon-1024.png")
 

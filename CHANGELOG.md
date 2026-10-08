@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Home stands still.** The bird, large, on a faint round of its green up top, the name under it, and Read, Review and Lesson down by the thumb, just over the tab bar; nothing to scroll.
+
 ### build 42 — 2026-10-08
 
 - **A lesson's pages keep a small title**, so scrolling a card near the top no longer fights the growing title.

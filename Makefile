@@ -161,8 +161,9 @@ format:  ## Rewrite sources with swift-format
 		Packages/YomidoriCore/Sources Packages/YomidoriCore/Tests Sources
 
 .PHONY: icon
-icon:  ## Regenerate the app icon PNG (pure CoreGraphics; flattened opaque)
+icon:  ## Regenerate the app icon PNGs and Home's bird (pure CoreGraphics; the icon flattened opaque)
 	@swift Scripts/assets/make-icon.swift Sources/Shared/Assets.xcassets/AppIcon.appiconset
+	@swift Scripts/assets/make-icon.swift Sources/Shared/Assets.xcassets/Bird.imageset --bird
 
 .PHONY: clean
 clean:  ## Remove the generated project + local build output
