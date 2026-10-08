@@ -72,7 +72,10 @@ struct UpcomingReviews: View {
             HStack(spacing: 10) {
                 Group {
                     if let chosen {
-                        Text(verbatim: "\(dayName(of: chosen.start)) \(hours(of: chosen))")
+                        Text(
+                            verbatim: byDay
+                                ? dayName(of: chosen.start)
+                                : "\(dayName(of: chosen.start)) \(hours(of: chosen))")
                     } else {
                         Text("Next \(upcoming.days.count) days", bundle: .module)
                     }
@@ -131,8 +134,8 @@ struct UpcomingReviews: View {
             ForEach(shares) { share in
                 bar(share, dimmed: chosenStart != nil && chosenStart != share.slot)
             }
-            // A hairline where each day begins, after the first.
-            ForEach(Array(dayStarts.dropFirst()), id: \.self) { day in
+            // A hairline where each day begins, after the first; each week's, by the day.
+            ForEach(Array(lineDays.dropFirst()), id: \.self) { day in
                 RuleMark(x: .value("Day", day))
                     .lineStyle(StrokeStyle(lineWidth: 0.5))
                     .foregroundStyle(Color.secondary.opacity(0.5))
@@ -141,18 +144,22 @@ struct UpcomingReviews: View {
         .chartXScale(domain: from...to)
         .chartXSelection(value: $selected)
         .chartXAxis {
-            // The day's name at its noon, no line of its own.
-            AxisMarks(values: dayStarts.map { $0.addingTimeInterval(12 * 3600) }) { value in
+            // The day's name at its noon, no line of its own; by the day, each week's first.
+            AxisMarks(values: lineDays.map { $0.addingTimeInterval(12 * 3600) }) { value in
                 AxisValueLabel(anchor: .top) {
                     if let date = value.as(Date.self) {
                         Text(verbatim: dayName(of: date))
                             .font(.caption)
+                            // Whole, past a narrow bar's width: the plot is padded for it.
+                            .fixedSize()
                     }
                 }
             }
         }
         .chartYAxis(.hidden)
         .chartYScale(domain: 0...max(1, upcoming.slots.map(\.questions).max() ?? 1))
+        // By the day, the first and last names hang past their narrow bars: room for them.
+        .chartPlotStyle { plot in plot.padding(.horizontal, byDay ? 14 : 0) }
         .frame(height: height)
     }
 
@@ -170,8 +177,23 @@ struct UpcomingReviews: View {
         return mark.foregroundStyle(color)
     }
 
-    /// A tenth of a quarter day, the room between bars.
-    private var gap: TimeInterval { 6 * 3600 / 10 }
+    /// One slot a day: the month ahead, named by date rather than by hour.
+    private var byDay: Bool {
+        guard let slot = upcoming.slots.first else { return false }
+        return slot.end.timeIntervalSince(slot.start) >= 24 * 3600 - 1
+    }
+
+    /// The days that get a line and a name: every day of a week, every seventh of a month.
+    private var lineDays: [Date] {
+        let starts = upcoming.days.map(\.day)
+        return byDay ? starts.enumerated().filter { $0.offset % 7 == 0 }.map(\.element) : starts
+    }
+
+    /// A tenth of a slot, the room between bars.
+    private var gap: TimeInterval {
+        guard let slot = upcoming.slots.first else { return 6 * 360 }
+        return slot.end.timeIntervalSince(slot.start) / 10
+    }
 
     private func slotEnd(_ start: Date) -> Date {
         upcoming.slots.first { $0.start == start }?.end ?? start.addingTimeInterval(6 * 3600)
@@ -182,7 +204,10 @@ struct UpcomingReviews: View {
         switch upcoming.days.firstIndex { $0.day == day } {
         case 0: return String(localized: "Today", bundle: .module)
         case 1: return String(localized: "Tomorrow", bundle: .module)
-        default: return date.formatted(.dateTime.weekday(.abbreviated))
+        default:
+            return byDay
+                ? date.formatted(.dateTime.month(.abbreviated).day())
+                : date.formatted(.dateTime.weekday(.abbreviated))
         }
     }
 

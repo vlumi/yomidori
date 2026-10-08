@@ -347,6 +347,26 @@
         }
       }
     },
+    "7 days" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7日"
+          }
+        }
+      }
+    },
+    "30 days" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30日"
+          }
+        }
+      }
+    },
     "A result or a word looked up opens here." : {
       "localizations" : {
         "ja" : {
@@ -1003,6 +1023,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "日"
+          }
+        }
+      }
+    },
+    "Days ahead" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "先の日数"
           }
         }
       }
@@ -2541,6 +2571,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "問題"
+          }
+        }
+      }
+    },
+    "Questions due by day; today's with what is overdue. Touch a bar for its numbers." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日ごとの出題数。今日の分には期限切れも含みます。棒に触れると数が出ます。"
           }
         }
       }
