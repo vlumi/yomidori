@@ -2,25 +2,37 @@ import SwiftUI
 import YomidoriCore
 
 /// Under a still the drawer lies over the page, so its height is its own business; under
-/// the camera it is only the button row.
-struct CaptureDrawer<Content: View, Buttons: View>: View {
+/// the camera it is only the button row. On the handle's row, at the drawer's edge, stand
+/// the page's two buttons: `near` at the side the thumb holds, `far` at the other.
+struct CaptureDrawer<Content: View, Buttons: View, Near: View, Far: View>: View {
     let hasStill: Bool
     let screenHeight: CGFloat
     /// The tab bar's height under the drawer, which the words run under: the last of them
     /// must still come up above it.
     let bottomInset: CGFloat
+    let side: PageControlsSide
     @Binding var fraction: Double
     let settled: (Double) -> Void
     let toggled: () -> Void
     @ViewBuilder var content: () -> Content
     @ViewBuilder var buttons: () -> Buttons
+    @ViewBuilder var near: () -> Near
+    @ViewBuilder var far: () -> Far
 
     var body: some View {
         VStack(spacing: 12) {
             if hasStill {
                 DrawerHandle(
                     fraction: $fraction, screenHeight: screenHeight, settled: settled,
-                    toggled: toggled)
+                    toggled: toggled
+                )
+                .frame(minHeight: 44)
+                .overlay(alignment: side == .left ? .leading : .trailing) {
+                    near().padding(.horizontal, 12)
+                }
+                .overlay(alignment: side == .left ? .trailing : .leading) {
+                    far().padding(.horizontal, 12)
+                }
                 ScrollViewReader { proxy in
                     ScrollView {
                         // Lazy for its pinned section headers: the recognized text's title
