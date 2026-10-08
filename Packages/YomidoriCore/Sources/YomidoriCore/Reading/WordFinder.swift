@@ -13,7 +13,17 @@ public struct FoundWord: Equatable, Sendable {
 
     public var surface: String { tokens.map(\.surface).joined() }
     public var reading: String { tokens.map(\.reading).joined() }
-    public var dictionaryForm: String? { tokens.count == 1 ? tokens[0].dictionaryForm : nil }
+
+    /// The form the dictionary lists the word under when the page has it inflected: the
+    /// tokenizer's for one token (眩ん → 眩む), and for a word joined from several, the
+    /// entry's form the stem was deinflected to (目が眩ん → 目が眩む). Nil when the page
+    /// already spells it as the dictionary does.
+    public var dictionaryForm: String? {
+        guard tokens.count > 1 else { return tokens[0].dictionaryForm }
+        guard let entry = entries.first else { return nil }
+        let forms = Deinflector.candidates(for: surface).dropFirst()
+        return (entry.kanji + entry.readings).first { forms.contains($0) }
+    }
 
     /// What a card of the word is headed by: the dictionary's headword, else the dictionary
     /// form, else the word as it stands on the page.
