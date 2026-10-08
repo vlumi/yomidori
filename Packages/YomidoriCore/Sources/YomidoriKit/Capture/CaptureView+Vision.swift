@@ -6,7 +6,16 @@ import YomidoriCore
 /// outlined over its characters, on whichever page of the spread they are.
 extension CaptureView {
     func tapWord(onPage index: Int, at point: CGPoint, in frame: CGRect) {
-        guard let chunk = chunk(onPage: index, at: point, in: frame), chunk.isWord else { return }
+        guard let reading = page.reading, !selection.looking, spreadPages.indices.contains(index)
+        else { return }
+        // A tap clear of any recognized text lets the selection go; one on a word takes it.
+        guard let offset = offset(onPage: index, at: point, in: frame) else {
+            page.selectedRange = nil
+            return
+        }
+        guard let chunk = reading.chunk(at: page.fixes.map(offset: offset)), chunk.isWord else {
+            return
+        }
         page.selectedRange = chunk.range
     }
 
@@ -20,12 +29,18 @@ extension CaptureView {
         -> PageReading.Chunk?
     {
         guard let reading = page.reading, !selection.looking,
-            spreadPages.indices.contains(index)
+            spreadPages.indices.contains(index),
+            let offset = offset(onPage: index, at: point, in: frame)
         else { return nil }
+        return reading.chunk(at: page.fixes.map(offset: offset))
+    }
+
+    /// The character under a point, as an offset into the spread's recognized text; nil
+    /// where the page has no character.
+    private func offset(onPage index: Int, at point: CGPoint, in frame: CGRect) -> Int? {
         let vision = VisionPage(lines: spreadPages[index].lines)
         guard let hit = vision.character(at: point, in: frame) else { return nil }
-        let offset = offset(ofPage: index) + vision.starts[hit.line] + hit.character
-        return reading.chunk(at: page.fixes.map(offset: offset))
+        return offset(ofPage: index) + vision.starts[hit.line] + hit.character
     }
 
     /// The spread's pages as Vision mode draws them: each page's lines, the ones the

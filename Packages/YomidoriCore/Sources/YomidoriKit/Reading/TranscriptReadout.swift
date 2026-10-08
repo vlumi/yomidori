@@ -296,9 +296,17 @@ struct TranscriptReadout: View {
         return { fix(range, $0) }
     }
 
-    /// A selection made on the page itself (Live Text's, the pasted text's), as whole chunks.
+    /// A selection made on the page itself (Live Text's, the pasted text's), as whole chunks;
+    /// and one let go there — a tap beside the text — let go here too, or the page would be
+    /// asked to show it again.
     private func selectionOnPage() {
         let onPage = selection.rangePage
+        if selection.range == nil, selection.text.isEmpty, !selection.looking,
+            page.selectedRange != nil
+        {
+            page.selectedRange = nil
+            return
+        }
         guard let reading = page.reading, let range = selection.range,
             pageTexts.indices.contains(onPage),
             range.lowerBound >= 0, range.upperBound <= pageTexts[onPage].count
