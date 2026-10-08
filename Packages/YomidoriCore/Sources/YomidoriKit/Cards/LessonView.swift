@@ -78,6 +78,10 @@ struct LessonView: View {
             }
             .listRowBackground(Color.clear)
         }
+        // Grouped on the Mac, as Settings is, and no wider than a page: a bare form ran
+        // the window's width with Begin as a bar across it.
+        .settingsFormStyle()
+        .readingWidth()
         .onAppear {
             collections = Cards.collections?.collections() ?? []
             if DemoMode.beginsLesson { begin() }
