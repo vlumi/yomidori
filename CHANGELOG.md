@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Progress's span and question filters sit between the numbers and the charts**, which is what they shape, and float under the bar once scrolled past; the title is large again.
 - **An expression read inflected shows its dictionary form**: 目が眩んで on the page is titled 目が眩ん with 目が眩む beside it, as a verb alone always was.
 
 ### build 41 — 2026-10-07
