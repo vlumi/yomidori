@@ -167,6 +167,15 @@ no progress file to go stale. Re-enter the chain at the right point:
 | **upload only** (export ok, ASC upload flaked) | the `.ipa` is already in `dist/` | `make release-upload` — uploads the existing package, no rebuild |
 | **archive/export** | release is tagged; the build failed | `make release-distribute-retry` — verifies the tag exists, then re-archives/exports/uploads **without** touching git/PR/tags |
 
+## Privacy manifest
+
+`Sources/Shared/PrivacyInfo.xcprivacy` ships in both apps: nothing collected, no
+tracking, and the two "required reason" APIs the app touches — UserDefaults for
+its own settings (CA92.1) and file modification dates of its own cover files
+(C617.1). Using another such API (disk space, boot time, the active keyboard
+list) means adding its reason there, or App Store Connect flags the upload
+(ITMS-91053).
+
 ## App Store listing & screenshots
 
 The listing lives in the repo and is synced, never typed into App Store
