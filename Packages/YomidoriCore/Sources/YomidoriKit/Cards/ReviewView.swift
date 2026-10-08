@@ -30,6 +30,9 @@ struct ReviewView: View {
     @State private var editing: Sighting?
     /// This sitting's answers, for the summary at its end.
     @State private var session = DayTally(day: Date())
+    /// Every card the sitting asks about, as it stood when the sitting began and as each
+    /// answer leaves it, for the summary's list.
+    @State private var seen: [UUID: SessionCard] = [:]
     @AccessibilityFocusState private var verdictFocused: Bool
     @Environment(\.dismiss) private var dismiss
 
@@ -38,7 +41,7 @@ struct ReviewView: View {
             if let item = queue.current {
                 review(item)
             } else if session.total > 0 {
-                SessionSummary(session: session) { dismiss() }
+                SessionSummary(session: session, cards: Array(seen.values)) { dismiss() }
             } else {
                 Text("Nothing due. Read on.", bundle: .module)
                     .foregroundStyle(.secondary)
@@ -273,7 +276,13 @@ struct ReviewView: View {
             session.answered[item.question, default: 0] += 1
             if grade == .good { session.right[item.question, default: 0] += 1 }
             session.seconds += min(max(seconds, 0), ReviewEntry.longestCounted)
+            if grade == .good {
+                seen[item.card.id]?.good += 1
+            } else {
+                seen[item.card.id]?.again += 1
+            }
         }
+        if let reviewed { seen[reviewed.id]?.card = reviewed }
         revealed = false
         answer = ""
         queue.answered(item, grade: grade, card: reviewed)
@@ -285,6 +294,7 @@ struct ReviewView: View {
         var waiting = Cards.store?.card(id: card.id) ?? card
         waiting.sendToWaiting()
         Cards.write { try Cards.store?.update(waiting) }
+        seen[card.id]?.card = waiting
         revealed = false
         answer = ""
         queue.remove(card: card.id)
@@ -301,6 +311,9 @@ struct ReviewView: View {
                 Cards.dueItems(at: Date()).filter { practicing.contains($0.card.id) }.shuffled())
         } else {
             queue = ReviewQueue(Cards.dueItems(at: Date()).shuffled())
+        }
+        for item in queue.items where seen[item.card.id] == nil {
+            seen[item.card.id] = SessionCard(card: item.card, before: item.card.rank)
         }
         picked = Dictionary(
             queue.items.compactMap { item in
