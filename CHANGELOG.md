@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **On the Mac, each pitch choice shows the key that picks it**: the downstep's number, 0 for flat, as the choices are laid out.
+
 ### build 43 — 2026-10-08
 
 - **On a phone the camera stands on the drawer's edge, at the thumb's side**, and the next-page button at the other end; the page's own column is the spread's way out and the zoom, so a reach for the zoom can't take a photo.
