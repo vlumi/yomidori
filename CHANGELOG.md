@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 45 — 2026-10-09
+
 - **On the iPad, a card or an entry beside its list keeps its title small in the bar**: large, it only repeated the header under it, flush with the column's edge.
 - **On the Mac, the review's answer sits under its question without the sidebar jumping away**, and a picture on Read fits its pane again when the window is resized, until you zoom it yourself.
 - **A burst of changes reloads each screen once.** A sync applying many cards at once had every card screen reload per card; now they reload a moment after the last, which also keeps an iPad from stalling at launch.
