@@ -88,7 +88,7 @@ struct ReviewView: View {
     /// question on a Mac, where the bottom of a window is nowhere in particular.
     private func review(_ item: ReviewItem) -> some View {
         VStack(alignment: .leading, spacing: 20) {
-            ScrollView {
+            QuestionRoom {
                 VStack(alignment: .leading, spacing: 20) {
                     ReviewFront(
                         card: item.card, sightingID: picked[Self.key(item)],
@@ -102,8 +102,6 @@ struct ReviewView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .scrollBounceBehavior(.basedOnSize)
-            .questionHeight()
             // Which question this is and how many remain, right above the answer.
             tagRow(item)
             if revealed {
@@ -390,14 +388,18 @@ extension ReviewView {
     }
 }
 
-extension View {
-    /// The question's room: whatever is left over the answer on a phone; its own height on
-    /// a Mac, so the answer follows it rather than the window's bottom.
-    fileprivate func questionHeight() -> some View {
+/// The question's room: a scroll view on a phone, so a long sentence shows whole over the
+/// answer at the bottom; on a Mac the question as it is, the answer following it — a
+/// scroll view sized to its content there scrolled the window's sidebar out of sight the
+/// moment the answer's field took focus.
+private struct QuestionRoom<Content: View>: View {
+    @ViewBuilder let content: () -> Content
+
+    var body: some View {
         #if os(macOS)
-        fixedSize(horizontal: false, vertical: true)
+        content()
         #else
-        self
+        ScrollView { content() }.scrollBounceBehavior(.basedOnSize)
         #endif
     }
 }

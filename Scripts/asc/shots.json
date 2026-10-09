@@ -63,7 +63,8 @@
       ],
       "demo": {
         "TAB": "search",
-        "SEARCH": "みる"
+        "SEARCH": "みる",
+        "ENTRY": "見る"
       }
     },
     "review": {
@@ -113,7 +114,8 @@
         "mac"
       ],
       "demo": {
-        "TAB": "cards"
+        "TAB": "cards",
+        "CARD": "名前"
       }
     },
     "progress": {

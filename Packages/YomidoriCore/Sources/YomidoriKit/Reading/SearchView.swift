@@ -28,7 +28,7 @@ struct SearchView: View {
         split
         #else
         phoneOrPad
-            .background { fieldShortcut }
+            .background { FieldShortcut(focus: focusField) }
         #endif
     }
 
@@ -64,18 +64,6 @@ struct SearchView: View {
     }
     #endif
 
-    /// ⌘F: the field, from anywhere in the dictionary.
-    private var fieldShortcut: some View {
-        Button {
-            focusField()
-        } label: {
-            EmptyView()
-        }
-        .keyboardShortcut("f", modifiers: .command)
-        .frame(width: 0, height: 0)
-        .opacity(0)
-    }
-
     /// A split's entry column: the entry picked, a result or a line of the history, with
     /// what it opens pushed over it.
     @State private var detailPath = NavigationPath()
@@ -94,7 +82,7 @@ struct SearchView: View {
 
     private var split: some View {
         searching(splitColumns.fittingWindow())
-            .background { fieldShortcut }
+            .background { FieldShortcut(focus: focusField) }
     }
 
     private var field: some View {
@@ -327,6 +315,10 @@ struct SearchView: View {
         }.value
         guard !Task.isCancelled else { return }
         results = found.results
+        // The demo's entry, picked once among the results, for a split's entry column.
+        if pickedResult == nil, let name = DemoMode.entry {
+            pickedResult = results.first { $0.headword == name }?.id
+        }
         accents = found.accents
         estimates = found.estimates
         kept = Cards.keptWords()
