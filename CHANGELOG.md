@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 46 — 2026-10-09
+
 - **The counts of what is due catch up at once** when the app comes back to the front, and by the minute while it stays there; before, Home, Study and the tab's badge kept the number from the last time a card changed, and a review opened on dozens where they said three.
 
 ### build 45 — 2026-10-09
