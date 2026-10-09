@@ -14,7 +14,40 @@ struct PadColumns<Column: View, Detail: View>: View {
             NavigationStack { column() }
                 .frame(width: Self.columnWidth)
             Divider().ignoresSafeArea()
-            detail()
+            detail().environment(\.inPadColumns, true)
         }
+    }
+}
+
+private struct InPadColumnsKey: EnvironmentKey {
+    static let defaultValue = false
+}
+
+extension EnvironmentValues {
+    /// Whether the view stands in a `PadColumns` detail, where the list is beside it.
+    var inPadColumns: Bool {
+        get { self[InPadColumnsKey.self] }
+        set { self[InPadColumnsKey.self] = newValue }
+    }
+}
+
+/// A screen's title small in the bar when the screen stands in a column: large, it only
+/// repeated the header right under it, flush with the column's edge. A phone keeps the
+/// large title, which its header scrolls away under.
+private struct ColumnTitle: ViewModifier {
+    @Environment(\.inPadColumns) private var inColumns
+
+    func body(content: Content) -> some View {
+        #if os(iOS)
+        content.navigationBarTitleDisplayMode(inColumns ? .inline : .automatic)
+        #else
+        content
+        #endif
+    }
+}
+
+extension View {
+    func columnTitle() -> some View {
+        modifier(ColumnTitle())
     }
 }

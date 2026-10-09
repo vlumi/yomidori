@@ -45,7 +45,7 @@ struct SearchView: View {
                 NavigationStack(path: $detailPath) {
                     Group {
                         if let picked {
-                            EntryView(entry: picked).id(picked.id)
+                            EntryView(entry: picked).id(picked.id).columnTitle()
                         } else {
                             Text("A result or a word looked up opens here.", bundle: .module)
                                 .foregroundStyle(.secondary)
