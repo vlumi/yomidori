@@ -81,14 +81,15 @@
     },
     "lesson": {
       "title": "A lesson",
-      "about": "A card met for the first time: the word, its sentence, its meaning, the kanji — start it or leave it for later.",
+      "about": "A card met for the first time, the first page of a lesson: the word, its sentence, its meaning, the kanji — Drop, Later or Next, and Start practice on the last.",
       "platforms": [
         "iphone",
         "ipad"
       ],
       "demo": {
         "TAB": "study",
-        "SCREEN": "lesson"
+        "SCREEN": "lesson",
+        "BEGIN": "1"
       }
     },
     "study": {
