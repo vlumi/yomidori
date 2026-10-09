@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A burst of changes reloads each screen once.** A sync applying many cards at once had every card screen reload per card; now they reload a moment after the last, which also keeps an iPad from stalling at launch.
+
 ### build 44 — 2026-10-08
 
 - **On the iPad, Cards and the Dictionary are two plain columns**, as on the Mac, so the top of each column no longer slips under the tab bar or leaves a blank band after the columns are hidden and shown or the iPad turns.

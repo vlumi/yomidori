@@ -19,12 +19,17 @@ enum Cards {
     static let didChange = Notification.Name("fi.misaki.yomidori.storesDidChange")
 
     /// Writes to the stores of `kinds`, so a lookup noted doesn't reload the card screens.
-    static func changes(of kinds: Set<SyncKind>)
-        -> Publishers.Filter<NotificationCenter.Publisher>
-    {
-        NotificationCenter.default.publisher(for: didChange).filter { note in
-            (note.object as? String).flatMap(SyncKind.init(rawValue:)).map(kinds.contains) ?? true
-        }
+    /// A burst of writes — a sync applying a hundred records, the demo seeding its cards —
+    /// comes through as one, a moment after the last: each screen reloads once, not once
+    /// per card, which kept an iPad busy past its launch.
+    static func changes(of kinds: Set<SyncKind>) -> AnyPublisher<Notification, Never> {
+        NotificationCenter.default.publisher(for: didChange)
+            .filter { note in
+                (note.object as? String).flatMap(SyncKind.init(rawValue:)).map(kinds.contains)
+                    ?? true
+            }
+            .debounce(for: .milliseconds(120), scheduler: RunLoop.main)
+            .eraseToAnyPublisher()
     }
     /// The settings the screens write to: the demo's own suite in the demo.
     static var defaults: UserDefaults { DemoMode.defaults ?? .standard }
