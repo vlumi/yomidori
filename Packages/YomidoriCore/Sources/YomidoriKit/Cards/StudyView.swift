@@ -5,6 +5,7 @@ import YomidoriCore
 struct StudyView: View {
     @State private var cards: [Card] = []
     @State private var dueCount = 0
+    @Environment(\.scenePhase) private var scenePhase
     @State private var upcoming = Upcoming()
     /// All the questions, or one: what Coming up and Ranks show.
     @State private var question: Question?
@@ -129,6 +130,10 @@ struct StudyView: View {
             }
         }
         .onAppear(perform: reload)
+        // What is due moves with the clock: counted again on return to the front and by
+        // the minute, not only when a card changes.
+        .onChange(of: scenePhase) { _, phase in if phase == .active { reload() } }
+        .onReceive(DueClock.ticks) { _ in reload() }
         .onChange(of: question) { reload() }
         .onChange(of: days) { reload() }
         .onReceive(Cards.changes(of: [.card])) { _ in reload() }
