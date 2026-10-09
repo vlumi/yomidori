@@ -10,11 +10,15 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 **One bullet, one line — no hard wrapping.** Editors soft-wrap and rendered Markdown ignores the line breaks, while hard wraps make an edited entry re-flow into a diff nobody can read. **Order the unreleased list by what a reader notices**, not by merge order, and fold entries that tell one story into one bullet.
 
-## v0.1.0
+## v1.0.0
 
 ### Unreleased (next build)
 
+### build 47 — 2026-10-09
+
 - **Japanese wording tidied**: the study buttons' "nothing due" and "none waiting", the forget and keep actions, the repeat's tag, the Coming up footers, and the keyboard hints' punctuation, made consistent.
+
+## v0.1.0
 
 ### build 46 — 2026-10-09
 
