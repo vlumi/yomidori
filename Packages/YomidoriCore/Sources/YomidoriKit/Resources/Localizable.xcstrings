@@ -637,6 +637,16 @@
         }
       }
     },
+    "At rank %lld" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ランク %lld"
+          }
+        }
+      }
+    },
     "Back" : {
       "localizations" : {
         "ja" : {
@@ -1400,7 +1410,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カードを忘れる (⌘⌫)"
+            "value" : "カードを忘れる（⌘⌫）"
           }
         }
       }
@@ -1420,7 +1430,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "このカードを捨てる"
+            "value" : "このカードを忘れる"
           }
         }
       }
@@ -1790,7 +1800,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "単語を保存 (⌘K)"
+            "value" : "言葉を残す（⌘K）"
           }
         }
       }
@@ -1875,16 +1885,6 @@
         }
       }
     },
-    "Lesson · %lld waiting" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レッスン · 待機中 %lld"
-          }
-        }
-      }
-    },
     "Licenses and notices" : {
       "localizations" : {
         "ja" : {
@@ -1920,7 +1920,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この端末ではテキスト認識表示を使えません。"
+            "value" : "この端末では Live Text を使えません。"
           }
         }
       }
@@ -2215,22 +2215,12 @@
         }
       }
     },
-    "None chosen means all of them." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "何も選ばなければすべてのコレクションから出題します。"
-          }
-        }
-      }
-    },
     "None waiting" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "待機中はありません"
+            "value" : "待機なし"
           }
         }
       }
@@ -2290,7 +2280,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "復習はありません"
+            "value" : "今はなし"
           }
         }
       }
@@ -2400,7 +2390,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "もう一度"
+            "value" : "やり直し"
           }
         }
       }
@@ -2610,7 +2600,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "後回しにする (⌘L)"
+            "value" : "あとに回す（⌘L）"
           }
         }
       }
@@ -2650,7 +2640,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "日ごとの出題数。今日の分には期限切れも含みます。棒に触れると数が出ます。"
+            "value" : "日ごとの問題数。今日の分には期限を過ぎたものも入ります。棒に触れると数が出ます。"
           }
         }
       }
@@ -2660,7 +2650,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "6時間ごとに期限が来る問いを、問いの種類の色で。いまの棒には期限切れの分も入ります。棒に触れると数が見られます。"
+            "value" : "一日を四つに分けた時間帯ごとの問題数を、問題の種類の色で示します。今の時間帯には期限を過ぎたものも入ります。棒に触れると数が出ます。"
           }
         }
       }
@@ -2921,16 +2911,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "復習"
-          }
-        }
-      }
-    },
-    "Review %lld" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "復習 %lld"
           }
         }
       }
@@ -3310,7 +3290,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カードを始めて練習する (↩)"
+            "value" : "カードを始めて練習する（↩）"
           }
         }
       }
@@ -3608,7 +3588,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "次のカード (↩)"
+            "value" : "次のカード（↩）"
           }
         }
       }
@@ -3868,7 +3848,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "写真をどちらの認識器で読むか"
+            "value" : "どちらの認識エンジンで写真を読むか"
           }
         }
       }

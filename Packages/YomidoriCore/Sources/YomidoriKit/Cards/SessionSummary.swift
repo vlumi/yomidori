@@ -116,7 +116,7 @@ struct SessionSummary: View {
 
     private func rankLabel(_ seen: SessionCard) -> Text {
         let after = seen.after.number ?? 0
-        if seen.after == seen.before { return Text("Rank \(after)", bundle: .module) }
+        if seen.after == seen.before { return Text("At rank \(after)", bundle: .module) }
         return Text("From rank \(seen.before.number ?? 0) to rank \(after)", bundle: .module)
     }
 
