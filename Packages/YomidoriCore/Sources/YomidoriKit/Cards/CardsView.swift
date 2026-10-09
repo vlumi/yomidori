@@ -334,7 +334,7 @@ struct CardsView: View {
     @ViewBuilder private var detail: some View {
         let picked = shownSelection
         if picked.count == 1, let card = cards.first(where: { picked.contains($0.id) }) {
-            CardView(card: card).id(card.id)
+            CardView(card: card).id(card.id).columnTitle()
         } else if picked.count > 1 {
             CardsBatch(picked: $picked, cards: cards, collections: collections)
                 .frame(maxWidth: 360)

@@ -24,18 +24,19 @@ struct Destinations: ViewModifier {
                         ReviewView(practicing: Set(cards))
                     }
                 }
+                .columnTitle()
             }
             .navigationDestination(for: Card.self) { card in
-                CardView(card: card)
+                CardView(card: card).columnTitle()
             }
             .navigationDestination(for: DictionaryEntry.self) { entry in
-                EntryView(entry: entry)
+                EntryView(entry: entry).columnTitle()
             }
             .navigationDestination(for: KanjiEntry.self) { kanji in
-                KanjiView(kanji: kanji)
+                KanjiView(kanji: kanji).columnTitle()
             }
             .navigationDestination(for: Collection.self) { collection in
-                CollectionEditor(collection: collection)
+                CollectionEditor(collection: collection).columnTitle()
             }
     }
 }
