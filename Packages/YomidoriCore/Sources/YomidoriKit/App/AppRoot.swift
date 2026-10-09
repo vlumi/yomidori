@@ -185,6 +185,8 @@ public struct AppRoot: View {
                 Sync.shared.start()
                 Sync.shared.fetch()
                 Cards.snapshotRanks()
+                // Back after hours away: what came due meanwhile is due now.
+                dueCount = Cards.dueItems(at: Date()).count
             }
             // And when the phone unlocks, should a push have launched the app while it was
             // locked and the stores unreadable.
@@ -200,6 +202,8 @@ public struct AppRoot: View {
             dueCount = Cards.dueItems(at: Date()).count
             AppBadge.refresh()
         }
+        // And by the minute while the app stays in front, as questions come due.
+        .onReceive(DueClock.ticks) { _ in dueCount = Cards.dueItems(at: Date()).count }
     }
 
     /// The tab, and a tap on the one already showing, which the binding sees as a set to

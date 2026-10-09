@@ -142,7 +142,21 @@ enum Cards {
         store?.dueItems(at: date, asksPitch: { !accents(of: $0).isEmpty }) ?? []
     }
 
+    /// A word's accents, looked up once: the due count asks for every card in review, and
+    /// asks again by the minute.
     static func accents(of card: Card) -> [PitchAccent] {
-        JMdict.bundled?.pitchAccents(for: card.headword, reading: card.reading) ?? []
+        let key = card.wordKey
+        if let known = accentsLock.withLock({ knownAccents[key] }) { return known }
+        let found = JMdict.bundled?.pitchAccents(for: card.headword, reading: card.reading) ?? []
+        accentsLock.withLock { knownAccents[key] = found }
+        return found
     }
+
+    private static let accentsLock = NSLock()
+    nonisolated(unsafe) private static var knownAccents: [String: [PitchAccent]] = [:]
+}
+
+/// A tick a minute, on the main thread, for the counts that move with the clock.
+enum DueClock {
+    static let ticks = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
 }

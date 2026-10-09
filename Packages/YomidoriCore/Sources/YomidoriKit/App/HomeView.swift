@@ -8,6 +8,7 @@ struct HomeView: View {
     /// Review and the lesson open on the Study tab, where they live, not over Home.
     let study: (Screen) -> Void
     @State private var dueCount = 0
+    @Environment(\.scenePhase) private var scenePhase
     @State private var waitingCount = 0
 
     var body: some View {
@@ -79,6 +80,10 @@ struct HomeView: View {
             }
         }
         .onAppear(perform: reload)
+        // What is due moves with the clock: counted again on return to the front and by
+        // the minute, not only when a card changes.
+        .onChange(of: scenePhase) { _, phase in if phase == .active { reload() } }
+        .onReceive(DueClock.ticks) { _ in reload() }
         .onReceive(Cards.changes(of: [.card])) { _ in reload() }
     }
 
