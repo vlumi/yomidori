@@ -21,6 +21,19 @@ public enum DemoMode {
         return AppTab(rawValue: CommandLine.arguments[index + 1])
     }
 
+    /// `-yomidori-card 名前` picks that card in Cards, so a split shows it beside the list.
+    static var card: String? { value(after: "-yomidori-card") }
+
+    /// `-yomidori-entry 見る` picks that result in the dictionary, for its entry column.
+    static var entry: String? { value(after: "-yomidori-entry") }
+
+    private static func value(after flag: String) -> String? {
+        guard isRequested, let index = CommandLine.arguments.firstIndex(of: flag),
+            index + 1 < CommandLine.arguments.count
+        else { return nil }
+        return CommandLine.arguments[index + 1]
+    }
+
     /// `-yomidori-begin` begins the lesson at once, past its setup, for a look at its pages.
     static var beginsLesson: Bool {
         isRequested && CommandLine.arguments.contains("-yomidori-begin")

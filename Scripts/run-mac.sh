@@ -5,6 +5,9 @@
 #   SCREEN=review|lesson|progress|settings|about|collections   pushed on that tab
 #   SEARCH=<text>                      the search field filled
 #   PICK=<text>                        Read opened with that text selected (demo only)
+#   CARD=<headword>                    Cards opened with that card picked (demo only)
+#   ENTRY=<headword>                   Dictionary opened with that result picked (demo only)
+#   APPEARANCE=light|dark|system       the look (demo only; light unless set)
 #   DEMO_LANG=en|ja                    the app's language (the system's otherwise)
 #   SHOTS=<seconds>                    a picture of the window saved to the app's container that often
 #   BUILD=0                            open the last build without building again
@@ -42,6 +45,11 @@ if [ -n "${DEMO:-}" ]; then
     [ -n "${SCREEN:-}" ] && args+=(-yomidori-screen "$SCREEN")
     [ -n "${SEARCH:-}" ] && args+=(-yomidori-search "$SEARCH")
     [ -n "${PICK:-}" ] && args+=(-yomidori-pick "$PICK")
+    [ -n "${CARD:-}" ] && args+=(-yomidori-card "$CARD")
+    [ -n "${ENTRY:-}" ] && args+=(-yomidori-entry "$ENTRY")
+    # The demo in the light look unless asked otherwise, whatever the Mac is set to: the
+    # store's pictures are light.
+    args+=(-appearance "${APPEARANCE:-light}")
 fi
 [ -n "${DEMO_LANG:-}" ] && args+=(-AppleLanguages "($DEMO_LANG)")
 # Quit the running one properly, so it leaves no half-written window state behind: a

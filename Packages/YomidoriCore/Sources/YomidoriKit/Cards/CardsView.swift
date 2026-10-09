@@ -381,6 +381,10 @@ extension CardsView {
     func reload() {
         cards = (Cards.store?.cards() ?? []).sorted { $0.created > $1.created }
         collections = Cards.collections?.collections() ?? []
+        // The demo's card, picked once the cards are in, for a split with its detail shown.
+        if picked.isEmpty, let name = DemoMode.card {
+            picked = Set(cards.filter { $0.headword == name }.prefix(1).map(\.id))
+        }
         // The kinds of word of cards not seen before, from the first sense of each entry; a
         // card kept without its entry's id is looked up by its word. Off the main thread: a
         // thousand cards are a thousand dictionary queries, a second's worth.

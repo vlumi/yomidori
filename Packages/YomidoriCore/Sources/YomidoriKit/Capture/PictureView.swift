@@ -41,6 +41,10 @@ struct PictureView: NSViewRepresentable {
         container.overlay.preferredInteractionTypes = .textSelection
         scroll.documentView = container
         context.coordinator.container = container
+        // Fitted to the pane as it is at launch, the picture would stay that size when the
+        // window grew: refitted on every resize until the reader zooms it themselves.
+        scroll.contentView.postsFrameChangedNotifications = true
+        context.coordinator.observe(scroll)
         return scroll
     }
 
@@ -111,6 +115,7 @@ struct PictureView: NSViewRepresentable {
         /// view, where reading starts.
         func fit(in scroll: NSScrollView) {
             guard let image = imageView.image, image.size.width > 0 else { return }
+            fitted = true
             frame = NSRect(origin: .zero, size: image.size)
             let width = scroll.contentSize.width
             let magnification = min(
@@ -122,9 +127,13 @@ struct PictureView: NSViewRepresentable {
 
         /// A step of zoom about the middle of what is in view, or back to the fit or the
         /// pixels.
+        /// Whether the picture stands as fitted, to be fitted again when the pane changes.
+        var fitted = false
+
         func zoom(_ kind: ZoomKind, in scroll: NSScrollView) {
             let visible = scroll.contentView.bounds
             let middle = NSPoint(x: visible.midX, y: visible.midY)
+            fitted = kind == .fit
             switch kind {
             case .fit: fit(in: scroll)
             case .actual: scroll.setMagnification(1, centeredAt: middle)
@@ -138,9 +147,37 @@ struct PictureView: NSViewRepresentable {
         weak var container: FittingImageView?
         var zoomApplied = 0
         private let selection: LiveTextSelection
+        private var observers: [any NSObjectProtocol] = []
 
         init(selection: LiveTextSelection) {
             self.selection = selection
+        }
+
+        deinit {
+            for observer in observers { NotificationCenter.default.removeObserver(observer) }
+        }
+
+        /// The pane resized: a fitted picture is fitted again. A pinch ends the fit.
+        func observe(_ scroll: NSScrollView) {
+            let center = NotificationCenter.default
+            observers.append(
+                center.addObserver(
+                    forName: NSView.frameDidChangeNotification, object: scroll.contentView,
+                    queue: .main
+                ) { [weak self, weak scroll] _ in
+                    MainActor.assumeIsolated {
+                        guard let container = self?.container, let scroll, container.fitted
+                        else { return }
+                        container.fit(in: scroll)
+                    }
+                })
+            observers.append(
+                center.addObserver(
+                    forName: NSScrollView.didEndLiveMagnifyNotification, object: scroll,
+                    queue: .main
+                ) { [weak self] _ in
+                    MainActor.assumeIsolated { self?.container?.fitted = false }
+                })
         }
 
         func textSelectionDidChange(_ overlayView: ImageAnalysisOverlayView) {
