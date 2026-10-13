@@ -31,10 +31,19 @@ struct CardFacts: View {
                     let good = card.answers(to: question, graded: .good)
                     let again = card.answers(to: question, graded: .again)
                     LabeledContent {
-                        HStack(spacing: 6) {
-                            RankMark(rank: card.rank(for: question), size: 22)
-                                .accessibilityLabel(RankName.text(for: card.rank(for: question)))
-                            Text("\(good) good · \(again) again", bundle: .module)
+                        VStack(alignment: .trailing, spacing: 2) {
+                            HStack(spacing: 6) {
+                                RankMark(rank: card.rank(for: question), size: 22)
+                                    .accessibilityLabel(
+                                        RankName.text(for: card.rank(for: question)))
+                                Text("\(good) good · \(again) again", bundle: .module)
+                            }
+                            // When the question comes back: now, or how far off.
+                            if let due = card.state(for: question)?.due {
+                                NextReview(due: due)
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     } label: {
                         QuestionName(question: question)
@@ -54,6 +63,19 @@ struct QuestionName: View {
         case .reading: Text("Reading", bundle: .module)
         case .meaning: Text("Meaning", bundle: .module)
         case .pitch: Text("Pitch", bundle: .module)
+        }
+    }
+}
+
+/// "Due now" once the date has come, else the time until it, as the clock counts it.
+struct NextReview: View {
+    let due: Date
+
+    var body: some View {
+        if due <= Date() {
+            Text("Due now", bundle: .module)
+        } else {
+            Text("Next in \(due, style: .relative)", bundle: .module)
         }
     }
 }
