@@ -83,13 +83,28 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     public var isWaiting: Bool { started == nil && !shelved }
     public var isInReview: Bool { started != nil && !shelved }
 
-    /// The reading and the meaning are always asked; the pitch only when it is known.
+    /// A word written in kana alone has no reading to ask: its headword is its reading.
+    public var asksReading: Bool { !Kana.isKana(headword) }
+
+    /// The questions the card is asked at all: the meaning always, the reading unless the
+    /// word is kana, the pitch only when one is known. A reading once asked of a kana card
+    /// is asked no more; its answers stay in the log.
+    public func questions(asksPitch: @autoclosure () -> Bool) -> [Question] {
+        Question.allCases.filter { question in
+            switch question {
+            case .reading: return asksReading
+            case .meaning: return true
+            case .pitch: return asksPitch()
+            }
+        }
+    }
+
     /// `asksPitch` is asked only when the pitch question is due, since it costs a lookup.
     public func dueQuestions(at date: Date, asksPitch: @autoclosure () -> Bool) -> [Question] {
         guard isInReview else { return [] }
         return Question.allCases.filter { question in
             (state(for: question).map { $0.due <= date } ?? true)
-                && (question != .pitch || asksPitch())
+                && questions(asksPitch: question == .pitch && asksPitch()).contains(question)
         }
     }
 
