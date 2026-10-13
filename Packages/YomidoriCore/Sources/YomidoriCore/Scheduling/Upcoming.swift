@@ -145,7 +145,7 @@ public struct Upcoming: Equatable, Sendable {
         }
         var later = 0
         for card in cards where card.isInReview {
-            for question in Question.allCases where question != .pitch || asksPitch(card) {
+            for question in card.questions(asksPitch: asksPitch(card)) {
                 if let only, question != only { continue }
                 let rank = only == nil ? card.rank : card.rank(for: question)
                 let due = max(card.state(for: question)?.due ?? now, now)

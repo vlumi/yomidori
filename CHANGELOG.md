@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A word written in kana alone is no longer asked its reading**: its headword is its reading. Cards that already had a reading question keep its answers in the log but are asked only the meaning and the pitch from now on, and rank by those.
+- **A word's readings are listed once each**: an entry with うんざり and ウンザリ showed the same reading and pitch twice.
 - **The numbers stand out**: what is due and waiting on the Review and Lesson buttons, what remains in a review, and the lesson's page count are big and plain where they were small and gray.
 
 ### build 47 — 2026-10-09
