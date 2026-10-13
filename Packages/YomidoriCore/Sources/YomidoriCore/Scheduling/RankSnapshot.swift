@@ -25,7 +25,8 @@ public struct RankSnapshot: Codable, Equatable, Sendable {
         }
         for card in cards {
             counts[card.rank.index] += 1
-            for question in Question.allCases {
+            // A kana word's reading is not asked, so it has no rank to count.
+            for question in Question.allCases where question != .reading || card.asksReading {
                 byQuestion[question.rawValue]?[card.rank(for: question).index] += 1
             }
         }
