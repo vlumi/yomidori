@@ -32,8 +32,9 @@ struct WordSections: View {
 
     private func readings(_ entry: DictionaryEntry) -> some View {
         Section {
-            ForEach(entry.readings, id: \.self) { reading in
-                let kana = Kana.hiragana(reading)
+            // Each reading once, in hiragana: an entry that lists うんざり and ウンザリ has
+            // one reading to show, not the same one twice.
+            ForEach(Self.kanaReadings(of: entry), id: \.self) { kana in
                 HStack(spacing: 10) {
                     if let accents = details.accents[kana], !accents.isEmpty {
                         ForEach(accents.indices, id: \.self) { index in
@@ -54,6 +55,12 @@ struct WordSections: View {
         } header: {
             Text("Readings", bundle: .module)
         }
+    }
+
+    /// The entry's readings in hiragana, the first of each spelling kept.
+    static func kanaReadings(of entry: DictionaryEntry) -> [String] {
+        var seen: Set<String> = []
+        return entry.readings.map(Kana.hiragana).filter { seen.insert($0).inserted }
     }
 
     private func senses(_ entry: DictionaryEntry) -> some View {
