@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A word the recognizer broke over a line is read whole**: 不気 at the foot of one column and 味 at the head of the next, or one character to a line, join into 不気味 when the dictionary knows it, lit on the picture as one.
+
 ### build 47 — 2026-10-09
 
 - **Japanese wording tidied**: the study buttons' "nothing due" and "none waiting", the forget and keep actions, the repeat's tag, the Coming up footers, and the keyboard hints' punctuation, made consistent.

@@ -4,7 +4,7 @@ import XCTest
 
 final class PageReadingTests: XCTestCase {
     private struct Stub: WordDictionary {
-        let words: Set<String> = ["樹皮", "匂い", "部屋", "漂う", "見当がつく"]
+        var words: Set<String> = ["樹皮", "匂い", "部屋", "漂う", "見当がつく"]
 
         func entries(matching text: String) -> [DictionaryEntry] {
             guard words.contains(text) else { return [] }
@@ -23,6 +23,37 @@ final class PageReadingTests: XCTestCase {
 
     private func read() -> PageReading {
         PageReading(text: text, tokens: SystemTokenizer().tokens(in:), dictionary: Stub())
+    }
+
+    func testAWordBrokenOverALineIsJoinedWhenTheDictionaryKnowsIt() {
+        var stub = Stub()
+        stub.words.formUnion(["もっと", "不気味", "気味", "不", "気", "味"])
+        let text = "もっと不気\n味だ"
+        let page = PageReading(text: text, tokens: SystemTokenizer().tokens(in:), dictionary: stub)
+        let word = page.chunks.first { $0.surface == "不気味" }
+        XCTAssertNotNil(word)
+        XCTAssertEqual(word?.line, 0)
+        XCTAssertEqual(word?.range, 3..<7)
+        XCTAssertTrue(page.spansLines(3..<7))
+        XCTAssertEqual(page.chunksByLine[1].map(\.surface), ["だ"])
+        XCTAssertEqual(page.chunks.map(\.id), Array(page.chunks.indices))
+        XCTAssertEqual(page.chunksByLine.flatMap { $0 }.map(\.id), page.chunks.map(\.id))
+    }
+
+    func testOneCharacterToALineJoinsTheWholeWordNotTheShorterTail() {
+        var stub = Stub()
+        stub.words.formUnion(["不気味", "気味", "不", "気", "味"])
+        let page = PageReading(
+            text: "不\n気\n味だ", tokens: SystemTokenizer().tokens(in:), dictionary: stub)
+        XCTAssertEqual(page.chunks.filter(\.isWord).map(\.surface), ["不気味"])
+        XCTAssertEqual(page.chunks.first?.range, 0..<5)
+        XCTAssertEqual(page.chunksByLine.map { $0.map(\.surface) }, [["不気味"], [], ["だ"]])
+    }
+
+    func testNoJoinWithoutTheDictionary() {
+        let page = PageReading(
+            text: "部屋に\n漂っていた。", tokens: SystemTokenizer().tokens(in:), dictionary: Stub())
+        XCTAssertEqual(page.chunksByLine[1].first?.surface, "漂っ")
     }
 
     func testThePageIsCutOnceIntoChunksThatCoverItWhole() {
