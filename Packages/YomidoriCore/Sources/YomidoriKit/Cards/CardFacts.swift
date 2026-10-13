@@ -27,7 +27,7 @@ struct CardFacts: View {
                 Text("Modified", bundle: .module)
             }
             ForEach(Question.allCases, id: \.self) { question in
-                if card.state(for: question) != nil {
+                if card.state(for: question) != nil, question != .reading || card.asksReading {
                     let good = card.answers(to: question, graded: .good)
                     let again = card.answers(to: question, graded: .again)
                     LabeledContent {

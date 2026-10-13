@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A word written in kana alone is no longer asked its reading**: its headword is its reading. Cards that already had a reading question keep its answers in the log but are asked only the meaning and the pitch from now on, and rank by those.
+
 ### build 47 — 2026-10-09
 
 - **Japanese wording tidied**: the study buttons' "nothing due" and "none waiting", the forget and keep actions, the repeat's tag, the Coming up footers, and the keyboard hints' punctuation, made consistent.
