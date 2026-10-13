@@ -7,11 +7,13 @@ final class WordFinderTests: XCTestCase {
         let headwords: [String]
 
         var functionWords: [String] = []
+        /// The headwords that conjugate: a stem finds only these.
+        var verbs: Set<String> = ["照らす", "目が眩む", "眩む"]
 
         func entries(matching text: String) -> [DictionaryEntry] {
             guard headwords.contains(text) || functionWords.contains(text) else { return [] }
-            let sense = DictionaryEntry.Sense(
-                partsOfSpeech: functionWords.contains(text) ? ["aux-v"] : ["n"], glosses: ["g"])
+            let kind = functionWords.contains(text) ? "aux-v" : verbs.contains(text) ? "v5s" : "n"
+            let sense = DictionaryEntry.Sense(partsOfSpeech: [kind], glosses: ["g"])
             return [
                 DictionaryEntry(
                     id: text.hashValue, kanji: [text], readings: [], senses: [sense], common: true)
@@ -37,6 +39,21 @@ final class WordFinderTests: XCTestCase {
             return Token(
                 surface: cut.surface, reading: cut.reading, range: index..<end, isWord: cut.isWord)
         }
+    }
+
+    func testADeinflectedStemFindsVerbsNotNounsSpelledLikeTheirForms() {
+        // 欠 lost by the recognizer left にけ before ます: a stem in け could be にく's, and
+        // 肉 is にく — but 肉 does not conjugate, so にけ is no word, not meat.
+        let dictionary = Tagged(words: ["にく": [("にく", "n")], "頷く": [("うなずく", "v5k")]])
+        let left = tokens(
+            "にけます", [Cut(surface: "にけ", reading: "にけ"), Cut(surface: "ます", reading: "ます")])
+        // Nothing to show: kana with no word behind it is an ending or a fragment.
+        XCTAssertTrue(WordFinder.words(in: left, dictionary: dictionary).isEmpty)
+        let nodded = tokens(
+            "頷いた", [Cut(surface: "頷い", reading: "うなずい"), Cut(surface: "た", reading: "た")])
+        XCTAssertEqual(
+            WordFinder.words(in: nodded, dictionary: dictionary).first?.entries.first?.headword,
+            "頷く")
     }
 
     func testAJoinedStemKnowsTheFormItWasLookedUpUnder() {
