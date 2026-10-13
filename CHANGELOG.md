@@ -20,6 +20,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 - **A card says when each question comes back**, under its answers: due now, or the time until the next review.
 - **The camera rests while the app is away and is up again when it comes back**, so the first photo after the phone was in a pocket no longer waits several seconds.
 - **A reading typed wrong is shown against the right one, kana by kana**: the kana that should not be there struck through in red, the ones missing underlined in green, so a typo reads as one wrong kana and a wrong reading as a different word.
+- **A word the recognizer broke over a line is read whole**: 不気 at the foot of one column and 味 at the head of the next, or one character to a line, join into 不気味 when the dictionary knows it, lit on the picture as one.
 
 ### build 47 — 2026-10-09
 
