@@ -163,16 +163,6 @@
         }
       }
     },
-    "%lld due" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 問"
-          }
-        }
-      }
-    },
     "%lld good · %lld again" : {
       "localizations" : {
         "ja" : {
@@ -1163,6 +1153,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld拍目の後で下がる"
+          }
+        }
+      }
+    },
+    "due" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問"
           }
         }
       }
@@ -3809,6 +3809,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vision"
+          }
+        }
+      }
+    },
+    "waiting" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "待機中"
           }
         }
       }

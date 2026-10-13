@@ -196,8 +196,7 @@ struct LessonView: View {
         let index = cards.firstIndex { $0.id == current } ?? 0
         return VStack(spacing: 10) {
             Text(verbatim: "\(index + 1) / \(cards.count)")
-                .font(.caption.monospacedDigit())
-                .foregroundStyle(.secondary)
+                .font(.headline.monospacedDigit())
                 .accessibilityLabel(Text("Card \(index + 1) of \(cards.count)", bundle: .module))
             FitsOrStacks {
                 actions(at: index, in: cards)

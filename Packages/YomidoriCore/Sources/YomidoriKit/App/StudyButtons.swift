@@ -8,18 +8,15 @@ import YomidoriCore
 enum StudyButtons {
     static func review(due: Int) -> some View {
         FatLabel(
-            title: Text("Review", bundle: .module),
-            detail: due > 0
-                ? Text("\(due) due", bundle: .module) : Text("Nothing due", bundle: .module),
+            title: Text("Review", bundle: .module), number: due,
+            noun: Text("due", bundle: .module), none: Text("Nothing due", bundle: .module),
             symbol: "checkmark.rectangle.stack")
     }
 
     static func lesson(waiting: Int) -> some View {
         FatLabel(
-            title: Text("Lesson", bundle: .module),
-            detail: waiting > 0
-                ? Text("\(waiting) waiting", bundle: .module)
-                : Text("None waiting", bundle: .module),
+            title: Text("Lesson", bundle: .module), number: waiting,
+            noun: Text("waiting", bundle: .module), none: Text("None waiting", bundle: .module),
             symbol: "book")
     }
 
@@ -28,10 +25,13 @@ enum StudyButtons {
     static let lessonColor = Rank.flying.color
 }
 
-/// The symbol over the name over the count, centered, filling the button.
+/// The symbol over the name over the count, centered, filling the button: the number big,
+/// since it is what the button is for, its noun small beside it.
 private struct FatLabel: View {
     let title: Text
-    let detail: Text
+    let number: Int
+    let noun: Text
+    let none: Text
     let symbol: String
 
     var body: some View {
@@ -41,9 +41,20 @@ private struct FatLabel: View {
                 .padding(.bottom, 2)
             title
                 .font(.headline)
-            detail
-                .font(.subheadline.monospacedDigit())
-                .opacity(0.85)
+            if number > 0 {
+                HStack(alignment: .firstTextBaseline, spacing: 4) {
+                    Text(verbatim: "\(number)")
+                        .font(.title.weight(.bold).monospacedDigit())
+                    noun
+                        .font(.subheadline)
+                        .opacity(0.85)
+                }
+                .accessibilityElement(children: .combine)
+            } else {
+                none
+                    .font(.subheadline)
+                    .opacity(0.85)
+            }
         }
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity)

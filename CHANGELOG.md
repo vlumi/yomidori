@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The numbers stand out**: what is due and waiting on the Review and Lesson buttons, what remains in a review, and the lesson's page count are big and plain where they were small and gray.
+
 ### build 47 — 2026-10-09
 
 - **Japanese wording tidied**: the study buttons' "nothing due" and "none waiting", the forget and keep actions, the repeat's tag, the Coming up footers, and the keyboard hints' punctuation, made consistent.
