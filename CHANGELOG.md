@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The camera rests while the app is away and is up again when it comes back**, so the first photo after the phone was in a pocket no longer waits several seconds.
+
 ### build 47 — 2026-10-09
 
 - **Japanese wording tidied**: the study buttons' "nothing due" and "none waiting", the forget and keep actions, the repeat's tag, the Coming up footers, and the keyboard hints' punctuation, made consistent.

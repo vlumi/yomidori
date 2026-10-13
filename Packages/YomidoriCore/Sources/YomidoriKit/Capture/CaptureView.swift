@@ -8,6 +8,7 @@ public struct CaptureView: View {
     @StateObject var camera = Camera()
     @StateObject var selection = LiveTextSelection()
     @EnvironmentObject var page: CaptureState
+    @Environment(\.scenePhase) private var scenePhase
     @State var recognizing = false
     /// The shutter pressed and the still on its way: a second or two of the camera's work.
     @State var taking = false
@@ -118,6 +119,11 @@ public struct CaptureView: View {
                 OrientationLock.portrait(false)
                 camera.stop()
             }
+            // Away, the camera rests; back, it is started again before the shutter is
+            // pressed. Left running into the background it came back through iOS's
+            // interruption, and the first shutter after a while in a pocket waited out
+            // the frame timeout before a page came.
+            .onChange(of: scenePhase) { _, phase in sceneChanged(to: phase) }
             .task(id: picked) { await loadPicked() }
             .onChange(of: page.mode) { page.selectedRange = nil }
             // A still from outside, while the camera was up: the camera rests.
