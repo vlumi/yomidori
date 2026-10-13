@@ -77,9 +77,9 @@ struct ReviewView: View {
                         bundle: .module))
             }
             Spacer()
+            // How many remain, as plain as the tag: the number is what the eye wants.
             Text("\(queue.count) remaining", bundle: .module)
-                .font(.callout.monospacedDigit())
-                .foregroundStyle(.secondary)
+                .font(.title3.weight(.semibold).monospacedDigit())
         }
     }
 
