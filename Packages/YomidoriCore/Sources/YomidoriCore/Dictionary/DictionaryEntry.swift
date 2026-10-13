@@ -115,7 +115,11 @@ extension WordDictionary {
             let verbal = entries(conjugableAmong: candidates)
             if !verbal.isEmpty { return verbal.preferring(reading: token.reading) }
         }
-        let found = entries(forAny: candidates)
+        // As written, or as the tokenizer names it: any word. Deinflected: a verb or an
+        // adjective only — にけ is no 肉 for ending in け.
+        let found = entries(
+            forAny: [token.dictionaryForm, token.surface].compactMap { $0 },
+            orConjugableAmong: Array(Deinflector.candidates(for: token.surface).dropFirst()))
         if !found.isEmpty { return found.preferring(reading: token.reading) }
         if !Kana.isKana(token.surface) {
             let conjugated = entries(conjugatedFrom: token.surface)
@@ -144,6 +148,16 @@ extension WordDictionary {
     /// The first candidate with entries wins.
     public func entries(forAny candidates: [String]) -> [DictionaryEntry] {
         candidates.lazy.map(entries(matching:)).first { !$0.isEmpty } ?? []
+    }
+
+    /// The word as it stands, any entry; failing that, the forms a stem could come from,
+    /// verbs and adjectives alone: a stem is a stem of something that conjugates, and a
+    /// noun spelled like one of its forms is another word.
+    public func entries(forAny exact: [String], orConjugableAmong forms: [String])
+        -> [DictionaryEntry]
+    {
+        let found = entries(forAny: exact)
+        return found.isEmpty ? entries(conjugableAmong: forms) : found
     }
 
     public func estimatedPitch(for headword: String, reading: String) -> [PitchPhrase] { [] }

@@ -122,7 +122,9 @@ public enum WordFinder {
             guard span.allSatisfy(\.isWord) else { continue }
             let surface = span.map(\.surface).joined()
             let candidates = Deinflector.candidates(for: surface)
-            var entries = dictionary.entries(forAny: candidates)
+            // The run as written, any word; deinflected, verbs and adjectives alone.
+            var entries = dictionary.entries(
+                forAny: [surface], orConjugableAmong: Array(candidates.dropFirst()))
             // A stem with its ending cut off after it (吹き出し + た, 揺すり + ながら) is a verb
             // or an adjective, whatever noun the dictionary spells the same way.
             if isInflected(span, in: tokens, endingAt: stop), !Kana.isKana(surface) {
