@@ -18,6 +18,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 - **A word's readings are listed once each**: an entry with うんざり and ウンザリ showed the same reading and pitch twice.
 - **The numbers stand out**: what is due and waiting on the Review and Lesson buttons, what remains in a review, and the lesson's page count are big and plain where they were small and gray.
 - **A card says when each question comes back**, under its answers: due now, or the time until the next review.
+- **The camera rests while the app is away and is up again when it comes back**, so the first photo after the phone was in a pocket no longer waits several seconds.
 
 ### build 47 — 2026-10-09
 
