@@ -163,16 +163,6 @@
         }
       }
     },
-    "%lld due" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 問"
-          }
-        }
-      }
-    },
     "%lld good · %lld again" : {
       "localizations" : {
         "ja" : {
@@ -1167,6 +1157,26 @@
         }
       }
     },
+    "due" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問"
+          }
+        }
+      }
+    },
+    "Due now" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "いま期限"
+          }
+        }
+      }
+    },
     "Edit" : {
       "localizations" : {
         "ja" : {
@@ -2121,6 +2131,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "次のカード"
+          }
+        }
+      }
+    },
+    "Next in %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次は %@ 後"
           }
         }
       }
@@ -3809,6 +3829,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vision"
+          }
+        }
+      }
+    },
+    "waiting" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "待機中"
           }
         }
       }

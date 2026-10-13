@@ -77,9 +77,9 @@ struct ReviewView: View {
                         bundle: .module))
             }
             Spacer()
+            // How many remain, as plain as the tag: the number is what the eye wants.
             Text("\(queue.count) remaining", bundle: .module)
-                .font(.callout.monospacedDigit())
-                .foregroundStyle(.secondary)
+                .font(.title3.weight(.semibold).monospacedDigit())
         }
     }
 
@@ -180,7 +180,7 @@ struct ReviewView: View {
     /// The answer shown after a miss: only the part asked, so a reading missed is not also
     /// the meaning given away.
     @ViewBuilder private func answered(_ item: ReviewItem) -> some View {
-        missLine
+        missLine(item)
         switch item.question {
         case .reading: ReadingBack(card: item.card)
         case .meaning: MeaningBack(card: item.card)
@@ -219,20 +219,27 @@ struct ReviewView: View {
         .controlSize(.large)
     }
 
-    private var missLine: some View {
-        HStack(spacing: 8) {
-            Image(systemName: "xmark.circle")
-                .accessibilityHidden(true)
-            if let typed {
-                Text("Not quite. You typed \(typed).", bundle: .module)
-            } else {
-                Text("Not answered", bundle: .module)
+    /// A reading typed wrong is shown against the right one, kana by kana; a meaning
+    /// typed wrong is just said, since the glosses are many.
+    @ViewBuilder private func missLine(_ item: ReviewItem) -> some View {
+        if let typed, item.question == .reading {
+            TypedAgainst(typed: typed, answer: item.card.reading)
+                .accessibilityFocused($verdictFocused)
+        } else {
+            HStack(spacing: 8) {
+                Image(systemName: "xmark.circle")
+                    .accessibilityHidden(true)
+                if let typed {
+                    Text("Not quite. You typed \(typed).", bundle: .module)
+                } else {
+                    Text("Not answered", bundle: .module)
+                }
             }
+            .font(.callout)
+            .foregroundStyle(.secondary)
+            .accessibilityElement(children: .combine)
+            .accessibilityFocused($verdictFocused)
         }
-        .font(.callout)
-        .foregroundStyle(.secondary)
-        .accessibilityElement(children: .combine)
-        .accessibilityFocused($verdictFocused)
     }
 
     private func check(_ item: ReviewItem) {

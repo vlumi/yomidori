@@ -41,9 +41,7 @@ extension Card {
     /// the meaning's ranks, and the pitch's once it has been asked — a card with no pitch
     /// to ask is not held to a question it never gets.
     public var rank: Rank {
-        var asked: [Question] = [.reading, .meaning]
-        if pitchReview != nil { asked.append(.pitch) }
-        return asked.map(rank(for:)).min() ?? rank(for: .reading)
+        questions(asksPitch: pitchReview != nil).map(rank(for:)).min() ?? rank(for: .meaning)
     }
 
     /// The rank of one of the card's questions, each climbing at its own pace, a hatchling

@@ -29,10 +29,8 @@ extension Card {
     /// already count now, not later; the pitch only where it is asked.
     public func upcomingDue(after now: Date, asksPitch: Bool) -> [Date] {
         guard isInReview else { return [] }
-        return Question.allCases.compactMap { question in
-            guard question != .pitch || asksPitch,
-                let due = state(for: question)?.due, due > now
-            else { return nil }
+        return questions(asksPitch: asksPitch).compactMap { question in
+            guard let due = state(for: question)?.due, due > now else { return nil }
             return due
         }
     }

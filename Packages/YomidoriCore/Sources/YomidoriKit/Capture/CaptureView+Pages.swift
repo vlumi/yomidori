@@ -163,4 +163,14 @@ extension CaptureView {
         AccessibilityNotification.Announcement(String(localized: "Page read", bundle: .module))
             .post()
     }
+
+    /// Away, the camera rests; back, it is started again with the camera view up, so it is
+    /// running by the time the shutter is pressed.
+    func sceneChanged(to phase: ScenePhase) {
+        switch phase {
+        case .background: camera.stop()
+        case .active: if still == nil, page.pasted == nil { camera.start() }
+        default: break
+        }
+    }
 }
