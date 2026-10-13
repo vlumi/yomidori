@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A reading typed wrong is shown against the right one, kana by kana**: the kana that should not be there struck through in red, the ones missing underlined in green, so a typo reads as one wrong kana and a wrong reading as a different word.
+
 ### build 47 — 2026-10-09
 
 - **Japanese wording tidied**: the study buttons' "nothing due" and "none waiting", the forget and keep actions, the repeat's tag, the Coming up footers, and the keyboard hints' punctuation, made consistent.
