@@ -3,8 +3,8 @@ import SwiftUI
 import YomidoriCore
 
 /// The reviewing done: today and all time in numbers, and over a chosen span the answers
-/// right and wrong, the ranks as they stood, and the words started. A finger on a chart
-/// shows that period's numbers above it.
+/// right and wrong, the ranks as they stood, the time spent, and the words started. A
+/// finger on a chart shows that period's numbers above it.
 struct ProgressScreen: View {
     @State private var span: ProgressSpan = .fourWeeks
     @State private var question: Question?
@@ -58,6 +58,11 @@ struct ProgressScreen: View {
                                 bundle: .module)
                         }
                     }
+                }
+                Section {
+                    StudyTimeChart(buckets: buckets, unit: span.unit, question: question)
+                } header: {
+                    Text("Time", bundle: .module)
                 }
                 Section {
                     StartedChart(buckets: buckets, unit: span.unit)

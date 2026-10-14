@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ so far" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ここまで %@"
+          }
+        }
+      }
+    },
     "%@, pitch %lld" : {
       "localizations" : {
         "ja" : {
@@ -493,6 +503,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "追加"
+          }
+        }
+      }
+    },
+    "Added up" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "累計"
           }
         }
       }
@@ -2545,6 +2565,36 @@
         }
       }
     },
+    "Per day" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日ごと"
+          }
+        }
+      }
+    },
+    "Per month" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "月ごと"
+          }
+        }
+      }
+    },
+    "Per week" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "週ごと"
+          }
+        }
+      }
+    },
     "Picture" : {
       "localizations" : {
         "ja" : {
@@ -3091,6 +3141,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "設定…"
+          }
+        }
+      }
+    },
+    "Shape" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表示"
           }
         }
       }
@@ -3719,6 +3779,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "文と回答も一緒になくなります。"
+          }
+        }
+      }
+    },
+    "Time" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "時間"
           }
         }
       }

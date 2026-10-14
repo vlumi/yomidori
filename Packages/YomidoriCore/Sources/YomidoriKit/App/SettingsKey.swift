@@ -25,4 +25,6 @@ enum SettingsKey {
     static let upcomingByQuestion = "upcomingByQuestion"
     /// How many days Study's Coming up looks ahead, 7 or 30.
     static let upcomingDays = "upcomingDays"
+    /// Progress's Time chart added up as the span went, not each period on its own.
+    static let studyTimeCumulative = "studyTimeCumulative"
 }
