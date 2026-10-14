@@ -56,27 +56,28 @@ struct StudyTimeChart: View {
                 .controlSize(.small)
                 .fixedSize()
             }
+            // The shape decided outside the ForEach, and the chart made anew on a switch: marks
+            // chosen inside it stayed as they were until the selection redrew them.
             Chart {
-                ForEach(points, id: \.day) { point in
-                    if cumulative {
+                if cumulative {
+                    ForEach(points, id: \.day) { point in
                         AreaMark(
                             x: .value(String(localized: "Day", bundle: .module), point.day),
-                            y: .value(
-                                String(localized: "Minutes", bundle: .module), point.minutes)
+                            y: .value(String(localized: "Minutes", bundle: .module), point.minutes)
                         )
                         .foregroundStyle(color.opacity(0.2))
                         LineMark(
                             x: .value(String(localized: "Day", bundle: .module), point.day),
-                            y: .value(
-                                String(localized: "Minutes", bundle: .module), point.minutes)
+                            y: .value(String(localized: "Minutes", bundle: .module), point.minutes)
                         )
                         .foregroundStyle(color)
-                    } else {
+                    }
+                } else {
+                    ForEach(points, id: \.day) { point in
                         BarMark(
                             x: .value(
                                 String(localized: "Day", bundle: .module), point.day, unit: unit),
-                            y: .value(
-                                String(localized: "Minutes", bundle: .module), point.minutes)
+                            y: .value(String(localized: "Minutes", bundle: .module), point.minutes)
                         )
                         .foregroundStyle(color)
                     }
@@ -88,6 +89,7 @@ struct StudyTimeChart: View {
                     .foregroundStyle(.secondary.opacity(0.5))
                 }
             }
+            .id(cumulative)
             .chartXSelection(value: $selected)
             .chartXAxis { AxisMarks(values: .automatic(desiredCount: 5)) }
             .chartYAxis {
