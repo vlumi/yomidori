@@ -34,4 +34,12 @@ extension Card {
             return due
         }
     }
+
+    /// The first moment after `now` any of the cards' questions comes due; nil when nothing
+    /// is on its way: for a Review button with nothing to do yet.
+    public static func nextDue(
+        among cards: [Card], after now: Date, asksPitch: (Card) -> Bool
+    ) -> Date? {
+        cards.flatMap { $0.upcomingDue(after: now, asksPitch: asksPitch($0)) }.min()
+    }
 }

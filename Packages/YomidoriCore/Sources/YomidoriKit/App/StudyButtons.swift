@@ -2,15 +2,16 @@ import SwiftUI
 import YomidoriCore
 
 /// Review and the lesson as two fat buttons side by side, each in its own color, so what
-/// there is to do stands out; gray when nothing is due or waiting. The buttons themselves
+/// there is to do stands out; gray when nothing is due or waiting, Review then saying when
+/// the next question comes due. The buttons themselves
 /// are the caller's — a link on the Study tab, a button that switches to it on Home — in
 /// `FatButtonStyle`, with these labels.
 enum StudyButtons {
-    static func review(due: Int) -> some View {
+    static func review(due: Int, next: Date? = nil) -> some View {
         FatLabel(
             title: Text("Review", bundle: .module), number: due,
             noun: Text("due", bundle: .module), none: Text("Nothing due", bundle: .module),
-            symbol: "checkmark.rectangle.stack")
+            next: next, symbol: "checkmark.rectangle.stack")
     }
 
     static func lesson(waiting: Int) -> some View {
@@ -26,12 +27,14 @@ enum StudyButtons {
 }
 
 /// The symbol over the name over the count, centered, filling the button: the number big,
-/// since it is what the button is for, its noun small beside it.
+/// since it is what the button is for, its noun small beside it. With nothing counted, the
+/// time until the next comes due where one is known, else that there is none.
 private struct FatLabel: View {
     let title: Text
     let number: Int
     let noun: Text
     let none: Text
+    var next: Date?
     let symbol: String
 
     var body: some View {
@@ -50,6 +53,10 @@ private struct FatLabel: View {
                         .opacity(0.85)
                 }
                 .accessibilityElement(children: .combine)
+            } else if let next {
+                NextReview(due: next)
+                    .font(.subheadline)
+                    .opacity(0.85)
             } else {
                 none
                     .font(.subheadline)

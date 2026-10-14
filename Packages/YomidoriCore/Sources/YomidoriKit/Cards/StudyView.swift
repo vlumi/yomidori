@@ -5,6 +5,7 @@ import YomidoriCore
 struct StudyView: View {
     @State private var cards: [Card] = []
     @State private var dueCount = 0
+    @State private var nextDue: Date?
     @Environment(\.scenePhase) private var scenePhase
     @State private var upcoming = Upcoming()
     /// All the questions, or one: what Coming up and Ranks show.
@@ -31,7 +32,7 @@ struct StudyView: View {
                     Button {
                         taps.open(.review, in: .study)
                     } label: {
-                        StudyButtons.review(due: dueCount)
+                        StudyButtons.review(due: dueCount, next: nextDue)
                     }
                     .buttonStyle(FatButtonStyle(color: StudyButtons.reviewColor))
                     .disabled(dueCount == 0)
@@ -143,6 +144,7 @@ struct StudyView: View {
         Cards.snapshotRanks()
         cards = Cards.store?.cards() ?? []
         dueCount = Cards.dueItems(at: Date()).count
+        nextDue = dueCount == 0 ? Cards.nextDue(after: Date()) : nil
         upcoming = Upcoming.of(
             cards, from: Date(), days: days, slotsPerDay: days > 7 ? 1 : Upcoming.slotsPerDay,
             question: question, asksPitch: { !Cards.accents(of: $0).isEmpty })

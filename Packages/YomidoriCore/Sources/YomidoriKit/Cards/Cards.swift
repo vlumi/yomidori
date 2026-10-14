@@ -142,6 +142,12 @@ enum Cards {
         store?.dueItems(at: date, asksPitch: { !accents(of: $0).isEmpty }) ?? []
     }
 
+    /// When the next question comes due after `date`, if any is on its way.
+    static func nextDue(after date: Date) -> Date? {
+        Card.nextDue(
+            among: store?.cards() ?? [], after: date, asksPitch: { !accents(of: $0).isEmpty })
+    }
+
     /// A word's accents, looked up once: the due count asks for every card in review, and
     /// asks again by the minute.
     static func accents(of card: Card) -> [PitchAccent] {
