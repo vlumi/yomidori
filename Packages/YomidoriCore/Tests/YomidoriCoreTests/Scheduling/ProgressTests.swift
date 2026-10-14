@@ -37,6 +37,9 @@ final class ProgressTests: XCTestCase {
         XCTAssertEqual(days[1].answered, [.reading: 1, .meaning: 1, .pitch: 1])
         XCTAssertEqual(days[1].right, [.reading: 1, .pitch: 1])
         XCTAssertEqual(days[1].seconds, 35)
+        XCTAssertEqual(days[1].secondsAsked, [.reading: 10, .meaning: 20, .pitch: 5])
+        XCTAssertEqual(days[1].seconds(of: .meaning), 20)
+        XCTAssertEqual(days[1].seconds(of: nil), 35)
         XCTAssertEqual(days[1].started, 1)
         XCTAssertEqual(days[1].accuracy, 2.0 / 3.0)
         XCTAssertEqual(days[1].accuracy(of: .reading), 1)
@@ -49,6 +52,8 @@ final class ProgressTests: XCTestCase {
         XCTAssertEqual(total.answered, 4)
         XCTAssertEqual(total.right, 3)
         XCTAssertEqual(total.seconds, 42)
+        XCTAssertEqual(Progress.cumulativeSeconds(days, of: nil), [0, 35, 42, 42])
+        XCTAssertEqual(Progress.cumulativeSeconds(days, of: .reading), [0, 10, 17, 17])
     }
 
     func testDaysRollUpIntoWeeksAndMonths() {

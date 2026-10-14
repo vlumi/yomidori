@@ -1,13 +1,13 @@
 import Foundation
 
 /// One day's reviewing, folded from the cards' logs: how many answers to each question, how
-/// many right (a "count it right" is right), the seconds spent, and the words started.
+/// many right (a "count it right" is right), the seconds spent on each, and the words started.
 public struct DayTally: Equatable, Sendable {
     /// The day's start in the calendar the tallies were made with.
     public let day: Date
     public var answered: [Question: Int] = [:]
     public var right: [Question: Int] = [:]
-    public var seconds = 0
+    public var secondsAsked: [Question: Int] = [:]
     public var started = 0
 
     public init(day: Date) {
@@ -16,6 +16,12 @@ public struct DayTally: Equatable, Sendable {
 
     public var total: Int { answered.values.reduce(0, +) }
     public var rightTotal: Int { right.values.reduce(0, +) }
+    public var seconds: Int { secondsAsked.values.reduce(0, +) }
+
+    /// The seconds spent on one question, or on all of them.
+    public func seconds(of question: Question?) -> Int {
+        question.map { secondsAsked[$0] ?? 0 } ?? seconds
+    }
 
     /// Nil for a day with nothing answered.
     public var accuracy: Double? {
@@ -31,7 +37,9 @@ public struct DayTally: Equatable, Sendable {
     public mutating func add(_ other: DayTally) {
         for (question, count) in other.answered { answered[question, default: 0] += count }
         for (question, count) in other.right { right[question, default: 0] += count }
-        seconds += other.seconds
+        for (question, count) in other.secondsAsked {
+            secondsAsked[question, default: 0] += count
+        }
         started += other.started
     }
 }
@@ -60,7 +68,7 @@ public enum Progress {
                 guard byDay[day] != nil else { continue }
                 byDay[day]?.answered[entry.question, default: 0] += 1
                 if entry.grade == .good { byDay[day]?.right[entry.question, default: 0] += 1 }
-                byDay[day]?.seconds += entry.seconds
+                byDay[day]?.secondsAsked[entry.question, default: 0] += entry.seconds
             }
             if let started = card.started {
                 let day = calendar.startOfDay(for: started)
@@ -87,6 +95,16 @@ public enum Progress {
             periods[start]?.add(day)
         }
         return order.compactMap { periods[$0] }
+    }
+
+    /// The periods' seconds (of one question or all) summed as they go, the first period's
+    /// alone first: where the time stood at the end of each.
+    public static func cumulativeSeconds(_ periods: [DayTally], of question: Question?) -> [Int] {
+        var sum = 0
+        return periods.map { period in
+            sum += period.seconds(of: question)
+            return sum
+        }
     }
 
     /// The first day anything was answered or started; nil before any.

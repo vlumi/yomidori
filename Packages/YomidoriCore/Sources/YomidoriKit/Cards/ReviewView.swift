@@ -286,7 +286,8 @@ struct ReviewView: View {
             }.flatMap { $0 }
             session.answered[item.question, default: 0] += 1
             if grade == .good { session.right[item.question, default: 0] += 1 }
-            session.seconds += min(max(seconds, 0), ReviewEntry.longestCounted)
+            session.secondsAsked[item.question, default: 0] +=
+                min(max(seconds, 0), ReviewEntry.longestCounted)
             if grade == .good {
                 seen[item.card.id]?.good += 1
             } else {
