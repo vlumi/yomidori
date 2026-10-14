@@ -52,4 +52,21 @@ final class BadgeScheduleTests: XCTestCase {
         card.shelve()
         XCTAssertEqual(card.upcomingDue(after: now, asksPitch: true), [])
     }
+
+    func testTheNextDueIsTheEarliestUpcomingAcrossTheCards() {
+        var bark = Card(headword: "樹皮", reading: "じゅひ", entryID: nil, sightings: [], created: now)
+        var room = Card(headword: "部屋", reading: "へや", entryID: nil, sightings: [], created: now)
+        XCTAssertNil(Card.nextDue(among: [bark, room], after: now, asksPitch: { _ in true }))
+        bark.start(at: now)
+        bark.answer(.reading, grade: .good, at: now)
+        room.start(at: now.addingTimeInterval(-3 * 86400))
+        room.answer(.reading, grade: .again, at: now)
+        let soonest = min(bark.review!.due, room.review!.due)
+        XCTAssertEqual(
+            Card.nextDue(among: [bark, room], after: now, asksPitch: { _ in false }), soonest)
+        // Once the clock has passed it, the next one after that.
+        XCTAssertEqual(
+            Card.nextDue(among: [bark, room], after: soonest, asksPitch: { _ in false }),
+            max(bark.review!.due, room.review!.due))
+    }
 }

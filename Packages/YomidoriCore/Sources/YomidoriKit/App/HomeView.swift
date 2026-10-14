@@ -8,6 +8,7 @@ struct HomeView: View {
     /// Review and the lesson open on the Study tab, where they live, not over Home.
     let study: (Screen) -> Void
     @State private var dueCount = 0
+    @State private var nextDue: Date?
     @Environment(\.scenePhase) private var scenePhase
     @State private var waitingCount = 0
 
@@ -40,7 +41,7 @@ struct HomeView: View {
                     Button {
                         study(.review)
                     } label: {
-                        StudyButtons.review(due: dueCount)
+                        StudyButtons.review(due: dueCount, next: nextDue)
                     }
                     .buttonStyle(FatButtonStyle(color: StudyButtons.reviewColor))
                     .disabled(dueCount == 0)
@@ -101,7 +102,9 @@ struct HomeView: View {
     }
 
     private func reload() {
-        dueCount = Cards.dueItems(at: Date()).count
+        let now = Date()
+        dueCount = Cards.dueItems(at: now).count
+        nextDue = dueCount == 0 ? Cards.nextDue(after: now) : nil
         waitingCount = Cards.store?.waiting().count ?? 0
     }
 }

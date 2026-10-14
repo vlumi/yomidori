@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The Review button says when the next review comes** while nothing is due, "Next in 2 hr" in place of "Nothing due", on Home and on Study.
 - **Progress charts the time spent**: a Time chart under the ranks follows the span and question filters like the others, each day, week or month as a bar, or added up as the span went, and a finger on it gives that period's time.
 - **A stem the recognizer left behind no longer lands on a noun spelled like a verb's form**: にけ, from a 欠 the recognizer dropped, was read as 肉 by way of にく; a deinflected form now finds verbs and adjectives alone.
 - **A word written in kana alone is no longer asked its reading**: its headword is its reading. Cards that already had a reading question keep its answers in the log but are asked only the meaning and the pitch from now on, and rank by those.
