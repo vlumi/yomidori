@@ -158,8 +158,25 @@ enum Cards {
         return found
     }
 
+    /// What a card can be searched by in English: its own meanings and the dictionary's
+    /// glosses, the latter looked up once per word.
+    static func meanings(of card: Card) -> [String] {
+        let key = card.wordKey
+        let glosses: [String]
+        if let known = accentsLock.withLock({ knownGlosses[key] }) {
+            glosses = known
+        } else {
+            glosses =
+                JMdict.bundled?.entry(headword: card.headword, reading: card.reading)?.senses
+                .flatMap(\.glosses) ?? []
+            accentsLock.withLock { knownGlosses[key] = glosses }
+        }
+        return card.acceptedMeanings + glosses
+    }
+
     private static let accentsLock = NSLock()
     nonisolated(unsafe) private static var knownAccents: [String: [PitchAccent]] = [:]
+    nonisolated(unsafe) private static var knownGlosses: [String: [String]] = [:]
 }
 
 /// A tick a minute, on the main thread, for the counts that move with the clock.
