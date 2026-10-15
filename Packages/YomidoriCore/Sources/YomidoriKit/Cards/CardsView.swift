@@ -8,6 +8,8 @@ import YomidoriDictionary
 /// out of one together: on the phone through *Select*, on the Mac by picking several rows.
 struct CardsView: View {
     @State private var cards: [Card] = []
+    /// What is typed into the search: kana, kanji or English, matched by `CardSearch`.
+    @State private var query = ""
     @State private var collections: [Collection] = []
     @AppStorage(SettingsKey.cardSort) private var sort: CardSort = .rank
     @AppStorage(SettingsKey.cardWordClass) private var wordClassName = ""
@@ -69,24 +71,12 @@ struct CardsView: View {
     /// The cards the filters let through, in the order the list shows them.
     private var shown: [Card] {
         let inCollections = unfiled ? loose : cards.filter { $0.isIn(anyOf: chosen) }
-        guard let wordClass = wordClass.wrappedValue else { return inCollections }
-        return inCollections.filter { classes[$0.id]?.contains(wordClass) ?? false }
-    }
-
-    private var order: some View {
-        CardListOrder(sort: $sort, wordClass: wordClass)
-    }
-
-    /// The cards in none of the collections there are.
-    private var loose: [Card] {
-        let existing = Set(collections.map(\.id))
-        return cards.filter { $0.isInNone(of: existing) }
-    }
-
-    private var filter: some View {
-        CollectionFilter(
-            collections: collections, chosen: $chosen, unfiled: $unfiled,
-            unfiledCount: loose.count)
+        let ofClass =
+            wordClass.wrappedValue.map { wordClass in
+                inCollections.filter { classes[$0.id]?.contains(wordClass) ?? false }
+            } ?? inCollections
+        guard !query.isEmpty else { return ofClass }
+        return ofClass.filter { CardSearch.matches($0, query, meanings: Cards.meanings(of: $0)) }
     }
 
     @ViewBuilder private var stacks: some View {
@@ -193,11 +183,13 @@ struct CardsView: View {
                 .id(TabTop.id)
             }
             stacks
+            noMatch
             if cards.isEmpty {
                 Text("No cards yet. Tap a word under a page and keep it.", bundle: .module)
                     .foregroundStyle(.secondary)
             }
         }
+        .searchable(text: $query, prompt: searchPrompt)
         .environment(\.editMode, $editMode)
         .modifier(ForgetOneDialog(card: $askedToForget, forgotten: reload))
         .navigationTitle(Text("Cards", bundle: .module))
@@ -288,6 +280,7 @@ struct CardsView: View {
                     .buttonStyle(.plain)
                 }
                 stacks
+                noMatch
                 if cards.isEmpty {
                     Text("No cards yet. Select a word under a page and keep it.", bundle: .module)
                         .foregroundStyle(.secondary)
@@ -298,6 +291,11 @@ struct CardsView: View {
             .forgetCardsDialog(isPresented: $forgetting, picked: $picked, cards: cards)
             .safeAreaInset(edge: .top) {
                 HStack {
+                    TextField(text: $query, prompt: searchPrompt) {
+                        Text("Search", bundle: .module)
+                    }
+                    .textFieldStyle(.roundedBorder)
+                    .labelsHidden()
                     Spacer()
                     if !collections.isEmpty { filter }
                     order
@@ -409,41 +407,31 @@ extension CardsView {
     }
 }
 
-struct CardRow: View {
-    let card: Card
-
-    var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 12) {
-            Text(japanese: card.headword)
-                .font(.title3)
-            Text(japanese: card.reading)
-                .foregroundStyle(Palette.nightGreen)
-            Spacer()
-            RankMark(rank: card.rank, size: 22)
-                .accessibilityLabel(RankName.text(for: card.rank))
-        }
+/// The filters' controls and the search's furniture.
+extension CardsView {
+    private var order: some View {
+        CardListOrder(sort: $sort, wordClass: wordClass)
     }
-}
 
-/// The question before one card goes from its row's menu.
-private struct ForgetOneDialog: ViewModifier {
-    @Binding var card: Card?
-    let forgotten: () -> Void
+    /// The cards in none of the collections there are.
+    private var loose: [Card] {
+        let existing = Set(collections.map(\.id))
+        return cards.filter { $0.isInNone(of: existing) }
+    }
 
-    func body(content: Content) -> some View {
-        content.confirmationDialog(
-            Text("Forget this card?", bundle: .module),
-            isPresented: Binding(get: { card != nil }, set: { if !$0 { card = nil } }),
-            presenting: card
-        ) { card in
-            Button(role: .destructive) {
-                Cards.write { try Cards.store?.remove(card) }
-                forgotten()
-            } label: {
-                Text("Forget", bundle: .module)
-            }
-        } message: { _ in
-            Text("Their sentences and their answers go with them.", bundle: .module)
+    private var filter: some View {
+        CollectionFilter(
+            collections: collections, chosen: $chosen, unfiled: $unfiled,
+            unfiledCount: loose.count)
+    }
+
+    /// The search's prompt, and the word that nothing matched.
+    private var searchPrompt: Text { Text("Kana, kanji, or English", bundle: .module) }
+
+    @ViewBuilder private var noMatch: some View {
+        if !query.isEmpty, shown.isEmpty {
+            ContentUnavailableView.search(text: query)
+                .listRowBackground(Color.clear)
         }
     }
 }
