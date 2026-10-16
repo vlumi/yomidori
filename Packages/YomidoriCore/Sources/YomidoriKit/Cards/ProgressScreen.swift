@@ -15,6 +15,7 @@ struct ProgressScreen: View {
     @State private var total = Progress.Total()
     @State private var started = 0
     @State private var streaks: [Streak] = []
+    @State private var history: [DayTally] = []
     @State private var records = ProgressRecords()
     /// Where the filters' row stands in the list and where the bar's safe area begins: once
     /// the row has scrolled up under the bar, a copy floats there until it comes back.
@@ -70,6 +71,11 @@ struct ProgressScreen: View {
                     StartedChart(buckets: buckets, unit: span.unit)
                 } header: {
                     Text("Words started", bundle: .module)
+                }
+                Section {
+                    StudyCalendar(days: history, now: Date(), calendar: Calendar.current)
+                } header: {
+                    Text("Days studied", bundle: .module)
                 }
                 if !streaks.isEmpty {
                     StreaksSection(streaks: streaks, now: Date())
@@ -157,9 +163,8 @@ struct ProgressScreen: View {
         streaks = Array(Records.streaks(of: cards, calendar: calendar).prefix(5))
         let all = Cards.snapshots?.snapshots() ?? []
         let earliest = [Progress.earliest(of: cards), all.first?.day].compactMap { $0 }.min()
-        records = ProgressRecords.of(
-            days: Progress.tallies(of: cards, from: earliest ?? now, to: now, calendar: calendar),
-            calendar: calendar)
+        history = Progress.tallies(of: cards, from: earliest ?? now, to: now, calendar: calendar)
+        records = ProgressRecords.of(days: history, calendar: calendar)
         let start = span.start(now: now, earliest: earliest, calendar: calendar)
         buckets = Progress.rollUp(
             Progress.tallies(of: cards, from: start, to: now, calendar: calendar),

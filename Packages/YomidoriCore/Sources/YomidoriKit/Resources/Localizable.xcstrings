@@ -279,6 +279,34 @@
         }
       }
     },
+    "%lld reviews" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld review"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld reviews"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "復習%lld回"
+          }
+        }
+      }
+    },
     "%lld selected" : {
       "localizations" : {
         "ja" : {
@@ -1121,6 +1149,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "復習かレッスン後の練習をした日が続いた日数。"
+          }
+        }
+      }
+    },
+    "Days studied" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習した日"
           }
         }
       }
@@ -3517,6 +3555,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "筆順、%lld画"
+          }
+        }
+      }
+    },
+    "Studied %lld of the last %lld days" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直近%2$lld日のうち%1$lld日学習"
           }
         }
       }
