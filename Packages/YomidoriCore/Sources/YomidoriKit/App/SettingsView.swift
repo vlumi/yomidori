@@ -10,6 +10,7 @@ public struct SettingsView: View {
     @AppStorage(SettingsKey.retention) private var retention = FSRS.desiredRetention
     @AppStorage(SettingsKey.language) private var language: AppLanguage = .system
     @AppStorage(SettingsKey.appearance) private var appearance: Appearance = .system
+    @AppStorage(SettingsKey.showStreaks) private var showStreaks = true
     /// The reader turned the count on, but notifications are off for the app.
     @State private var badgeRefused = false
     @State private var choosingBackup = false
@@ -85,6 +86,16 @@ public struct SettingsView: View {
                 Text(
                     // swiftlint:disable:next line_length
                     "The share of reviews you should get right when a word comes up. At 95 % each word comes back about twice as often as at 90 %. Counts from the next answer, on this device.",
+                    bundle: .module)
+            }
+            Section {
+                Toggle(isOn: $showStreaks) {
+                    Text("Streaks on Progress", bundle: .module)
+                }
+            } footer: {
+                Text(
+                    // swiftlint:disable:next line_length
+                    "The days in a row and the longest runs. Off, Progress keeps the calendar of days studied and the records.",
                     bundle: .module)
             }
             Section {

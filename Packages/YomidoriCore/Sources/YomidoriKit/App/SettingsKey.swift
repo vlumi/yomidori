@@ -27,4 +27,7 @@ enum SettingsKey {
     static let upcomingDays = "upcomingDays"
     /// Progress's Time chart added up as the span went, not each period on its own.
     static let studyTimeCumulative = "studyTimeCumulative"
+    /// Progress's days in a row and longest runs shown; off for a reader who would rather
+    /// not count.
+    static let showStreaks = "showStreaks"
 }

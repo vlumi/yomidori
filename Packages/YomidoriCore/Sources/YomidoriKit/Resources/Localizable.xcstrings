@@ -3521,6 +3521,16 @@
         }
       }
     },
+    "Streaks on Progress" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "進捗に連続記録を表示"
+          }
+        }
+      }
+    },
     "Stroke order" : {
       "localizations" : {
         "ja" : {
@@ -3775,6 +3785,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "カメラはいま別のところで使われています。"
+          }
+        }
+      }
+    },
+    "The days in a row and the longest runs. Off, Progress keeps the calendar of days studied and the records." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "連続日数と最長記録。オフにしても、学習した日のカレンダーと最高記録は残ります。"
           }
         }
       }
