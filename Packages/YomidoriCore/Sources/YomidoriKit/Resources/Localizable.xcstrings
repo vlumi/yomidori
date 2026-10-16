@@ -173,6 +173,34 @@
         }
       }
     },
+    "%lld days" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld day"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld days"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld日"
+          }
+        }
+      }
+    },
     "%lld good · %lld again" : {
       "localizations" : {
         "ja" : {
@@ -1083,6 +1111,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "連続日数"
+          }
+        }
+      }
+    },
+    "Days in a row with a review, a lesson's practice included." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "復習かレッスン後の練習をした日が続いた日数。"
           }
         }
       }
@@ -2875,6 +2913,16 @@
         }
       }
     },
+    "Records" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最高記録"
+          }
+        }
+      }
+    },
     "Remove tag %@" : {
       "localizations" : {
         "ja" : {
@@ -3001,6 +3049,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "アプリアイコンに復習の数"
+          }
+        }
+      }
+    },
+    "Reviews in a day" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1日の復習数"
+          }
+        }
+      }
+    },
+    "Reviews in a week" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1週間の復習数"
           }
         }
       }
@@ -3275,6 +3343,16 @@
         }
       }
     },
+    "Since %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@から"
+          }
+        }
+      }
+    },
     "Slipped" : {
       "localizations" : {
         "ja" : {
@@ -3391,6 +3469,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "止める"
+          }
+        }
+      }
+    },
+    "Streaks" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "連続記録"
           }
         }
       }
@@ -3789,6 +3877,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "時間"
+          }
+        }
+      }
+    },
+    "Time in a day" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1日の学習時間"
+          }
+        }
+      }
+    },
+    "Time in a week" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1週間の学習時間"
           }
         }
       }
