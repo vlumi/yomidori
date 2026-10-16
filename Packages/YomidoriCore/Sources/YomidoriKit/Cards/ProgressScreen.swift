@@ -6,6 +6,7 @@ import YomidoriCore
 /// right and wrong, the ranks as they stood, the time spent, and the words started. A
 /// finger on a chart shows that period's numbers above it.
 struct ProgressScreen: View {
+    @AppStorage(SettingsKey.showStreaks) private var showStreaks = true
     @State private var span: ProgressSpan = .fourWeeks
     @State private var question: Question?
     @State private var today: DayTally?
@@ -77,7 +78,7 @@ struct ProgressScreen: View {
                 } header: {
                     Text("Days studied", bundle: .module)
                 }
-                if !streaks.isEmpty {
+                if showStreaks, !streaks.isEmpty {
                     StreaksSection(streaks: streaks, now: Date())
                 }
                 if !records.isEmpty {
@@ -124,16 +125,7 @@ struct ProgressScreen: View {
     private var stats: some View {
         Group {
             Section {
-                StatRow(stats: [
-                    Stat(value: "\(today?.total ?? 0)", label: Text("Reviews", bundle: .module)),
-                    Stat(
-                        value: Percent.text(today?.accuracy),
-                        label: Text("Correct", bundle: .module)),
-                    Stat(
-                        value: "\((today?.seconds ?? 0) / 60)",
-                        label: Text("Minutes", bundle: .module)),
-                    Stat(value: "\(streak)", label: Text("Days in a row", bundle: .module)),
-                ])
+                StatRow(stats: todayStats)
             } header: {
                 Text("Today", bundle: .module)
             }
@@ -150,6 +142,19 @@ struct ProgressScreen: View {
                 Text("All time", bundle: .module)
             }
         }
+    }
+
+    private var todayStats: [Stat] {
+        var stats = [
+            Stat(value: "\(today?.total ?? 0)", label: Text("Reviews", bundle: .module)),
+            Stat(value: Percent.text(today?.accuracy), label: Text("Correct", bundle: .module)),
+            Stat(
+                value: "\((today?.seconds ?? 0) / 60)", label: Text("Minutes", bundle: .module)),
+        ]
+        if showStreaks {
+            stats.append(Stat(value: "\(streak)", label: Text("Days in a row", bundle: .module)))
+        }
+        return stats
     }
 
     private func reload() {
