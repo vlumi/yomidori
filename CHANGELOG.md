@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Progress keeps streaks and records**: the five longest runs of days studied, a lesson's practice counting like a review, and the most reviews and time in a day and in a week, each with when it was done.
 - **Cards can be searched**: a search field on the Cards list finds cards by kana in either script, by kanji, or by a word of their meaning, within whatever collection and kind of word is chosen.
 - **The Review button says when the next review comes** while nothing is due, "Next in 2 hr" in place of "Nothing due", on Home and on Study.
 - **Progress charts the time spent**: a Time chart under the ranks follows the span and question filters like the others, each day, week or month as a bar, or added up as the span went, and a finger on it gives that period's time.

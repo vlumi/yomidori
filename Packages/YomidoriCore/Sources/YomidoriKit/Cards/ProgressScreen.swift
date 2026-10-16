@@ -14,6 +14,8 @@ struct ProgressScreen: View {
     @State private var streak = 0
     @State private var total = Progress.Total()
     @State private var started = 0
+    @State private var streaks: [Streak] = []
+    @State private var records = ProgressRecords()
     /// Where the filters' row stands in the list and where the bar's safe area begins: once
     /// the row has scrolled up under the bar, a copy floats there until it comes back.
     @State private var filtersBottom: CGFloat = .infinity
@@ -68,6 +70,12 @@ struct ProgressScreen: View {
                     StartedChart(buckets: buckets, unit: span.unit)
                 } header: {
                     Text("Words started", bundle: .module)
+                }
+                if !streaks.isEmpty {
+                    StreaksSection(streaks: streaks, now: Date())
+                }
+                if !records.isEmpty {
+                    RecordsSection(records: records, calendar: Calendar.current)
                 }
             }
         }
@@ -146,11 +154,13 @@ struct ProgressScreen: View {
         streak = Progress.streak(of: cards, at: now, calendar: calendar)
         total = Progress.total(of: cards)
         started = cards.filter { $0.started != nil }.count
+        streaks = Array(Records.streaks(of: cards, calendar: calendar).prefix(5))
         let all = Cards.snapshots?.snapshots() ?? []
-        let start = span.start(
-            now: now,
-            earliest: [Progress.earliest(of: cards), all.first?.day].compactMap { $0 }.min(),
+        let earliest = [Progress.earliest(of: cards), all.first?.day].compactMap { $0 }.min()
+        records = ProgressRecords.of(
+            days: Progress.tallies(of: cards, from: earliest ?? now, to: now, calendar: calendar),
             calendar: calendar)
+        let start = span.start(now: now, earliest: earliest, calendar: calendar)
         buckets = Progress.rollUp(
             Progress.tallies(of: cards, from: start, to: now, calendar: calendar),
             by: span.unit, calendar: calendar)
