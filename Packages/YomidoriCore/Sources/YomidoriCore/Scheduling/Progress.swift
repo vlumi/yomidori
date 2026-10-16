@@ -117,20 +117,8 @@ public enum Progress {
     public static func streak(of cards: [Card], at date: Date, calendar: Calendar = .current)
         -> Int
     {
-        let days = Set(cards.flatMap(\.log).map { calendar.startOfDay(for: $0.date) })
-        var day = calendar.startOfDay(for: date)
-        if !days.contains(day) {
-            guard let yesterday = calendar.date(byAdding: .day, value: -1, to: day) else {
-                return 0
-            }
-            day = yesterday
-        }
-        var run = 0
-        while days.contains(day), let before = calendar.date(byAdding: .day, value: -1, to: day) {
-            run += 1
-            day = before
-        }
-        return run
+        Records.streaks(of: cards, calendar: calendar)
+            .first { $0.isOngoing(at: date, calendar: calendar) }?.days ?? 0
     }
 
     /// Everything ever answered.
