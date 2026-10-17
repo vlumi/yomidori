@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A sentence marks the word whole**: a verb or adjective through its endings, 恨んでいる where 恨ん alone was green, and a する noun without its する, 黙認 in 黙認します. Cards kept before are marked the same way.
 - **The meaning question no longer shows the reading**: the word as written is all that is given, so a kanji word is not read out before it is asked what it means. The pitch question keeps the reading, since the pitch is of the reading.
 - **Progress shows the year as a calendar of days studied**: a square a day, filled the fuller the more was answered, with how many of the last 30 days were studied; a finger on a square names the day and its reviews.
 - **Progress keeps streaks and records**: the five longest runs of days studied, a lesson's practice counting like a review, and the most reviews and time in a day and in a week, each with when it was done. A switch in Settings hides the streaks for a reader who would rather not count.

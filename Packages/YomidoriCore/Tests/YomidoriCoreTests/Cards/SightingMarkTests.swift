@@ -55,3 +55,30 @@ final class SightingMarkTests: XCTestCase {
         XCTAssertNil(sighting.surfaceRange)
     }
 }
+
+final class MarkedRangeTests: XCTestCase {
+    private func marked(_ sentence: String, _ surface: String, headword: String) -> String? {
+        let offset = sentence.range(of: surface).map {
+            sentence.distance(from: sentence.startIndex, to: $0.lowerBound)
+        }
+        let sighting = Sighting(
+            sentence: sentence, surface: surface, offset: offset ?? -1, source: nil, date: Date())
+        return sighting.markedForm(headword: headword, tokenizer: SystemTokenizer())
+    }
+
+    func testAStemKeptAloneIsMarkedThroughItsEndings() {
+        XCTAssertEqual(marked("所長を恨んでいる人がいた。", "恨ん", headword: "恨む"), "恨んでいる")
+        XCTAssertEqual(marked("庭は月に照らされていた。", "照らさ", headword: "照らす"), "照らされていた")
+        // Kept whole already: as it is.
+        XCTAssertEqual(marked("所長を恨んでいる人がいた。", "恨んでいる", headword: "恨む"), "恨んでいる")
+        // After a noun, what follows is not an ending.
+        XCTAssertEqual(marked("人がいた。", "人", headword: "人"), "人")
+    }
+
+    func testASuruNounIsMarkedWithoutItsSuru() {
+        XCTAssertEqual(marked("ことを黙認します。", "黙認します", headword: "黙認"), "黙認")
+        XCTAssertEqual(marked("勉強したい。", "勉強したい", headword: "勉強"), "勉強")
+        // A noun that is not a する noun with kana after it is left as kept.
+        XCTAssertEqual(marked("受付けで待つ。", "受付け", headword: "受付"), "受付け")
+    }
+}

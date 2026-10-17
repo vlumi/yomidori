@@ -86,20 +86,9 @@ public enum WordFinder {
     ) -> [Segment] {
         var found: [Segment] = []
         var index = 0
-        // After a stem and its ending, the endings that follow are the same inflection
-        // (見 + て + い + た), not words: させ is not 差す, いる not 射る, しまっ not 仕舞う.
-        var inflecting = false
         while index < tokens.count {
             let token = tokens[index]
             guard token.isWord else {
-                found.append(Segment(word: FoundWord(tokens: [token], entries: []), isShown: false))
-                inflecting = false
-                index += 1
-                continue
-            }
-            if inflecting, Kana.isKana(token.surface),
-                Deinflector.continuesInflection(token.surface)
-            {
                 found.append(Segment(word: FoundWord(tokens: [token], entries: []), isShown: false))
                 index += 1
                 continue
@@ -107,9 +96,60 @@ public enum WordFinder {
             let word = longestWord(from: index, in: tokens, dictionary: dictionary, span: span)
             found.append(Segment(word: word, isShown: isShown(word)))
             index += word.tokens.count
-            inflecting = isInflected(word.tokens, in: tokens, endingAt: index)
+            // After a stem and its ending, the endings that follow are the same inflection
+            // (見 + て + い + た), not words: させ is not 差す, いる not 射る, しまっ not 仕舞う.
+            for ending in endings(from: index, after: word.tokens, in: tokens) {
+                found.append(
+                    Segment(word: FoundWord(tokens: [ending], entries: []), isShown: false))
+                index += 1
+            }
         }
         return found
+    }
+
+    /// The endings a tokenizer cut off after a word's stem, as they follow it in the run:
+    /// で and いる after 恨ん, れ, て, い and た after 照らさ. None after a word the page
+    /// spells as the dictionary does.
+    public static func endings(after word: FoundWord, in tokens: [Token]) -> [Token] {
+        guard let last = word.tokens.last,
+            let index = tokens.firstIndex(where: { $0.range == last.range })
+        else { return [] }
+        return endings(from: index + 1, after: word.tokens, in: tokens)
+    }
+
+    private static func endings(from start: Int, after stem: [Token], in tokens: [Token])
+        -> [Token]
+    {
+        guard isInflected(stem, in: tokens, endingAt: start) else { return [] }
+        var endings: [Token] = []
+        var index = start
+        while index < tokens.count, tokens[index].isWord, Kana.isKana(tokens[index].surface),
+            Deinflector.continuesInflection(tokens[index].surface)
+        {
+            endings.append(tokens[index])
+            index += 1
+        }
+        return endings
+    }
+
+    /// The word's form on the page, as a card marks it in the sentence: a verb or an
+    /// adjective whole, with the endings cut off after its stem (恨んでいる, 頼みたい), and a
+    /// する noun without its する (黙認 in 黙認します), since the noun is the word and する
+    /// a verb of its own.
+    public static func pageForm(of word: FoundWord, in tokens: [Token]) -> String {
+        let surface = word.surface
+        if let entry = word.entries.first {
+            let forms = entry.kanji + entry.readings
+            if !forms.contains(surface),
+                let noun = forms.first(where: { form in
+                    surface.hasPrefix(form)
+                        && Deinflector.isSuruForm(String(surface.dropFirst(form.count)))
+                })
+            {
+                return noun
+            }
+        }
+        return surface + endings(after: word, in: tokens).map(\.surface).joined()
     }
 
     private static func longestWord(

@@ -16,7 +16,7 @@ struct LessonCard: View {
             ForEach(card.sightingsNewestFirst) { sighting in
                 if !sighting.sentence.isEmpty {
                     Section {
-                        MarkedSentence(sighting: sighting)
+                        MarkedSentence(sighting: sighting, headword: card.headword)
                         SpeakButton(text: sighting.sentence)
                         Button {
                             editing = sighting

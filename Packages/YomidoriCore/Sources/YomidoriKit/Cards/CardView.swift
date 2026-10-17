@@ -20,7 +20,7 @@ struct CardView: View {
             }
             CardFacts(card: card)
             ForEach(card.sightingsNewestFirst) { sighting in
-                SightingSection(sighting: sighting) {
+                SightingSection(sighting: sighting, headword: card.headword) {
                     editing = sighting
                 }
             }

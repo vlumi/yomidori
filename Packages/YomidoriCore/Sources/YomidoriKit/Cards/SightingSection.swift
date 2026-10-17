@@ -4,6 +4,7 @@ import YomidoriCore
 /// One sighting on a card: the sentence with the word marked, and the row that corrects it.
 struct SightingSection: View {
     let sighting: Sighting
+    let headword: String
     let edit: () -> Void
 
     var body: some View {
@@ -13,7 +14,7 @@ struct SightingSection: View {
                     .font(.callout)
                     .foregroundStyle(.secondary)
             } else {
-                MarkedSentence(sighting: sighting)
+                MarkedSentence(sighting: sighting, headword: headword)
                 SpeakButton(text: sighting.sentence)
             }
             Button(action: edit) {
