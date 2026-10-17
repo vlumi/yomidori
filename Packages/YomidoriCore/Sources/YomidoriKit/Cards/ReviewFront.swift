@@ -83,9 +83,6 @@ struct MeaningQuestion: View {
         FitsOrStacks {
             Text(japanese: card.headword)
                 .font(.title)
-            Text(japanese: card.reading)
-                .font(.title3)
-                .foregroundStyle(Palette.nightGreen)
             Text("What does it mean?", bundle: .module)
                 .font(.callout)
                 .foregroundStyle(.secondary)
