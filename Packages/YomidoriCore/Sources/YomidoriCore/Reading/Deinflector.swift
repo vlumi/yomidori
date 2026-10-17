@@ -89,6 +89,14 @@ public enum Deinflector {
         return forms.reduce(into: []) { if !$0.contains($1) { $0.append($1) } }
     }
 
+    /// Whether the kana are する in some form as it follows a noun to make a verb of it (し,
+    /// します, して, した, しない, される): what a page has after a する noun once the
+    /// dictionary has resolved the run to the noun.
+    public static func isSuruForm(_ kana: String) -> Bool {
+        guard Kana.isKana(kana), let first = kana.first else { return false }
+        return ["し", "す", "さ", "せ"].contains(first)
+    }
+
     /// Whether the surface is a stem a tokenizer cuts an ending from: one a row knows, or
     /// an adjective's.
     public static func isStem(_ surface: String) -> Bool {

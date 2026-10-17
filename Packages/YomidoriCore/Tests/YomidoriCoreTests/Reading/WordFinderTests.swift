@@ -338,3 +338,49 @@ final class WordFinderTests: XCTestCase {
             ["走る", "出す"])
     }
 }
+
+final class PageFormTests: XCTestCase {
+    private struct Stub: WordDictionary {
+        let headwords: [String]
+        var verbs: Set<String> = ["恨む", "頼む"]
+
+        func entries(matching text: String) -> [DictionaryEntry] {
+            guard headwords.contains(text) else { return [] }
+            let kinds = verbs.contains(text) ? ["v5m"] : ["n", "vs"]
+            let sense = DictionaryEntry.Sense(partsOfSpeech: kinds, glosses: ["g"])
+            return [
+                DictionaryEntry(
+                    id: text.hashValue, kanji: [text], readings: [], senses: [sense], common: true)
+            ]
+        }
+        func pitchAccents(for headword: String, reading: String) -> [PitchAccent] { [] }
+        func search(_ query: String, limit: Int) -> [DictionaryEntry] { [] }
+    }
+
+    private let dictionary = Stub(headwords: ["恨む", "頼む", "黙認", "人"])
+
+    private func tokens(_ text: String) -> [Token] {
+        SystemTokenizer().tokens(in: text)
+    }
+
+    func testAVerbsPageFormRunsThroughItsEndings() {
+        let cut = tokens("所長を恨んでいる人が")
+        let words = WordFinder.words(in: cut, dictionary: dictionary)
+        XCTAssertEqual(words.map(\.surface), ["所長", "恨ん", "人"])
+        XCTAssertEqual(
+            WordFinder.endings(after: words[1], in: cut).map(\.surface), ["で", "いる"])
+        XCTAssertEqual(WordFinder.pageForm(of: words[1], in: cut), "恨んでいる")
+        XCTAssertEqual(WordFinder.pageForm(of: words[2], in: cut), "人")
+        let wish = tokens("頼みたい")
+        let asked = WordFinder.words(in: wish, dictionary: dictionary)
+        XCTAssertEqual(asked.map(\.surface), ["頼みたい"])
+        XCTAssertEqual(WordFinder.pageForm(of: asked[0], in: wish), "頼みたい")
+    }
+
+    func testASuruNounsPageFormIsTheNounAlone() {
+        let cut = tokens("ことを黙認します。")
+        let words = WordFinder.words(in: cut, dictionary: dictionary)
+        XCTAssertEqual(words.map(\.surface), ["黙認します"])
+        XCTAssertEqual(WordFinder.pageForm(of: words[0], in: cut), "黙認")
+    }
+}

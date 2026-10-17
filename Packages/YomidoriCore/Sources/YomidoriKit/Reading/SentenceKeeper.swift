@@ -14,7 +14,8 @@ struct SentenceKeeper {
         }
         let found = transcriptLines.sentence(around: word.first, onLine: line, in: transcript)
         return Sighting(
-            sentence: found.sentence.text, surface: word.surface,
+            sentence: found.sentence.text,
+            surface: WordFinder.pageForm(of: word, in: tokenLines[line]),
             offset: found.sentence.offset(of: found.start, in: transcript), source: source,
             date: Date())
     }

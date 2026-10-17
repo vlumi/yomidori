@@ -3,6 +3,9 @@ import YomidoriCore
 
 struct MarkedSentence: View {
     let sighting: Sighting
+    /// The card's headword, which decides what is marked: the whole verb, or the noun
+    /// without its する.
+    let headword: String
     var font: Font = .title3
 
     var body: some View {
@@ -14,7 +17,7 @@ struct MarkedSentence: View {
     private var marked: AttributedString {
         var text = AttributedString(sighting.sentence)
         text.languageIdentifier = "ja"
-        guard let range = sighting.surfaceRange,
+        guard let range = sighting.markedRange(headword: headword, tokenizer: SystemTokenizer()),
             let start = AttributedString.Index(range.lowerBound, within: text),
             let end = AttributedString.Index(range.upperBound, within: text)
         else { return text }

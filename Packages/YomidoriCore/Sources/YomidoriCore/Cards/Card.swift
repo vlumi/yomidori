@@ -259,6 +259,37 @@ public struct Sighting: Identifiable, Hashable, Codable, Sendable {
         return start..<sentence.index(start, offsetBy: surface.count)
     }
 
+    /// What the sentence marks for a card of `headword`: the surface, cut to the headword
+    /// where the surface is the headword with する on it (黙認 in 黙認します), and run on
+    /// through the endings after a stem (恨ん + で + いる) where the stem alone was kept,
+    /// as cards kept before the whole form was.
+    public func markedRange(headword: String, tokenizer: (any Tokenizer)? = nil)
+        -> Range<String.Index>?
+    {
+        guard let range = surfaceRange else { return nil }
+        if surface != headword, surface.hasPrefix(headword),
+            Deinflector.isSuruForm(String(surface.dropFirst(headword.count)))
+        {
+            return range.lowerBound..<sentence.index(range.lowerBound, offsetBy: headword.count)
+        }
+        guard let tokenizer, Deinflector.isStem(surface) else { return range }
+        var end = range.upperBound
+        for (index, token) in tokenizer.tokens(in: String(sentence[end...])).enumerated() {
+            guard token.isWord, Kana.isKana(token.surface),
+                index == 0
+                    ? Deinflector.isEnding(token.surface, after: surface)
+                    : Deinflector.continuesInflection(token.surface)
+            else { break }
+            end = sentence.index(end, offsetBy: token.surface.count)
+        }
+        return range.lowerBound..<end
+    }
+
+    /// The marked text itself.
+    public func markedForm(headword: String, tokenizer: (any Tokenizer)? = nil) -> String? {
+        markedRange(headword: headword, tokenizer: tokenizer).map { String(sentence[$0]) }
+    }
+
     /// The sighting with its sentence rewritten; the word is found again in the new text,
     /// at the old place when it is still there, else at its first occurrence, else nowhere.
     public func withSentence(_ text: String) -> Sighting {

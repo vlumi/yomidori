@@ -20,8 +20,11 @@ struct ReviewFront: View {
 
     var body: some View {
         if let sighting {
-            MarkedSentence(sighting: sighting, font: .title2)
-            if showsForm, sighting.surface != card.headword {
+            MarkedSentence(sighting: sighting, headword: card.headword, font: .title2)
+            if showsForm,
+                sighting.markedForm(headword: card.headword, tokenizer: SystemTokenizer())
+                    != card.headword
+            {
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
                     Text(japanese: card.headword)
                         .font(.title2.weight(.semibold))
