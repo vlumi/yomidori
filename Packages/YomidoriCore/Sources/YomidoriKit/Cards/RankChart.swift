@@ -3,7 +3,8 @@ import SwiftUI
 import YomidoriCore
 
 /// How many cards stand at each rank, as bars from the nest to the migrating bird, each in
-/// its color; a finger on a bar shows its number and name.
+/// its color. At rest the caption counts the eggs waiting and every card started, the
+/// hatchling up; a finger on a bar shows its number and name instead.
 struct RankChart: View {
     let cards: [Card]
     /// One question's ranks, or the cards' own.
@@ -26,7 +27,7 @@ struct RankChart: View {
 
     var body: some View {
         let bars = bars
-        let shown = bars.first { $0.key == selected } ?? bars.max { $0.count < $1.count }
+        let shown = bars.first { $0.key == selected }
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 if let shown {
@@ -34,8 +35,23 @@ struct RankChart: View {
                     RankName(rank: shown.rank)
                     Text(verbatim: "\(shown.count)")
                         .fontWeight(.semibold)
+                } else {
+                    let eggs = bars.first { $0.rank == .egg }?.count ?? 0
+                    let started = bars.filter { $0.rank > .egg }.map(\.count).reduce(0, +)
+                    RankMark(rank: .egg)
+                    RankName(rank: .egg)
+                    Text(verbatim: "\(eggs)")
+                        .fontWeight(.semibold)
+                    Text(verbatim: "·")
+                        .foregroundStyle(.secondary)
+                        .accessibilityHidden(true)
+                    RankMark(rank: .hatchling)
+                    Text("Started", bundle: .module)
+                    Text(verbatim: "\(started)")
+                        .fontWeight(.semibold)
                 }
             }
+            .accessibilityElement(children: .combine)
             .font(.callout)
             .frame(minHeight: 30)
             Chart(bars) { bar in
