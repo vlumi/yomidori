@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Old kanji forms are found**: a word printed in prewar forms, 戰爭 or 圖書館, that the dictionary has no entry for as written is looked up in modern forms, 戦争 and 図書館.
 - **Text with its endings in katakana is read**: in the old official style, 但シ、本日ヨリ外出ヲ禁ズ, a line with no hiragana has its katakana endings and particles read as hiragana, so 但し, より and 禁ず are found where 但 stood alone. Loanwords in such a line, タワー or チーム, stay as they are, and the page still shows the katakana as printed.
 - **Study's rank bars count the eggs and everything started**: with no finger on them, the line above says how many eggs wait for a lesson and how many cards are started, the hatchling up, where it named only the tallest bar.
 - **A sentence marks the word whole**: a verb or adjective through its endings, 恨んでいる where 恨ん alone was green, and a する noun without its する, 黙認 in 黙認します. Cards kept before are marked the same way.

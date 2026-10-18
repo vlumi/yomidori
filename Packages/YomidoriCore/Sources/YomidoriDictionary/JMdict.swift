@@ -58,22 +58,32 @@ public final class JMdict: WordDictionary {
 
     /// Through the kanji and reading indexes, not a join with OR across them, which scans
     /// every entry: a tenth of a second per word, thousands of words to a page.
+    /// The entries spelled exactly so; where there are none, those spelled so in modern
+    /// kanji (戰爭 as 戦争), for the old forms JMdict lists only some words under.
     public func entries(matching text: String) -> [DictionaryEntry] {
         queue.sync {
             let ids =
                 matchCache[text]
-                ?? rows(
-                    """
-                    SELECT e.id FROM entry e
-                    WHERE e.id IN (
-                        SELECT entry FROM kanji WHERE text = ?1
-                        UNION SELECT entry FROM reading WHERE text = ?1)
-                    ORDER BY e.common DESC, e.id
-                    """, bind: text
-                ).compactMap { Int($0[0]) }
+                ?? {
+                    let exact = exactIDs(text)
+                    guard exact.isEmpty, let modern = OldKanji.modern(text) else { return exact }
+                    return exactIDs(modern)
+                }()
             matchCache[text] = ids
             return ids.map(entry(id:))
         }
+    }
+
+    private func exactIDs(_ text: String) -> [Int] {
+        rows(
+            """
+            SELECT e.id FROM entry e
+            WHERE e.id IN (
+                SELECT entry FROM kanji WHERE text = ?1
+                UNION SELECT entry FROM reading WHERE text = ?1)
+            ORDER BY e.common DESC, e.id
+            """, bind: text
+        ).compactMap { Int($0[0]) }
     }
 
     public func entries(spelledLike form: String, anyCharacterAt index: Int, limit: Int)
