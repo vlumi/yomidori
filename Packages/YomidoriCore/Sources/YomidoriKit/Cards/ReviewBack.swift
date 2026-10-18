@@ -34,7 +34,7 @@ struct MeaningBack: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            if let entry = JMdict.bundled?.entry(headword: card.headword, reading: card.reading) {
+            if let entry = JMdict.bundled?.entry(of: card) {
                 SensesList(entry: entry)
             } else {
                 Text("Not in the dictionary.", bundle: .module)

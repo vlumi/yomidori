@@ -28,9 +28,21 @@ public struct FoundWord: Equatable, Sendable {
         return (entry.kanji + entry.readings).first { forms.contains($0) }
     }
 
-    /// What a card of the word is headed by: the dictionary's headword, else the dictionary
-    /// form, else the word as it stands on the page.
-    public var cardHeadword: String { entries.first?.headword ?? dictionaryForm ?? surface }
+    /// What a card of the word is headed by: the word as the book spells it, in the form
+    /// the dictionary lists it under (讀む for 讀んだ, こと for こと, not 事), its kana as
+    /// written today (但し for 但シ, 思う for 思ふ). A word in kana alone takes the entry's
+    /// own kana (こと for コト, テレビ for テレビ). A spelling the entry doesn't have takes
+    /// the entry's headword; a word without an entry, its dictionary form or its surface.
+    public var cardHeadword: String {
+        guard let entry = entries.first else { return dictionaryForm ?? surface }
+        let forms = [dictionaryForm].compactMap { $0 } + Deinflector.candidates(for: surface)
+        if Kana.isKana(surface) {
+            let kana = Set(forms.map(Kana.hiragana))
+            return entry.readings.first { kana.contains(Kana.hiragana($0)) }
+                ?? entry.readings.first ?? entry.headword
+        }
+        return forms.first(where: entry.isSpelled) ?? entry.headword
+    }
     /// What a card of the word reads: the dictionary's first reading, else the page's.
     public var cardReading: String { Kana.hiragana(entries.first?.readings.first ?? reading) }
     /// The key a card of the word is kept under (`WordKey`).

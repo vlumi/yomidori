@@ -54,6 +54,11 @@ public struct DictionaryEntry: Hashable, Sendable, Identifiable {
         return readings.contains { Kana.hiragana($0) == wanted }
     }
 
+    /// Whether `form` is one of the word's kanji forms, in old kanji (戰爭) as in modern.
+    public func isSpelled(_ form: String) -> Bool {
+        kanji.contains(form) || OldKanji.modern(form).map(kanji.contains) == true
+    }
+
     /// The word is written in kana: it has no kanji, or its first sense is usually written
     /// without them. いる on a page is 居る, not 射る; いい is いい, not 謂.
     public var isUsuallyKana: Bool { kanji.isEmpty || senses.first?.isUsuallyKana == true }

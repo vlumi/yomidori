@@ -391,9 +391,7 @@ extension CardsView {
         Task.detached(priority: .userInitiated) {
             var found: [UUID: Set<WordClass>] = [:]
             for card in unknown {
-                let entry =
-                    card.entryID.flatMap(dictionary.entry(withID:))
-                    ?? dictionary.entry(headword: card.headword, reading: card.reading)
+                let entry = dictionary.entry(of: card)
                 found[card.id] = WordClass.of(
                     partsOfSpeech: entry?.senses.first?.partsOfSpeech ?? [])
             }
