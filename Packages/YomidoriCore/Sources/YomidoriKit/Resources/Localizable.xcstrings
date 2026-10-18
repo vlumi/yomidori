@@ -3491,6 +3491,16 @@
         }
       }
     },
+    "Started" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習中"
+          }
+        }
+      }
+    },
     "Starting…" : {
       "localizations" : {
         "ja" : {
