@@ -269,7 +269,7 @@ struct LessonView: View {
     private func begin() {
         let dictionary = JMdict.bundled
         let ordered = Lesson.pick(from: candidates, order: order, size: candidates.count) { card in
-            dictionary?.entry(headword: card.headword, reading: card.reading)?.common ?? false
+            dictionary?.entry(of: card)?.common ?? false
         }
         cards = Array(ordered.prefix(size))
         pool = Array(ordered.dropFirst(size))

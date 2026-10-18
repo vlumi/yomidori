@@ -153,7 +153,9 @@ enum Cards {
     static func accents(of card: Card) -> [PitchAccent] {
         let key = card.wordKey
         if let known = accentsLock.withLock({ knownAccents[key] }) { return known }
-        let found = JMdict.bundled?.pitchAccents(for: card.headword, reading: card.reading) ?? []
+        let dictionary = JMdict.bundled
+        let headword = dictionary?.entry(of: card)?.headword ?? card.headword
+        let found = dictionary?.pitchAccents(for: headword, reading: card.reading) ?? []
         accentsLock.withLock { knownAccents[key] = found }
         return found
     }
@@ -167,7 +169,7 @@ enum Cards {
             glosses = known
         } else {
             glosses =
-                JMdict.bundled?.entry(headword: card.headword, reading: card.reading)?.senses
+                JMdict.bundled?.entry(of: card)?.senses
                 .flatMap(\.glosses) ?? []
             accentsLock.withLock { knownGlosses[key] = glosses }
         }

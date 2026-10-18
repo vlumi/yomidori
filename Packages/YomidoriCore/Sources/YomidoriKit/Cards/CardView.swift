@@ -53,7 +53,7 @@ struct CardView: View {
             .sheetSize(width: 520, height: 360)
         }
         .task(id: card.id) {
-            details = await WordDetails.load(headword: card.headword, reading: card.reading)
+            details = await WordDetails.load(card: card)
         }
         // A review, or another device, may change the card while it is open; the next edit
         // then writes over the stored card, not the one this screen started with.

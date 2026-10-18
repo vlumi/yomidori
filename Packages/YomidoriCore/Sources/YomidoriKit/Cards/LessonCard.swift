@@ -37,7 +37,7 @@ struct LessonCard: View {
                 .sheetSize(width: 520, height: 360)
         }
         .task(id: card.id) {
-            details = await WordDetails.load(headword: card.headword, reading: card.reading)
+            details = await WordDetails.load(card: card)
         }
     }
 }

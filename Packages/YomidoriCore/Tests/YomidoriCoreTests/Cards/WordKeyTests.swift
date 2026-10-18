@@ -17,8 +17,9 @@ final class WordKeyTests: XCTestCase {
     }
 
     /// Every screen that asks whether a word is kept derives the key the same way: an entry
-    /// by its headword and first reading in hiragana; a word on the page by its entry when
-    /// it has one, else its dictionary form, else its surface, read as the page reads it.
+    /// by its headword and first reading in hiragana; a word on the page by its spelling
+    /// and its entry's reading when it has one, else its dictionary form, else its surface,
+    /// read as the page reads it.
     func testEntriesAndWordsDeriveTheKeyACardIsKeptUnder() {
         let sense = DictionaryEntry.Sense(partsOfSpeech: ["n"], glosses: ["bark"])
         let entry = DictionaryEntry(

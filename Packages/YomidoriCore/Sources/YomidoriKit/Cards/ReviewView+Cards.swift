@@ -5,7 +5,7 @@ import YomidoriDictionary
 /// glosses a card's meanings start from, and a meaning kept on a card.
 extension ReviewView {
     static func glosses(of item: ReviewItem) -> [String] {
-        JMdict.bundled?.entry(headword: item.card.headword, reading: item.card.reading)?.senses
+        JMdict.bundled?.entry(of: item.card)?.senses
             .flatMap(\.glosses) ?? []
     }
 
