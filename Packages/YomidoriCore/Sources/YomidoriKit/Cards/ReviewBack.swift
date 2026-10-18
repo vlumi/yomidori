@@ -7,7 +7,10 @@ struct ReadingBack: View {
     let card: Card
 
     var body: some View {
-        WordTitle(headword: card.headword, reading: card.reading, accent: nil, font: .largeTitle) {
+        WordTitle(
+            headword: card.headword, reading: card.reading, accent: nil,
+            dictionaryForm: JMdict.bundled?.listedForm(of: card), font: .largeTitle
+        ) {
             DictionaryButton(term: card.headword)
         }
     }
@@ -22,6 +25,11 @@ struct PitchBack: View {
         FlowLayout(spacing: 16) {
             Text(japanese: card.headword)
                 .font(.title)
+            if let listed = JMdict.bundled?.listedForm(of: card) {
+                Text(japanese: listed)
+                    .font(.title3)
+                    .foregroundStyle(.secondary)
+            }
             ForEach(accents, id: \.downstep) { accent in
                 PitchReading(reading: card.reading, accent: accent)
             }
@@ -35,6 +43,11 @@ struct MeaningBack: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             if let entry = JMdict.bundled?.entry(of: card) {
+                if let listed = entry.headword.nonEmpty(unless: card.headword) {
+                    Text(japanese: listed)
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
+                }
                 SensesList(entry: entry)
             } else {
                 Text("Not in the dictionary.", bundle: .module)

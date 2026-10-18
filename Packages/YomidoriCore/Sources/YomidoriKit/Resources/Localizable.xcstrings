@@ -3909,12 +3909,12 @@
         }
       }
     },
-    "The word as the dictionary has it" : {
+    "The word in its dictionary form" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "辞書の形"
+            "value" : "辞書形"
           }
         }
       }
