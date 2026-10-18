@@ -11,6 +11,8 @@ enum PageFix: Equatable {
 struct FixRequest: Identifiable {
     let id = UUID()
     let surface: String
+    /// As the page prints it, where that differs from what was looked up (ヨリ for より).
+    let written: String
     let apply: (PageFix) -> Void
 }
 
@@ -41,12 +43,13 @@ final class FixSheet: ObservableObject {
 /// Asks the readout's sheet to fix this row's text.
 struct FixButton: View {
     let surface: String
+    var written: String?
     let fix: (PageFix) -> Void
     @EnvironmentObject private var sheet: FixSheet
 
     var body: some View {
         Button {
-            sheet.ask(FixRequest(surface: surface, apply: fix))
+            sheet.ask(FixRequest(surface: surface, written: written ?? surface, apply: fix))
         } label: {
             Label {
                 Text("Fix the text", bundle: .module)
@@ -66,8 +69,10 @@ extension View {
         self.sheet(item: Binding(get: { sheet.request }, set: { sheet.request = $0 })) {
             sheet.dismissed()
         } content: { request in
-            CharacterFixView(surface: request.surface) { sheet.chose($0, for: request) }
-                .sheetSize(width: 480, height: 560)
+            CharacterFixView(surface: request.surface, written: request.written) {
+                sheet.chose($0, for: request)
+            }
+            .sheetSize(width: 480, height: 560)
         }
     }
 }

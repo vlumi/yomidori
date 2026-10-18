@@ -414,7 +414,7 @@ private struct PhraseRow: View {
                 .font(.title3)
                 .textSelection(.enabled)
             if let fix {
-                FixButton(surface: phrase, fix: fix)
+                FixButton(surface: phrase, written: chunks.map(\.written).joined(), fix: fix)
             }
         }
     }
