@@ -70,7 +70,8 @@ public enum WordFinder {
                 // noun spelled the same.
                 guard verbal, Deinflector.isStem(part.surface) else { return part }
                 let verbs = dictionary.entries(
-                    conjugableAmong: Deinflector.candidates(for: part.surface))
+                    conjugableAmong: Deinflector.candidates(for: part.surface),
+                    reading: part.reading)
                 return verbs.isEmpty
                     ? part
                     : FoundWord(
@@ -216,14 +217,16 @@ public enum WordFinder {
         _ span: [Token], in tokens: [Token], endingAt stop: Int, dictionary: any WordDictionary
     ) -> [DictionaryEntry] {
         let surface = span.map(\.surface).joined()
+        let reading = span.map(\.reading).joined()
         let candidates = Deinflector.candidates(for: surface)
         // The run as written, any word; deinflected, verbs and adjectives alone.
         var entries = dictionary.entries(
-            forAny: [surface], orConjugableAmong: Array(candidates.dropFirst()))
+            forAny: [surface], orConjugableAmong: Array(candidates.dropFirst()),
+            reading: reading)
         // A stem with its ending cut off after it (吹き出し + た, 揺すり + ながら) is a verb
         // or an adjective, whatever noun the dictionary spells the same way.
         if isInflected(span, in: tokens, endingAt: stop), !Kana.isKana(surface) {
-            let verbal = dictionary.entries(conjugableAmong: candidates)
+            let verbal = dictionary.entries(conjugableAmong: candidates, reading: reading)
             if !verbal.isEmpty { entries = verbal }
         }
         // Endings and particles side by side spell many a word in kana (た + が is 箍 or 誰が,
