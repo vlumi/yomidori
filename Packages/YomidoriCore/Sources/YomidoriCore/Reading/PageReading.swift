@@ -19,6 +19,8 @@ public struct PageReading: Sendable {
         public let parts: [FoundWord]
 
         public var surface: String { word.surface }
+        /// As the page spells it, for showing.
+        public var written: String { word.written }
     }
 
     public let text: String

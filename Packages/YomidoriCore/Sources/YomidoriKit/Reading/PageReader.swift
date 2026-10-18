@@ -8,7 +8,13 @@ actor PageReader {
 
     func read(_ text: String, with choice: TokenizerChoice) -> PageReading {
         let tokenizer = choice.tokenizer
+        let dictionary = JMdict.bundled
         return PageReading(
-            text: text, tokens: { tokenizer?.tokens(in: $0) ?? [] }, dictionary: JMdict.bundled)
+            text: text,
+            tokens: { line in
+                KatakanaOkurigana.tokens(
+                    in: line, tokenizer: { tokenizer?.tokens(in: $0) ?? [] },
+                    isWord: { !(dictionary?.entries(matching: $0).isEmpty ?? true) })
+            }, dictionary: dictionary)
     }
 }
