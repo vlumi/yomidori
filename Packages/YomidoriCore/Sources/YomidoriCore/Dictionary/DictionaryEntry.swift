@@ -6,11 +6,17 @@ public struct DictionaryEntry: Hashable, Sendable, Identifiable {
     public struct Sense: Hashable, Sendable {
         public let partsOfSpeech: [String]
         public let glosses: [String]
+        /// JMdict's notes on the sense: uk (usually written in kana), arch, obs, col, …
+        public let misc: [String]
 
-        public init(partsOfSpeech: [String], glosses: [String]) {
+        public init(partsOfSpeech: [String], glosses: [String], misc: [String] = []) {
             self.partsOfSpeech = partsOfSpeech
             self.glosses = glosses
+            self.misc = misc
         }
+
+        /// The sense is usually written in kana, its kanji seldom seen (居る, 為る).
+        public var isUsuallyKana: Bool { misc.contains("uk") }
     }
 
     public let id: Int
@@ -47,6 +53,10 @@ public struct DictionaryEntry: Hashable, Sendable, Identifiable {
         let wanted = Kana.hiragana(reading)
         return readings.contains { Kana.hiragana($0) == wanted }
     }
+
+    /// The word is written in kana: it has no kanji, or its first sense is usually written
+    /// without them. いる on a page is 居る, not 射る; いい is いい, not 謂.
+    public var isUsuallyKana: Bool { kanji.isEmpty || senses.first?.isUsuallyKana == true }
 
     public var isFunctionWord: Bool {
         let function: Set<String> = ["prt", "aux", "aux-v", "aux-adj", "cop"]
@@ -214,6 +224,15 @@ public enum SearchQuery {
 extension Array where Element == DictionaryEntry {
     /// The entries read as the tokenizer read the word first (本 as ほん before 元 as もと),
     /// the dictionary's order kept otherwise.
+    /// For a word the page writes in kana, the common entries usually written so first,
+    /// each group in its order: いる is 居る or 要る before 射る and 入る. Common ones alone,
+    /// since JMdict marks many a rare plant and animal so too (野老 for ところ, 鴇 for とき).
+    public func preferringKana(for surface: String) -> [DictionaryEntry] {
+        guard Kana.isKana(surface) else { return self }
+        let first = filter { $0.common && $0.isUsuallyKana }
+        return first + filter { !($0.common && $0.isUsuallyKana) }
+    }
+
     public func preferring(reading: String) -> [DictionaryEntry] {
         filter { $0.isRead(reading) } + filter { !$0.isRead(reading) }
     }

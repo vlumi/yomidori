@@ -173,7 +173,8 @@ public enum WordFinder {
                 if !entries.isEmpty {
                     return FoundWord(
                         tokens: span,
-                        entries: entries.preferring(reading: span.map(\.reading).joined()))
+                        entries: entries.preferring(reading: span.map(\.reading).joined())
+                            .preferringKana(for: span.map(\.surface).joined()))
                 }
             }
         }
@@ -189,7 +190,9 @@ public enum WordFinder {
         }
         // Looked up only when no longer word was found.
         return FoundWord(
-            tokens: [token], entries: dictionary.entries(for: token, inflected: inflected))
+            tokens: [token],
+            entries: dictionary.entries(for: token, inflected: inflected)
+                .preferringKana(for: token.surface))
     }
 
     /// The span in modern kana, each token as long as before and keeping the page's
