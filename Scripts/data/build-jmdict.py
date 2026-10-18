@@ -53,7 +53,7 @@ CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);
 CREATE TABLE entry (id INTEGER PRIMARY KEY, common INTEGER NOT NULL);
 CREATE TABLE kanji (entry INTEGER NOT NULL, ord INTEGER NOT NULL, text TEXT NOT NULL);
 CREATE TABLE reading (entry INTEGER NOT NULL, ord INTEGER NOT NULL, text TEXT NOT NULL);
-CREATE TABLE sense (entry INTEGER NOT NULL, ord INTEGER NOT NULL, pos TEXT NOT NULL, gloss TEXT NOT NULL);
+CREATE TABLE sense (entry INTEGER NOT NULL, ord INTEGER NOT NULL, pos TEXT NOT NULL, gloss TEXT NOT NULL, misc TEXT NOT NULL DEFAULT '');
 CREATE INDEX kanji_text ON kanji (text);
 CREATE INDEX kanji_entry ON kanji (entry);
 CREATE INDEX reading_text ON reading (text);
@@ -247,8 +247,11 @@ def build(xml_bytes, accents_text, kanjidic_bytes, kradfile_bytes, kanjivg, outp
             # A sense without its own <pos> inherits the previous sense's, as JMdict's DTD says.
             pos = [codes.get(p.text, p.text) for p in sense.findall("pos")] or pos
             glosses = [g.text for g in sense.findall("gloss") if g.text and g.get("{http://www.w3.org/XML/1998/namespace}lang", "eng") == "eng"]
+            # The sense's own notes (uk: usually written in kana; arch, obs, col, …); unlike
+            # <pos>, not inherited.
+            misc = [codes.get(m.text, m.text) for m in sense.findall("misc")]
             if glosses:
-                db.execute("INSERT INTO sense VALUES (?, ?, ?, ?)", (entry_id, i, " ".join(pos), "; ".join(glosses)))
+                db.execute("INSERT INTO sense VALUES (?, ?, ?, ?, ?)", (entry_id, i, " ".join(pos), "; ".join(glosses), " ".join(misc)))
         entry.clear()
         count += 1
     # The full-text index over the glosses, for typed search in English.

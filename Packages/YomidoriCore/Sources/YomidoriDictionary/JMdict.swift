@@ -203,18 +203,26 @@ public final class JMdict: WordDictionary {
             .map {
                 $0[0]
             }
+        // A dictionary built before the notes were kept has no misc column.
+        let notes = hasMisc ? "misc" : "''"
         let senses = rows(
-            "SELECT pos, gloss FROM sense WHERE entry = ?1 ORDER BY ord", bind: idText
+            "SELECT pos, gloss, \(notes) FROM sense WHERE entry = ?1 ORDER BY ord", bind: idText
         ).map {
             DictionaryEntry.Sense(
                 partsOfSpeech: $0[0].split(separator: " ").map(String.init),
-                glosses: $0[1].components(separatedBy: "; "))
+                glosses: $0[1].components(separatedBy: "; "),
+                misc: $0[2].split(separator: " ").map(String.init))
         }
         let common = rows("SELECT common FROM entry WHERE id = ?1", bind: idText).first?[0] == "1"
         let entry = DictionaryEntry(
             id: id, kanji: kanji, readings: readings, senses: senses, common: common)
         entryCache[id] = entry
         return entry
+    }
+
+    /// Whether the senses carry JMdict's notes; asked once, on `queue`.
+    private lazy var hasMisc: Bool = rows("PRAGMA table_info(sense)", bind: nil).contains {
+        $0.count > 1 && $0[1] == "misc"
     }
 
     func rows(_ sql: String, bind: String?) -> [[String]] {
