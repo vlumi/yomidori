@@ -112,14 +112,15 @@ extension WordDictionary {
         let candidates =
             [token.dictionaryForm].compactMap { $0 } + Deinflector.candidates(for: token.surface)
         if inflected, !Kana.isKana(token.surface) {
-            let verbal = entries(conjugableAmong: candidates)
+            let verbal = entries(conjugableAmong: candidates, reading: token.reading)
             if !verbal.isEmpty { return verbal.preferring(reading: token.reading) }
         }
         // As written, or as the tokenizer names it: any word. Deinflected: a verb or an
         // adjective only — にけ is no 肉 for ending in け.
         let found = entries(
             forAny: [token.dictionaryForm, token.surface].compactMap { $0 },
-            orConjugableAmong: Array(Deinflector.candidates(for: token.surface).dropFirst()))
+            orConjugableAmong: Array(Deinflector.candidates(for: token.surface).dropFirst()),
+            reading: token.reading)
         if !found.isEmpty { return found.preferring(reading: token.reading) }
         if !Kana.isKana(token.surface) {
             let conjugated = entries(conjugatedFrom: token.surface)
@@ -138,11 +139,29 @@ extension WordDictionary {
 
     /// The first candidate with a common conjugable entry, else the first with any; the
     /// conjugable entries alone. Common first, since the rows also spell verbs no one
-    /// uses (見せ → 見す beside 見せる).
-    public func entries(conjugableAmong candidates: [String]) -> [DictionaryEntry] {
+    /// uses (見せ → 見す beside 見せる). Where the page's `reading` is known, a candidate
+    /// read so comes first: 終っ read おわっ is 終わる, though 終う spells しまう too.
+    public func entries(conjugableAmong candidates: [String], reading: String? = nil)
+        -> [DictionaryEntry]
+    {
         let found = candidates.map { self.entries(matching: $0).filter(\.isConjugable) }
             .filter { !$0.isEmpty }
+        if let stem = Self.stem(of: reading) {
+            let read = found.filter { group in
+                group.contains { $0.readings.contains { Kana.hiragana($0).hasPrefix(stem) } }
+            }
+            if let group = read.first(where: { $0.contains(where: \.common) }) ?? read.first {
+                return group
+            }
+        }
         return found.first { $0.contains(where: \.common) } ?? found.first ?? []
+    }
+
+    /// A stem's reading without its last kana, the one that changes as the word conjugates
+    /// (おわっ → おわ, いっ → い); nil where nothing would be left.
+    private static func stem(of reading: String?) -> String? {
+        guard let reading, reading.count > 1, Kana.isKana(reading) else { return nil }
+        return String(Kana.hiragana(reading).dropLast())
     }
 
     /// The first candidate with entries wins.
@@ -153,11 +172,11 @@ extension WordDictionary {
     /// The word as it stands, any entry; failing that, the forms a stem could come from,
     /// verbs and adjectives alone: a stem is a stem of something that conjugates, and a
     /// noun spelled like one of its forms is another word.
-    public func entries(forAny exact: [String], orConjugableAmong forms: [String])
-        -> [DictionaryEntry]
-    {
+    public func entries(
+        forAny exact: [String], orConjugableAmong forms: [String], reading: String? = nil
+    ) -> [DictionaryEntry] {
         let found = entries(forAny: exact)
-        return found.isEmpty ? entries(conjugableAmong: forms) : found
+        return found.isEmpty ? entries(conjugableAmong: forms, reading: reading) : found
     }
 
     public func estimatedPitch(for headword: String, reading: String) -> [PitchPhrase] { [] }
