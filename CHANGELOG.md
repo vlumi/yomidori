@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Prewar kana spelling is found**: a word that finds nothing as printed is looked up in modern kana, 思ふ as 思う, 言ひ as 言い, あはれ as 哀れ, 戰へ as 戦う, with the page still showing it as printed. は, へ and を as particles are left alone.
 - **Old kanji forms are found**: a word printed in prewar forms, 戰爭 or 圖書館, that the dictionary has no entry for as written is looked up in modern forms, 戦争 and 図書館.
 - **Text with its endings in katakana is read**: in the old official style, 但シ、本日ヨリ外出ヲ禁ズ, a line with no hiragana has its katakana endings and particles read as hiragana, so 但し, より and 禁ず are found where 但 stood alone. Loanwords in such a line, タワー or チーム, stay as they are, and the page still shows the katakana as printed.
 - **Study's rank bars count the eggs and everything started**: with no finger on them, the line above says how many eggs wait for a lesson and how many cards are started, the hatchling up, where it named only the tallest bar.

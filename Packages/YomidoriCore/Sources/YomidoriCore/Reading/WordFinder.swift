@@ -139,6 +139,8 @@ public enum WordFinder {
     /// adjective whole, with the endings cut off after its stem (恨んでいる, 頼みたい), and a
     /// する noun without its する (黙認 in 黙認します), since the noun is the word and する
     /// a verb of its own.
+    /// As the page prints it: the surface read in hiragana or modern kana (より for ヨリ,
+    /// 思う for 思ふ) is the page's own spelling again, one kana for one.
     public static func pageForm(of word: FoundWord, in tokens: [Token]) -> String {
         let surface = word.surface
         if let entry = word.entries.first {
@@ -149,10 +151,11 @@ public enum WordFinder {
                         && Deinflector.isSuruForm(String(surface.dropFirst(form.count)))
                 })
             {
-                return noun
+                return String(word.written.prefix(noun.count))
             }
         }
-        return surface + endings(after: word, in: tokens).map(\.surface).joined()
+        return word.written
+            + endings(after: word, in: tokens).map { $0.written ?? $0.surface }.joined()
     }
 
     private static func longestWord(
@@ -161,40 +164,78 @@ public enum WordFinder {
         guard let dictionary else { return FoundWord(tokens: [tokens[start]], entries: []) }
         let end = min(tokens.count, start + max(span, 1))
         for stop in stride(from: end, to: start + 1, by: -1) {
-            let span = Array(tokens[start..<stop])
-            guard span.allSatisfy(\.isWord) else { continue }
-            let surface = span.map(\.surface).joined()
-            let candidates = Deinflector.candidates(for: surface)
-            // The run as written, any word; deinflected, verbs and adjectives alone.
-            var entries = dictionary.entries(
-                forAny: [surface], orConjugableAmong: Array(candidates.dropFirst()))
-            // A stem with its ending cut off after it (吹き出し + た, 揺すり + ながら) is a verb
-            // or an adjective, whatever noun the dictionary spells the same way.
-            if isInflected(span, in: tokens, endingAt: stop), !Kana.isKana(surface) {
-                let verbal = dictionary.entries(conjugableAmong: candidates)
-                if !verbal.isEmpty { entries = verbal }
+            let written = Array(tokens[start..<stop])
+            guard written.allSatisfy(\.isWord) else { continue }
+            let modern = modern(written, before: tokens, at: stop)
+            for span in [written] + [modern].compactMap({ $0 }) {
+                let entries = lookUp(span, in: tokens, endingAt: stop, dictionary: dictionary)
+                if !entries.isEmpty {
+                    return FoundWord(
+                        tokens: span,
+                        entries: entries.preferring(reading: span.map(\.reading).joined()))
+                }
             }
-            // Endings and particles side by side spell many a word in kana (た + が is 箍 or 誰が,
-            // し + た is 下); a join of kana alone counts only as what is first of all an
-            // expression, かもしれない.
-            if Kana.isKana(surface) {
-                entries = entries.filter { $0.senses.first?.partsOfSpeech.contains("exp") == true }
-            } else if entries.isEmpty {
-                // A verb with its ending cut off as a word (頼み + たい): the verb, whole.
-                entries = dictionary.entries(conjugatedFrom: surface)
-            }
+        }
+        let token = tokens[start]
+        let inflected = isInflected([token], in: tokens, endingAt: start + 1)
+        // A word of one token in prewar kana (思ふ), before its reading stands in for it.
+        if let modern = modern([token], before: tokens, at: start + 1) {
+            let entries = lookUp(modern, in: tokens, endingAt: start + 1, dictionary: dictionary)
             if !entries.isEmpty {
                 return FoundWord(
-                    tokens: span, entries: entries.preferring(reading: span.map(\.reading).joined())
-                )
+                    tokens: modern, entries: entries.preferring(reading: modern[0].reading))
             }
         }
         // Looked up only when no longer word was found.
         return FoundWord(
-            tokens: [tokens[start]],
-            entries: dictionary.entries(
-                for: tokens[start],
-                inflected: isInflected([tokens[start]], in: tokens, endingAt: start + 1)))
+            tokens: [token], entries: dictionary.entries(for: token, inflected: inflected))
+    }
+
+    /// The span in modern kana, each token as long as before and keeping the page's
+    /// spelling as `written`; nil where prewar kana changes nothing.
+    private static func modern(_ span: [Token], before tokens: [Token], at next: Int)
+        -> [Token]?
+    {
+        let surface = span.map(\.surface).joined()
+        let following = next < tokens.count ? tokens[next].surface : nil
+        guard let modern = HistoricalKana.modern(surface, before: following) else { return nil }
+        var rest = Substring(modern)
+        return span.map { token in
+            let piece = String(rest.prefix(token.surface.count))
+            rest = rest.dropFirst(token.surface.count)
+            return Token(
+                surface: piece,
+                reading: HistoricalKana.modern(token.reading) ?? token.reading,
+                range: token.range, isWord: token.isWord,
+                written: token.written ?? (piece == token.surface ? nil : token.surface))
+        }
+    }
+
+    /// The entries for a run of tokens taken as one word, or none.
+    private static func lookUp(
+        _ span: [Token], in tokens: [Token], endingAt stop: Int, dictionary: any WordDictionary
+    ) -> [DictionaryEntry] {
+        let surface = span.map(\.surface).joined()
+        let candidates = Deinflector.candidates(for: surface)
+        // The run as written, any word; deinflected, verbs and adjectives alone.
+        var entries = dictionary.entries(
+            forAny: [surface], orConjugableAmong: Array(candidates.dropFirst()))
+        // A stem with its ending cut off after it (吹き出し + た, 揺すり + ながら) is a verb
+        // or an adjective, whatever noun the dictionary spells the same way.
+        if isInflected(span, in: tokens, endingAt: stop), !Kana.isKana(surface) {
+            let verbal = dictionary.entries(conjugableAmong: candidates)
+            if !verbal.isEmpty { entries = verbal }
+        }
+        // Endings and particles side by side spell many a word in kana (た + が is 箍 or 誰が,
+        // し + た is 下); a join of kana alone counts only as what is first of all an
+        // expression, かもしれない.
+        if Kana.isKana(surface), span.count > 1 {
+            entries = entries.filter { $0.senses.first?.partsOfSpeech.contains("exp") == true }
+        } else if entries.isEmpty, !Kana.isKana(surface) {
+            // A verb with its ending cut off as a word (頼み + たい): the verb, whole.
+            entries = dictionary.entries(conjugatedFrom: surface)
+        }
+        return entries
     }
 
     /// The span is a stem, and the token after it is an ending cut from it.
