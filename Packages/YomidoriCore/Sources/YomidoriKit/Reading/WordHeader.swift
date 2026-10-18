@@ -24,7 +24,10 @@ struct WordHeader<Trailing: View>: View {
         Section {
             WordTitle(
                 headword: headword, reading: reading, accent: details.accent(of: reading),
-                estimate: details.estimate, font: .largeTitle
+                estimate: details.estimate,
+                // The dictionary's spelling beside a card headed as the book has it.
+                dictionaryForm: details.entry?.headword.nonEmpty(unless: headword),
+                font: .largeTitle
             ) {
                 DictionaryButton(term: headword)
                     .labelStyle(.iconOnly)

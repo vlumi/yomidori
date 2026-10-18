@@ -29,7 +29,7 @@ struct ReviewFront: View {
                     Text(japanese: card.headword)
                         .font(.title2.weight(.semibold))
                         .foregroundStyle(Palette.nightGreen)
-                    Text("The word as the dictionary has it", bundle: .module)
+                    Text("The word in its dictionary form", bundle: .module)
                         .font(.callout)
                         .foregroundStyle(.secondary)
                 }

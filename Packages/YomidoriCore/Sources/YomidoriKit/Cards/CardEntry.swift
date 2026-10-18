@@ -9,4 +9,17 @@ extension JMdict {
         card.entryID.flatMap(entry(withID:))
             ?? entry(headword: card.headword, reading: card.reading)
     }
+
+    /// The dictionary's headword for a card headed otherwise (事 for こと, 戦争 for 戰爭), to
+    /// show beside it; nil where the two are the same.
+    func listedForm(of card: Card) -> String? {
+        entry(of: card)?.headword.nonEmpty(unless: card.headword)
+    }
+}
+
+extension String {
+    /// The string, unless it is `other` or empty.
+    func nonEmpty(unless other: String) -> String? {
+        isEmpty || self == other ? nil : self
+    }
 }
