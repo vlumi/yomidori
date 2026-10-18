@@ -13,6 +13,9 @@ public struct FoundWord: Equatable, Sendable {
 
     public var surface: String { tokens.map(\.surface).joined() }
     public var reading: String { tokens.map(\.reading).joined() }
+    /// The word as the page spells it, where that differs from what was looked up (但シ
+    /// for 但し).
+    public var written: String { tokens.map { $0.written ?? $0.surface }.joined() }
 
     /// The form the dictionary lists the word under when the page has it inflected: the
     /// tokenizer's for one token (眩ん → 眩む), and for a word joined from several, the

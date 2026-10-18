@@ -297,13 +297,21 @@ public struct Sighting: Identifiable, Hashable, Codable, Sendable {
         let unchanged = Sighting(
             id: id, sentence: sentence, surface: surface, offset: offset, source: source,
             date: date)
-        if let range = unchanged.surfaceRange, sentence[range] == surface { return unchanged }
-        let offset = sentence.range(of: surface).map {
-            sentence.distance(from: sentence.startIndex, to: $0.lowerBound)
+        // The surface may be the sentence's katakana read as hiragana (より for ヨリ), one
+        // kana for one, so the two are compared folded.
+        let folded = Kana.hiragana(sentence)
+        let surface = Kana.hiragana(self.surface)
+        if unchanged.surfaceRange != nil,
+            folded.dropFirst(offset).prefix(surface.count) == surface
+        {
+            return unchanged
+        }
+        let offset = folded.range(of: surface).map {
+            folded.distance(from: folded.startIndex, to: $0.lowerBound)
         }
         return Sighting(
-            id: id, sentence: sentence, surface: surface, offset: offset ?? -1, source: source,
-            date: date)
+            id: id, sentence: sentence, surface: self.surface, offset: offset ?? -1,
+            source: source, date: date)
     }
 
     /// Cards once kept page photos and a crop of the sentence; those keys are no longer read.

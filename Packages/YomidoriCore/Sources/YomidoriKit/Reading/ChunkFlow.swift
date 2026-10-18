@@ -23,7 +23,7 @@ struct ChunkFlow: View {
                     Text(verbatim: reading ? chunk.word.reading : " ")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
-                    Text(verbatim: chunk.surface)
+                    Text(verbatim: chunk.written)
                         .font(.title3)
                         .foregroundStyle(chunk.isWord ? .primary : .secondary)
                 }
@@ -64,7 +64,7 @@ struct ChunkFlow: View {
                         Text("Extend the selection to here", bundle: .module)
                     }
                     Button {
-                        Clipboard.copy(chunk.surface)
+                        Clipboard.copy(chunk.written)
                     } label: {
                         Text("Copy", bundle: .module)
                     }
