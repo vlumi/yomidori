@@ -1891,6 +1891,16 @@
         }
       }
     },
+    "Katakana as hiragana" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カタカナをひらがなで"
+          }
+        }
+      }
+    },
     "Keep" : {
       "localizations" : {
         "ja" : {
@@ -2561,6 +2571,16 @@
         }
       }
     },
+    "Or read it otherwise" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "別の読み方"
+          }
+        }
+      }
+    },
     "Or retype it whole" : {
       "localizations" : {
         "ja" : {
@@ -3117,6 +3137,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "右"
+          }
+        }
+      }
+    },
+    "Right to left" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右から左へ"
           }
         }
       }

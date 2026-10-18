@@ -3,9 +3,12 @@ import YomidoriCore
 import YomidoriDictionary
 
 /// A misreading put right. One character: tap it, then pick from the words spelled like the
-/// rest, or type it. More than one: retype the whole of it.
+/// rest, or type it. More than one: retype the whole of it, or read it otherwise: right to
+/// left, as a sign of before the war, or its katakana as hiragana.
 struct CharacterFixView: View {
     let surface: String
+    /// As the page prints it, which the other readings turn around.
+    var written: String?
     let apply: (PageFix) -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var index: Int?
@@ -81,6 +84,7 @@ struct CharacterFixView: View {
                 } footer: {
                     Text("For a word or a line read wrong in more than one place.", bundle: .module)
                 }
+                ReadOtherwise(text: written ?? surface) { done(.whole($0)) }
             }
             .navigationTitle(Text("Fix the text", bundle: .module))
             .navigationBarTitleDisplayModeInline()
@@ -139,5 +143,49 @@ struct CharacterFixView: View {
     private func done(_ fix: PageFix) {
         apply(fix)
         dismiss()
+    }
+}
+
+/// The same characters read another way: right to left, as signs and headings were written
+/// before the war, or with their katakana as hiragana, for endings in the old official
+/// style the page did not take as such.
+private struct ReadOtherwise: View {
+    let text: String
+    let apply: (String) -> Void
+
+    private var readings: [(title: Text, result: String)] {
+        var readings: [(title: Text, result: String)] = []
+        let reversed = String(text.reversed())
+        if reversed != text {
+            readings.append((Text("Right to left", bundle: .module), reversed))
+        }
+        let hiragana = Kana.hiragana(text)
+        if hiragana != text {
+            readings.append((Text("Katakana as hiragana", bundle: .module), hiragana))
+        }
+        return readings
+    }
+
+    var body: some View {
+        let readings = readings
+        if !readings.isEmpty {
+            Section {
+                ForEach(readings, id: \.result) { reading in
+                    Button {
+                        apply(reading.result)
+                    } label: {
+                        LabeledContent {
+                            Text(japanese: reading.result)
+                                .foregroundStyle(Palette.nightGreen)
+                        } label: {
+                            reading.title
+                        }
+                    }
+                    .tint(.primary)
+                }
+            } header: {
+                Text("Or read it otherwise", bundle: .module)
+            }
+        }
     }
 }

@@ -14,6 +14,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A run of text can be read right to left, or its katakana as hiragana**: Fix the text offers both, with what each would read, for a prewar sign written right to left (店商田山 as 山田商店) or old-style endings in katakana the page did not take as such.
 - **Common verbs are no longer read as other verbs spelled alike**: 行った was 行う, 降りた was 下る, and 終った was 仕舞う. Among the verbs a cut stem could come from, the one the page's reading matches now comes first.
 - **Prewar kana spelling is found**: a word that finds nothing as printed is looked up in modern kana, 思ふ as 思う, 言ひ as 言い, あはれ as 哀れ, 戰へ as 戦う, with the page still showing it as printed. は, へ and を as particles are left alone.
 - **Old kanji forms are found**: a word printed in prewar forms, 戰爭 or 圖書館, that the dictionary has no entry for as written is looked up in modern forms, 戦争 and 図書館.

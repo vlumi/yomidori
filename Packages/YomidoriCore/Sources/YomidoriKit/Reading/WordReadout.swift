@@ -86,7 +86,7 @@ struct WordReadout: View {
             }
             HStack(spacing: 12) {
                 if let fix {
-                    FixButton(surface: word.surface, fix: fix)
+                    FixButton(surface: word.surface, written: word.written, fix: fix)
                 }
                 DictionaryButton(term: word.entries.first?.headword ?? headword)
                 if let entry = word.entries.first {
