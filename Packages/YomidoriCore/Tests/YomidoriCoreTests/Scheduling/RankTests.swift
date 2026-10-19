@@ -76,5 +76,7 @@ final class RankTests: XCTestCase {
         XCTAssertEqual(all.questionCounts[.reading], 1)
         XCTAssertEqual(all.questionCounts[.meaning], 1)
         XCTAssertEqual(all.slots.first { $0.questions > 0 }?.questionShares.count, 2)
+        // Each at its own rank, not the card's, which its young pitch holds at hatchling.
+        XCTAssertEqual(all.counts, [.fledgling: 2])
     }
 }
