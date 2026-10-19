@@ -3,12 +3,12 @@ import SwiftUI
 import YomidoriCore
 
 /// The week ahead as a picture: a bar for each quarter of a day, the questions that come
-/// due in it stacked in the colors of their cards' ranks, a hairline between the days; a
-/// finger on a bar (the pointer, on a Mac) reads it out above, and the whole week stands
-/// there otherwise. What is overdue is in now's bar. Below, how many lie beyond.
+/// due in it stacked in the colors of their ranks, each question's own, a hairline between
+/// the days; a finger on a bar (the pointer, on a Mac) reads it out above, and the whole
+/// week stands there otherwise. What is overdue is in now's bar. Below, how many lie beyond.
 struct UpcomingReviews: View {
     let upcoming: Upcoming
-    /// What colors the bars: the cards' ranks, or what each question asks.
+    /// What colors the bars: each question's rank, or what it asks.
     var stacking: Stacking = .rank
     @State private var selected: Date?
     @ScaledMetric(relativeTo: .body) private var height: CGFloat = 132

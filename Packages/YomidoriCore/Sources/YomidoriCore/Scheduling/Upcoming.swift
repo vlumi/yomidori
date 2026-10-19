@@ -1,13 +1,13 @@
 import Foundation
 
-/// The questions coming due, by quarter day and by the rank of their cards, for a look
+/// The questions coming due, by quarter day and by the rank of each question, for a look
 /// ahead: how much now, how much each morning, afternoon, evening and night after, and
 /// whether a wall is on its way.
 public struct Upcoming: Equatable, Sendable {
     /// A day in four: night, morning, afternoon, evening.
     public static let slotsPerDay = 4
 
-    /// A quarter of a day and the questions that come due in it, by the rank of their card.
+    /// A quarter of a day and the questions that come due in it, each by its own rank.
     public struct Slot: Equatable, Sendable, Identifiable {
         public let start: Date
         public let end: Date
@@ -119,8 +119,9 @@ public struct Upcoming: Equatable, Sendable {
     /// Every question of the cards in review, placed in the quarter day it comes due — or
     /// the day, with one slot a day for a longer look ahead: one never answered is due now,
     /// one overdue counts as now's. `asksPitch` says which cards have a pitch to ask, as the
-    /// review's own queue is told. With `question`, that question's alone, each at the rank
-    /// of that question.
+    /// review's own queue is told. Each question at its own rank, as each keeps its own
+    /// schedule: a card's young pitch doesn't color its meaning, known for months, as young.
+    /// With `question`, that question's alone.
     public static func of(
         _ cards: [Card], from now: Date, days: Int, slotsPerDay: Int = Upcoming.slotsPerDay,
         calendar: Calendar = .current, question only: Question? = nil,
@@ -147,7 +148,7 @@ public struct Upcoming: Equatable, Sendable {
         for card in cards where card.isInReview {
             for question in card.questions(asksPitch: asksPitch(card)) {
                 if let only, question != only { continue }
-                let rank = only == nil ? card.rank : card.rank(for: question)
+                let rank = card.rank(for: question)
                 let due = max(card.state(for: question)?.due ?? now, now)
                 if let index = slots.firstIndex(where: { $0.contains(due) }) {
                     slots[index].counts[rank, default: 0] += 1
