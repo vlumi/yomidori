@@ -18,12 +18,13 @@ struct ProgressScreen: View {
     @State private var streaks: [Streak] = []
     @State private var history: [DayTally] = []
     @State private var records = ProgressRecords()
-    /// Where the filters' row stands in the list and where the bar's safe area begins: once
-    /// the row has scrolled up under the bar, a copy floats there until it comes back.
-    @State private var filtersBottom: CGFloat = .infinity
-    @State private var safeTop: CGFloat = 0
+    /// Where the filters' row begins in the list and where the bar ends: once the row starts
+    /// under the bar, a copy floats there, where the row stood, until it comes back.
+    @State private var filtersTop: CGFloat = .infinity
+    @State private var barBottom: CGFloat = 0
 
-    private static let space = "progress"
+    /// The floating copy's margin above the filters, so it takes over the row in place.
+    private static let floatMargin: CGFloat = 8
 
     var body: some View {
         List {
@@ -37,9 +38,9 @@ struct ProgressScreen: View {
                 Section {
                     filters
                         .onGeometryChange(for: CGFloat.self) {
-                            $0.frame(in: .named(Self.space)).maxY
+                            $0.frame(in: .scrollView).minY
                         } action: {
-                            filtersBottom = $0
+                            filtersTop = $0
                         }
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets())
@@ -87,21 +88,20 @@ struct ProgressScreen: View {
             }
         }
         .navigationTitle(Text("Progress", bundle: .module))
-        .coordinateSpace(.named(Self.space))
-        // The filters again, floating under the bar once their row has scrolled up under
-        // it; an overlay, not an inset, so the list doesn't jump when they appear.
+        // The bar's bottom in the list's own terms: the list scrolls under the bar, and its
+        // top inset is where the bar ends, a large title's or an inline one's.
+        .onScrollGeometryChange(for: CGFloat.self) {
+            $0.contentInsets.top
+        } action: { _, inset in
+            barBottom = inset
+        }
+        // The filters again, floating under the bar once their row starts under it; an
+        // overlay, not an inset, so the list doesn't jump when they appear.
         .overlay(alignment: .top) {
-            GeometryReader { proxy in
-                let top = proxy.frame(in: .named(Self.space)).minY
-                Color.clear
-                    .onAppear { safeTop = top }
-                    .onChange(of: top) { _, top in safeTop = top }
-            }
-            .frame(height: 0)
-            if filtersBottom < safeTop {
+            if filtersTop < barBottom + Self.floatMargin {
                 filters
                     .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
+                    .padding(.vertical, Self.floatMargin)
                     .background(.bar)
             }
         }
