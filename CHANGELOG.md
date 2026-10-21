@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 48 — 2026-10-21
+
 - **A card is the word as the book writes it**: a word kept from a page is headed as printed, in its dictionary form, こと where it was 事, 戰爭 where it was 戦争, 讀む for 讀んだ, so a word met in two spellings makes two cards. Katakana endings and prewar kana are kept as hiragana written today, 但し for 但シ and 思う for 思ふ, and a word in katakana alone takes the dictionary's kana, こと for コト but テレビ for テレビ. The card, a lesson and a review's answer show the dictionary's spelling beside it in gray, 事 beside こと, 戦争 beside 戰爭. Cards kept before keep their headings.
 - **A word read in another form shows both**: the word's title is the word as recognized on the page, 戰爭, 但シ or 思ふ, with the form it was looked up in beside it, 戦争, 但し or 思う, so a misreading can still be seen.
 - **A word written in kana finds the word usually written so**: こと is 事, not 琴, and よう is 様, not 酔う. The dictionary now keeps JMdict's note that a word is usually written in kana, and among common words that note decides for a word the page has in kana.
