@@ -45,7 +45,8 @@ struct RankChart: View {
                     Text(verbatim: "·")
                         .foregroundStyle(.secondary)
                         .accessibilityHidden(true)
-                    RankMark(rank: .hatchling)
+                    // No rank's mark: started spans the hatchling up, and one rank's ball
+                    // would read as that rank alone.
                     Text("Started", bundle: .module)
                     Text(verbatim: "\(started)")
                         .fontWeight(.semibold)
