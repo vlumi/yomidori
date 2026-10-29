@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **An inflected word shows its dictionary form beside it with the system tokenizer too**: 訊い from 訊いた has 訊く beside it in gray, taken from the dictionary's entry where the tokenizer gives no dictionary form.
+
 ### build 48 — 2026-10-21
 
 - **A card is the word as the book writes it**: a word kept from a page is headed as printed, in its dictionary form, こと where it was 事, 戰爭 where it was 戦争, 讀む for 讀んだ, so a word met in two spellings makes two cards. Katakana endings and prewar kana are kept as hiragana written today, 但し for 但シ and 思う for 思ふ, and a word in katakana alone takes the dictionary's kana, こと for コト but テレビ for テレビ. The card, a lesson and a review's answer show the dictionary's spelling beside it in gray, 事 beside こと, 戦争 beside 戰爭. Cards kept before keep their headings.

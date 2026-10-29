@@ -62,4 +62,20 @@ final class CardHeadwordTests: XCTestCase {
             id: 3, kanji: ["戦争"], readings: ["せんそう"], senses: [sense], common: true)
         XCTAssertEqual(word("線争", reading: "せんそう", entry: war).cardHeadword, "戦争")
     }
+
+    func testTheLookedUpFormStandsBesideTheWordAsPrinted() {
+        let ask = DictionaryEntry(
+            id: 7, kanji: ["訊く"], readings: ["きく"], senses: [verb], common: true)
+        XCTAssertEqual(word("訊い", reading: "きい", entry: ask).lookedUpForm, "訊く")
+        XCTAssertEqual(
+            word("訊い", reading: "きい", dictionaryForm: "訊く", entry: ask).lookedUpForm, "訊く")
+        XCTAssertNil(word("訊く", reading: "きく", entry: ask).lookedUpForm)
+        let war = DictionaryEntry(
+            id: 3, kanji: ["戦争"], readings: ["せんそう"], senses: [sense], common: true)
+        XCTAssertEqual(word("戰爭", reading: "せんそう", entry: war).lookedUpForm, "戦争")
+        let tadashi = DictionaryEntry(
+            id: 5, kanji: ["但し"], readings: ["ただし"], senses: [sense], common: true)
+        XCTAssertEqual(
+            word("但し", reading: "ただし", written: "但シ", entry: tadashi).lookedUpForm, "但し")
+    }
 }

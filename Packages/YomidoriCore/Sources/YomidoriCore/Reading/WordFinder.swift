@@ -43,6 +43,15 @@ public struct FoundWord: Equatable, Sendable {
         }
         return forms.first(where: entry.isSpelled) ?? entry.headword
     }
+    /// The form shown beside the word as printed, where it was looked up in another: the
+    /// dictionary form of an inflected word (訊く for 訊い, from the entry when the tokenizer
+    /// gives none), the kana as written today (但し for 但シ), the kanji made modern (戦争
+    /// for 戰爭). Nil where the page spells it so already.
+    public var lookedUpForm: String? {
+        let form = dictionaryForm ?? cardHeadword
+        let shown = OldKanji.modern(form) ?? form
+        return shown == written ? nil : shown
+    }
     /// What a card of the word reads: the dictionary's first reading, else the page's.
     public var cardReading: String { Kana.hiragana(entries.first?.readings.first ?? reading) }
     /// The key a card of the word is kept under (`WordKey`).
