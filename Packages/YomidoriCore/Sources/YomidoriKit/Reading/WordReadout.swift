@@ -25,7 +25,7 @@ struct WordReadout: View {
             HStack(alignment: .firstTextBaseline, spacing: 10) {
                 WordTitle(
                     headword: word.written, reading: reading, accent: accent,
-                    estimate: estimate, dictionaryForm: word.dictionaryForm ?? lookedUp
+                    estimate: estimate, dictionaryForm: word.lookedUpForm
                 ) {
                     keepButton
                 }
@@ -56,14 +56,6 @@ struct WordReadout: View {
 
     private var headword: String {
         word.dictionaryForm ?? word.surface
-    }
-
-    /// The form the word was looked up in where the page prints another: 但し for 但シ, 思う
-    /// for 思ふ, 戦争 for 戰爭. Shown beside the word as recognized, so a misreading of the
-    /// page can still be seen for what it is.
-    private var lookedUp: String? {
-        if word.written != word.surface { return word.surface }
-        return OldKanji.modern(word.surface)
     }
 
     private var reading: String {
