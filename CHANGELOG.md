@@ -10,7 +10,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 **One bullet, one line — no hard wrapping.** Editors soft-wrap and rendered Markdown ignores the line breaks, while hard wraps make an edited entry re-flow into a diff nobody can read. **Order the unreleased list by what a reader notices**, not by merge order, and fold entries that tell one story into one bullet.
 
-## v1.0.0
+## v1.0.1
 
 ### Unreleased (next build)
 
@@ -45,6 +45,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 - **The camera rests while the app is away and is up again when it comes back**, so the first photo after the phone was in a pocket no longer waits several seconds.
 - **A reading typed wrong is shown against the right one, kana by kana**: the kana that should not be there struck through in red, the ones missing underlined in green, so a typo reads as one wrong kana and a wrong reading as a different word.
 - **A word the recognizer broke over a line is read whole**: 不気 at the foot of one column and 味 at the head of the next, or one character to a line, join into 不気味 when the dictionary knows it, lit on the picture as one.
+
+## v1.0.0
 
 ### build 47 — 2026-10-09
 

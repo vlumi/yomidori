@@ -72,7 +72,11 @@ promote_changelog_build() {
     # `## vNEW`, a fresh Unreleased, this build's heading — and a new `## vOLD` is
     # written below it to re-open the previous version over its own builds.
     awk -v build="$build" -v today="$today" -v version="$version" '
-        # The old `## vX.Y.Z` line: remember it, and open the new section here.
+        # The old `## vX.Y.Z` line: remember it, and open the new section here — unless
+        # it is the new version already, written by hand to file earlier builds under
+        # it (b48 was cut as 1.0.0 after 1.0.0 b47 had gone to review, and belongs to
+        # 1.0.1); then this build is promoted in place under it, like a same-version one.
+        version != "" && !done && /^## v[0-9]/ && $0 == "## v" version { version = "" }
         version != "" && !done && /^## v[0-9]/ {
             old = $0
             print "## v" version "\n"
