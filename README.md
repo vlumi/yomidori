@@ -7,8 +7,8 @@ A reading companion for Japanese paperbacks, for iPhone and iPad. Point the
 camera at a word you can't read, tap it, and get its reading. The sentence you
 were reading becomes a card, and the cards are what you study.
 
-> **Status: 1.0 on the [Mac App Store](https://apps.apple.com/app/id6813011056);
-> iPhone and iPad in App Review.** The whole first form is there and has been
+> **Status: 1.0 on the [App Store](https://apps.apple.com/app/id6813011056)
+> for iPhone, iPad and Mac.** The whole first form is there and has been
 > read with on a real paperback: freeze the
 > page, select a word, every word in the selection with its reading, pitch and
 > meaning, the kanji behind them with stroke order, cards with the sentences you
