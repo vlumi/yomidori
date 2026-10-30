@@ -2461,6 +2461,16 @@
         }
       }
     },
+    "Nothing yet" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだなし"
+          }
+        }
+      }
+    },
     "Notifications are off for Yomidori. Turn on badges for it in System Settings, under Notifications, then here again." : {
       "localizations" : {
         "ja" : {

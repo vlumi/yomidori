@@ -21,6 +21,29 @@ enum Period {
 
 }
 
+/// Today's column in a chart of periods, behind the bars: a faint band over the period that
+/// is now, so the day can be found among many, and, where there is nothing in it yet, a tick
+/// on the baseline, so an empty column reads as nothing yet, not as no column.
+struct TodayColumn: ChartContent {
+    /// The start of the period that is now: the last bucket's, as the buckets run to today.
+    let day: Date
+    let unit: Calendar.Component
+    let empty: Bool
+
+    var body: some ChartContent {
+        RectangleMark(x: .value(String(localized: "Day", bundle: .module), day, unit: unit))
+            .foregroundStyle(.secondary.opacity(0.12))
+        if empty {
+            RectangleMark(
+                x: .value(String(localized: "Day", bundle: .module), day, unit: unit),
+                y: .value(String(localized: "Nothing yet", bundle: .module), 0),
+                height: .fixed(3)
+            )
+            .foregroundStyle(.secondary)
+        }
+    }
+}
+
 /// The line above a chart: the period under the finger, or the whole span.
 struct ChartCaption<Content: View>: View {
     @ViewBuilder let content: () -> Content
@@ -67,6 +90,9 @@ struct AnswersChart: View {
                 }
             }
             Chart {
+                if let today = buckets.last {
+                    TodayColumn(day: today.day, unit: unit, empty: answered(today) == 0)
+                }
                 ForEach(buckets, id: \.day) { bucket in
                     BarMark(
                         x: .value(
@@ -192,6 +218,9 @@ struct StartedChart: View {
                 Text("\(shown) words started", bundle: .module)
             }
             Chart {
+                if let today = buckets.last {
+                    TodayColumn(day: today.day, unit: unit, empty: today.started == 0)
+                }
                 ForEach(buckets, id: \.day) { bucket in
                     BarMark(
                         x: .value(
