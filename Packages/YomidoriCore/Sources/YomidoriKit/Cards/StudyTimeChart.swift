@@ -73,6 +73,9 @@ struct StudyTimeChart: View {
                         .foregroundStyle(color)
                     }
                 } else {
+                    if let today = points.last {
+                        TodayColumn(day: today.day, unit: unit, empty: today.seconds == 0)
+                    }
                     ForEach(points, id: \.day) { point in
                         BarMark(
                             x: .value(
