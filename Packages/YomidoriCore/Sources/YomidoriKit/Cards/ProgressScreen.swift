@@ -75,7 +75,8 @@ struct ProgressScreen: View {
                     Text("Words started", bundle: .module)
                 }
                 Section {
-                    StudyCalendar(days: history, now: Date(), calendar: Calendar.autoupdatingCurrent)
+                    StudyCalendar(
+                        days: history, now: Date(), calendar: Calendar.autoupdatingCurrent)
                 } header: {
                     Text("Days studied", bundle: .module)
                 }
