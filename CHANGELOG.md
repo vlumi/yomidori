@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The week starts where the system says, without a restart**: Progress's weekly bars, week records and calendar follow First Day of Week in Settings › General › Language & Region as soon as it changes.
+
 ### build 49 — 2026-10-30
 
 - **Today stands out in the Progress charts**: the Reviews, Time and Words started bars have today's column (or this week's or month's) shaded behind them, and a tick on the baseline where there is nothing in it yet, so an empty today is told apart from no day at all.

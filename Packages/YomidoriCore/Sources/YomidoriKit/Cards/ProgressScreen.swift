@@ -75,7 +75,8 @@ struct ProgressScreen: View {
                     Text("Words started", bundle: .module)
                 }
                 Section {
-                    StudyCalendar(days: history, now: Date(), calendar: Calendar.current)
+                    StudyCalendar(
+                        days: history, now: Date(), calendar: Calendar.autoupdatingCurrent)
                 } header: {
                     Text("Days studied", bundle: .module)
                 }
@@ -83,7 +84,7 @@ struct ProgressScreen: View {
                     StreaksSection(streaks: streaks, now: Date())
                 }
                 if !records.isEmpty {
-                    RecordsSection(records: records, calendar: Calendar.current)
+                    RecordsSection(records: records, calendar: Calendar.autoupdatingCurrent)
                 }
             }
         }
@@ -108,6 +109,11 @@ struct ProgressScreen: View {
         .onAppear(perform: reload)
         .onChange(of: span) { reload() }
         .onReceive(Cards.changes(of: [.card])) { _ in reload() }
+        // The first day of the week, and the calendar, are the system's; a change in
+        // Settings redraws the weeks and the records here without a restart.
+        .onReceive(
+            NotificationCenter.default.publisher(for: NSLocale.currentLocaleDidChangeNotification)
+        ) { _ in reload() }
     }
 
     private var filters: some View {
@@ -159,7 +165,7 @@ struct ProgressScreen: View {
 
     private func reload() {
         let cards = Cards.store?.cards() ?? []
-        let calendar = Calendar.current
+        let calendar = Calendar.autoupdatingCurrent
         let now = Date()
         today = Progress.tallies(of: cards, from: now, to: now, calendar: calendar).first
         streak = Progress.streak(of: cards, at: now, calendar: calendar)
