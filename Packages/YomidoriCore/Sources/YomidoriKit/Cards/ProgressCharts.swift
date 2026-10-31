@@ -4,9 +4,9 @@ import YomidoriCore
 
 /// A period's name: the day, the week's first and last day, or the month.
 enum Period {
-    static func label(_ start: Date, unit: Calendar.Component, calendar: Calendar = .current)
-        -> String
-    {
+    static func label(
+        _ start: Date, unit: Calendar.Component, calendar: Calendar = .autoupdatingCurrent
+    ) -> String {
         switch unit {
         case .day:
             return start.formatted(.dateTime.month(.abbreviated).day())

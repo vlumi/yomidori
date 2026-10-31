@@ -200,7 +200,7 @@ struct UpcomingReviews: View {
     }
 
     private func dayName(of date: Date) -> String {
-        let day = Calendar.current.startOfDay(for: date)
+        let day = Calendar.autoupdatingCurrent.startOfDay(for: date)
         switch upcoming.days.firstIndex { $0.day == day } {
         case 0: return String(localized: "Today", bundle: .module)
         case 1: return String(localized: "Tomorrow", bundle: .module)
