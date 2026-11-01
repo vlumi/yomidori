@@ -1,31 +1,75 @@
 # Yomidori — command-line build/run/test, so you never have to open Xcode.
 #
-# The Scripts/*.sh do the actual work (one job each); this Makefile wires up the
-# dependencies (e.g. the Xcode project is regenerated only when project.yml or
-# an Info.plist changes) and gives short targets. Run `make` (or `make help`)
-# to list them.
+# The shared targets — generate, build, test, lint, the release lane — come from
+# slipway (Scripts/slipway, configured by slipway.yml; see its README.md). This
+# Makefile adds what's Yomidori's own: the dictionary, running and the demo, and
+# the App Store listing. Run `make` (or `make help`) to list them all.
 
-.DEFAULT_GOAL := help
+include Scripts/slipway/slipway.mk
 
-.PHONY: help
-help:  ## List the available commands
-	@echo "Yomidori — available make targets:"
-	@awk 'BEGIN {FS = ":.*## "} \
-		/^##@ / {printf "\n\033[1m%s\033[0m\n", substr($$0, 5); next} \
-		/^##~ / {printf "  \033[2m%s\033[0m\n", substr($$0, 5); next} \
-		/^[a-zA-Z0-9_-]+:.*## / {printf "  \033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
-
-##@ Dev — build, run, test
-
-# Inputs xcodegen reads — regenerate the project when any of these change.
-PROJECT_INPUTS := project.yml \
-	$(wildcard Sources/*/Info.plist) \
-	$(wildcard Sources/*/*.entitlements) \
-	$(wildcard Sources/*/*.xcstrings)
+##@ Build & test
 
 # The bundled dictionary is built from JMdict, not committed (~78 MB); the project
 # must exist on disk before XcodeGen runs, or the app is generated without it.
 DICTIONARY := Sources/Shared/Dictionaries/jmdict.sqlite
+$(SLIPWAY_XCODEPROJ): $(DICTIONARY)
+
+.PHONY: coverage
+coverage:  ## The logic tests with coverage: a table by file, and the report CI sends to Codecov
+	@Scripts/coverage.sh
+
+# markdownlint is pinned like SwiftLint, so CI and a local run agree (npx fetches it).
+MARKDOWNLINT := markdownlint-cli2@0.23.3
+
+lint: lint-markdown
+.PHONY: lint-markdown
+lint-markdown:  ## markdownlint, strict (part of lint)
+	@npx --yes $(MARKDOWNLINT) '*.md'
+
+.PHONY: icon
+icon:  ## Regenerate the app icon PNGs and Home's bird (pure CoreGraphics; the icon flattened opaque)
+	@swift Scripts/assets/make-icon.swift Sources/Shared/Assets.xcassets/AppIcon.appiconset
+	@swift Scripts/assets/make-icon.swift Sources/Shared/Assets.xcassets/Bird.imageset --bird
+
+# The dictionary and its downloads survive a clean: they take minutes to rebuild.
+clean: clean-keeps-data
+.PHONY: clean-keeps-data
+clean-keeps-data:
+	@echo "(the dictionary and the downloads stay: delete Sources/Shared/Dictionaries and .build-data by hand)"
+
+##@ Run
+
+.PHONY: run-iphone
+run-iphone: $(SLIPWAY_XCODEPROJ)  ## Build + launch on an iPhone simulator (DEVICE="SE" / "17 Pro" to pick)
+	@Scripts/run-ios.sh iphone "$(DEVICE)"
+
+.PHONY: run-ipad
+run-ipad: $(SLIPWAY_XCODEPROJ)  ## Build + launch on an iPad simulator (DEVICE="Air" / "13-inch" to pick)
+	@Scripts/run-ios.sh ipad "$(DEVICE)"
+
+.PHONY: run-device
+run-device: $(SLIPWAY_XCODEPROJ)  ## Build + install + launch on a paired iPhone/iPad (DEVICE="<name>" to pick)
+	@Scripts/run-device.sh "$(DEVICE)"
+
+.PHONY: run-mac
+run-mac: $(SLIPWAY_XCODEPROJ)  ## Build the Mac app signed for this Mac and open it
+	@Scripts/run-mac.sh
+
+# The demo launchers install the last simulator build and start it with -yomidori-demo:
+# stores in a wiped, reseeded folder, settings in their own suite (YomidoriKit/Demo).
+.PHONY: demo-iphone
+demo-iphone: build-ios  ## Launch the seeded demo on an iPhone simulator (DEVICE=<pattern>, TAB=, SCREEN=, SEARCH=, SPREAD=1, SELECT=1, PICK=<text>, BEGIN=1)
+	@PLATFORM=iphone Scripts/demo.sh
+
+.PHONY: demo-ipad
+demo-ipad: build-ios  ## Launch the seeded demo on an iPad simulator
+	@PLATFORM=ipad Scripts/demo.sh
+
+.PHONY: demo-mac
+demo-mac: $(SLIPWAY_XCODEPROJ)  ## Open the seeded demo on this Mac (TAB=, SCREEN=, SEARCH=, PICK=, DEMO_LANG=)
+	@DEMO=1 Scripts/run-mac.sh
+
+##@ Dictionary
 
 $(DICTIONARY): Scripts/data/build-jmdict.py
 	@Scripts/data/build-jmdict.py --output $(DICTIONARY)
@@ -69,55 +113,10 @@ pitch: $(DICTIONARY) $(PITCH_VENV_READY)  ## Estimate the pitch Kanjium lacks in
 pitch-measure: $(DICTIONARY) $(PITCH_VENV_READY)  ## How often the estimate agrees with Kanjium, on compounds held out
 	@$(PITCH_VENV)/bin/python Scripts/data/estimate-pitch.py --database $(DICTIONARY) --measure
 
-# File target: the generated project depends on its inputs, so `make` skips the
-# regen when nothing changed (and reruns it when project.yml etc. are edited).
-Yomidori.xcodeproj: $(PROJECT_INPUTS) $(DICTIONARY)
-	@Scripts/generate.sh
-
-.PHONY: generate
-generate: Yomidori.xcodeproj  ## Regenerate Yomidori.xcodeproj from project.yml (if stale)
-
-.PHONY: run-iphone
-run-iphone: Yomidori.xcodeproj  ## Build + launch on an iPhone simulator (DEVICE="SE" / "17 Pro" to pick)
-	@Scripts/run-ios.sh iphone "$(DEVICE)"
-
-.PHONY: run-ipad
-run-ipad: Yomidori.xcodeproj  ## Build + launch on an iPad simulator (DEVICE="Air" / "13-inch" to pick)
-	@Scripts/run-ios.sh ipad "$(DEVICE)"
-
-.PHONY: run-device
-run-device: Yomidori.xcodeproj  ## Build + install + launch on a paired iPhone/iPad (DEVICE="<name>" to pick)
-	@Scripts/run-device.sh "$(DEVICE)"
-
-# The demo launchers install the last simulator build and start it with -yomidori-demo:
-# stores in a wiped, reseeded folder, settings in their own suite (YomidoriKit/Demo).
-.PHONY: demo-iphone
-demo-iphone: build-ios  ## Launch the seeded demo on an iPhone simulator (DEVICE=<pattern>, TAB=, SCREEN=, SEARCH=, SPREAD=1, SELECT=1, PICK=<text>, BEGIN=1)
-	@PLATFORM=iphone Scripts/demo.sh
-
-.PHONY: demo-ipad
-demo-ipad: build-ios  ## Launch the seeded demo on an iPad simulator
-	@PLATFORM=ipad Scripts/demo.sh
-
-.PHONY: build-ios
-build-ios: Yomidori.xcodeproj  ## Build the iOS app (simulator, unsigned)
-	@Scripts/build.sh ios
-
-.PHONY: build-mac
-build-mac: Yomidori.xcodeproj  ## Build the Mac app (unsigned)
-	@Scripts/build.sh macos
-
-.PHONY: run-mac
-run-mac: Yomidori.xcodeproj  ## Build the Mac app signed for this Mac and open it
-	@Scripts/run-mac.sh
-
-.PHONY: demo-mac
-demo-mac: Yomidori.xcodeproj  ## Open the seeded demo on this Mac (TAB=, SCREEN=, SEARCH=, PICK=, DEMO_LANG=)
-	@DEMO=1 Scripts/run-mac.sh
-
 ##@ App Store (Scripts/asc: listing.json and shots.json are the sources; asc-* are dry runs, -apply writes)
+
 .PHONY: shots
-shots: Yomidori.xcodeproj  ## Capture the store screenshots from the demo: PLATFORM=iphone|ipad|mac [LANGS=en,ja] [OUT=shots] [PAUSE=1] [ONLY=a,b]
+shots: $(SLIPWAY_XCODEPROJ)  ## Capture the store screenshots from the demo: PLATFORM=iphone|ipad|mac [LANGS=en,ja] [OUT=shots] [PAUSE=1] [ONLY=a,b]
 	@Scripts/shoot.sh
 
 .PHONY: asc-listing
@@ -135,93 +134,3 @@ asc-screenshots:  ## Show the screenshot upload plan from shots/
 .PHONY: asc-screenshots-apply
 asc-screenshots-apply:  ## Replace the ASC screenshot sets with shots/
 	@Scripts/asc/run.sh screens --apply
-
-# Logic tests run straight from the Swift package — no Xcode project involved.
-.PHONY: test
-test:  ## Run the package logic tests (no Xcode project needed)
-	@Scripts/test.sh
-
-.PHONY: coverage
-coverage:  ## The logic tests with coverage: a table by file, and the report CI sends to Codecov
-	@Scripts/coverage.sh
-
-.PHONY: lint
-# markdownlint is pinned like SwiftLint, so CI and a local run agree (npx fetches it).
-MARKDOWNLINT := markdownlint-cli2@0.23.3
-
-lint:  ## SwiftLint, swift-format and markdownlint, all strict (as CI runs them)
-	@swiftlint lint --strict
-	@swift format lint --strict --recursive --configuration .swift-format \
-		Packages/YomidoriCore/Sources Packages/YomidoriCore/Tests Sources
-	@npx --yes $(MARKDOWNLINT) '*.md'
-
-.PHONY: format
-format:  ## Rewrite sources with swift-format
-	@swift format --in-place --recursive --configuration .swift-format \
-		Packages/YomidoriCore/Sources Packages/YomidoriCore/Tests Sources
-
-.PHONY: icon
-icon:  ## Regenerate the app icon PNGs and Home's bird (pure CoreGraphics; the icon flattened opaque)
-	@swift Scripts/assets/make-icon.swift Sources/Shared/Assets.xcassets/AppIcon.appiconset
-	@swift Scripts/assets/make-icon.swift Sources/Shared/Assets.xcassets/Bird.imageset --bird
-
-.PHONY: clean
-clean:  ## Remove the generated project + local build output
-	@rm -rf Yomidori.xcodeproj .build-xcode Packages/YomidoriCore/.build dist
-	@echo "removed Yomidori.xcodeproj, .build-xcode, package .build, dist (the dictionary and the downloads stay: delete Sources/Shared/Dictionaries and .build-data by hand)"
-
-##@ Release lane
-##~ Cut a build: make release — runs preflight → publish → tag → distribute
-
-# The cut is split by concern, one script each, chained here in order:
-#   preflight → publish → tag → distribute
-# The pure ends (preflight, tag, distribute) re-derive their inputs from git +
-# project.yml, so each runs standalone. The dirty middle (publish: version-bump
-# prompts + auto-merging PR + CI-wait) is the one stateful script; state crosses
-# to the later steps via the merged commit on main, not through Make.
-#
-# PLATFORM is all: one cut is both apps, one build number, the tags ios/N and
-# mac/N; ios or macos cuts one. UPLOAD=0 stops after export (no ASC upload). The
-# steps are a linear dependency chain so they stay ordered even under
-# `make -j`. Run from a clean, up-to-date main.
-PLATFORM ?= all
-UPLOAD ?= 1
-DIST_FLAGS := $(if $(filter 0,$(UPLOAD)),--no-upload,)
-
-.PHONY: release
-release: release-distribute  ## Cut a release (UPLOAD=0 to skip the ASC upload)
-	@echo "✓ release complete (PLATFORM=$(PLATFORM))."
-
-.PHONY: release-build
-release-build:  ## Like `release` but stop after export (no upload)
-	@$(MAKE) release UPLOAD=0
-
-.PHONY: release-preflight
-release-preflight:  ## Release step 1: verify a clean, up-to-date base (main or release/X.Y.x)
-	@Scripts/release-preflight.sh
-
-.PHONY: release-publish
-release-publish: release-preflight  ## Release step 2: bump, open auto-merging PR, wait for CI
-	@Scripts/release-publish.sh $(PLATFORM)
-
-.PHONY: release-tag
-release-tag: release-publish  ## Release step 3: tag the merge commit + publish GitHub releases
-	@Scripts/release-tag.sh $(PLATFORM)
-
-.PHONY: release-distribute
-release-distribute: release-tag  ## Release step 4: archive/export (+ upload unless UPLOAD=0)
-	@Scripts/release-distribute.sh $(PLATFORM) $(DIST_FLAGS)
-
-# Distribute is the likeliest step to fail (archive/export/ASC upload) and is
-# safe to repeat. This standalone retry has NO prereqs — it re-distributes an
-# already-tagged release without touching git/PR/tags, after verifying the tag
-# for the current version+build exists.
-.PHONY: release-distribute-retry
-release-distribute-retry:  ## Re-distribute an already-tagged release (no PR/tag steps)
-	@Scripts/release-distribute.sh $(PLATFORM) $(DIST_FLAGS) --require-tag
-
-# Upload the package already in dist/ (from a prior `release-build`) without
-# rebuilding — for when export succeeded but only the ASC upload failed.
-.PHONY: release-upload
-release-upload:  ## Upload the already-built dist/ package (no rebuild)
-	@Scripts/release-distribute.sh $(PLATFORM) --upload-only

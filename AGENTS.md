@@ -129,11 +129,11 @@ The load-bearing decisions and their rationale live in
 yomidori/
 ├── project.yml                     XcodeGen spec (the iOS app target)
 ├── Makefile                        Short targets; run `make` to list them
+├── slipway.yml                     Settings for the shared plumbing in Scripts/slipway
 ├── Scripts/                        One job per script; the Makefile wires them
-│     generate.sh                   Regenerates the .xcodeproj (refuses if THIS project is open in Xcode)
-│     build.sh / test.sh / run-ios.sh / run-device.sh / demo.sh (the seeded demo, make demo-iphone)
-│     embed-commit-sha.sh           Stamps GitCommitSHA into the built Info.plist
-│     release-*.sh, distribute.sh   The release lane (RELEASING.md)
+│     slipway/                      Shared plumbing, a pinned copy: generate, build, test, the release lane (its README.md; RELEASING.md). Never edit it — fix slipway, then make slipway-update
+│     ensure-dictionary.sh          Builds the dictionary before xcodegen when it's missing (slipway.yml's pre_generate)
+│     run-ios.sh / run-device.sh / demo.sh (the seeded demo, make demo-iphone)
 │     assets/make-icon.swift        Renders the app icon PNG (make icon)
 │     data/build-jmdict.py          JMdict, KANJIDIC2, KRADFILE, KanjiVG, Kanjium accents → the bundled SQLite (make dictionary)
 │     data/estimate-pitch.py        Open JTalk and Kanjium's habits → estimated pitch in the SQLite (make pitch; optional)
