@@ -32,10 +32,11 @@ icon:  ## Regenerate the app icon PNGs and Home's bird (pure CoreGraphics; the i
 	@swift Scripts/assets/make-icon.swift Sources/Shared/Assets.xcassets/Bird.imageset --bird
 
 # The dictionary and its downloads survive a clean: they take minutes to rebuild.
+# (A prerequisite, so this prints before slipway's "removed …".)
 clean: clean-keeps-data
 .PHONY: clean-keeps-data
 clean-keeps-data:
-	@echo "(the dictionary and the downloads stay: delete Sources/Shared/Dictionaries and .build-data by hand)"
+	@echo "keeping the dictionary and its downloads (delete Sources/Shared/Dictionaries and .build-data by hand)"
 
 ##@ Run
 
