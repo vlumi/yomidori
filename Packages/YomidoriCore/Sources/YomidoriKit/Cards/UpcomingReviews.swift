@@ -125,7 +125,6 @@ struct UpcomingReviews: View {
     }
 
     private var chart: some View {
-        let dayStarts = upcoming.days.map(\.day)
         let from = upcoming.slots.first?.start ?? Date()
         let to = upcoming.slots.last?.end ?? from.addingTimeInterval(24 * 3600)
         let shares = shares
