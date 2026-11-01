@@ -1,0 +1,7 @@
+# Build and release settings for the shared plumbing in Scripts/slipway
+# (see its README.md). Everything else about the lane follows from these.
+name: Yomidori
+platforms: [ios, macos]
+changelog_version_heading: "## v{version}"
+app_icon: Sources/Shared/Assets.xcassets/AppIcon.appiconset/icon-1024.png
+pre_generate: Scripts/ensure-dictionary.sh

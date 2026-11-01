@@ -48,7 +48,7 @@ this counter does **not** reset when the marketing version changes. If ASC has
 seen build 2, the next accepted upload is build 3 — even across a `0.1.0 →
 0.5.0` bump. The lane enforces this: the next build is always one past the
 highest existing tag (`highest_tagged_build` in
-[Scripts/release-lib.sh](Scripts/release-lib.sh)), never reset by a version
+[Scripts/slipway/release-lib.sh](Scripts/slipway/release-lib.sh)), never reset by a version
 bump.
 
 ### When to bump what
@@ -88,8 +88,9 @@ make release UPLOAD=0        # everything through export, no ASC upload
 make release-build           # alias for UPLOAD=0
 ```
 
-`make release` runs a four-step chain (each step its own
-[`Scripts/release-*.sh`](Scripts/); the Makefile wires the order). The pure
+`make release` runs a four-step chain (each step its own script in
+[`Scripts/slipway/`](Scripts/slipway/), the shared release lane — see its
+README.md; `slipway.yml` holds Yomidori's settings for it). The pure
 steps re-derive their inputs from git + `project.yml`, so the only state passed
 between them is the merged commit on the base — no state file:
 
@@ -116,12 +117,12 @@ between them is the merged commit on the base — no state file:
    version/build/commit table and the commits since the previous tag.
 4. **distribute** — regenerates the project, archives, exports, and (unless
    `UPLOAD=0`) uploads to App Store Connect via
-   [Scripts/distribute.sh](Scripts/distribute.sh).
+   [Scripts/slipway/distribute.sh](Scripts/slipway/distribute.sh).
 
 ### Tags
 
 Every tag MUST be exactly `<prefix>/vMAJOR.MINOR.PATCH-BUILD` — platform
-`<prefix>` is `ios` (the scripts also know `mac`, unused); version is plain
+`<prefix>` is `ios` or `mac`; version is plain
 SemVer; the suffix is the **build number**, not a beta/rc label:
 
 ```sh
@@ -135,7 +136,7 @@ This format is **load-bearing**:
 - **The suffix is a plain integer build number.** No `-beta.N` / `-rc.N`: the
   lane orders tags with `--sort=-v:refname` and parses `(version, build)` to
   pick the previous release for a changelog (`previous_tag` in
-  [Scripts/release-lib.sh](Scripts/release-lib.sh)); a pre-release suffix
+  [Scripts/slipway/release-lib.sh](Scripts/slipway/release-lib.sh)); a pre-release suffix
   would mis-sort and corrupt that choice.
 
 The **git tags are the source of truth** — immutable pointers to the exact

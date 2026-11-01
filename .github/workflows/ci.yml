@@ -25,7 +25,11 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
-      - name: SwiftLint
+      - name: slipway copy unmodified
+        # Scripts/slipway is a pinned copy of the shared plumbing: a fix belongs
+        # upstream in slipway, then `make slipway-update` brings it here.
+        run: Scripts/slipway/check.sh
+      - name: Install SwiftLint
         # Pinned to an exact version so CI and local installs agree (an
         # unpinned install follows the rolling latest, so a new SwiftLint
         # release could turn CI red on untouched code). Bump deliberately;
@@ -38,15 +42,11 @@ jobs:
           unzip -o -q swiftlint.zip -d swiftlint-bin
           ./swiftlint-bin/swiftlint version | grep -qx "${SWIFTLINT_VERSION}" \
             || { echo "SwiftLint version mismatch"; exit 1; }
-          ./swiftlint-bin/swiftlint lint --strict
-      - name: swift-format
-        run: |
-          swift format lint --strict --recursive --configuration .swift-format \
-            Packages/YomidoriCore/Sources Packages/YomidoriCore/Tests Sources
-      - name: markdownlint
-        # The docs are read as rendered Markdown and CHANGELOG is parsed by the release
-        # lane; pinned like SwiftLint (keep in step with the Makefile's MARKDOWNLINT).
-        run: npx --yes markdownlint-cli2@0.23.3 '*.md'
+      - name: SwiftLint, swift-format, markdownlint
+        # The same `make lint` as a local run, so the paths and the markdownlint
+        # pin are said once (slipway.mk and the Makefile), with the pinned
+        # SwiftLint first on the PATH.
+        run: PATH="$PWD/swiftlint-bin:$PATH" make lint
 
   test:
     name: Test core logic
@@ -113,18 +113,9 @@ jobs:
       - name: Build dictionary
         run: make dictionary
       - name: Generate project
-        run: xcodegen generate
+        # Through make, so slipway.yml's pre_generate runs as it does locally.
+        run: make generate
       - name: Build iOS (simulator)
-        run: |
-          xcodebuild build \
-            -project Yomidori.xcodeproj \
-            -scheme Yomidori-iOS \
-            -destination 'generic/platform=iOS Simulator' \
-            CODE_SIGNING_ALLOWED=NO
+        run: make build-ios
       - name: Build macOS
-        run: |
-          xcodebuild build \
-            -project Yomidori.xcodeproj \
-            -scheme Yomidori-macOS \
-            -destination 'generic/platform=macOS' \
-            CODE_SIGNING_ALLOWED=NO
+        run: make build-mac
