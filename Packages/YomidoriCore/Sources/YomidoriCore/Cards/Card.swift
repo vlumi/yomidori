@@ -25,6 +25,9 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     public private(set) var shelved: Bool
     /// The collections the card is in, a book each usually; none is fine.
     public var collectionIDs: [UUID]
+    /// The sightings taken off the card, by id: a merge with a copy that still has one
+    /// leaves it off, rather than putting the sentence back.
+    public private(set) var removedSightingIDs: [UUID]
 
     /// `id` is left out for a new card: it is the word's own (see `WordKey.cardID`), so the
     /// same word kept on two devices is one card to sync.
@@ -33,7 +36,7 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         sightings: [Sighting], created: Date, modified: Date? = nil, review: ReviewState? = nil,
         meaningReview: ReviewState? = nil, pitchReview: ReviewState? = nil,
         log: [ReviewEntry] = [], acceptedMeanings: [String] = [], started: Date? = nil,
-        shelved: Bool = false, collectionIDs: [UUID] = []
+        shelved: Bool = false, collectionIDs: [UUID] = [], removedSightingIDs: [UUID] = []
     ) {
         self.id = id ?? WordKey.cardID(headword: headword, reading: reading)
         self.headword = headword
@@ -50,6 +53,7 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         self.started = started
         self.shelved = shelved
         self.collectionIDs = collectionIDs
+        self.removedSightingIDs = removedSightingIDs
     }
 
     /// The meanings that count in a review: the reader's own list, or the dictionary's
@@ -151,7 +155,17 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
 
     public mutating func add(_ sighting: Sighting) {
         sightings.append(sighting)
+        removedSightingIDs.removeAll { $0 == sighting.id }
         modified = max(modified, sighting.date)
+    }
+
+    /// The sighting off the card, and remembered as taken off, so a copy from another device
+    /// that still has it doesn't bring it back.
+    public mutating func remove(_ sighting: Sighting, at date: Date = Date()) {
+        guard sightings.contains(where: { $0.id == sighting.id }) else { return }
+        sightings.removeAll { $0.id == sighting.id }
+        if !removedSightingIDs.contains(sighting.id) { removedSightingIDs.append(sighting.id) }
+        modified = date
     }
 
     /// The scheduler's verdict and a line in the log; `reconciled` when the reader overruled
@@ -178,6 +192,7 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case id, headword, reading, entryID, sightings, created, modified, review, meaningReview
         case pitchReview, log, acceptedMeanings, started, shelved, collectionIDs
+        case removedSightingIDs
     }
 
     public init(from decoder: Decoder) throws {
@@ -198,6 +213,8 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         acceptedMeanings = try c.decodeIfPresent([String].self, forKey: .acceptedMeanings) ?? []
         shelved = try c.decodeIfPresent(Bool.self, forKey: .shelved) ?? false
         collectionIDs = try c.decodeIfPresent([UUID].self, forKey: .collectionIDs) ?? []
+        removedSightingIDs =
+            try c.decodeIfPresent([UUID].self, forKey: .removedSightingIDs) ?? []
         if c.contains(.started) {
             started = try c.decodeIfPresent(Date.self, forKey: .started)
         } else {

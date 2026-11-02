@@ -8,13 +8,15 @@ extension Card {
 
     /// The same card changed on two devices before either heard of the other, as one: nothing
     /// done on either side is lost. Sightings, answers, accepted meanings and collections are
-    /// the union; each question keeps the schedule of its later answer. Where the card
-    /// stands (waiting, in review, shelved) comes from the side touched last, and a card
-    /// sent back to waiting there keeps no schedule.
+    /// the union, less the sightings either side took off; each question keeps the schedule
+    /// of its later answer. Where the card stands (waiting, in review, shelved) comes from the
+    /// side touched last, and a card sent back to waiting there keeps no schedule.
     public func merged(with other: Card) -> Card {
         let (newer, older) = other.lastTouched > lastTouched ? (other, self) : (self, other)
+        let removed = union(newer.removedSightingIDs, older.removedSightingIDs)
         let known = Set(newer.sightings.map(\.id))
-        let sightings = newer.sightings + older.sightings.filter { !known.contains($0.id) }
+        let sightings = (newer.sightings + older.sightings.filter { !known.contains($0.id) })
+            .filter { !removed.contains($0.id) }
         var log = newer.log
         var seen = Set(log)
         for entry in older.log where seen.insert(entry).inserted { log.append(entry) }
@@ -32,7 +34,8 @@ extension Card {
             review: later(.reading), meaningReview: later(.meaning), pitchReview: later(.pitch),
             log: log, acceptedMeanings: union(newer.acceptedMeanings, older.acceptedMeanings),
             started: newer.started, shelved: newer.shelved,
-            collectionIDs: union(newer.collectionIDs, older.collectionIDs))
+            collectionIDs: union(newer.collectionIDs, older.collectionIDs),
+            removedSightingIDs: removed)
     }
 
     private func union<T: Equatable>(_ first: [T], _ second: [T]) -> [T] {

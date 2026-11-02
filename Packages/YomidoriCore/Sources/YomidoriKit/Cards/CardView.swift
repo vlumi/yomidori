@@ -20,9 +20,13 @@ struct CardView: View {
             }
             CardFacts(card: card)
             ForEach(card.sightingsNewestFirst) { sighting in
-                SightingSection(sighting: sighting, headword: card.headword) {
-                    editing = sighting
-                }
+                SightingSection(
+                    sighting: sighting, headword: card.headword,
+                    edit: { editing = sighting },
+                    remove: {
+                        card.remove(sighting)
+                        Cards.write { try Cards.store?.update(card) }
+                    })
             }
             Section {
                 Button {
