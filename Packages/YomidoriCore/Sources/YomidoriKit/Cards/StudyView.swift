@@ -60,35 +60,33 @@ struct StudyView: View {
                     UpcomingReviews(
                         upcoming: upcoming,
                         stacking: question == nil && byQuestion ? .question : .rank)
-                    if question == nil {
-                        HStack {
-                            Spacer()
-                            Picker(selection: $byQuestion) {
-                                Text("Ranks", bundle: .module).tag(false)
-                                Text("Questions", bundle: .module).tag(true)
-                            } label: {
-                                Text("Colors", bundle: .module)
-                            }
-                            .pickerStyle(.segmented)
-                            .controlSize(.mini)
-                            .fixedSize()
-                        }
-                    }
                 } header: {
-                    HStack {
+                    // Both switches above the chart, in its header, as every chart's are;
+                    // under the title where the row is too narrow for the three.
+                    FitsOrStacks(spacing: 8, trailingLast: true) {
                         Text("Coming up", bundle: .module)
-                        Spacer()
-                        Picker(selection: $days) {
-                            Text("7 days", bundle: .module).tag(7)
-                            Text("30 days", bundle: .module).tag(30)
-                        } label: {
-                            Text("Days ahead", bundle: .module)
+                            .fixedSize()
+                        HStack(spacing: 8) {
+                            Picker(selection: $days) {
+                                Text("7 days", bundle: .module).tag(7)
+                                Text("30 days", bundle: .module).tag(30)
+                            } label: {
+                                Text("Days ahead", bundle: .module)
+                            }
+                            if question == nil {
+                                Picker(selection: $byQuestion) {
+                                    Text("Ranks", bundle: .module).tag(false)
+                                    Text("Questions", bundle: .module).tag(true)
+                                } label: {
+                                    Text("Colors", bundle: .module)
+                                }
+                            }
                         }
                         .pickerStyle(.segmented)
                         .controlSize(.mini)
                         .fixedSize()
-                        .textCase(nil)
                     }
+                    .textCase(nil)
                 } footer: {
                     if days > 7 {
                         Text(
