@@ -67,6 +67,39 @@ final class SyncMergeTests: XCTestCase {
         XCTAssertEqual(merged.log.count, 2)
     }
 
+    func testASentenceTakenOffOnOneDeviceStaysOffWhicheverSideWasTouchedLast() {
+        var base = started()
+        let second = sighting("樹皮の匂い。", daysIn: 1)
+        base.add(second)
+        var phone = base
+        phone.remove(second, at: start.addingTimeInterval(2 * day))
+        var mac = base
+        mac.answer(.reading, grade: .good, at: start.addingTimeInterval(3 * day))
+        for merged in [phone.merged(with: mac), mac.merged(with: phone)] {
+            XCTAssertEqual(merged.sightings.map(\.sentence), ["樹皮。"])
+            XCTAssertEqual(merged.removedSightingIDs, [second.id])
+            XCTAssertEqual(merged.log.count, 1)
+        }
+        // Kept again, the same sighting is no longer remembered as taken off.
+        phone.add(second)
+        XCTAssertEqual(phone.removedSightingIDs, [])
+        XCTAssertEqual(phone.merged(with: mac).sightings.count, 2)
+    }
+
+    func testTheSightingsTakenOffTravelAndACardWithoutThemReads() throws {
+        var card = started()
+        let gone = sighting("消える。", daysIn: 1)
+        card.add(gone)
+        card.remove(gone, at: start.addingTimeInterval(2 * day))
+        let data = try JSONEncoder().encode(card)
+        XCTAssertEqual(try JSONDecoder().decode(Card.self, from: data), card)
+        XCTAssertEqual(card.modified, start.addingTimeInterval(2 * day))
+        var json = try XCTUnwrap(try JSONSerialization.jsonObject(with: data) as? [String: Any])
+        json["removedSightingIDs"] = nil
+        let old = try JSONSerialization.data(withJSONObject: json)
+        XCTAssertEqual(try JSONDecoder().decode(Card.self, from: old).removedSightingIDs, [])
+    }
+
     func testTheLaterCollectionAndLookupWin() {
         let old = Collection(name: "羊", modified: start)
         var renamed = old

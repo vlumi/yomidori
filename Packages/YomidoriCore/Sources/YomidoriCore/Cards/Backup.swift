@@ -191,6 +191,7 @@ extension Card {
             id: id, headword: headword, reading: reading, entryID: entryID, sightings: sightings,
             created: created, modified: modified, review: review, meaningReview: meaningReview,
             pitchReview: pitchReview, log: log, acceptedMeanings: acceptedMeanings,
-            started: started, shelved: shelved, collectionIDs: collectionIDs)
+            started: started, shelved: shelved, collectionIDs: collectionIDs,
+            removedSightingIDs: removedSightingIDs)
     }
 }

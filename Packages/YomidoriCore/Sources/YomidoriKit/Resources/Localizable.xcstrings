@@ -2991,6 +2991,16 @@
         }
       }
     },
+    "Remove" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "消す"
+          }
+        }
+      }
+    },
     "Remove tag %@" : {
       "localizations" : {
         "ja" : {
@@ -3021,12 +3031,32 @@
         }
       }
     },
+    "Remove the sentence" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文を消す"
+          }
+        }
+      }
+    },
     "Remove this meaning" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "この意味を外す"
+          }
+        }
+      }
+    },
+    "Remove this sentence?" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この文を消しますか？"
           }
         }
       }
@@ -3925,6 +3955,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "辞書形"
+          }
+        }
+      }
+    },
+    "The word's card stays, with its answers." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードと回答は残ります。"
           }
         }
       }

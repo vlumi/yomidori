@@ -86,7 +86,8 @@ extension Card: Sanitizable {
             acceptedMeanings: Sanitize.texts(
                 acceptedMeanings, count: Intake.meanings, limit: Intake.nameLength),
             started: started.map { Intake.date($0) }, shelved: shelved,
-            collectionIDs: Array(collectionIDs.prefix(Intake.collectionsPerCard)))
+            collectionIDs: Array(collectionIDs.prefix(Intake.collectionsPerCard)),
+            removedSightingIDs: Array(removedSightingIDs.prefix(Intake.sightings)))
     }
 }
 
