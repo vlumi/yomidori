@@ -10,13 +10,17 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 **One bullet, one line — no hard wrapping.** Editors soft-wrap and rendered Markdown ignores the line breaks, while hard wraps make an edited entry re-flow into a diff nobody can read. **Order the unreleased list by what a reader notices**, not by merge order, and fold entries that tell one story into one bullet.
 
-## v1.0.1
+## v1.0.2
 
 ### Unreleased (next build)
+
+### build 50 — 2026-11-03
 
 - **A sentence can be taken off a card**: Remove the sentence, under Correct the sentence on the card; a card changed on another device at the same time keeps it off rather than bringing it back.
 - **Coming up's switches sit together above its chart**: Ranks/Questions moved up beside 7 days/30 days in the heading, where every chart's switches are.
 - **The week starts where the system says, without a restart**: Progress's weekly bars, week records and calendar follow First Day of Week in Settings › General › Language & Region as soon as it changes.
+
+## v1.0.1
 
 ### build 49 — 2026-10-30
 
