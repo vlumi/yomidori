@@ -264,12 +264,22 @@ extension Question {
         }
     }
 
-    /// Green for the reading, the sky's blue for the meaning, amber for the pitch.
+    /// Violet for the reading, rose for the meaning, amber for the pitch: the same wherever
+    /// a question is told from the others, the review's tag, a legend, a chart's bars.
     var color: Color {
         switch self {
-        case .reading: return Palette.nightGreen
-        case .meaning: return Rank.flying.color
-        case .pitch: return Color(red: 0.85, green: 0.58, blue: 0.20)
+        case .reading: return Palette.reading
+        case .meaning: return Palette.meaning
+        case .pitch: return Palette.pitch
+        }
+    }
+
+    /// The question's symbol, beside its name on the review's tag and alone on its mark.
+    var symbol: String {
+        switch self {
+        case .reading: return "character.ja"
+        case .meaning: return "text.book.closed"
+        case .pitch: return "waveform"
         }
     }
 }

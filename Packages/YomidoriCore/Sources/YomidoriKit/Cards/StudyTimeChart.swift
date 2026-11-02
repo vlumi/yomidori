@@ -26,7 +26,8 @@ struct StudyTimeChart: View {
         return zip(buckets, seconds).map { Point(day: $0.day, seconds: $1) }
     }
 
-    private var color: Color { question?.color ?? Rank.migrating.color }
+    /// One question's color, or the app's green for all of them, as the Reviews chart.
+    private var color: Color { question?.color ?? Palette.nightGreen }
 
     var body: some View {
         let points = points
@@ -35,6 +36,9 @@ struct StudyTimeChart: View {
         VStack(alignment: .leading, spacing: 8) {
             FitsOrStacks(spacing: 8, trailingLast: true) {
                 ChartCaption {
+                    if let question {
+                        QuestionMark(question: question, size: 16)
+                    }
                     if let picked {
                         Text(verbatim: Period.label(picked.day, unit: unit)).fontWeight(.semibold)
                     }
