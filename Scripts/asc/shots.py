@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The shot list from shots.json, for shoot.sh and screenshots.py.
+"""The shot list from shots.json, for shoot.sh (slipway's asc-screenshots reads its store order itself).
 
   shots.py <platform>            # the shots that platform carries, in capture order
   shots.py <platform> --plain    # one per line: name <TAB> title <TAB> KEY=value ... <TAB> stage

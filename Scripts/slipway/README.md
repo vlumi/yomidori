@@ -42,7 +42,7 @@ Flat `key: value` and `key: [a, b]` lines, `#` comments. Quote a value that
 contains `#`.
 
 | Key | Default | |
-|---|---|---|
+| --- | --- | --- |
 | `name` | required | `<name>.xcodeproj`, `<name>-iOS`, … |
 | `display_name` | `name` | tag messages and GitHub release titles |
 | `core_package` | `<name>Core` | `Packages/<core>/`, for tests and formatting |
@@ -70,6 +70,8 @@ Targets for a platform the project doesn't build don't exist, and aren't listed.
 - **Release:** `release`, `release-build`, the four steps
   (`release-preflight`, `-publish`, `-tag`, `-distribute`),
   `release-distribute-retry`, `release-upload`
+- **App Store:** `asc-listing`, `asc-screenshots` (dry runs), and each with
+  `-apply` to write
 - **slipway:** `slipway-check`, `slipway-update`
 
 ### Hooking in
@@ -118,6 +120,32 @@ changes it also writes the new version's heading, keeping the old heading (and
 any text under it) over the builds it shipped. If Unreleased is empty but code
 changed since the last tag, it asks before releasing without notes.
 
+## App Store Connect
+
+The listing text and the screenshots go to App Store Connect from the repo,
+never by hand in the ASC UI. The project keeps the data; slipway the code:
+
+- `Scripts/asc/listing.json`: `bundleId`, then `appInfo` (name, subtitle,
+  privacy URL) and `version` (description, keywords, promotional text, what's
+  new, URLs), each keyed by ASC locale.
+- `Scripts/asc/shots.json`: `"store": [<shot>, …]`, the carousel order. A shot
+  under `"shots"` with `"platforms": [...]` is left out of the others; any other
+  fields are the project's own (its capture script's, say).
+- `shots/<platform>/<lang>/<shot>-<platform>.png`, the captures, with platform
+  `iphone`, `ipad`, `mac` or `watch` at the store's sizes. An app in one
+  language can leave out `<lang>/`; that reads as English.
+
+`make asc-listing` and `make asc-screenshots` show what would change, and
+`-apply` writes it to every editable version. A screenshot set gets only the
+shots whose file differs from what it holds (by MD5), loses the ones no file
+matches and is put in store order, so one retaken screen doesn't send the rest
+through ASC's processing again; `ALL=1` replaces every shot. A capture at the
+wrong size stops the run before anything is touched, since ASC would accept it
+and then fail to process it.
+
+The credentials are the release lane's (`Scripts/.asc-config`). The Python runs
+in a venv shared by every project, `~/.venvs/slipway-asc`, made on first use.
+
 ## Updating and checking
 
 ```sh
@@ -134,7 +162,7 @@ projects that need it — never edit a project's copy.
 
 ```sh
 tests/run.sh             # all tests; tests/run.sh <filter> for some
-shellcheck -S warning install.sh lib/*.sh tests/*.sh tests/stubs/*
+shellcheck -S warning install.sh lib/*.sh scripts/*.sh tests/*.sh tests/stubs/*
 ```
 
 The tests build small projects (iOS, iOS + macOS, iOS + macOS + watchOS) with a
@@ -142,4 +170,20 @@ local bare repo as origin and fake `gh`, `xcodebuild`, `xcrun` and `xcodegen`,
 and run the real targets — the whole release lane included — against them.
 
 The scripts run on macOS's own bash 3.2: no associative arrays, `mapfile` or
-`${x,,}`. A release is a `vX.Y.Z` tag with its entry in `CHANGELOG.md`.
+`${x,,}`.
+
+### Releasing slipway
+
+A change to `lib/` — what the projects run — writes its entry under
+`## [Unreleased]` in `CHANGELOG.md`. The rest (`scripts/`, `tests/`, CI, a
+docs-only README change) gets no entry and no release of its own; the README
+reaches the projects with the next release that has one.
+
+```sh
+scripts/release.sh 0.2.0
+```
+
+It files Unreleased under `## [0.2.0] — <date>` in a release PR, waits for it
+to merge, tags that merge commit `v0.2.0` — so the tagged changelog has the
+heading — and publishes a GitHub release with that section as its notes. If it
+stops partway, run it again: it picks up at the step that's missing.

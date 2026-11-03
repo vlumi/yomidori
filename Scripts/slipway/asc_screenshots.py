@@ -1,19 +1,24 @@
 #!/usr/bin/env python3
-"""Upload App Store screenshots from the `make shots` output tree — so the
+"""Upload the App Store screenshots from the project's capture tree, so the
 per-locale uploads never happen by hand in Media Manager.
 
-Reads shots/<platform>/<lang>/<shot>-<platform>.png, maps platform → the ASC
-screenshot set (display type) and lang → locale, and makes each set hold those
-files in the store order shots.json gives. Only what changed goes up: a shot
-whose file matches one already in the set (by MD5, ASC's sourceFileChecksum)
-stays as it is, so it is not sent through ASC's processing again.
+Reads shots/<platform>/<lang>/<shot>-<platform>.png (or shots/<platform>/<shot>-
+<platform>.png for an app in one language, read as en), maps the platform
+folder to its ASC screenshot set and the language to its locale, and makes each
+set hold those files in the store order of Scripts/asc/shots.json. Only what
+changed goes up: a shot whose file matches one already in the set (by MD5, ASC's
+sourceFileChecksum) stays as it is, so it is not sent through ASC's processing
+again.
 
-  Scripts/asc/screenshots.py               # dry run: show the plan
-  Scripts/asc/screenshots.py --apply       # upload the changed, drop the stale, reorder
-  Scripts/asc/screenshots.py --all         # replace every shot, changed or not
-  Scripts/asc/screenshots.py --dir <tree>  # a different capture tree
+Run from the project root, through asc.sh:
 
-Dry-run by default. Needs: PyJWT + cryptography (the run.sh venv).
+  asc.sh screens               # dry run: show the plan
+  asc.sh screens --apply       # upload the changed, drop the stale, reorder
+  asc.sh screens --all         # replace every shot, changed or not
+  asc.sh screens --dir <tree>  # a different capture tree (default: shots)
+
+shots.json needs only `"store": [<shot>, …]`, the carousel order by shot name;
+a shot listed under `"shots"` with `"platforms"` is left out of the others.
 """
 import argparse
 import hashlib
@@ -22,40 +27,55 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _client import ASC  # noqa: E402
-from shots import for_platform  # noqa: E402
+from asc_client import ASC  # noqa: E402
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-# run.sh cd's into Scripts/asc — anchor the default capture tree at repo root.
-REPO = os.path.dirname(os.path.dirname(HERE))
+LISTING = os.path.join("Scripts", "asc", "listing.json")
+SHOTS = os.path.join("Scripts", "asc", "shots.json")
 
-# platform dir → (ASC version platform, screenshot display type)
+# platform folder → (ASC version platform, screenshot display type)
 PLATFORMS = {
     "iphone": ("IOS", "APP_IPHONE_67"),
     "ipad": ("IOS", "APP_IPAD_PRO_3GEN_129"),
     "mac": ("MAC_OS", "APP_DESKTOP"),
+    "watch": ("IOS", "APP_WATCH_ULTRA"),
 }
-# Pixel sizes ASC accepts for each platform dir. A capture at any other size
+# Pixel sizes ASC accepts for each platform folder. A capture at any other size
 # uploads fine but fails ASC's processing — a broken tile that BLOCKS
 # submission — so refuse it here, loudly, before touching the sets.
 EXPECTED_SIZES = {
     "iphone": {(1320, 2868)},
     "ipad": {(2064, 2752)},
     "mac": {(1440, 900), (2880, 1800)},
+    "watch": {(410, 502), (422, 514)},
 }
-LOCALES = {"en": "en-US", "ja": "ja"}
+# A language folder is its ASC locale, but for English.
+LOCALES = {"en": "en-US"}
 EDITABLE = {"PREPARE_FOR_SUBMISSION", "DEVELOPER_REJECTED", "REJECTED",
             "METADATA_REJECTED", "PENDING_DEVELOPER_RELEASE"}
 
 
-def ordered_files(lang_dir, platform):
-    """The captured files present, in store order (shots.json)."""
-    out = []
-    for name, _ in for_platform(platform, "store"):
-        path = os.path.join(lang_dir, f"{name}-{platform}.png")
-        if os.path.exists(path):
-            out.append(path)
-    return out
+def store_order(doc, platform):
+    """The shot names that platform carries, in carousel order."""
+    shots = doc.get("shots", {})
+    return [name for name in doc["store"]
+            if platform in shots.get(name, {}).get("platforms", [platform])]
+
+
+def languages(plat_dir):
+    """(language, folder) pairs: a folder per language, or the platform's own."""
+    if any(f.endswith(".png") for f in os.listdir(plat_dir)):
+        return [("en", plat_dir)]
+    return [(lang, os.path.join(plat_dir, lang)) for lang in sorted(os.listdir(plat_dir))
+            if os.path.isdir(os.path.join(plat_dir, lang))]
+
+
+def ordered_files(lang_dir, platform, order):
+    """The captured files present, in store order, and the ones it doesn't name."""
+    files = [os.path.join(lang_dir, f"{name}-{platform}.png") for name in order]
+    files = [f for f in files if os.path.exists(f)]
+    unnamed = sorted(f for f in os.listdir(lang_dir)
+                     if f.endswith(".png") and os.path.join(lang_dir, f) not in files)
+    return files, unnamed
 
 
 def png_size(path):
@@ -74,26 +94,7 @@ def check_sizes(files, platform):
         lines = "\n".join(f"  {p}: {w}x{h}" for p, (w, h) in bad)
         want = " or ".join(f"{w}x{h}" for w, h in sorted(EXPECTED_SIZES[platform]))
         sys.exit(f"Wrong-sized {platform} capture(s) — expected {want}:\n{lines}\n"
-                 "Recapture via `make shots` (the demo pins the window/simulator size).")
-
-
-def screenshot_set(asc, loc_id, display_type, apply):
-    """The localization's set for `display_type`, created when missing."""
-    sets = asc.get_all(f"/appStoreVersionLocalizations/{loc_id}/appScreenshotSets")
-    for s in sets:
-        if s["attributes"]["screenshotDisplayType"] == display_type:
-            return s["id"]
-    if not apply:
-        return None  # dry run: would create
-    created = asc.post("/appScreenshotSets", {
-        "data": {
-            "type": "appScreenshotSets",
-            "attributes": {"screenshotDisplayType": display_type},
-            "relationships": {
-                "appStoreVersionLocalization": {
-                    "data": {"type": "appStoreVersionLocalizations", "id": loc_id}}},
-        }})
-    return created["data"]["id"]
+                 "Recapture them at the store's size.")
 
 
 def md5_of(path):
@@ -122,6 +123,25 @@ def plan_set(existing, files, everything):
     kept = {i for i in slots if i}
     stale = [shot["id"] for shot in existing if shot["id"] not in kept]
     return slots, stale
+
+
+def screenshot_set(asc, loc_id, display_type, apply):
+    """The localization's set for `display_type`, created when missing."""
+    sets = asc.get_all(f"/appStoreVersionLocalizations/{loc_id}/appScreenshotSets")
+    for s in sets:
+        if s["attributes"]["screenshotDisplayType"] == display_type:
+            return s["id"]
+    if not apply:
+        return None  # dry run: would create
+    created = asc.post("/appScreenshotSets", {
+        "data": {
+            "type": "appScreenshotSets",
+            "attributes": {"screenshotDisplayType": display_type},
+            "relationships": {
+                "appStoreVersionLocalization": {
+                    "data": {"type": "appStoreVersionLocalizations", "id": loc_id}}},
+        }})
+    return created["data"]["id"]
 
 
 def reorder(asc, set_id, ids):
@@ -174,12 +194,13 @@ def main():
     ap.add_argument(
         "--all", action="store_true",
         help="replace every shot, even one ASC already holds unchanged")
-    ap.add_argument(
-        "--dir", default=os.path.join(REPO, "shots"),
-        help="capture tree (default: <repo>/shots)")
+    ap.add_argument("--dir", default="shots", help="capture tree (default: shots)")
     args = ap.parse_args()
 
-    doc = json.load(open(os.path.join(HERE, "listing.json")))
+    if not os.path.exists(SHOTS):
+        sys.exit(f"No {SHOTS}: it gives the store order, as {{\"store\": [<shot>, …]}}.")
+    shots_doc = json.load(open(SHOTS))
+    doc = json.load(open(LISTING))
     asc = ASC()
     apps = asc.get(f"/apps?filter[bundleId]={doc['bundleId']}&limit=1")["data"]
     if not apps:
@@ -197,7 +218,6 @@ def main():
     for platform, (ver_platform, display_type) in PLATFORMS.items():
         plat_dir = os.path.join(args.dir, platform)
         if not os.path.isdir(plat_dir):
-            print(f"({platform}: no {plat_dir}/ — skipped)")
             continue
         ver = by_platform.get(ver_platform)
         if not ver:
@@ -206,28 +226,30 @@ def main():
         locs = asc.get_all(
             f"/appStoreVersions/{ver['id']}/appStoreVersionLocalizations")
         loc_ids = {l["attributes"]["locale"]: l["id"] for l in locs}
-        for lang, locale in LOCALES.items():
-            lang_dir = os.path.join(plat_dir, lang)
-            files = ordered_files(lang_dir, platform) if os.path.isdir(lang_dir) else []
+        order = store_order(shots_doc, platform)
+        for lang, lang_dir in languages(plat_dir):
+            locale = LOCALES.get(lang, lang)
+            label = f"{platform} [{locale}]"
+            files, unnamed = ordered_files(lang_dir, platform, order)
+            if unnamed:
+                print(f"({label}: not in the store order, left out: {', '.join(unnamed)})")
             if not files:
-                print(f"({platform} [{locale}]: no captures — skipped)")
+                print(f"({label}: no captures — skipped)")
                 continue
             check_sizes(files, platform)
             loc_id = loc_ids.get(locale)
             if not loc_id:
-                print(f"({platform} [{locale}]: locale missing on the version — skipped)")
+                print(f"({label}: locale missing on the version — skipped)")
                 continue
             set_id = screenshot_set(asc, loc_id, display_type, args.apply)
             if set_id is None:
-                print(f"{platform} [{locale}]: would create {display_type} set "
-                      f"and upload {len(files)}")
+                print(f"{label}: would create {display_type} set and upload {len(files)}")
                 uploaded += len(files)
                 continue
             existing = asc.get_all(f"/appScreenshotSets/{set_id}/appScreenshots")
             slots, stale = plan_set(existing, files, args.all)
             changed = [f for f, slot in zip(files, slots) if slot is None]
             in_order = [s["id"] for s in existing] == slots
-            label = f"{platform} [{locale}]"
             if not changed and not stale and in_order:
                 print(f"{label}: up to date ({len(files)})")
                 continue
