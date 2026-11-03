@@ -32,10 +32,14 @@ case "$PLATFORM" in
     *) echo "PLATFORM must be iphone | ipad" >&2; exit 2 ;;
 esac
 
-udid=$(xcrun simctl list devices available | grep -E "$pat" \
-    | grep -oE "[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}" | tail -1)
-[ -n "$udid" ] || { echo "No simulator matching /$pat/ installed." >&2; exit 1; }
-xcrun simctl bootstatus "$udid" -b >/dev/null 2>&1 || true
+# The matches newest first, and the first that boots: see simulator.sh.
+# shellcheck source=Scripts/simulator.sh
+. "$(dirname "$0")/simulator.sh"
+udids=$(xcrun simctl list devices available | grep -E "$pat" \
+    | grep -oE "[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}" | tail -r)
+[ -n "$udids" ] || { echo "No simulator matching /$pat/ installed." >&2; exit 1; }
+# shellcheck disable=SC2086
+udid=$(boot_first_simulator $udids) || { echo "No simulator matching /$pat/ boots." >&2; exit 1; }
 # Shows the simulator where there is a Simulator.app to show it in; Xcode 27 has none (its
 # devices live in DeviceHub), and the demo runs headless just as well.
 open -g -a Simulator 2>/dev/null || true
