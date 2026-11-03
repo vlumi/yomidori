@@ -74,7 +74,7 @@ enum Cards {
     /// The day's first look at the ranks, kept for the progress charts; nothing after that.
     static func snapshotRanks() {
         guard let store, let snapshots else { return }
-        try? snapshots.take(of: store.cards(), at: Date())
+        _ = try? snapshots.take(of: store.cards(), at: Date())
     }
 
     /// Every write refreshes the screens; this device's own also go to sync.

@@ -96,7 +96,9 @@ extension CaptureView {
 
     func loadPicked() async {
         guard let picked, let data = try? await picked.loadTransferable(type: Data.self),
-            let loaded = await Task.detached(priority: .userInitiated) { Still(data: data) }.value,
+            let loaded = await Task.detached(
+                priority: .userInitiated, operation: { Still(data: data) }
+            ).value,
             !Task.isCancelled
         else { return }
         // Loaded once: a return to the tab must not read the photo again.
