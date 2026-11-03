@@ -34,13 +34,15 @@ final class Speaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
         speaking = text
         #if os(iOS)
         // Asked for by a press, so heard with the ring switch off too, over whatever plays.
-        // The session's setup takes tens of milliseconds and more: off the main thread.
-        let synthesizer = synthesizer
-        DispatchQueue.global(qos: .userInitiated).async {
-            let session = AVAudioSession.sharedInstance()
-            try? session.setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
-            try? session.setActive(true)
-            DispatchQueue.main.async { synthesizer.speak(utterance) }
+        // The session's setup takes tens of milliseconds and more: off the main actor, then
+        // back on it to speak.
+        Task {
+            await Task.detached(priority: .userInitiated) {
+                let session = AVAudioSession.sharedInstance()
+                try? session.setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
+                try? session.setActive(true)
+            }.value
+            synthesizer.speak(utterance)
         }
         #else
         synthesizer.speak(utterance)

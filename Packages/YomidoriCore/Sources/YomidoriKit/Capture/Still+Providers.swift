@@ -11,7 +11,7 @@ extension Still {
     ) -> Bool {
         guard let provider = providers.first else { return false }
         if provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
-            provider.loadDataRepresentation(for: .image) { data, _ in
+            _ = provider.loadDataRepresentation(for: .image) { data, _ in
                 guard let data, let still = Still(data: data) else { return }
                 Task { @MainActor in take(still) }
             }
