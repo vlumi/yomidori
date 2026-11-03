@@ -20,7 +20,7 @@ make asc-listing-apply        # write the listing text (both platforms, every lo
 
 make shots PLATFORM=iphone    # capture the screenshots (see SCREENSHOTS.md)
 make asc-screenshots          # dry run: the upload plan from shots/
-make asc-screenshots-apply    # replace each set and upload, in store order
+make asc-screenshots-apply    # upload what changed, drop the stale, in store order
 ```
 
 The sync writes to every *editable* version (Prepare for Submission, rejected);

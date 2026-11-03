@@ -70,5 +70,7 @@ Captions, if added in ASC, one idea each: "Tap a word. Get its reading." ·
 ## When the pictures are retaken
 
 Any change to a screen in the set means `make shots` for every platform and
-`make asc-screenshots-apply`; the tooling replaces each set whole, so a partial
-recapture (`ONLY=`) still uploads a complete set from `shots/`.
+`make asc-screenshots-apply`. The tooling uploads only the shots whose file
+differs from what the set holds (by MD5), drops the ones no file matches and puts
+the set in store order, so a partial recapture (`ONLY=`) sends just those shots
+and the rest are not processed again. `ALL=1` replaces every shot anyway.
