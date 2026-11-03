@@ -26,7 +26,9 @@ esac
 #    Names are additive substrings ("17" ⊂ "17 Pro" ⊂ "17 Pro Max"), so among
 #    matches prefer an exact name, then the shortest name, then newest runtime —
 #    `DEVICE=17` favors plain "iPhone 17" over the Pro Max.
-udid="$(xcrun simctl list devices --json 2>/dev/null | DEVICE="$device" FAMILY="$family_match" python3 -c '
+# Every match in order of preference, one a line; the first that boots is used, since a
+# listed device may sit on a runtime that is not mounted (see simulator.sh).
+udids="$(xcrun simctl list devices --json 2>/dev/null | DEVICE="$device" FAMILY="$family_match" python3 -c '
 import json, os, re, sys
 d = json.load(sys.stdin)["devices"]
 want = os.environ.get("DEVICE", "").strip()
@@ -48,22 +50,27 @@ for runtime, devs in d.items():
             booted = dev["udid"]
         exact = (name.lower() == want.lower())
         matches.append((not exact, len(name), tuple(-x for x in ver), dev["udid"]))
-if not matches:
-    print("")
-elif want:
-    # Filter is authoritative: best name match wins, ignore whatever is booted.
-    print(sorted(matches)[0][3])
-else:
-    print(booted or sorted(matches)[0][3])
+ordered = [m[3] for m in sorted(matches)]
+# No filter: whatever is booted first. A filter is authoritative: best name match first.
+if booted and not want:
+    ordered = [booted] + [u for u in ordered if u != booted]
+print("\n".join(ordered))
 ')"
-[ -n "$udid" ] || {
+[ -n "$udids" ] || {
     echo "error: no available iOS>=26 $family_match simulator${device:+ matching '$device'} found" >&2
+    exit 1
+}
+# shellcheck source=Scripts/simulator.sh
+. "$(dirname "$0")/simulator.sh"
+# shellcheck disable=SC2086
+udid=$(boot_first_simulator $udids) || {
+    echo "error: no $family_match simulator${device:+ matching '$device'} boots" >&2
     exit 1
 }
 
 echo "Simulator: $udid"
-open -a Simulator
-xcrun simctl bootstatus "$udid" -b >/dev/null 2>&1 || true
+# Xcode 27 has no Simulator.app (its devices live in DeviceHub); the app runs headless.
+open -g -a Simulator 2>/dev/null || true
 
 # Build for the generic simulator destination (robust — no per-device matching),
 # then install the product to the chosen sim.
