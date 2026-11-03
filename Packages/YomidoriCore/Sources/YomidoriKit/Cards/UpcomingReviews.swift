@@ -6,12 +6,17 @@ import YomidoriCore
 /// due in it stacked in the colors of their ranks, each question's own, a hairline between
 /// the days; a finger on a bar (the pointer, on a Mac) reads it out above, and the whole
 /// week stands there otherwise. What is overdue is in now's bar. Below, how many lie beyond.
+/// With more than one stacking, a chart each, the first full height and the rest smaller,
+/// all under one readout and one finger: a bar touched in one is picked in all.
 struct UpcomingReviews: View {
     let upcoming: Upcoming
-    /// What colors the bars: each question's rank, or what it asks.
-    var stacking: Stacking = .rank
+    /// What colors the bars, a chart for each: the questions' ranks, what they ask.
+    var stackings: [Stacking] = [.rank]
     @State private var selected: Date?
     @ScaledMetric(relativeTo: .body) private var height: CGFloat = 132
+
+    /// The charts after the first: the same bars in other colors, a glance's worth.
+    private static let secondaryHeight: CGFloat = 0.6
 
     enum Stacking {
         case rank
@@ -28,7 +33,7 @@ struct UpcomingReviews: View {
         var id: String { "\(slot.timeIntervalSinceReferenceDate).\(key)" }
     }
 
-    private var shares: [Share] {
+    private func shares(_ stacking: Stacking) -> [Share] {
         upcoming.slots.flatMap { slot -> [Share] in
             switch stacking {
             case .rank:
@@ -54,7 +59,17 @@ struct UpcomingReviews: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             readout
-            chart
+            ForEach(Array(stackings.enumerated()), id: \.offset) { index, stacking in
+                if index > 0 {
+                    HStack {
+                        Spacer()
+                        legend(stacking).fixedSize()
+                    }
+                    .font(.callout.monospacedDigit())
+                    .padding(.top, 4)
+                }
+                chart(stacking, height: index == 0 ? height : height * Self.secondaryHeight)
+            }
             if upcoming.later > 0 {
                 Text("\(upcoming.later) more after that", bundle: .module)
                     .font(.callout)
@@ -85,16 +100,20 @@ struct UpcomingReviews: View {
                     .fontWeight(.semibold)
             }
             .fixedSize()
-            Group {
-                switch stacking {
-                case .rank: ranks(of: chosen?.counts ?? upcoming.counts)
-                case .question: questions(of: chosen?.questionCounts ?? upcoming.questionCounts)
-                }
-            }
-            .fixedSize()
+            legend(stackings.first ?? .rank)
+                .fixedSize()
         }
         .font(.callout.monospacedDigit())
         .frame(minHeight: 24)
+    }
+
+    /// A chart's key with the numbers of the bar under the finger, else of the whole span.
+    @ViewBuilder
+    private func legend(_ stacking: Stacking) -> some View {
+        switch stacking {
+        case .rank: ranks(of: chosen?.counts ?? upcoming.counts)
+        case .question: questions(of: chosen?.questionCounts ?? upcoming.questionCounts)
+        }
     }
 
     /// The ranks that come up, each as its dot and its number.
@@ -123,10 +142,10 @@ struct UpcomingReviews: View {
         }
     }
 
-    private var chart: some View {
+    private func chart(_ stacking: Stacking, height: CGFloat) -> some View {
         let from = upcoming.slots.first?.start ?? Date()
         let to = upcoming.slots.last?.end ?? from.addingTimeInterval(24 * 3600)
-        let shares = shares
+        let shares = shares(stacking)
         let chosenStart = chosen?.start
         return Chart {
             ForEach(shares) { share in
