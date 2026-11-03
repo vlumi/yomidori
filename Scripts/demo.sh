@@ -4,7 +4,8 @@
 # openings at every rank, collections with covers, a history) and a rendered page open under Read, so the
 # screens can be looked at without a camera. The real simulator data is never touched.
 #   PLATFORM=iphone|ipad   (default iphone)
-#   DEVICE=<name pattern>  override the simulator pick
+#   DEVICE=<name pattern>  override the simulator pick (a grep regex, or a udid); without it
+#                          a booted match is preferred, one DeviceHub already shows
 #   TAB=home|read|study|cards|search   open on that tab (default: where it was left)
 #   SCREEN=review|lesson|progress|settings|about|collections   pushed on that tab
 #   SEARCH=<text>                      the search field filled
@@ -26,17 +27,25 @@ cd "$(dirname "$0")/.."
 PLATFORM="${PLATFORM:-iphone}"
 BUNDLE="fi.misaki.yomidori"
 
+# Any recent iPhone or a 13-inch iPad; the store's sizes are shoot.sh's business.
 case "$PLATFORM" in
-    iphone) pat="${DEVICE:-iPhone 1[6-9] Pro Max}" ;;
+    iphone) pat="${DEVICE:-iPhone 1[6-9]}" ;;
     ipad) pat="${DEVICE:-iPad Pro 13-inch}" ;;
     *) echo "PLATFORM must be iphone | ipad" >&2; exit 2 ;;
 esac
 
-# The matches newest first, and the first that boots: see simulator.sh.
+# The booted matches first (a window in DeviceHub, where the demo can be seen), then the
+# rest, newest first either way; the first that boots is used: see simulator.sh.
 # shellcheck source=Scripts/simulator.sh
 . "$(dirname "$0")/simulator.sh"
-udids=$(xcrun simctl list devices available | grep -E "$pat" \
-    | grep -oE "[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}" | tail -r)
+udid_re="[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}"
+# Only devices under an "-- iOS 26 --" or later heading: the app's minimum.
+ios26='/^-- /{v=($2=="iOS")?$3+0:0; next} v>=26'
+udids=$( {
+    xcrun simctl list devices booted | awk "$ios26" | grep -E "$pat" | grep -oE "$udid_re" | tail -r
+    xcrun simctl list devices available | awk "$ios26" | grep -E "$pat" | grep -oE "$udid_re" \
+        | tail -r
+} | awk 'NF && !seen[$0]++')
 [ -n "$udids" ] || { echo "No simulator matching /$pat/ installed." >&2; exit 1; }
 # shellcheck disable=SC2086
 udid=$(boot_first_simulator $udids) || { echo "No simulator matching /$pat/ boots." >&2; exit 1; }

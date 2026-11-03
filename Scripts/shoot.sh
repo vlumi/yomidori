@@ -25,6 +25,11 @@ APP_NAME="Yomidori"
 # The store's sizes: iPhone 6.9" 1320×2868, iPad 13" 2064×2752, Mac 1440×900 (@2x).
 MAC_WIDTH=1440
 MAC_HEIGHT=900
+# The simulators of those sizes, whatever else is open: a Pro Max iPhone, a 13-inch iPad.
+case "$PLATFORM" in
+    iphone) export DEVICE="${DEVICE:-iPhone 1[6-9] Pro Max}" ;;
+    ipad) export DEVICE="${DEVICE:-iPad Pro 13-inch}" ;;
+esac
 
 case "$PLATFORM" in
     mac) ;;
