@@ -30,26 +30,39 @@ struct TypedAgainst: View {
         .accessibilityLabel(Text("Not quite. You typed \(typed).", bundle: .module))
     }
 
+    // One attributed string per line rather than Texts joined with `+`, which iOS 26 and
+    // macOS 26 deprecate.
     private func typedLine(_ parts: [AnswerDiff.Part]) -> Text {
-        parts.reduce(Text(verbatim: "")) { line, part in
+        var line = AttributedString()
+        for part in parts {
             switch part {
-            case .same(let text): return line + Text(verbatim: text)
+            case .same(let text): line += AttributedString(text)
             case .extra(let text):
-                return line + Text(verbatim: text).foregroundColor(.red).bold().strikethrough()
-            case .missing: return line
+                var extra = AttributedString(text)
+                extra.foregroundColor = Color.red
+                extra.inlinePresentationIntent = .stronglyEmphasized
+                extra.strikethroughStyle = .single
+                line += extra
+            case .missing: break
             }
         }
+        return Text(line)
     }
 
     private func answerLine(_ parts: [AnswerDiff.Part]) -> Text {
-        parts.reduce(Text(verbatim: "")) { line, part in
+        var line = AttributedString()
+        for part in parts {
             switch part {
-            case .same(let text): return line + Text(verbatim: text)
+            case .same(let text): line += AttributedString(text)
             case .missing(let text):
-                return line
-                    + Text(verbatim: text).foregroundColor(Palette.nightGreen).bold().underline()
-            case .extra: return line
+                var missing = AttributedString(text)
+                missing.foregroundColor = Palette.nightGreen
+                missing.inlinePresentationIntent = .stronglyEmphasized
+                missing.underlineStyle = .single
+                line += missing
+            case .extra: break
             }
         }
+        return Text(line)
     }
 }
