@@ -80,6 +80,9 @@ struct AnswersChart: View {
         let wrongName = String(localized: "Wrong", bundle: .module)
         VStack(alignment: .leading, spacing: 8) {
             ChartCaption {
+                if let question {
+                    QuestionMark(question: question, size: 16)
+                }
                 if let picked {
                     Text(verbatim: Period.label(picked.day, unit: unit)).fontWeight(.semibold)
                 }

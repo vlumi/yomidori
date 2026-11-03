@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **Each question has a color of its own, the same everywhere**: violet for the reading, rose for the meaning, amber for the pitch, on the review's tag, the card's rows, Coming up's Questions legend and the Progress charts filtered to one question, each with the tag's symbol in a small round mark; green is the app's and All's alone, no longer also the reading's, and blue the ranks' alone.
+
 ### build 50 — 2026-11-03
 
 - **A sentence can be taken off a card**: Remove the sentence, under Correct the sentence on the card; a card changed on another device at the same time keeps it off rather than bringing it back.

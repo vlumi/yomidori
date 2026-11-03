@@ -55,14 +55,14 @@ struct CardFacts: View {
     }
 }
 
+/// The question's mark and its name, as a row's label.
 struct QuestionName: View {
     let question: Question
 
     var body: some View {
-        switch question {
-        case .reading: Text("Reading", bundle: .module)
-        case .meaning: Text("Meaning", bundle: .module)
-        case .pitch: Text("Pitch", bundle: .module)
+        HStack(spacing: 6) {
+            QuestionMark(question: question)
+            Text(verbatim: question.name)
         }
     }
 }
