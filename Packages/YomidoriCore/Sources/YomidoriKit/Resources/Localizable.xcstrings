@@ -963,16 +963,6 @@
         }
       }
     },
-    "Colors" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "色分け"
-          }
-        }
-      }
-    },
     "Coming up" : {
       "localizations" : {
         "ja" : {
@@ -2821,12 +2811,12 @@
         }
       }
     },
-    "Questions due by quarter day, in the colors of what they ask; now's with what is overdue. Touch a bar for its numbers." : {
+    "Questions due by quarter day, above in their ranks' colors, below in the colors of what they ask; now's with what is overdue. Touch a bar for its numbers." : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "一日を四つに分けた時間帯ごとの問題数を、問題の種類の色で示します。今の時間帯には期限を過ぎたものも入ります。棒に触れると数が出ます。"
+            "value" : "一日を四つに分けた時間帯ごとの問題数を、上はランクの色で、下は問題の種類の色で示します。今の時間帯には期限を過ぎたものも入ります。棒に触れると数が出ます。"
           }
         }
       }

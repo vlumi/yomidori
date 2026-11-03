@@ -4,12 +4,12 @@ import YomidoriCore
 
 /// The time spent answering, for one question or all: each period's as a bar, or added up
 /// as the span went, as a line; the caption gives the period under the finger, or the whole
-/// span's.
+/// span's. Which of the two is the section header's switch (`StudyTimeShape`).
 struct StudyTimeChart: View {
     let buckets: [DayTally]
     let unit: Calendar.Component
     let question: Question?
-    @AppStorage(SettingsKey.studyTimeCumulative) private var cumulative = false
+    let cumulative: Bool
     @State private var selected: Date?
 
     private struct Point {
@@ -34,31 +34,18 @@ struct StudyTimeChart: View {
         let picked = ProgressSpan.period(under: selected, in: points, start: \.day)
         let shown = picked?.seconds ?? buckets.map { $0.seconds(of: question) }.reduce(0, +)
         VStack(alignment: .leading, spacing: 8) {
-            FitsOrStacks(spacing: 8, trailingLast: true) {
-                ChartCaption {
-                    if let question {
-                        QuestionMark(question: question, size: 16)
-                    }
-                    if let picked {
-                        Text(verbatim: Period.label(picked.day, unit: unit)).fontWeight(.semibold)
-                    }
-                    if cumulative, picked != nil {
-                        Text("\(Self.time(shown)) so far", bundle: .module)
-                    } else {
-                        Text(verbatim: Self.time(shown))
-                    }
+            ChartCaption {
+                if let question {
+                    QuestionMark(question: question, size: 16)
                 }
-                .fixedSize()
-                Picker(selection: $cumulative) {
-                    perPeriod.tag(false)
-                    Text("Added up", bundle: .module).tag(true)
-                } label: {
-                    Text("Shape", bundle: .module)
+                if let picked {
+                    Text(verbatim: Period.label(picked.day, unit: unit)).fontWeight(.semibold)
                 }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                .controlSize(.small)
-                .fixedSize()
+                if cumulative, picked != nil {
+                    Text("\(Self.time(shown)) so far", bundle: .module)
+                } else {
+                    Text(verbatim: Self.time(shown))
+                }
             }
             // The shape decided outside the ForEach, and the chart made anew on a switch: marks
             // chosen inside it stayed as they were until the selection redrew them.
@@ -113,14 +100,6 @@ struct StudyTimeChart: View {
         }
     }
 
-    private var perPeriod: Text {
-        switch unit {
-        case .day: return Text("Per day", bundle: .module)
-        case .weekOfYear: return Text("Per week", bundle: .module)
-        default: return Text("Per month", bundle: .module)
-        }
-    }
-
     /// "1 hr, 5 min", "12 min"; a span with nothing in it says "0 min".
     static func time(_ seconds: Int) -> String {
         Duration.seconds(seconds).formatted(
@@ -134,5 +113,33 @@ struct StudyTimeChart: View {
         guard minutes > 0 else { return "0" }
         return Duration.seconds(minutes * 60).formatted(
             .units(allowed: [.hours, .minutes], width: .narrow))
+    }
+}
+
+/// The Time chart's switch, for its section header: each period's time, or the span's
+/// added up.
+struct StudyTimeShape: View {
+    @Binding var cumulative: Bool
+    let unit: Calendar.Component
+
+    var body: some View {
+        Picker(selection: $cumulative) {
+            perPeriod.tag(false)
+            Text("Added up", bundle: .module).tag(true)
+        } label: {
+            Text("Shape", bundle: .module)
+        }
+        .pickerStyle(.segmented)
+        .labelsHidden()
+        .controlSize(.mini)
+        .fixedSize()
+    }
+
+    private var perPeriod: Text {
+        switch unit {
+        case .day: return Text("Per day", bundle: .module)
+        case .weekOfYear: return Text("Per week", bundle: .module)
+        default: return Text("Per month", bundle: .module)
+        }
     }
 }

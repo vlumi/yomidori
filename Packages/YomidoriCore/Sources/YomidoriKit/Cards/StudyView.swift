@@ -10,8 +10,6 @@ struct StudyView: View {
     @State private var upcoming = Upcoming()
     /// All the questions, or one: what Coming up and Ranks show.
     @State private var question: Question?
-    /// Coming up's bars colored by the cards' ranks, or by what each question asks.
-    @AppStorage(SettingsKey.upcomingByQuestion) private var byQuestion = false
     /// How far Coming up looks: a week by quarter days, or a month by days.
     @AppStorage(SettingsKey.upcomingDays) private var days = 7
     /// Opens a screen over this tab's root: a button, not a link, so a list row doesn't
@@ -57,30 +55,22 @@ struct StudyView: View {
             }
             if !upcoming.isEmpty {
                 Section {
+                    // All the questions: by rank and by what they ask, a chart each under
+                    // one finger; one question has one color, so its ranks alone.
                     UpcomingReviews(
                         upcoming: upcoming,
-                        stacking: question == nil && byQuestion ? .question : .rank)
+                        stackings: question == nil ? [.rank, .question] : [.rank])
                 } header: {
-                    // Both switches above the chart, in its header, as every chart's are;
-                    // under the title where the row is too narrow for the three.
+                    // The span above the charts, in the header, as every chart's switch is;
+                    // under the title where the row is too narrow for both.
                     FitsOrStacks(spacing: 8, trailingLast: true) {
                         Text("Coming up", bundle: .module)
                             .fixedSize()
-                        HStack(spacing: 8) {
-                            Picker(selection: $days) {
-                                Text("7 days", bundle: .module).tag(7)
-                                Text("30 days", bundle: .module).tag(30)
-                            } label: {
-                                Text("Days ahead", bundle: .module)
-                            }
-                            if question == nil {
-                                Picker(selection: $byQuestion) {
-                                    Text("Ranks", bundle: .module).tag(false)
-                                    Text("Questions", bundle: .module).tag(true)
-                                } label: {
-                                    Text("Colors", bundle: .module)
-                                }
-                            }
+                        Picker(selection: $days) {
+                            Text("7 days", bundle: .module).tag(7)
+                            Text("30 days", bundle: .module).tag(30)
+                        } label: {
+                            Text("Days ahead", bundle: .module)
                         }
                         .pickerStyle(.segmented)
                         .controlSize(.mini)
@@ -93,10 +83,10 @@ struct StudyView: View {
                             // swiftlint:disable:next line_length
                             "Questions due by day; today's with what is overdue. Touch a bar for its numbers.",
                             bundle: .module)
-                    } else if question == nil && byQuestion {
+                    } else if question == nil {
                         Text(
                             // swiftlint:disable:next line_length
-                            "Questions due by quarter day, in the colors of what they ask; now's with what is overdue. Touch a bar for its numbers.",
+                            "Questions due by quarter day, above in their ranks' colors, below in the colors of what they ask; now's with what is overdue. Touch a bar for its numbers.",
                             bundle: .module)
                     } else {
                         Text(

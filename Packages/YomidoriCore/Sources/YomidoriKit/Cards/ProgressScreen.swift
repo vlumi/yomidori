@@ -7,6 +7,8 @@ import YomidoriCore
 /// finger on a chart shows that period's numbers above it.
 struct ProgressScreen: View {
     @AppStorage(SettingsKey.showStreaks) private var showStreaks = true
+    /// The Time chart's bars per period, or its line added up.
+    @AppStorage(SettingsKey.studyTimeCumulative) private var timeAddedUp = false
     @State private var span: ProgressSpan = .fourWeeks
     @State private var question: Question?
     @State private var today: DayTally?
@@ -65,9 +67,18 @@ struct ProgressScreen: View {
                     }
                 }
                 Section {
-                    StudyTimeChart(buckets: buckets, unit: span.unit, question: question)
+                    StudyTimeChart(
+                        buckets: buckets, unit: span.unit, question: question,
+                        cumulative: timeAddedUp)
                 } header: {
-                    Text("Time", bundle: .module)
+                    // The chart's switch in its header, as Coming up's; under the title
+                    // where the row is too narrow for both.
+                    FitsOrStacks(spacing: 8, trailingLast: true) {
+                        Text("Time", bundle: .module)
+                            .fixedSize()
+                        StudyTimeShape(cumulative: $timeAddedUp, unit: span.unit)
+                    }
+                    .textCase(nil)
                 }
                 Section {
                     StartedChart(buckets: buckets, unit: span.unit)
