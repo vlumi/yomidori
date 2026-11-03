@@ -73,4 +73,9 @@ xcrun simctl launch "$udid" "$BUNDLE" -yomidori-demo ${TAB:+-yomidori-tab "$TAB"
   ${MODE:+-yomidori-mode "$MODE"} ${RECOGNIZE:+-yomidori-recognize} ${NOPAGE:+-yomidori-nopage} ${BEGIN:+-yomidori-begin} ${CARD:+-yomidori-card "$CARD"} ${ENTRY:+-yomidori-entry "$ENTRY"} ${PICTURE:+-yomidori-picture "$PICTURE"} \
   ${DEMO_LANG:+-AppleLanguages "($DEMO_LANG)"} >/dev/null
 [ -n "${YOMIDORI_UDID_FILE:-}" ] && echo "$udid" > "$YOMIDORI_UDID_FILE"
-echo "Demo launched on $udid — seeded cards, collections and a page; nothing persists."
+# Named, with its runtime: DeviceHub shows only the devices opened in it, so the reader
+# needs to know which one to open.
+where=$(xcrun simctl list devices | awk -v u="$udid" \
+    '/^-- /{rt=$2" "$3} index($0,u){sub(/^ +/,""); sub(" \\(" u "\\).*$",""); print $0", "rt; exit}')
+echo "Demo launched on ${where:-$udid} ($udid) — seeded cards, collections and a page; nothing persists."
+echo "Not on your screen? Open that simulator in DeviceHub (File › New Window, or the sidebar)."
