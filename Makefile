@@ -114,24 +114,8 @@ pitch: $(DICTIONARY) $(PITCH_VENV_READY)  ## Estimate the pitch Kanjium lacks in
 pitch-measure: $(DICTIONARY) $(PITCH_VENV_READY)  ## How often the estimate agrees with Kanjium, on compounds held out
 	@$(PITCH_VENV)/bin/python Scripts/data/estimate-pitch.py --database $(DICTIONARY) --measure
 
-##@ App Store (Scripts/asc: listing.json and shots.json are the sources; asc-* are dry runs, -apply writes)
+##@ App Store
 
 .PHONY: shots
 shots: $(SLIPWAY_XCODEPROJ)  ## Capture the store screenshots from the demo: PLATFORM=iphone|ipad|mac [LANGS=en,ja] [OUT=shots] [PAUSE=1] [ONLY=a,b]
 	@Scripts/shoot.sh
-
-.PHONY: asc-listing
-asc-listing:  ## Show what the listing text in listing.json would change in ASC
-	@Scripts/asc/run.sh listing
-
-.PHONY: asc-listing-apply
-asc-listing-apply:  ## Write the listing text to ASC
-	@Scripts/asc/run.sh listing --apply
-
-.PHONY: asc-screenshots
-asc-screenshots:  ## Show the screenshot upload plan from shots/: only what changed [ALL=1 for every shot]
-	@Scripts/asc/run.sh screens $(if $(ALL),--all)
-
-.PHONY: asc-screenshots-apply
-asc-screenshots-apply:  ## Upload the changed shots from shots/, drop the stale, reorder [ALL=1 replaces every shot]
-	@Scripts/asc/run.sh screens --apply $(if $(ALL),--all)

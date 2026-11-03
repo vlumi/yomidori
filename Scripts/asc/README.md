@@ -3,14 +3,16 @@
 The listing and the screenshots from the repo, never from the ASC UI:
 `listing.json` is the single source of the listing text, `shots.json` of the
 screenshots (what each shows and the demo arguments that stage it). Edit here,
-sync with one command.
+sync with one command. The sync itself is slipway's (`asc-*` targets; see
+"App Store Connect" in `Scripts/slipway/README.md`); `shots.py` and the
+capture are this project's.
 
 ## Setup (once)
 
 Credentials are the release lane's: `Scripts/.asc-config` (Key ID + Issuer ID)
 with the `.p8` in `~/.appstoreconnect/private_keys/` — nothing new. The Python
-side runs in a venv that `run.sh` makes on first use (Homebrew's Python is
-externally-managed), so the Make targets are one step.
+side runs in slipway's shared venv (`~/.venvs/slipway-asc`), made on first use
+(Homebrew's Python is externally-managed), so the Make targets are one step.
 
 ## Use
 
