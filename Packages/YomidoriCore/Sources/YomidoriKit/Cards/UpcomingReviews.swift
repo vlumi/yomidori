@@ -58,12 +58,14 @@ struct UpcomingReviews: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            readout
+            steady { readout(for: $0) }
             ForEach(Array(stackings.enumerated()), id: \.offset) { index, stacking in
                 if index > 0 {
-                    HStack {
-                        Spacer()
-                        legend(stacking).fixedSize()
+                    steady { slot in
+                        HStack {
+                            Spacer()
+                            legend(stacking, of: slot).fixedSize()
+                        }
                     }
                     .font(.callout.monospacedDigit())
                     .padding(.top, 4)
@@ -80,8 +82,20 @@ struct UpcomingReviews: View {
         .accessibilityLabel(accessibilityDays)
     }
 
+    /// A readout as tall as the whole span's, whatever the finger is on: the span's, drawn
+    /// unseen behind it, has every rank and question any slot has, so it is the tallest,
+    /// and the charts below stay put while a finger moves over empty slots or few ranks.
+    private func steady<Content: View>(@ViewBuilder _ content: (Upcoming.Slot?) -> Content)
+        -> some View
+    {
+        ZStack(alignment: .topLeading) {
+            content(nil).hidden().accessibilityHidden(true)
+            content(chosen)
+        }
+    }
+
     /// The bar under the finger, else the week: its span, its count and its ranks.
-    private var readout: some View {
+    private func readout(for chosen: Upcoming.Slot?) -> some View {
         // On one line where it fits, on two where the ranks' numbers would wrap every word.
         FitsOrStacks(spacing: 8, trailingLast: true) {
             HStack(spacing: 10) {
@@ -100,7 +114,7 @@ struct UpcomingReviews: View {
                     .fontWeight(.semibold)
             }
             .fixedSize()
-            legend(stackings.first ?? .rank)
+            legend(stackings.first ?? .rank, of: chosen)
                 .fixedSize()
         }
         .font(.callout.monospacedDigit())
@@ -109,7 +123,7 @@ struct UpcomingReviews: View {
 
     /// A chart's key with the numbers of the bar under the finger, else of the whole span.
     @ViewBuilder
-    private func legend(_ stacking: Stacking) -> some View {
+    private func legend(_ stacking: Stacking, of chosen: Upcoming.Slot?) -> some View {
         switch stacking {
         case .rank: ranks(of: chosen?.counts ?? upcoming.counts)
         case .question: questions(of: chosen?.questionCounts ?? upcoming.questionCounts)
