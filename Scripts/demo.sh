@@ -53,11 +53,13 @@ udid=$(boot_first_simulator $udids) || { echo "No simulator matching /$pat/ boot
 # devices live in DeviceHub), and the demo runs headless just as well.
 open -g -a Simulator 2>/dev/null || true
 
-# The pristine status bar, as for screenshots: 9:41, full battery.
+# The pristine status bar, as for screenshots: 9:41, full battery. Cosmetic, so a device
+# that refuses the override (a watch, say) still gets the demo.
 offset=$(date +%z)
 xcrun simctl status_bar "$udid" override \
     --time "2007-01-09T09:41:00.000${offset:0:3}:${offset:3}" \
-    --batteryState charged --batteryLevel 100 --wifiBars 3 --dataNetwork wifi
+    --batteryState charged --batteryLevel 100 --wifiBars 3 --dataNetwork wifi \
+    || echo "Status bar not overridden (fine for a look, not for a store shot)." >&2
 
 app="$(find .build-xcode/Build/Products/Debug-iphonesimulator \
     -maxdepth 1 -name '*.app' -print -quit 2>/dev/null)"
