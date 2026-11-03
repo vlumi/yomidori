@@ -110,13 +110,12 @@ struct UpcomingReviews: View {
         }
     }
 
-    /// The questions that come up, each as a dot of its color and its number.
+    /// The questions that come up, each as its mark and its number.
     private func questions(of counts: [Question: Int]) -> some View {
         HStack(spacing: 6) {
             ForEach(Question.allCases.filter { (counts[$0] ?? 0) > 0 }, id: \.self) { question in
                 HStack(spacing: 2) {
-                    Circle().fill(question.color).frame(width: 10, height: 10)
-                        .accessibilityLabel(Text(verbatim: question.name))
+                    QuestionMark(question: question, size: 14)
                     Text(verbatim: "\(counts[question] ?? 0)")
                         .font(.subheadline.monospacedDigit())
                 }

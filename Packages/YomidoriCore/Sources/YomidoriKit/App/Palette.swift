@@ -15,6 +15,17 @@ public enum Palette {
     public static let silver = Color(
         light: Color(red: 0.42, green: 0.45, blue: 0.47),
         dark: Color(red: 0.78, green: 0.80, blue: 0.82))
+    /// The three questions' own colors, off the greens and blues the ranks and the app's
+    /// tint take, so a bar or a tag in one of them says which question and nothing else.
+    public static let reading = Color(
+        light: Color(red: 0.45, green: 0.35, blue: 0.78),
+        dark: Color(red: 0.64, green: 0.56, blue: 0.92))
+    public static let meaning = Color(
+        light: Color(red: 0.78, green: 0.30, blue: 0.40),
+        dark: Color(red: 0.92, green: 0.50, blue: 0.57))
+    public static let pitch = Color(
+        light: Color(red: 0.78, green: 0.52, blue: 0.12),
+        dark: Color(red: 0.93, green: 0.69, blue: 0.32))
 }
 
 extension Color {
