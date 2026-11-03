@@ -15,6 +15,7 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 ### Unreleased (next build)
 
 - **Coming up's charts hold still under a finger**: the readouts keep the height of the whole span's, so moving over a slot with nothing due or fewer ranks no longer shifts the charts below.
+
 ### build 51 — 2026-11-03
 
 - **Coming up shows ranks and questions at once**: with All, a second, smaller chart under the ranks stacks the same bars by what they ask, both read out together under one finger; the Ranks/Questions switch is gone, and 7 days/30 days stands alone in the heading. The Time chart's Per day/Added up switch moved into its heading too, out of the chart's numbers.
