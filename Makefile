@@ -129,9 +129,9 @@ asc-listing-apply:  ## Write the listing text to ASC
 	@Scripts/asc/run.sh listing --apply
 
 .PHONY: asc-screenshots
-asc-screenshots:  ## Show the screenshot upload plan from shots/
-	@Scripts/asc/run.sh screens
+asc-screenshots:  ## Show the screenshot upload plan from shots/: only what changed [ALL=1 for every shot]
+	@Scripts/asc/run.sh screens $(if $(ALL),--all)
 
 .PHONY: asc-screenshots-apply
-asc-screenshots-apply:  ## Replace the ASC screenshot sets with shots/
-	@Scripts/asc/run.sh screens --apply
+asc-screenshots-apply:  ## Upload the changed shots from shots/, drop the stale, reorder [ALL=1 replaces every shot]
+	@Scripts/asc/run.sh screens --apply $(if $(ALL),--all)

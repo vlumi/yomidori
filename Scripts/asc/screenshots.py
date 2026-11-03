@@ -3,11 +3,14 @@
 per-locale uploads never happen by hand in Media Manager.
 
 Reads shots/<platform>/<lang>/<shot>-<platform>.png, maps platform → the ASC
-screenshot set (display type) and lang → locale, REPLACES each set's contents,
-and uploads in the store order shots.json gives.
+screenshot set (display type) and lang → locale, and makes each set hold those
+files in the store order shots.json gives. Only what changed goes up: a shot
+whose file matches one already in the set (by MD5, ASC's sourceFileChecksum)
+stays as it is, so it is not sent through ASC's processing again.
 
   Scripts/asc/screenshots.py               # dry run: show the plan
-  Scripts/asc/screenshots.py --apply       # replace + upload
+  Scripts/asc/screenshots.py --apply       # upload the changed, drop the stale, reorder
+  Scripts/asc/screenshots.py --all         # replace every shot, changed or not
   Scripts/asc/screenshots.py --dir <tree>  # a different capture tree
 
 Dry-run by default. Needs: PyJWT + cryptography (the run.sh venv).
@@ -93,17 +96,41 @@ def screenshot_set(asc, loc_id, display_type, apply):
     return created["data"]["id"]
 
 
-def clear_set(asc, set_id, apply):
-    """Delete every existing screenshot in the set (replace semantics)."""
-    existing = asc.get_all(f"/appScreenshotSets/{set_id}/appScreenshots")
+def md5_of(path):
+    return hashlib.md5(open(path, "rb").read()).hexdigest()
+
+
+def plan_set(existing, files, everything):
+    """Which files go up, which shots stay, which go.
+
+    Returns (slots, stale): slots is one entry per file in store order, the id
+    of the existing shot it matches or None when it is uploaded; stale the ids
+    of the shots no file matches. A shot whose processing failed never counts
+    as a match, and `everything` matches nothing.
+    """
+    unused = {}
     for shot in existing:
-        if apply:
-            asc.delete(f"/appScreenshots/{shot['id']}")
-    return len(existing)
+        attrs = shot["attributes"]
+        state = (attrs.get("assetDeliveryState") or {}).get("state")
+        if everything or state == "FAILED" or not attrs.get("sourceFileChecksum"):
+            continue
+        unused.setdefault(attrs["sourceFileChecksum"], []).append(shot["id"])
+    slots = []
+    for path in files:
+        same = unused.get(md5_of(path))
+        slots.append(same.pop(0) if same else None)
+    kept = {i for i in slots if i}
+    stale = [shot["id"] for shot in existing if shot["id"] not in kept]
+    return slots, stale
+
+
+def reorder(asc, set_id, ids):
+    asc.patch(f"/appScreenshotSets/{set_id}/relationships/appScreenshots", {
+        "data": [{"type": "appScreenshots", "id": i} for i in ids]})
 
 
 def upload(asc, set_id, path):
-    """The 3-step dance: reserve → upload chunk(s) → commit."""
+    """The 3-step dance: reserve → upload chunk(s) → commit. Returns the new id."""
     data = open(path, "rb").read()
     reserve = asc.post("/appScreenshots", {
         "data": {
@@ -126,7 +153,7 @@ def upload(asc, set_id, path):
         try:
             asc.patch(f"/appScreenshots/{shot_id}", {
                 "data": {"type": "appScreenshots", "id": shot_id, "attributes": attrs}})
-            return
+            return shot_id
         except RuntimeError as e:
             if "ATTRIBUTE.UNKNOWN" not in str(e):
                 raise
@@ -144,6 +171,9 @@ def _put_bytes(op, data, headers):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--apply", action="store_true", help="write (default: dry run)")
+    ap.add_argument(
+        "--all", action="store_true",
+        help="replace every shot, even one ASC already holds unchanged")
     ap.add_argument(
         "--dir", default=os.path.join(REPO, "shots"),
         help="capture tree (default: <repo>/shots)")
@@ -193,16 +223,33 @@ def main():
                       f"and upload {len(files)}")
                 uploaded += len(files)
                 continue
-            dropped = clear_set(asc, set_id, args.apply)
-            note = f" (replacing {dropped})" if dropped else ""
-            if args.apply:
-                for path in files:
-                    upload(asc, set_id, path)
-                    print(f"  {platform} [{locale}] ← {os.path.basename(path)}")
-            else:
-                print(f"{platform} [{locale}]: would upload {len(files)}{note}: "
-                      + ", ".join(os.path.basename(f) for f in files))
-            uploaded += len(files)
+            existing = asc.get_all(f"/appScreenshotSets/{set_id}/appScreenshots")
+            slots, stale = plan_set(existing, files, args.all)
+            changed = [f for f, slot in zip(files, slots) if slot is None]
+            in_order = [s["id"] for s in existing] == slots
+            label = f"{platform} [{locale}]"
+            if not changed and not stale and in_order:
+                print(f"{label}: up to date ({len(files)})")
+                continue
+            names = ", ".join(os.path.basename(f) for f in changed) or "none"
+            if not args.apply:
+                print(f"{label}: would upload {len(changed)} ({names}), keep "
+                      f"{len(files) - len(changed)}, drop {len(stale)}, then reorder")
+                uploaded += len(changed)
+                continue
+            # Stale ones first: a set holds ten at most.
+            for shot_id in stale:
+                asc.delete(f"/appScreenshots/{shot_id}")
+            ids = []
+            for path, slot in zip(files, slots):
+                if slot is None:
+                    slot = upload(asc, set_id, path)
+                    print(f"  {label} ← {os.path.basename(path)}")
+                ids.append(slot)
+            reorder(asc, set_id, ids)
+            print(f"{label}: uploaded {len(changed)}, kept {len(files) - len(changed)}, "
+                  f"dropped {len(stale)}")
+            uploaded += len(changed)
 
     print(f"\n{uploaded} screenshot(s) {'uploaded' if args.apply else 'planned'}.")
 

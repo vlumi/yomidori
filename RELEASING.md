@@ -185,7 +185,7 @@ Connect: [`Scripts/asc/listing.json`](Scripts/asc/listing.json) is the text
 [`Scripts/asc/shots.json`](Scripts/asc/shots.json) the screenshots — each one
 a set of demo arguments, so `make shots` stages and captures every shot by
 itself, per platform and language, and `make asc-screenshots-apply` replaces
-the sets in ASC. [`Scripts/asc/README.md`](Scripts/asc/README.md) has the
+the sets in ASC, uploading only the shots that changed. [`Scripts/asc/README.md`](Scripts/asc/README.md) has the
 commands and the few things still set by hand on the record (categories, age
 rating, App Privacy, pricing);
 [`Scripts/asc/SCREENSHOTS.md`](Scripts/asc/SCREENSHOTS.md) the shot plan,
