@@ -10,7 +10,8 @@ boot_first_simulator() {
     for udid in "$@"; do
         # Exit 149 is "already booted", which is fine; the state check below is what counts.
         err=$(xcrun simctl boot "$udid" 2>&1 >/dev/null) || true
-        if xcrun simctl list devices booted | grep -q "$udid"; then
+        # Not grep -q: it quits at the first match, and under pipefail the long list then dies of SIGPIPE.
+        if xcrun simctl list devices booted | grep "$udid" >/dev/null; then
             xcrun simctl bootstatus "$udid" >/dev/null 2>&1 || true
             echo "$udid"
             return 0
