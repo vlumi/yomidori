@@ -24,7 +24,7 @@
       "promotionalText": "Point at a word, get its reading and its pitch. The sentence you were reading becomes a card. Everything on your device; nothing is sent anywhere.",
       "supportUrl": "https://yomidori.app/support/",
       "marketingUrl": "https://yomidori.app/",
-      "whatsNew": "• A sentence can be taken off a card: Remove the sentence, under Correct the sentence.\n• The week starts where your system says (Settings › General › Language & Region › First Day of Week) in Progress's weekly bars, records and calendar, with no restart.\n• Study's Coming up has both its switches above the chart."
+      "whatsNew": "• Each question has its own color everywhere: violet for the reading, rose for the meaning, amber for the pitch, in reviews, on cards and in every chart.\n• Study's Coming up shows the days ahead by rank and, below, by question, read out together under one finger.\n• A sentence can be taken off a card: Remove the sentence, under Correct the sentence.\n• The week starts where your system says (Settings › General › Language & Region › First Day of Week) in Progress's weekly bars, records and calendar, with no restart."
     },
     "ja": {
       "description": "ヨミドリは、日本語を読むときの相棒です。文庫本でも、マンガでも、画面の文字でも、貼りつけた文章でも。読めない言葉をタップすれば、その場で読み方とアクセントが分かります。ページから離れる必要はありません。読んでいた文がそのままカードになり、そのカードで覚えていきます。\n\n聞かれたときだけ\nページ全体にふりがなを振ることも、タップしていない言葉を訳すこともしません。行にカメラを向けてページを読み取り、縦書きでも横書きでも言葉をタップすると、言葉全体が光って、かなの読みとアクセントが、アクセント辞典と同じ表記で出ます。意味が出るのは、もう一回タップしたときだけ。複合語はそれを作る言葉ごとにも引けて、読み取り違いの文字はその場で直せ、文は読み上げもできます。\n\n本がそのまま例文集\n言葉を残すと、ページにあったままの文がカードになります。別の本で同じ言葉に出会えば、二つ目の文が加わります。コレクションは本ごとにカードをまとめ、撮った表紙つきで、ファイルとして共有できます。\n\n入力して答える、レッスンと復習\n時間のあるときにレッスンでカードを始めると、短い練習が続きます。復習で聞かれるのは三つ。読みと意味は入力で、アクセントは選択で答えます。間違えた問題は正解するまで戻ってきますが、成績に数えられるのは最初の答えだけ。間隔は FSRS が決め、言葉が戻ってくる頻度は設定で選べます。\n\n連続記録ではなく、鳥\nカードは覚えているほど、卵から雛、幼鳥、若鳥、成鳥、渡り鳥へと育ちます。学習タブでは、この先一週間の復習が一日四つの時間帯ごとに、出てくる鳥の色で示されるので、復習の山が来る前に見えます。せかす通知はなく、アイコンの数字も頼んだときだけ。\n\n漢字、アクセント、辞書\n漢字には書き順、読み、部品がついて、入力できない漢字は部品から探せます。アクセントは Kanjium の東京式で、辞書にない複合語は推定します。辞書は JMdict。かな、漢字、英語で引けて、引いた言葉の履歴が残ります。\n\nすべて端末の中で\n文字認識、分かち書き、読み、アクセント、カード。すべて端末の中で、オフラインで、同梱の辞書から動きます。アカウントも、サーバーも、クラウドのモデルもありません。カードは自分の iCloud を通して端末どうしで同期し、同期はオフにもできます。\n\niPhone、iPad、Mac\n一つのアプリで、どの端末でも同じカード。iPhone は手に持った本や画面のスクリーンショットを読み、Mac は貼りつけたりドロップしたりした文章を読んで、キーボードで復習します。表示は英語と日本語。\n\n無料。オープンソース。広告も、アカウントも、追跡もありません。",
@@ -32,7 +32,7 @@
       "promotionalText": "読めない言葉をタップすると、その場で読み方とアクセントが分かります。読んでいた文がそのままカードに。すべて端末の中で、どこにも送られません。",
       "supportUrl": "https://yomidori.app/support/",
       "marketingUrl": "https://yomidori.app/",
-      "whatsNew": "• カードから文を消せるようになりました（「文を直す」の下の「文を消す」）。\n• 週の始まりがシステムの設定（設定 › 一般 › 言語と地域 › 週の始まり）に従います。進捗の週ごとのグラフ、記録、カレンダーに再起動なしで反映されます。\n• 学習タブ「これからの復習」の切り替えが、どちらもグラフの上に並びました。"
+      "whatsNew": "• 問題の種類ごとに決まった色がつきました。読みは紫、意味はローズ、アクセントは琥珀色で、復習、カード、すべてのグラフで同じです。\n• 学習タブ「これからの復習」で、この先の復習をランク別と、その下に問題の種類別で表示し、触れると両方の数が出ます。\n• カードから文を消せるようになりました（「文を直す」の下の「文を消す」）。\n• 週の始まりがシステムの設定（設定 › 一般 › 言語と地域 › 週の始まり）に従います。進捗の週ごとのグラフ、記録、カレンダーに再起動なしで反映されます。"
     }
   }
 }
