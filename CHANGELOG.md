@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 52 — 2026-11-04
+
 - **Coming up's charts hold still under a finger**: the readouts keep the height of the whole span's, so moving over a slot with nothing due or fewer ranks no longer shifts the charts below.
 
 ### build 51 — 2026-11-03
