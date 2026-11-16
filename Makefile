@@ -19,7 +19,7 @@ coverage:  ## The logic tests with coverage: a table by file, and the report CI 
 	@Scripts/coverage.sh
 
 # markdownlint is pinned like SwiftLint, so CI and a local run agree (npx fetches it).
-MARKDOWNLINT := markdownlint-cli2@0.23.3
+MARKDOWNLINT := markdownlint-cli2@0.24.1
 
 lint: lint-markdown
 .PHONY: lint-markdown
@@ -99,11 +99,13 @@ dictionary-fresh:  ## Refetch JMdict, KANJIDIC2 and KRADFILE from EDRDG and rebu
 PITCH_VENV := .build-data/pitch-venv
 PITCH_VENV_READY := $(PITCH_VENV)/.ready
 
+# pyopenjtalk builds its C++ from source; from 0.4 its own build isolation does the job
+# (0.3 needed cmake, cython and numpy preinstalled and isolation off).
 $(PITCH_VENV_READY): Scripts/data/pitch-requirements.txt
 	@python3.13 -m venv $(PITCH_VENV) \
-		&& $(PITCH_VENV)/bin/pip install -q --upgrade pip setuptools wheel cmake cython numpy \
-		&& PATH="$(CURDIR)/$(PITCH_VENV)/bin:$$PATH" CMAKE_POLICY_VERSION_MINIMUM=3.5 \
-			$(PITCH_VENV)/bin/pip install -q --no-build-isolation -r Scripts/data/pitch-requirements.txt \
+		&& $(PITCH_VENV)/bin/pip install -q --upgrade pip \
+		&& CMAKE_POLICY_VERSION_MINIMUM=3.5 \
+			$(PITCH_VENV)/bin/pip install -q -r Scripts/data/pitch-requirements.txt \
 		&& touch $@
 
 .PHONY: pitch
