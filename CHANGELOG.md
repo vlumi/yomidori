@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The review's scroll indicator** runs along the screen's edge instead of over the choices.
+
 ### build 53 — 2026-11-16
 
 - **Long words in the pitch question** no longer run into each other: the choices take a column each once the reading is too wide for two.

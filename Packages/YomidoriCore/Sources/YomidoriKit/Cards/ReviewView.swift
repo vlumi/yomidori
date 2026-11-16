@@ -108,21 +108,27 @@ struct ReviewView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
+                // The side padding is the content's, not the scroll view's, so the
+                // indicator runs along the screen's edge rather than over the chips.
+                .padding(.horizontal, 24)
             }
             if !choicesScroll {
                 // Which question this is and how many remain, right above the answer.
-                tagRow(item)
-                if revealed {
-                    answered(item)
-                } else {
-                    prompt(item)
+                VStack(alignment: .leading, spacing: 20) {
+                    tagRow(item)
+                    if revealed {
+                        answered(item)
+                    } else {
+                        prompt(item)
+                    }
                 }
+                .padding(.horizontal, 24)
             }
             #if os(macOS)
             Spacer(minLength: 0)
             #endif
         }
-        .padding(24)
+        .padding(.vertical, 24)
         .tint(Palette.nightGreen)
         .onChange(of: revealed) { _, shown in
             if shown { verdictFocused = true }
