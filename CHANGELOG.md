@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+### build 54 — 2026-11-16
+
 - **The dictionary refreshed** to JMdict, KANJIDIC2, KRADFILE and Kanjium as of mid-November 2026, some three hundred entries more; the pitch estimates come from a newer Open JTalk and agree with Kanjium exactly as before.
 - **The review's scroll indicator** runs along the screen's edge instead of over the choices.
 
