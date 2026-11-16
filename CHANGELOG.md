@@ -10,13 +10,17 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 **One bullet, one line — no hard wrapping.** Editors soft-wrap and rendered Markdown ignores the line breaks, while hard wraps make an edited entry re-flow into a diff nobody can read. **Order the unreleased list by what a reader notices**, not by merge order, and fold entries that tell one story into one bullet.
 
-## v1.0.2
+## v1.0.3
 
 ### Unreleased (next build)
+
+### build 53 — 2026-11-16
 
 - **Long words in the pitch question** no longer run into each other: the choices take a column each once the reading is too wide for two.
 - **The ranks' colors tell apart.** Each rank now has its own hue as well as its own lightness, gray, silver, yellow, green, night green, sky blue, indigo, so neighbours on the charts no longer blur into each other; checked for color-blind vision too.
 - **One card for a word read two ways.** Where the dictionary lists a word under two readings for the same thing (吐く はく and つく), Keep files a new sighting under the card you already have instead of starting a second, a reading question takes either reading as right, and a card that did get split has a *Merge into* row for its twin, which moves its sentences and answers over. Readings that mean something else (生地 きじ and せいち) stay apart.
+
+## v1.0.2
 
 ### build 52 — 2026-11-04
 
