@@ -59,6 +59,12 @@ mac_size_window() {
     osascript -e "tell application \"System Events\" to tell process \"$APP_NAME\" to set size of window 1 to {$MAC_WIDTH, $MAC_HEIGHT}" >/dev/null 2>&1 || true
 }
 
+# The pointer out of the window: on the Mac a chart's selection follows the hover, and a
+# pointer left over Coming up dimmed every bar but the one under it in the Study shot.
+mac_park_pointer() {
+    swift -e 'import CoreGraphics; CGWarpMouseCursorPosition(CGPoint(x: 2, y: 2))' >/dev/null 2>&1 || true
+}
+
 capture() {  # $1 = output file
     mkdir -p "$(dirname "$1")"
     if [ "$PLATFORM" = mac ]; then
@@ -79,6 +85,7 @@ launch() {
         env DEMO=1 DEMO_LANG="$lang" BUILD=0 "$@" Scripts/run-mac.sh >/dev/null
         WINDOW_ID=$(mac_window_id) || { echo "App window never appeared." >&2; exit 1; }
         mac_size_window
+        mac_park_pointer
     else
         local udid_file
         udid_file=$(mktemp)

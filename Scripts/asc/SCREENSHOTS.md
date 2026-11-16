@@ -24,7 +24,9 @@ look; `ONLY=read,review` redoes some. A shot with a `stage` note in
 Before a Mac run, once: the window grab asks for Screen Recording permission
 for your terminal; grant it and run again. The Mac demo is opened in the
 background and sized by System Events, which needs Accessibility permission
-for the terminal too.
+for the terminal too. The pointer is parked in the screen's corner before each
+shot, since a chart's selection follows the hover on the Mac and a pointer left
+over a chart dims every bar but one.
 
 ## The page shots are read for real
 
