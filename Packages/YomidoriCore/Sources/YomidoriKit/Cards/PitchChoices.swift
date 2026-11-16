@@ -5,6 +5,8 @@ import YomidoriCore
 struct PitchChoices: View {
     let reading: String
     let pick: (PitchAccent) -> Void
+    /// About a mora's width in the chip's type, for the column that fits the whole reading.
+    @ScaledMetric(relativeTo: .title3) private var moraWidth: CGFloat = 22
 
     /// The Mac always has a keyboard; a phone's hint would only be noise.
     static var showsKeys: Bool {
@@ -16,10 +18,13 @@ struct PitchChoices: View {
     }
 
     var body: some View {
-        let patterns = PitchAccent.patterns(forMoraCount: PitchAccent.morae(of: reading).count)
-        // Columns as wide as the screen allows: two on the smallest phone, where a flow of
-        // chips put one to a row and pushed the question off the screen.
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 10)], spacing: 10) {
+        let moraCount = PitchAccent.morae(of: reading).count
+        let patterns = PitchAccent.patterns(forMoraCount: moraCount)
+        // Columns as wide as the screen allows, two on the smallest phone for a short word,
+        // but never narrower than the reading with its number, so a long word (情報化社会)
+        // takes a column each instead of running into its neighbour.
+        let column = max(140, CGFloat(moraCount) * moraWidth + 48)
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: column), spacing: 10)], spacing: 10) {
             ForEach(patterns, id: \.downstep) { pattern in
                 Button {
                     pick(pattern)
