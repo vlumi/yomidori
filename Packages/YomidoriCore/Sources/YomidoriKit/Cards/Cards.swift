@@ -148,6 +148,31 @@ enum Cards {
             among: store?.cards() ?? [], after: date, asksPitch: { !accents(of: $0).isEmpty })
     }
 
+    /// The reading a kept word is filed under: the card's own when one exists for the
+    /// headword read the same thing another way (吐く はく takes a 吐く つく sighting), so one
+    /// word never splits into two cards over the tokenizer's choice; else the reading given.
+    static func filedReading(headword: String, reading: String) -> String {
+        guard store?.card(headword: headword, reading: reading) == nil,
+            let dictionary = JMdict.bundled
+        else { return reading }
+        return dictionary.interchangeableReadings(of: headword, reading: reading)
+            .first { store?.card(headword: headword, reading: $0) != nil } ?? reading
+    }
+
+    /// The other readings a card's word takes for the same thing.
+    static func interchangeableReadings(of card: Card) -> [String] {
+        let dictionary = JMdict.bundled
+        let headword = dictionary?.entry(of: card)?.headword ?? card.headword
+        return dictionary?.interchangeableReadings(of: headword, reading: card.reading) ?? []
+    }
+
+    /// The cards for the same word under its other readings, to merge with.
+    static func siblings(of card: Card) -> [Card] {
+        interchangeableReadings(of: card).compactMap {
+            store?.card(headword: card.headword, reading: $0)
+        }
+    }
+
     /// A word's accents, looked up once: the due count asks for every card in review, and
     /// asks again by the minute.
     static func accents(of card: Card) -> [PitchAccent] {

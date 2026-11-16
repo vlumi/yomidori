@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **One card for a word read two ways.** Where the dictionary lists a word under two readings for the same thing (吐く はく and つく), Keep files a new sighting under the card you already have instead of starting a second, a reading question takes either reading as right, and a card that did get split has a *Merge into* row for its twin, which moves its sentences and answers over. Readings that mean something else (生地 きじ and せいち) stay apart.
+
 ### build 52 — 2026-11-04
 
 - **Coming up's charts hold still under a finger**: the readouts keep the height of the whole span's, so moving over a slot with nothing due or fewer ranks no longer shifts the charts below.

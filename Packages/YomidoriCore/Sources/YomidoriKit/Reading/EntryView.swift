@@ -47,7 +47,9 @@ struct EntryView: View {
             date: Date())
         let card = Cards.write {
             try Cards.store?.keep(
-                sighting, headword: entry.headword, reading: entry.hiraganaReading,
+                sighting, headword: entry.headword,
+                reading: Cards.filedReading(
+                    headword: entry.headword, reading: entry.hiraganaReading),
                 entryID: entry.id, collection: Cards.currentCollectionID())
         }
         if card != nil { kept = true }
