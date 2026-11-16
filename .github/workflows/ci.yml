@@ -14,7 +14,7 @@ env:
   # Pin to the same Xcode the project is developed against, which is the
   # macos-26 image's default. Explicit so CI stays deterministic if the
   # image's default later changes.
-  XCODE_VERSION: "26.5"
+  XCODE_VERSION: "26.6"
 
 jobs:
   lint:
