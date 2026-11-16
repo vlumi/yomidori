@@ -85,9 +85,12 @@ struct ReviewView: View {
 
     /// The question scrolls, so a long sentence shows whole; the answer stays put below,
     /// at the bottom on a phone, where the thumb and the keyboard are, and right under the
-    /// question on a Mac, where the bottom of a window is nowhere in particular.
+    /// question on a Mac, where the bottom of a window is nowhere in particular. The pitch
+    /// choices are the one answer with no keyboard and a column of chips for a long word,
+    /// so they scroll with the question instead.
     private func review(_ item: ReviewItem) -> some View {
-        VStack(alignment: .leading, spacing: 20) {
+        let choicesScroll = item.question == .pitch && !revealed
+        return VStack(alignment: .leading, spacing: 20) {
             QuestionRoom {
                 VStack(alignment: .leading, spacing: 20) {
                     ReviewFront(
@@ -99,15 +102,21 @@ struct ReviewView: View {
                     case .meaning: MeaningQuestion(card: item.card)
                     case .pitch: PitchQuestion(card: item.card)
                     }
+                    if choicesScroll {
+                        tagRow(item)
+                        prompt(item)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            // Which question this is and how many remain, right above the answer.
-            tagRow(item)
-            if revealed {
-                answered(item)
-            } else {
-                prompt(item)
+            if !choicesScroll {
+                // Which question this is and how many remain, right above the answer.
+                tagRow(item)
+                if revealed {
+                    answered(item)
+                } else {
+                    prompt(item)
+                }
             }
             #if os(macOS)
             Spacer(minLength: 0)
