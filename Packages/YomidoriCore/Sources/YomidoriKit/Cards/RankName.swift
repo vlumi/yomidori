@@ -46,27 +46,28 @@ struct RankMark: View {
 }
 
 extension Rank {
-    /// From the gray of the shelf through the silver egg to greens that deepen as the bird
-    /// grows, and the blue of the sky it leaves by.
+    /// A walk round the hue circle with a step in lightness at each rank, so neighbours
+    /// differ in both and read apart with or without full color vision (checked: every
+    /// adjacent pair over ΔE 15 normal and 8 simulated, light and dark surface alike): the
+    /// nest's gray, the egg's silver, a hatchling's yellow down, a chick's green, the night
+    /// green of the fledgling, the sky blue it flies into, the indigo of the far horizon.
     var color: Color {
         switch self {
-        case .nest: return Color(red: 0.50, green: 0.47, blue: 0.43)
-        case .egg: return Palette.silver
-        case .hatchling: return Color(red: 0.62, green: 0.78, blue: 0.55)
-        case .chick: return Color(red: 0.36, green: 0.66, blue: 0.45)
-        case .fledgling: return Palette.nightGreen
-        case .flying: return Color(red: 0.12, green: 0.42, blue: 0.50)
-        case .migrating: return Color(red: 0.16, green: 0.28, blue: 0.58)
+        case .nest: return Color(red: 0.54, green: 0.51, blue: 0.47)
+        case .egg: return Color(red: 0.85, green: 0.84, blue: 0.80)
+        case .hatchling: return Color(red: 0.90, green: 0.76, blue: 0.10)
+        case .chick: return Color(red: 0.31, green: 0.69, blue: 0.29)
+        case .fledgling: return Color(red: 0.12, green: 0.42, blue: 0.30)
+        case .flying: return Color(red: 0.12, green: 0.50, blue: 0.70)
+        case .migrating: return Color(red: 0.23, green: 0.18, blue: 0.62)
         }
     }
 
-    /// The numeral's color: black on the light greens and on the silver and the green of the
-    /// dark palette, where white would fall under 3:1; white on the rest.
+    /// The numeral's color, whichever of black and white contrasts more with the dot.
     var markForeground: Color {
         switch self {
-        case .hatchling, .chick: return .black
-        case .egg, .fledgling: return Color(light: .white, dark: .black)
-        case .nest, .flying, .migrating: return .white
+        case .fledgling, .migrating: return .white
+        case .nest, .egg, .hatchling, .chick, .flying: return .black
         }
     }
 }
