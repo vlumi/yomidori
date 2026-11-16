@@ -56,18 +56,19 @@ extension Rank {
         case .nest: return Color(red: 0.54, green: 0.51, blue: 0.47)
         case .egg: return Color(red: 0.85, green: 0.84, blue: 0.80)
         case .hatchling: return Color(red: 0.90, green: 0.76, blue: 0.10)
-        case .chick: return Color(red: 0.31, green: 0.69, blue: 0.29)
-        case .fledgling: return Color(red: 0.12, green: 0.42, blue: 0.30)
-        case .flying: return Color(red: 0.12, green: 0.50, blue: 0.70)
+        case .chick: return Color(red: 0.20, green: 0.60, blue: 0.25)
+        case .fledgling: return Color(red: 0.09, green: 0.36, blue: 0.26)
+        case .flying: return Color(red: 0.11, green: 0.47, blue: 0.67)
         case .migrating: return Color(red: 0.23, green: 0.18, blue: 0.62)
         }
     }
 
-    /// The numeral's color, whichever of black and white contrasts more with the dot.
+    /// The numeral's color: black on the three light dots, white from the chick's green on,
+    /// where black read dull on the green and the blue though it measured as well.
     var markForeground: Color {
         switch self {
-        case .fledgling, .migrating: return .white
-        case .nest, .egg, .hatchling, .chick, .flying: return .black
+        case .chick, .fledgling, .flying, .migrating: return .white
+        case .nest, .egg, .hatchling: return .black
         }
     }
 }
