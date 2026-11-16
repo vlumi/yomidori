@@ -337,12 +337,19 @@ struct ReviewView: View {
     private func reload() {
         guard !loaded else { return }
         loaded = true
-        if let practicing {
-            queue = ReviewQueue(
-                Cards.dueItems(at: Date()).filter { practicing.contains($0.card.id) }.shuffled())
-        } else {
-            queue = ReviewQueue(Cards.dueItems(at: Date()).shuffled())
-        }
+        var due = Cards.dueItems(at: Date())
+        if let practicing { due = due.filter { practicing.contains($0.card.id) } }
+        // The demo asks the readings first and in the store's order, so a screenshot of the
+        // review is the same every time and shows the reading typed; a reader's review is
+        // shuffled.
+        queue = ReviewQueue(
+            DemoMode.isRequested
+                ? due.enumerated().sorted {
+                    ($0.element.question.rawValue, $0.offset) < (
+                        $1.element.question.rawValue, $1.offset
+                    )
+                }.map(\.element)
+                : due.shuffled())
         for item in queue.items where seen[item.card.id] == nil {
             seen[item.card.id] = SessionCard(card: item.card, before: item.card.rank)
         }
