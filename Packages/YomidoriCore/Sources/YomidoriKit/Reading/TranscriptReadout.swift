@@ -360,7 +360,7 @@ struct TranscriptReadout: View {
         }
         let kept = Cards.write {
             try store.keep(
-                sighting, headword: word.cardHeadword, reading: word.cardReading,
+                sighting, headword: word.cardHeadword, reading: word.filedReading,
                 entryID: word.entries.first?.id, collection: Cards.currentCollectionID())
         }
         guard kept != nil else { return }

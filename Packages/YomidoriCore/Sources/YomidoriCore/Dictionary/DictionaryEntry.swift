@@ -37,6 +37,14 @@ public struct DictionaryEntry: Hashable, Sendable, Identifiable {
         kanji.first ?? readings.first ?? ""
     }
 
+    /// Whether any gloss is the same, as MeaningCheck reads them.
+    public func sharesSense(with other: DictionaryEntry) -> Bool {
+        let mine = Set(senses.flatMap(\.glosses).map(MeaningCheck.normalize))
+        return other.senses.flatMap(\.glosses).contains {
+            mine.contains(MeaningCheck.normalize($0))
+        }
+    }
+
     /// A particle, an auxiliary or the copula, by JMdict's own marks: every marked sense is
     /// one of those.
     /// A verb, a する noun or an i-adjective: a word endings can be put on.
@@ -117,6 +125,25 @@ extension WordDictionary {
     /// Katakana readings count as their hiragana.
     public func entry(headword: String, reading: String) -> DictionaryEntry? {
         entries(matching: headword).first { $0.readings.map(Kana.hiragana).contains(reading) }
+    }
+
+    /// The other readings the headword takes for the same thing: a different entry whose
+    /// senses overlap this one's (吐く はく and 吐く つく both breathe out), never one that
+    /// means something else (生地 きじ and 生地 せいち). What a reading question accepts
+    /// beside the card's own, and what a card can merge into.
+    public func interchangeableReadings(of headword: String, reading: String) -> [String] {
+        let kana = Kana.hiragana(reading)
+        let entries = entries(matching: headword)
+        guard let own = entries.first(where: { $0.readings.map(Kana.hiragana).contains(kana) })
+        else { return [] }
+        var found: [String] = []
+        for other in entries where other.id != own.id && other.sharesSense(with: own) {
+            for alternative in other.readings.map(Kana.hiragana)
+            where alternative != kana && !found.contains(alternative) {
+                found.append(alternative)
+            }
+        }
+        return found
     }
 
     /// The tokenizer's dictionary form, then the word and its deinflections, then its reading;

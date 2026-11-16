@@ -245,7 +245,11 @@ struct ReviewView: View {
     private func check(_ item: ReviewItem) {
         switch item.question {
         case .reading:
-            settle(item, ReadingCheck.matches(typed: answer, reading: item.card.reading))
+            settle(
+                item,
+                ReadingCheck.matches(
+                    typed: answer,
+                    readings: [item.card.reading] + Cards.interchangeableReadings(of: item.card)))
         case .meaning:
             settle(
                 item,

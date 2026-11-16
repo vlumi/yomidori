@@ -15,6 +15,7 @@ struct CardView: View {
             WordSections(headword: card.headword, details: details)
             CardCollections(card: $card) { Cards.write { try Cards.store?.update(card) } }
             CardActions(card: $card) { Cards.write { try Cards.store?.update(card) } }
+            CardSiblings(card: card)
             AcceptedMeanings(card: $card, glosses: details.entry?.senses.flatMap(\.glosses) ?? []) {
                 Cards.write { try Cards.store?.update(card) }
             }

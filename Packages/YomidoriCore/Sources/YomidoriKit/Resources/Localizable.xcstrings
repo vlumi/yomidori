@@ -643,6 +643,16 @@
         }
       }
     },
+    "Also read" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "別の読み"
+          }
+        }
+      }
+    },
     "An author, say" : {
       "localizations" : {
         "ja" : {
@@ -2067,6 +2077,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "MeCabの辞書を読み込めませんでした。"
+          }
+        }
+      }
+    },
+    "Merge into %@ %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@ に統合する"
+          }
+        }
+      }
+    },
+    "Merge into the other card?" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "もう一方のカードに統合しますか？"
           }
         }
       }
@@ -3925,6 +3955,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "問いごとのランクは今日から記録します。日を追ってグラフが埋まっていきます。"
+          }
+        }
+      }
+    },
+    "The same word under another reading. Merged, this card's sentences and answers join the other and this one goes." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同じ言葉の別の読みのカードです。統合すると、このカードの文と答えがそちらに移り、このカードは消えます。"
           }
         }
       }
