@@ -8,7 +8,7 @@
 #   PLATFORM=iphone|ipad|mac   (default iphone)
 #   LANGS=en,ja                (default en,ja)
 #   OUT=shots                  (default ./shots)
-#   SETTLE=<seconds>           wait after launch before the capture (default 6)
+#   SETTLE=<seconds>           wait after launch before the capture (default 10)
 #   PAUSE=1                    stop before each capture: ⏎ capture · r retake · s skip
 #   ONLY=<name,name>           just these shots
 # Mac: window capture needs Screen Recording permission for your terminal
@@ -19,7 +19,7 @@ cd "$(dirname "$0")/.."
 PLATFORM="${PLATFORM:-iphone}"
 LANGS="${LANGS:-en,ja}"
 OUT="${OUT:-shots}"
-SETTLE="${SETTLE:-6}"
+SETTLE="${SETTLE:-10}"
 BUNDLE="fi.misaki.yomidori"
 APP_NAME="Yomidori"
 # The store's sizes: iPhone 6.9" 1320×2868, iPad 13" 2064×2752, Mac 1440×900 (@2x).

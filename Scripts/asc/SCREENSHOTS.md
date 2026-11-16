@@ -16,7 +16,7 @@ make shots PLATFORM=mac        # the window at 1440×900 points, grabbed @2x
 ```
 
 For each language and each shot: launch the demo with the shot's arguments,
-wait `SETTLE` seconds (6), capture to `shots/<platform>/<lang>/<shot>-<platform>.png`.
+wait `SETTLE` seconds (10), capture to `shots/<platform>/<lang>/<shot>-<platform>.png`.
 `PAUSE=1` stops before every capture (⏎ capture · r retake · s skip) for a
 look; `ONLY=read,review` redoes some. A shot with a `stage` note in
 `shots.json` pauses on its own, since something there is still done by hand.
