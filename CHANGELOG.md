@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A day's reviews stay on their day across time zones.** Every answer now remembers the zone it was given in, so the calendar, the streaks and the charts count it on the date it was given, wherever you open the app later; answers from before are taken as given in the zone the device is in at the first launch of this build.
+
 ### build 54 — 2026-11-16
 
 - **The dictionary refreshed** to JMdict, KANJIDIC2, KRADFILE and Kanjium as of mid-November 2026, some three hundred entries more; the pitch estimates come from a newer Open JTalk and agree with Kanjium exactly as before.

@@ -58,6 +58,9 @@ enum Cards {
         if !stores.collections.file.isUnreadable {
             CoverArchive.migrate(covers: stores.collections.collections().compactMap(\.coverID))
         }
+        // Answers logged before zones were kept take this device's zone, before the change
+        // listener is on: a zone on every old answer is not a change worth syncing.
+        if !stores.cards.file.isUnreadable { _ = try? stores.cards.stampZones() }
         stores.cards.file.onChange = { changed(.card, $0, $1) }
         stores.collections.file.onChange = { changed(.collection, $0, $1) }
         stores.lookups.file.onChange = { changed(.lookup, $0, $1) }

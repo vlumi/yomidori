@@ -23,9 +23,10 @@ final class ProgressTests: XCTestCase {
 
     func testAnswersAreTalliedByDayQuestionAndGrade() {
         var bark = card("樹皮", started: noon(2))
-        bark.answer(.reading, grade: .good, at: noon(3), seconds: 10)
-        bark.answer(.meaning, grade: .again, at: noon(3), seconds: 20)
-        bark.answer(.pitch, grade: .good, at: noon(3), reconciled: true, seconds: 5)
+        bark.answer(.reading, grade: .good, at: noon(3), seconds: 10, in: calendar.timeZone)
+        bark.answer(.meaning, grade: .again, at: noon(3), seconds: 20, in: calendar.timeZone)
+        bark.answer(
+            .pitch, grade: .good, at: noon(3), reconciled: true, seconds: 5, in: calendar.timeZone)
         // Just before midnight belongs to the 4th in Tokyo.
         bark.answer(.reading, grade: .good, at: noon(4).addingTimeInterval(11 * 3600), seconds: 7)
         let room = card("部屋", started: noon(3))
@@ -59,9 +60,9 @@ final class ProgressTests: XCTestCase {
     func testDaysRollUpIntoWeeksAndMonths() {
         var bark = card("樹皮", started: noon(1))
         // Tokyo's calendar starts the week on Sunday: Sept 6 and 12 are one week, 13 the next.
-        bark.answer(.reading, grade: .good, at: noon(6), seconds: 5)
-        bark.answer(.meaning, grade: .again, at: noon(12), seconds: 7)
-        bark.answer(.pitch, grade: .good, at: noon(13), seconds: 9)
+        bark.answer(.reading, grade: .good, at: noon(6), seconds: 5, in: calendar.timeZone)
+        bark.answer(.meaning, grade: .again, at: noon(12), seconds: 7, in: calendar.timeZone)
+        bark.answer(.pitch, grade: .good, at: noon(13), seconds: 9, in: calendar.timeZone)
         let days = Progress.tallies(of: [bark], from: noon(1), to: noon(20), calendar: calendar)
         let weeks = Progress.rollUp(days, by: .weekOfYear, calendar: calendar)
         XCTAssertEqual(weeks.count, 4)
@@ -93,7 +94,9 @@ final class ProgressTests: XCTestCase {
 
     func testTheStreakCountsDaysInARowAndForgivesToday() {
         var bark = card("樹皮", started: noon(1))
-        for day in [3, 4, 5] { bark.answer(.reading, grade: .good, at: noon(day)) }
+        for day in [3, 4, 5] {
+            bark.answer(.reading, grade: .good, at: noon(day), in: calendar.timeZone)
+        }
         XCTAssertEqual(Progress.streak(of: [bark], at: noon(5), calendar: calendar), 3)
         // Nothing yet today: yesterday's run still stands.
         XCTAssertEqual(Progress.streak(of: [bark], at: noon(6), calendar: calendar), 3)
@@ -145,8 +148,8 @@ final class ProgressTests: XCTestCase {
         let fresh = card("樹皮", started: noon(1))
         // Answered: the reading comes back in three days, the meaning tomorrow.
         var known = card("部屋", started: noon(1))
-        known.answer(.reading, grade: .good, at: noon(10), seconds: 3)
-        known.answer(.meaning, grade: .again, at: noon(10), seconds: 3)
+        known.answer(.reading, grade: .good, at: noon(10), seconds: 3, in: calendar.timeZone)
+        known.answer(.meaning, grade: .again, at: noon(10), seconds: 3, in: calendar.timeZone)
         // Waiting and shelved cards are asked nothing.
         let waiting = card("円柱")
         var shelved = card("山根", started: noon(1))
@@ -179,8 +182,8 @@ final class ProgressTests: XCTestCase {
     func testTheQuestionsComingDueArePlacedInQuarterDaysByRank() {
         let fresh = card("樹皮", started: noon(1))
         var known = card("部屋", started: noon(1))
-        known.answer(.reading, grade: .good, at: noon(10), seconds: 3)
-        known.answer(.meaning, grade: .again, at: noon(10), seconds: 3)
+        known.answer(.reading, grade: .good, at: noon(10), seconds: 3, in: calendar.timeZone)
+        known.answer(.meaning, grade: .again, at: noon(10), seconds: 3, in: calendar.timeZone)
         // Asked at noon on the 10th: the fresh card's two questions are due now, in the
         // 12–18 quarter; the known card's meaning at noon tomorrow, its reading in three days.
         let ahead = Upcoming.of([fresh, known], from: noon(10), days: 3, calendar: calendar)

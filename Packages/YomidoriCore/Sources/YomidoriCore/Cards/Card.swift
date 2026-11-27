@@ -172,7 +172,7 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     /// a wrong verdict, `retention` what the schedule aims for.
     public mutating func answer(
         _ question: Question, grade: Grade, at date: Date, reconciled: Bool = false,
-        seconds: Int = 0, retention: Double = FSRS.desiredRetention
+        seconds: Int = 0, retention: Double = FSRS.desiredRetention, in zone: TimeZone = .current
     ) {
         setState(
             FSRS.review(state(for: question), grade: grade, at: date, retention: retention),
@@ -180,7 +180,21 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         log.append(
             ReviewEntry(
                 date: date, question: question, grade: grade, reconciled: reconciled,
-                seconds: seconds))
+                seconds: seconds, zone: zone))
+    }
+
+    /// Gives every answer logged before zones were kept the zone of the device it is on now;
+    /// how many were stamped. Once, at the first launch that keeps zones.
+    public mutating func stampZones(_ zone: TimeZone) -> Int {
+        var stamped = 0
+        log = log.map { entry in
+            guard entry.zoneOffset == nil else { return entry }
+            stamped += 1
+            return ReviewEntry(
+                date: entry.date, question: entry.question, grade: entry.grade,
+                reconciled: entry.reconciled, seconds: entry.seconds, zone: zone)
+        }
+        return stamped
     }
 
     public func answers(to question: Question, graded grade: Grade) -> Int {
@@ -231,18 +245,41 @@ public struct ReviewEntry: Hashable, Codable, Sendable {
     /// From the question shown to the answer graded, at most `longestCounted`: a phone put
     /// down mid-question doesn't count as an hour's study.
     public let seconds: Int
+    /// The zone the answer was given in, as seconds east of Greenwich at that moment, so
+    /// the day it counts for is the day it was given on, wherever the reader is later; nil
+    /// for an answer logged before zones were kept.
+    public let zoneOffset: Int?
 
     public static let longestCounted = 60
 
-    public init(date: Date, question: Question, grade: Grade, reconciled: Bool, seconds: Int = 0) {
+    public init(
+        date: Date, question: Question, grade: Grade, reconciled: Bool, seconds: Int = 0,
+        zone: TimeZone? = .current
+    ) {
+        self.init(
+            date: date, question: question, grade: grade, reconciled: reconciled,
+            seconds: seconds, zoneOffset: zone?.secondsFromGMT(for: date))
+    }
+
+    public init(
+        date: Date, question: Question, grade: Grade, reconciled: Bool, seconds: Int,
+        zoneOffset: Int?
+    ) {
         self.date = date
         self.question = question
         self.grade = grade
         self.reconciled = reconciled
         self.seconds = min(max(seconds, 0), Self.longestCounted)
+        self.zoneOffset = zoneOffset
     }
 
-    /// A entry written before the time was kept reads as 0 seconds, not as unreadable.
+    private enum CodingKeys: String, CodingKey {
+        case date, question, grade, reconciled, seconds
+        case zoneOffset = "zone"
+    }
+
+    /// An entry written before the time was kept reads as 0 seconds, one before zones were
+    /// kept as no zone, neither as unreadable.
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         self.init(
@@ -250,7 +287,46 @@ public struct ReviewEntry: Hashable, Codable, Sendable {
             question: try c.decode(Question.self, forKey: .question),
             grade: try c.decode(Grade.self, forKey: .grade),
             reconciled: try c.decode(Bool.self, forKey: .reconciled),
-            seconds: try c.decodeIfPresent(Int.self, forKey: .seconds) ?? 0)
+            seconds: try c.decodeIfPresent(Int.self, forKey: .seconds) ?? 0,
+            zoneOffset: try c.decodeIfPresent(Int.self, forKey: .zoneOffset))
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(date, forKey: .date)
+        try c.encode(question, forKey: .question)
+        try c.encode(grade, forKey: .grade)
+        try c.encode(reconciled, forKey: .reconciled)
+        try c.encode(seconds, forKey: .seconds)
+        try c.encodeIfPresent(zoneOffset, forKey: .zoneOffset)
+    }
+
+    /// The start, in `calendar`, of the day the answer was given on where it was given: an
+    /// answer at 23:30 in Tokyo stays on that date seen from Helsinki. An entry with no
+    /// zone takes the viewer's day.
+    public func day(in calendar: Calendar) -> Date {
+        guard let zoneOffset, let zone = TimeZone(secondsFromGMT: zoneOffset) else {
+            return calendar.startOfDay(for: date)
+        }
+        var there = calendar
+        there.timeZone = zone
+        let parts = there.dateComponents([.year, .month, .day], from: date)
+        return calendar.date(from: parts).map(calendar.startOfDay(for:))
+            ?? calendar.startOfDay(for: date)
+    }
+
+    /// The same answer, whether or not its zone was kept: how two devices' logs are matched.
+    var answer: Answer {
+        Answer(
+            date: date, question: question, grade: grade, reconciled: reconciled, seconds: seconds)
+    }
+
+    struct Answer: Hashable {
+        let date: Date
+        let question: Question
+        let grade: Grade
+        let reconciled: Bool
+        let seconds: Int
     }
 }
 
