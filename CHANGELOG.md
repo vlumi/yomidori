@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **A backup carries the covers.** The collections' cover pictures are in the backup file now, and come back with a restore; a backup from before restores as it did.
+
 - **Erase all data.** A button in Settings takes every card, collection, cover and the lookup history off this device and, through iCloud, off your other devices, a device that is offline now included when it next syncs. To correct a backup by hand, erase first and then restore the corrected file.
 
 - **An answer keeps its zone through a backup and a sync.** Restoring a backup or receiving a card from another device left every answer stamped with this device's zone instead of the one it was given in; the zone now comes through as recorded.

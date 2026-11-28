@@ -1,25 +1,30 @@
 import Foundation
 
-/// Everything the reader has made, as one file to keep: the cards, the collections and the
-/// lookup history. The covers are pictures and stay out; sync carries those. Restoring adds
-/// what the file has to what is there, merged as sync merges, and takes nothing away.
+/// Everything the reader has made, as one file to keep: the cards, the collections with
+/// their covers, and the lookup history. Restoring adds what the file has to what is there,
+/// merged as sync merges, and takes nothing away.
 public struct Backup: Equatable, Sendable {
     public var created: Date
     public var cards: [Card]
     public var collections: [Collection]
     public var lookups: [Lookup]
+    /// The covers' JPEG bytes by cover id, since version 2; in the file as base64. Each is
+    /// decoded with care and drawn anew when restored, as a cover from sync is.
+    public var covers: [UUID: Data]
 
-    public static let version = 1
-    /// Far above any reader's cards, far below what would choke the phone.
-    public static let largestFile = 50_000_000
+    public static let version = 2
+    /// Far above any reader's cards and covers, far below what would choke the phone.
+    public static let largestFile = 100_000_000
 
     public init(
-        created: Date, cards: [Card], collections: [Collection] = [], lookups: [Lookup] = []
+        created: Date, cards: [Card], collections: [Collection] = [], lookups: [Lookup] = [],
+        covers: [UUID: Data] = [:]
     ) {
         self.created = created
         self.cards = cards
         self.collections = collections
         self.lookups = lookups
+        self.covers = covers
     }
 
     /// The file's name, by the day where the reader is: the ISO style alone counts the day
@@ -36,6 +41,12 @@ public struct Backup: Equatable, Sendable {
         let cards: [Card]
         let collections: [Collection]
         let lookups: [Lookup]
+        let covers: [Cover]
+    }
+
+    private struct Cover: Encodable {
+        let id: UUID
+        let jpeg: Data
     }
 
     public func encoded() throws -> Data {
@@ -45,7 +56,10 @@ public struct Backup: Equatable, Sendable {
         return try encoder.encode(
             File(
                 version: Self.version, created: created, cards: cards,
-                collections: collections, lookups: lookups))
+                collections: collections, lookups: lookups,
+                covers: covers.keys.sorted { $0.uuidString < $1.uuidString }.map {
+                    Cover(id: $0, jpeg: covers[$0] ?? Data())
+                }))
     }
 
     /// A backup, or the cards file alone as earlier builds shared it. Each record is cleaned
@@ -66,7 +80,22 @@ public struct Backup: Equatable, Sendable {
             created: created ?? .distantPast,
             cards: records(Card.self, in: file["cards"]),
             collections: records(Collection.self, in: file["collections"]),
-            lookups: records(Lookup.self, in: file["lookups"]))
+            lookups: records(Lookup.self, in: file["lookups"]),
+            covers: covers(in: file["covers"]))
+    }
+
+    /// The covers' bytes by id, as many as there could be collections; one with no id, or
+    /// bigger than any cover the app writes, is left out. The bytes are not looked at here.
+    private static func covers(in list: Any?) -> [UUID: Data] {
+        var covers: [UUID: Data] = [:]
+        for cover in ((list as? [[String: Any]]) ?? []).prefix(Intake.covers) {
+            guard let id = (cover["id"] as? String).flatMap(UUID.init),
+                let data = (cover["jpeg"] as? String).flatMap({ Data(base64Encoded: $0) }),
+                data.count <= Intake.coverBytes
+            else { continue }
+            covers[id] = data
+        }
+        return covers
     }
 
     private static func records<Record: Decodable & Sanitizable>(
