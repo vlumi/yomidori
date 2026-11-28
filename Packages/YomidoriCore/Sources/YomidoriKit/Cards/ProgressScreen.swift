@@ -183,7 +183,7 @@ struct ProgressScreen: View {
         total = Progress.total(of: cards)
         started = cards.filter { $0.started != nil }.count
         streaks = Array(Records.streaks(of: cards, calendar: calendar).prefix(5))
-        let all = Cards.snapshots?.snapshots() ?? []
+        let all = RankHistory.replay(cards, through: now, calendar: calendar)
         let earliest = [Progress.earliest(of: cards), all.first?.day].compactMap { $0 }.min()
         history = Progress.tallies(of: cards, from: earliest ?? now, to: now, calendar: calendar)
         records = ProgressRecords.of(days: history, calendar: calendar)

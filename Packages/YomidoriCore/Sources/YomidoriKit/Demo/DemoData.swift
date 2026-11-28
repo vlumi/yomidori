@@ -6,11 +6,11 @@ import YomidoriDictionary
 /// The fixed cast, seeded into the demo's stores: some hundred cards from `DemoText`, spread
 /// over the ranks the way a few months of reading would leave them, a shelf of names, words
 /// kept from searches, collections with covers, and a lookup history. Dates are relative to
-/// now, so the queue is in the same state at every launch.
+/// now, so the queue is in the same state at every launch, and every card has earned its
+/// rank through answers at their due dates, so the ranks by day replay to it.
 enum DemoData {
     static func seed(
-        cards: FileCardStore, collections: FileCollectionStore, lookups: FileLookupHistory,
-        snapshots: FileRankSnapshots
+        cards: FileCardStore, collections: FileCollectionStore, lookups: FileLookupHistory
     ) {
         let seeder = CardSeeder(store: cards, now: Date())
         for (index, work) in (DemoText.works + [DemoText.sign]).enumerated() {
@@ -28,33 +28,6 @@ enum DemoData {
             }
         }
         seedLookups(into: lookups)
-        seedSnapshots(into: snapshots, ending: cards.cards())
-    }
-
-    /// Six weeks of ranks up to yesterday, walked back from the cards as they stand: fewer
-    /// cards the further back, and the higher a rank the faster it thins. Today's is taken
-    /// from the cards as on any day.
-    private static func seedSnapshots(into snapshots: FileRankSnapshots, ending cards: [Card]) {
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-        let final = RankSnapshot.of(cards, day: today).counts
-        let history = (1...42).reversed().compactMap { daysAgo -> RankSnapshot? in
-            guard let day = calendar.date(byAdding: .day, value: -daysAgo, to: today) else {
-                return nil
-            }
-            let back = Double(daysAgo) / 42
-            var counts = Rank.allCases.map { rank -> Int in
-                let thinning = rank == .nest ? 0.3 : 0.4 + 0.12 * Double(rank.index)
-                return Int((Double(final[rank.index]) * max(0, 1 - back * thinning)).rounded())
-            }
-            // The eggs make up the total, which grows as pages are read.
-            let total = Int((Double(final.reduce(0, +)) * (1 - back * 0.6)).rounded())
-            let others = counts.enumerated().filter { $0.offset != Rank.egg.index }
-                .map(\.element).reduce(0, +)
-            counts[Rank.egg.index] = max(0, total - others)
-            return RankSnapshot(day: day, counts: counts)
-        }
-        try? snapshots.replaceAll(history)
     }
 
     private static func seedCollection(
@@ -151,12 +124,15 @@ private struct CardSeeder {
     let store: FileCardStore
     let now: Date
 
-    /// Where a card stands: the reading's stability in days, when it is due, how many misses
-    /// its log holds. Nil is a card still waiting for a lesson.
+    /// Where a card stands: the stability in days it has climbed to, when it is due, how
+    /// many misses its log holds. Nil is a card still waiting for a lesson.
     struct Standing {
         let stability: Double
         let dueIn: Double
         var again = 0
+
+        /// The days of answering at the due dates it takes to climb there, with room.
+        var daysToClimb: Double { stability * 1.7 }
     }
 
     /// A few months of reading: most cards young, a few settled, one in four still waiting,
@@ -176,15 +152,16 @@ private struct CardSeeder {
     /// differ, and later works are newer.
     func seed(_ work: DemoText.Work, in collection: Collection, phase: Int) {
         for (index, word) in work.words.enumerated() {
-            let daysAgo = Double(60 - phase * 12 - index).clamped(to: 1...120)
+            let standing = Self.pattern[(index + phase * 5) % Self.pattern.count]
+            // Kept long enough ago to have climbed where the pattern puts it.
+            let daysAgo = max(
+                Double(60 - phase * 12 - index).clamped(to: 1...120),
+                standing?.daysToClimb ?? 0)
             guard
                 var card = keep(
                     word.headword, word.reading, in: work.lines[word.line], collection: collection,
-                    daysAgo: daysAgo)
+                    daysAgo: daysAgo), let standing
             else { continue }
-            guard let standing = Self.pattern[(index + phase * 5) % Self.pattern.count] else {
-                continue
-            }
             review(&card, standing, daysAgo: daysAgo)
             try? store.update(card)
         }
@@ -206,23 +183,29 @@ private struct CardSeeder {
         )
     }
 
+    /// Started the day after it was kept and answered each time it came due, wrong the first
+    /// `again` times, until it stood where the pattern puts it; then due when the pattern
+    /// says, so the queue is the same at every launch. The log replays to the same ranks.
     private func review(_ card: inout Card, _ standing: Standing, daysAgo: Double) {
-        card.start(at: now.addingTimeInterval(-(daysAgo - 1) * 86_400))
+        let started = now.addingTimeInterval(-(daysAgo - 1) * 86_400)
+        card.start(at: started)
         for question in Question.allCases {
-            card.setState(
-                ReviewState(
-                    stability: standing.stability, difficulty: 5,
-                    due: now.addingTimeInterval(standing.dueIn * 86_400),
-                    lastReview: now.addingTimeInterval(
-                        -min(daysAgo - 1, standing.stability) * 86_400),
-                    reviews: 3 + standing.again, lapses: standing.again), for: question)
-        }
-        for step in 0..<(3 + standing.again) {
-            card.answer(
-                step < standing.again ? .reading : .meaning,
-                grade: step < standing.again ? .again : .good,
-                at: now.addingTimeInterval(-Double(3 + standing.again - step) * 86_400),
-                seconds: 6 + step * 4)
+            var date = started
+            var step = 0
+            while date < now {
+                card.answer(
+                    question, grade: step < standing.again ? .again : .good, at: date,
+                    seconds: 6 + step * 4)
+                step += 1
+                guard let state = card.state(for: question),
+                    state.stability < standing.stability
+                else { break }
+                date = state.due
+            }
+            if var state = card.state(for: question) {
+                state.due = now.addingTimeInterval(standing.dueIn * 86_400)
+                card.setState(state, for: question)
+            }
         }
         if standing.stability > 100 { card.acceptedMeanings = ["(my own wording)"] }
     }

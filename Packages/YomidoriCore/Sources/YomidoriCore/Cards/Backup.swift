@@ -221,6 +221,6 @@ extension Card {
             created: created, modified: modified, review: review, meaningReview: meaningReview,
             pitchReview: pitchReview, log: log, acceptedMeanings: acceptedMeanings,
             started: started, shelved: shelved, collectionIDs: collectionIDs,
-            removedSightingIDs: removedSightingIDs)
+            removedSightingIDs: removedSightingIDs, moves: moves)
     }
 }
