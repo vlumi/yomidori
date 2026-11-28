@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **The rank history is the same on every device.** The ranks-by-day chart is replayed from the cards' own answers now, so it no longer depends on which device opened the app each day, and comes back whole with a restored backup. A card remembers when it was started, sent back to waiting or shelved, so the replay follows; for the time before, a card is read from where it stands now.
+
 - **A backup carries the covers.** The collections' cover pictures are in the backup file now, and come back with a restore; a backup from before restores as it did.
 
 - **Erase all data.** A button in Settings takes every card, collection, cover and the lookup history off this device and, through iCloud, off your other devices, a device that is offline now included when it next syncs. To correct a backup by hand, erase first and then restore the corrected file.

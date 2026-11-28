@@ -184,7 +184,6 @@ public struct AppRoot: View {
             if phase == .active {
                 Sync.shared.start()
                 Sync.shared.fetch()
-                Cards.snapshotRanks()
                 // Back after hours away: what came due meanwhile is due now.
                 dueCount = Cards.dueItems(at: Date()).count
             }

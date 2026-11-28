@@ -28,6 +28,10 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     /// The sightings taken off the card, by id: a merge with a copy that still has one
     /// leaves it off, rather than putting the sentence back.
     public private(set) var removedSightingIDs: [UUID]
+    /// Where the card was put and when: into review, back to waiting, on the shelf. With
+    /// the log, what the ranks by day are replayed from (`RankHistory`). Empty on a card
+    /// from before moves were kept, whose replay takes where it stands now.
+    public private(set) var moves: [CardMove]
 
     /// `id` is left out for a new card: it is the word's own (see `WordKey.cardID`), so the
     /// same word kept on two devices is one card to sync.
@@ -36,7 +40,8 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         sightings: [Sighting], created: Date, modified: Date? = nil, review: ReviewState? = nil,
         meaningReview: ReviewState? = nil, pitchReview: ReviewState? = nil,
         log: [ReviewEntry] = [], acceptedMeanings: [String] = [], started: Date? = nil,
-        shelved: Bool = false, collectionIDs: [UUID] = [], removedSightingIDs: [UUID] = []
+        shelved: Bool = false, collectionIDs: [UUID] = [], removedSightingIDs: [UUID] = [],
+        moves: [CardMove] = []
     ) {
         self.id = id ?? WordKey.cardID(headword: headword, reading: reading)
         self.headword = headword
@@ -54,6 +59,7 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         self.shelved = shelved
         self.collectionIDs = collectionIDs
         self.removedSightingIDs = removedSightingIDs
+        self.moves = moves
     }
 
     /// The meanings that count in a review: the reader's own list, or the dictionary's
@@ -115,20 +121,27 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     public mutating func start(at date: Date) {
         started = date
         shelved = false
+        moves.append(CardMove(date: date, standing: .started))
     }
 
     /// Back to the waiting stack with no schedule; the log stays.
-    public mutating func sendToWaiting() {
-        started = nil
+    public mutating func sendToWaiting(at date: Date = Date()) {
+        clearSchedule()
         shelved = false
+        moves.append(CardMove(date: date, standing: .waiting))
+    }
+
+    public mutating func shelve(at date: Date = Date()) {
+        clearSchedule()
+        shelved = true
+        moves.append(CardMove(date: date, standing: .shelved))
+    }
+
+    private mutating func clearSchedule() {
+        started = nil
         review = nil
         meaningReview = nil
         pitchReview = nil
-    }
-
-    public mutating func shelve() {
-        sendToWaiting()
-        shelved = true
     }
 
     public func state(for question: Question) -> ReviewState? {
@@ -206,7 +219,7 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case id, headword, reading, entryID, sightings, created, modified, review, meaningReview
         case pitchReview, log, acceptedMeanings, started, shelved, collectionIDs
-        case removedSightingIDs
+        case removedSightingIDs, moves
     }
 
     public init(from decoder: Decoder) throws {
@@ -229,111 +242,13 @@ public struct Card: Identifiable, Hashable, Codable, Sendable {
         collectionIDs = try c.decodeIfPresent([UUID].self, forKey: .collectionIDs) ?? []
         removedSightingIDs =
             try c.decodeIfPresent([UUID].self, forKey: .removedSightingIDs) ?? []
+        moves = try c.decodeIfPresent([CardMove].self, forKey: .moves) ?? []
         if c.contains(.started) {
             started = try c.decodeIfPresent(Date.self, forKey: .started)
         } else {
             started = [review, meaningReview, pitchReview].compactMap { $0?.lastReview }.min()
         }
     }
-}
-
-public struct ReviewEntry: Hashable, Codable, Sendable {
-    public let date: Date
-    public let question: Question
-    public let grade: Grade
-    public let reconciled: Bool
-    /// From the question shown to the answer graded, at most `longestCounted`: a phone put
-    /// down mid-question doesn't count as an hour's study.
-    public let seconds: Int
-    /// The zone the answer was given in, as seconds east of Greenwich at that moment, so
-    /// the day it counts for is the day it was given on, wherever the reader is later; nil
-    /// for an answer logged before zones were kept.
-    public let zoneOffset: Int?
-
-    public static let longestCounted = 60
-
-    public init(
-        date: Date, question: Question, grade: Grade, reconciled: Bool, seconds: Int = 0,
-        zone: TimeZone? = .current
-    ) {
-        self.init(
-            date: date, question: question, grade: grade, reconciled: reconciled,
-            seconds: seconds, zoneOffset: zone?.secondsFromGMT(for: date))
-    }
-
-    public init(
-        date: Date, question: Question, grade: Grade, reconciled: Bool, seconds: Int,
-        zoneOffset: Int?
-    ) {
-        self.date = date
-        self.question = question
-        self.grade = grade
-        self.reconciled = reconciled
-        self.seconds = min(max(seconds, 0), Self.longestCounted)
-        self.zoneOffset = zoneOffset
-    }
-
-    private enum CodingKeys: String, CodingKey {
-        case date, question, grade, reconciled, seconds
-        case zoneOffset = "zone"
-    }
-
-    /// An entry written before the time was kept reads as 0 seconds, one before zones were
-    /// kept as no zone, neither as unreadable.
-    public init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        self.init(
-            date: try c.decode(Date.self, forKey: .date),
-            question: try c.decode(Question.self, forKey: .question),
-            grade: try c.decode(Grade.self, forKey: .grade),
-            reconciled: try c.decode(Bool.self, forKey: .reconciled),
-            seconds: try c.decodeIfPresent(Int.self, forKey: .seconds) ?? 0,
-            zoneOffset: try c.decodeIfPresent(Int.self, forKey: .zoneOffset))
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encode(date, forKey: .date)
-        try c.encode(question, forKey: .question)
-        try c.encode(grade, forKey: .grade)
-        try c.encode(reconciled, forKey: .reconciled)
-        try c.encode(seconds, forKey: .seconds)
-        try c.encodeIfPresent(zoneOffset, forKey: .zoneOffset)
-    }
-
-    /// The start, in `calendar`, of the day the answer was given on where it was given: an
-    /// answer at 23:30 in Tokyo stays on that date seen from Helsinki. An entry with no
-    /// zone takes the viewer's day.
-    public func day(in calendar: Calendar) -> Date {
-        guard let zoneOffset, let zone = TimeZone(secondsFromGMT: zoneOffset) else {
-            return calendar.startOfDay(for: date)
-        }
-        var there = calendar
-        there.timeZone = zone
-        let parts = there.dateComponents([.year, .month, .day], from: date)
-        return calendar.date(from: parts).map(calendar.startOfDay(for:))
-            ?? calendar.startOfDay(for: date)
-    }
-
-    /// The same answer, whether or not its zone was kept: how two devices' logs are matched.
-    var answer: Answer {
-        Answer(
-            date: date, question: question, grade: grade, reconciled: reconciled, seconds: seconds)
-    }
-
-    struct Answer: Hashable {
-        let date: Date
-        let question: Question
-        let grade: Grade
-        let reconciled: Bool
-        let seconds: Int
-    }
-}
-
-public enum Question: Int, Codable, Sendable, Hashable, CaseIterable {
-    case reading
-    case meaning
-    case pitch
 }
 
 public struct Sighting: Identifiable, Hashable, Codable, Sendable {

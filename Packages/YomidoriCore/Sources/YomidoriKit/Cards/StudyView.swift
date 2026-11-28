@@ -129,7 +129,6 @@ struct StudyView: View {
     }
 
     private func reload() {
-        Cards.snapshotRanks()
         cards = Cards.store?.cards() ?? []
         dueCount = Cards.dueItems(at: Date()).count
         nextDue = dueCount == 0 ? Cards.nextDue(after: Date()) : nil

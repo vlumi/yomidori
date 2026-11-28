@@ -35,14 +35,12 @@ enum Cards {
     static var defaults: UserDefaults { DemoMode.defaults ?? .standard }
     static let collections: FileCollectionStore? = stores?.collections
     static let lookups: FileLookupHistory? = stores?.lookups
-    static let snapshots: FileRankSnapshots? = stores?.snapshots
     static let studySettings: FileStudySettings? = stores?.settings
 
     private struct Stores {
         let cards: FileCardStore
         let collections: FileCollectionStore
         let lookups: FileLookupHistory
-        let snapshots: FileRankSnapshots
         let settings: FileStudySettings
         let erased: FileEraseMark
 
@@ -58,7 +56,6 @@ enum Cards {
             collections: FileCollectionStore(
                 url: directory.appendingPathComponent("collections.json")),
             lookups: FileLookupHistory(url: directory.appendingPathComponent("lookups.json")),
-            snapshots: FileRankSnapshots(url: directory.appendingPathComponent("progress.json")),
             settings: FileStudySettings(url: directory.appendingPathComponent("settings.json")),
             erased: FileEraseMark(url: directory.appendingPathComponent("erased.json")))
         if !stores.collections.file.isUnreadable {
@@ -67,6 +64,8 @@ enum Cards {
         // Answers logged before zones were kept take this device's zone, before the change
         // listener is on: a zone on every old answer is not a change worth syncing.
         if !stores.cards.file.isUnreadable { _ = try? stores.cards.stampZones() }
+        // The ranks by day were once kept here; they are replayed from the cards now.
+        try? FileManager.default.removeItem(at: directory.appendingPathComponent("progress.json"))
         stores.cards.file.onChange = { changed(.card, $0, $1) }
         stores.collections.file.onChange = { changed(.collection, $0, $1) }
         stores.lookups.file.onChange = { changed(.lookup, $0, $1) }
@@ -74,17 +73,10 @@ enum Cards {
         stores.lookups.onClear = { _ in Sync.historyCleared() }
         if DemoMode.isRequested {
             DemoData.seed(
-                cards: stores.cards, collections: stores.collections, lookups: stores.lookups,
-                snapshots: stores.snapshots)
+                cards: stores.cards, collections: stores.collections, lookups: stores.lookups)
         }
         return stores
     }()
-
-    /// The day's first look at the ranks, kept for the progress charts; nothing after that.
-    static func snapshotRanks() {
-        guard let store, let snapshots else { return }
-        _ = try? snapshots.take(of: store.cards(), at: Date())
-    }
 
     /// Everything the reader made, gone from this device and, through sync, from every other:
     /// the stores' deletes go out as they are reported, then the erase mark, so a device that
@@ -101,11 +93,9 @@ enum Cards {
         Sync.erased()
     }
 
-    /// What only this device keeps: the covers, the ranks by day, the collection Keep files
-    /// under.
+    /// What only this device keeps: the covers, and the collection Keep files under.
     private static func clearDeviceFiles() {
         CoverArchive.removeAll()
-        try? snapshots?.replaceAll([])
         defaults.removeObject(forKey: currentCollectionKey)
     }
 

@@ -286,8 +286,9 @@ and reseeded at each launch and the settings to their own defaults suite;
 `DemoData` seeds a hundred cards from four public-domain openings (漱石's
 吾輩は猫である, 太宰's 走れメロス, 芥川's 羅生門, 賢治's 銀河鉄道の夜) and a shop sign, at
 every rank with sightings, shelved names, search-kept words, collections with
-rendered covers, a lookup history and six weeks of rank snapshots, dates
-relative to now so the queue is always in the same state; `DemoRenderer` draws the page and the
+rendered covers and a lookup history, dates relative to now so the queue is
+always in the same state, each card answered at its due dates so the ranks by
+day replay to where it stands; `DemoRenderer` draws the page and the
 covers from text with CoreText, vertical Mincho on cream, so Read opens on a
 page with its transcript already known (`CaptureState.transcript`). The camera
 is untouched; the data can be changed in the session and is gone at the next

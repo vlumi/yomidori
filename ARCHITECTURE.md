@@ -324,9 +324,12 @@ has what remains.
   are folded from the cards' own logs (`ReviewEntry` keeps the seconds, capped at
   a minute); the words started come from the cards' start dates; the streak is
   the days in a row with an answer, today forgiven until it ends. The ranks by
-  day are the one thing kept apart: `FileRankSnapshots` writes the day's first
-  look at the counts to `progress.json`, this device's own, since every device
-  sees the same cards. The screen is reached from the Study tab; its span is
+  day are replayed from the cards too (`RankHistory`): every card's answers
+  and moves in date order through the scheduler, the counts taken at the
+  start of each day, so every device shows the same history and nothing is
+  kept for it. A card logs its moves (`Card.Move`: into review, back to
+  waiting, on the shelf, dated); one from before moves were kept is read from
+  where it stands now. The screen is reached from the Study tab; its span is
   four weeks by day, three months by week, or a year or everything by month
   (`Progress.rollUp`, `RankSnapshot.thinned`), and a finger on a chart puts
   that period's numbers in the caption above it, as the rank chart does. Ahead
@@ -415,8 +418,7 @@ has what remains.
   all is moved aside under a dated name, never written over. What lies in the
   app's folder: `cards.json`, `collections.json`, `lookups.json` with
   `lookups.cleared.json` (the date the history was last cleared),
-  `erased.json` (the date everything was last erased),
-  `progress.json` (the ranks by day, this device's own), `Covers/`, and
+  `erased.json` (the date everything was last erased), `Covers/`, and
   sync's own three, `sync-unsent.json`, `sync-state.json` and
   `sync-fields.json`. The merges sync needs when a
   record changed on two devices at once are Core's too: a card keeps the union
@@ -543,10 +545,8 @@ has what remains.
   the meaning's, and the pitch's once asked), and Study and Progress carry one
   question picker over their charts: Coming up and the rank bars follow it,
   and with all questions shown Coming up can be colored by rank or by what the
-  questions ask. A stored count (`RankSnapshot.counts`) is indexed by
-  `Rank.index`, the nest first, with the same per question in `byQuestion`
-  from 2026-10-07 on (older snapshots have none, and the per-question history
-  starts where they begin).
+  questions ask. A snapshot's count (`RankSnapshot.counts`) is indexed by
+  `Rank.index`, the nest first, with the same per question in `byQuestion`.
   Study draws the ranks as bars in each rank's color with a selection, and the
   mark everywhere is the rank's number on a dot of its color, the name beside
   it where there is room and as the accessibility label where not.

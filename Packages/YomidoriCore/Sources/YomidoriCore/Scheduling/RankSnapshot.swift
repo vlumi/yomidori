@@ -1,14 +1,14 @@
 import Foundation
 
-/// How many cards stood at each rank at the start of a day: the first look of the day is
-/// kept, so the day's own reviewing shows on the next.
+/// How many cards stood at each rank at the start of a day, so the day's own reviewing
+/// shows on the next; replayed from the cards by `RankHistory`.
 public struct RankSnapshot: Codable, Equatable, Sendable {
     /// The day's start.
     public let day: Date
     /// By `Rank.index`: the nest first, then the egg and the climb.
     public let counts: [Int]
-    /// The same for each question, by its raw value; nil in a snapshot taken before the
-    /// questions were counted apart.
+    /// The same for each question, by its raw value; nil in a snapshot that does not count
+    /// them apart.
     public let byQuestion: [Int: [Int]]?
 
     public init(day: Date, counts: [Int], byQuestion: [Int: [Int]]? = nil) {
@@ -61,39 +61,5 @@ public struct RankSnapshot: Codable, Equatable, Sendable {
                 calendar.dateInterval(of: component, for: snapshot.day)?.start ?? snapshot.day
             return seen.insert(start).inserted
         }
-    }
-}
-
-/// The snapshots in one JSON file beside the stores, this device's own: every device sees
-/// the same cards, so each takes the same snapshot.
-public final class FileRankSnapshots: @unchecked Sendable {
-    let file: RecordFile<RankSnapshot>
-
-    public init(url: URL) {
-        file = RecordFile(
-            url: url, label: "fi.misaki.yomidori.snapshots",
-            key: { String($0.day.timeIntervalSince1970) })
-    }
-
-    public func snapshots() -> [RankSnapshot] {
-        file.records().sorted { $0.day < $1.day }
-    }
-
-    /// Keeps today's snapshot if there is none yet; true when one was taken.
-    @discardableResult
-    public func take(of cards: [Card], at date: Date, calendar: Calendar = .current) throws
-        -> Bool
-    {
-        let day = calendar.startOfDay(for: date)
-        return try file.write { snapshots in
-            guard !snapshots.contains(where: { $0.day == day }) else { return false }
-            snapshots.append(RankSnapshot.of(cards, day: day))
-            return true
-        }
-    }
-
-    /// The whole history at once, as the demo seeds it.
-    public func replaceAll(_ snapshots: [RankSnapshot]) throws {
-        try file.write { $0 = snapshots }
     }
 }

@@ -1,13 +1,13 @@
 import Foundation
 
 extension Card {
-    /// The last thing done to the card: a sighting or edit, an answer, a start.
+    /// The last thing done to the card: a sighting or edit, an answer, a move.
     var lastTouched: Date {
-        [modified, log.last?.date, started].compactMap { $0 }.max() ?? created
+        [modified, log.last?.date, started, moves.last?.date].compactMap { $0 }.max() ?? created
     }
 
     /// The same card changed on two devices before either heard of the other, as one: nothing
-    /// done on either side is lost. Sightings, answers, accepted meanings and collections are
+    /// done on either side is lost. Sightings, answers, moves, accepted meanings and collections are
     /// the union, less the sightings either side took off; each question keeps the schedule
     /// of its later answer. Where the card stands (waiting, in review, shelved) comes from the
     /// side touched last, and a card sent back to waiting there keeps no schedule.
@@ -44,7 +44,8 @@ extension Card {
             log: log, acceptedMeanings: union(newer.acceptedMeanings, older.acceptedMeanings),
             started: newer.started, shelved: newer.shelved,
             collectionIDs: union(newer.collectionIDs, older.collectionIDs),
-            removedSightingIDs: removed)
+            removedSightingIDs: removed,
+            moves: union(newer.moves, older.moves).sorted { $0.date < $1.date })
     }
 
     private func union<T: Equatable>(_ first: [T], _ second: [T]) -> [T] {
