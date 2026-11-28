@@ -16,7 +16,9 @@ final class BackupTests: XCTestCase {
     }
 
     func testABackupComesBackAsItWent() throws {
-        let story = Collection(name: "羅生門", note: "芥川")
+        var story = Collection(name: "羅生門", note: "芥川")
+        story.coverID = UUID()
+        let jpeg = Data([0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46])
         var bark = card("樹皮", "じゅひ", sentence: "樹皮の匂い。")
         bark.add(to: story.id)
         bark.start(at: day)
@@ -27,13 +29,41 @@ final class BackupTests: XCTestCase {
             created: day, cards: [bark], collections: [story],
             lookups: [
                 Lookup(headword: "樹皮", reading: "じゅひ", entryID: 1, date: day, source: .page)
-            ])
-        let back = try Backup.decoded(from: backup.encoded())
+            ],
+            covers: [story.coverID!: jpeg])
+        let encoded = try backup.encoded()
+        let back = try Backup.decoded(from: encoded)
         XCTAssertEqual(back.cards, [bark])
         XCTAssertEqual(back.cards[0].log[0].zoneOffset, 32_400)
         XCTAssertEqual(back.collections.map(\.name), ["羅生門"])
         XCTAssertEqual(back.lookups.map(\.headword), ["樹皮"])
         XCTAssertEqual(back.created, day)
+        XCTAssertEqual(back.covers, [story.coverID!: jpeg])
+        let file = try XCTUnwrap(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        XCTAssertEqual(file["version"] as? Int, 2)
+        XCTAssertEqual(
+            (file["covers"] as? [[String: Any]])?.first?["jpeg"] as? String,
+            jpeg.base64EncodedString())
+    }
+
+    /// A version 1 file has no covers; a cover too big to be one the app wrote, or with no
+    /// id, is left out, and the rest kept.
+    func testAFileFromBeforeHasNoCoversAndABadCoverIsLeftOut() throws {
+        let id = UUID()
+        let one = try Backup.decoded(
+            from: Data(#"{"version": 1, "cards": [], "collections": []}"#.utf8))
+        XCTAssertTrue(one.covers.isEmpty)
+        let huge = Data(repeating: 0, count: Intake.coverBytes + 1).base64EncodedString()
+        let two = try Backup.decoded(
+            from: Data(
+                """
+                {"version": 2, "cards": [], "covers": [
+                  {"id": "\(id.uuidString)", "jpeg": "/9j/"},
+                  {"jpeg": "/9j/"},
+                  {"id": "\(UUID().uuidString)", "jpeg": "\(huge)"}
+                ]}
+                """.utf8))
+        XCTAssertEqual(two.covers, [id: Data(base64Encoded: "/9j/")!])
     }
 
     func testTheCardsFileAloneIsABackupAndABadRecordIsLeftOut() throws {

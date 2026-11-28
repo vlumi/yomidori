@@ -206,7 +206,7 @@ public struct SettingsView: View {
                 } footer: {
                     Text(
                         // swiftlint:disable:next line_length
-                        "Your cards, collections and lookup history as one file, to keep a copy wherever you like; the covers are not in it. Restoring adds what a backup has to what is here, and takes nothing away.",
+                        "Your cards, collections with their covers, and lookup history as one file, to keep a copy wherever you like. Restoring adds what a backup has to what is here, and takes nothing away.",
                         bundle: .module)
                 }
                 Section {

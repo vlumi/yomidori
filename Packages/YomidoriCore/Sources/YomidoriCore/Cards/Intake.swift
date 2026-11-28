@@ -15,6 +15,10 @@ public enum Intake {
     public static let answers = 20_000
     public static let meanings = 100
     public static let collectionsPerCard = 500
+    /// A backup's covers: as many as a reader could have collections, each at most a few
+    /// times what a cover six hundred pixels a side comes to.
+    public static let covers = 5_000
+    public static let coverBytes = 2_000_000
 }
 
 extension Intake {

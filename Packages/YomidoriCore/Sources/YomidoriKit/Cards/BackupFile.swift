@@ -21,11 +21,16 @@ struct BackupRestore: Identifiable, Sendable {
 }
 
 extension Cards {
-    /// The cards, the collections and the lookup history as one dated file.
+    /// The cards, the collections with their covers and the lookup history as one dated file.
     static func writeBackup() throws -> URL {
+        let collections = collections?.collections() ?? []
+        var covers: [UUID: Data] = [:]
+        for id in collections.compactMap(\.coverID) {
+            covers[id] = (try? CoverArchive.url(for: id)).flatMap { try? Data(contentsOf: $0) }
+        }
         let backup = Backup(
-            created: Date(), cards: store?.cards() ?? [],
-            collections: collections?.collections() ?? [], lookups: lookups?.lookups() ?? [])
+            created: Date(), cards: store?.cards() ?? [], collections: collections,
+            lookups: lookups?.lookups() ?? [], covers: covers)
         let url = try Cards.shareFolder()
             .appendingPathComponent(Backup.fileName(at: Date()))
             .appendingPathExtension("json")
@@ -42,6 +47,8 @@ extension Cards {
     nonisolated static func restoreBackup(from url: URL) throws -> BackupRestore {
         let backup = try Backup.decoded(from: readImport(url, largest: Backup.largestFile))
         guard let store, let collections, let lookups else { throw CocoaError(.fileReadUnknown) }
+        // The covers first, so a collection's row finds its cover when it reloads.
+        restoreCovers(of: backup)
         let restored = try backup.restore(
             cards: store, collections: collections, lookups: lookups)
         return BackupRestore(
@@ -51,6 +58,19 @@ extension Cards {
 }
 
 extension Cards {
+    /// The file's covers that its collections point at and this device has no file for,
+    /// each decoded with care and drawn anew, never copied as it came.
+    nonisolated private static func restoreCovers(of backup: Backup) {
+        for id in Set(backup.collections.compactMap(\.coverID)) {
+            guard let data = backup.covers[id], let url = try? CoverArchive.url(for: id),
+                !FileManager.default.fileExists(atPath: url.path),
+                let image = ImageIntake.image(
+                    from: data, longestSide: Int(CoverArchive.longestSide))
+            else { continue }
+            _ = try? CoverArchive.save(image, as: id)
+        }
+    }
+
     /// Where a file to share is written: a folder of its own under tmp, emptied for each
     /// share, so a copy of every card never sits there longer than the next share.
     static func shareFolder() throws -> URL {

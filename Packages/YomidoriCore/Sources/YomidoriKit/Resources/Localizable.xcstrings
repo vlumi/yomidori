@@ -4379,12 +4379,12 @@
         }
       }
     },
-    "Your cards, collections and lookup history as one file, to keep a copy wherever you like; the covers are not in it. Restoring adds what a backup has to what is here, and takes nothing away." : {
+    "Your cards, collections with their covers, and lookup history as one file, to keep a copy wherever you like. Restoring adds what a backup has to what is here, and takes nothing away." : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カード、コレクション、調べた言葉の履歴を一つのファイルにして、好きな場所に保存できます（表紙は含みません）。復元はバックアップの内容をここに加えるだけで、何も消しません。"
+            "value" : "カード、表紙つきのコレクション、調べた言葉の履歴を一つのファイルにして、好きな場所に保存できます。復元はバックアップの内容をここに加えるだけで、何も消しません。"
           }
         }
       }
