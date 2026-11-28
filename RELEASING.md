@@ -210,7 +210,6 @@ make asc-screenshots && make asc-screenshots-apply
   enabled for the app id (done 2026-09-23; the entitlements are in
   `project.yml`). Its schema — the record types `Card`, `Collection`, `Lookup`,
   `HistoryClear` (deployed 2026-09-23), `Settings` (added 2026-10-04) and
-  `Erase` (added 2026-11-28; deploy before the first TestFlight build that
-  carries it) — must be in Production.
+  `Erase` (deployed 2026-11-28) — must be in Production.
 - **Repo settings**: "Allow auto-merge" enabled (the release PR self-merges on
   green CI); branch protection on `main` with the CI checks required.
