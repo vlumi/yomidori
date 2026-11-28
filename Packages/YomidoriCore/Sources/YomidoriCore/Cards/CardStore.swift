@@ -131,6 +131,20 @@ public final class FileCardStore: CardStore {
         try file.write { $0.removeAll { $0.id == card.id } }
     }
 
+    /// Every answer logged before zones were kept gets `zone`; nothing is written when
+    /// none needed it. How many were stamped.
+    @discardableResult
+    public func stampZones(_ zone: TimeZone = .current) throws -> Int {
+        guard cards().contains(where: { $0.log.contains { $0.zoneOffset == nil } }) else {
+            return 0
+        }
+        return try file.write { cards in
+            var stamped = 0
+            for index in cards.indices { stamped += cards[index].stampZones(zone) }
+            return stamped
+        }
+    }
+
     public func update(_ card: Card) throws {
         try file.write { cards in
             guard let index = cards.firstIndex(where: { $0.id == card.id }) else { return }

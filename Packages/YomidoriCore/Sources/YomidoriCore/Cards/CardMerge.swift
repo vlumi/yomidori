@@ -17,9 +17,18 @@ extension Card {
         let known = Set(newer.sightings.map(\.id))
         let sightings = (newer.sightings + older.sightings.filter { !known.contains($0.id) })
             .filter { !removed.contains($0.id) }
-        var log = newer.log
-        var seen = Set(log)
-        for entry in older.log where seen.insert(entry).inserted { log.append(entry) }
+        // An answer stamped with its zone on one device and not yet on the other is one
+        // answer; the stamped one is kept.
+        var log: [ReviewEntry] = []
+        var at: [ReviewEntry.Answer: Int] = [:]
+        for entry in newer.log + older.log {
+            if let index = at[entry.answer] {
+                if log[index].zoneOffset == nil, entry.zoneOffset != nil { log[index] = entry }
+            } else {
+                at[entry.answer] = log.count
+                log.append(entry)
+            }
+        }
         log.sort { $0.date < $1.date }
         let waiting = newer.started == nil
         func later(_ question: Question) -> ReviewState? {

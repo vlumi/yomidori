@@ -64,7 +64,7 @@ public enum Progress {
         }
         for card in cards {
             for entry in card.log {
-                let day = calendar.startOfDay(for: entry.date)
+                let day = entry.day(in: calendar)
                 guard byDay[day] != nil else { continue }
                 byDay[day]?.answered[entry.question, default: 0] += 1
                 if entry.grade == .good { byDay[day]?.right[entry.question, default: 0] += 1 }

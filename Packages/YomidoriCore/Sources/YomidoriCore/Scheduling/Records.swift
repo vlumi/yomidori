@@ -39,7 +39,7 @@ public struct Record: Equatable, Sendable {
 public enum Records {
     /// The days with an answer, each at its start.
     public static func studiedDays(of cards: [Card], calendar: Calendar = .current) -> Set<Date> {
-        Set(cards.flatMap(\.log).map { calendar.startOfDay(for: $0.date) })
+        Set(cards.flatMap(\.log).map { $0.day(in: calendar) })
     }
 
     /// Every run of studied days, longest first and the latest first among equals, so the
