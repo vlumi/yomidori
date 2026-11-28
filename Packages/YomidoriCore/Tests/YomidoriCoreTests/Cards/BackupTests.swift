@@ -20,7 +20,9 @@ final class BackupTests: XCTestCase {
         var bark = card("樹皮", "じゅひ", sentence: "樹皮の匂い。")
         bark.add(to: story.id)
         bark.start(at: day)
-        bark.answer(.reading, grade: .good, at: day, seconds: 9)
+        // Answered in Tokyo, wherever the test runs: the zone is part of what comes back.
+        bark.answer(
+            .reading, grade: .good, at: day, seconds: 9, in: TimeZone(identifier: "Asia/Tokyo")!)
         let backup = Backup(
             created: day, cards: [bark], collections: [story],
             lookups: [
@@ -28,6 +30,7 @@ final class BackupTests: XCTestCase {
             ])
         let back = try Backup.decoded(from: backup.encoded())
         XCTAssertEqual(back.cards, [bark])
+        XCTAssertEqual(back.cards[0].log[0].zoneOffset, 32_400)
         XCTAssertEqual(back.collections.map(\.name), ["羅生門"])
         XCTAssertEqual(back.lookups.map(\.headword), ["樹皮"])
         XCTAssertEqual(back.created, day)

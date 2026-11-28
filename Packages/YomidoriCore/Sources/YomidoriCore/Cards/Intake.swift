@@ -29,6 +29,13 @@ extension Intake {
 
     /// Stability is in days; a hundred years is more than any schedule asks.
     public static let longestStability: Double = 36_500
+
+    /// The zone an answer was given in stays as the record says, so a backup or another
+    /// device never has its answers moved to where this device is; an offset no zone on
+    /// earth has (beyond eighteen hours) is dropped, and the answer takes the viewer's day.
+    public static func zoneOffset(_ offset: Int?) -> Int? {
+        offset.flatMap { TimeZone(secondsFromGMT: $0) == nil ? nil : $0 }
+    }
 }
 
 extension Sighting {
@@ -81,7 +88,8 @@ extension Card: Sanitizable {
             log: log.suffix(Intake.answers).map { entry in
                 ReviewEntry(
                     date: Intake.date(entry.date), question: entry.question, grade: entry.grade,
-                    reconciled: entry.reconciled, seconds: entry.seconds)
+                    reconciled: entry.reconciled, seconds: entry.seconds,
+                    zoneOffset: Intake.zoneOffset(entry.zoneOffset))
             },
             acceptedMeanings: Sanitize.texts(
                 acceptedMeanings, count: Intake.meanings, limit: Intake.nameLength),

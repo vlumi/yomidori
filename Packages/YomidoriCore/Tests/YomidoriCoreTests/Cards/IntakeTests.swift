@@ -103,11 +103,18 @@ final class IntakeTests: XCTestCase {
             created: .distantPast,
             log: [
                 ReviewEntry(
-                    date: .distantFuture, question: .reading, grade: .good, reconciled: false)
+                    date: .distantFuture, question: .reading, grade: .good, reconciled: false,
+                    seconds: 0, zoneOffset: -36_000),
+                ReviewEntry(
+                    date: now, question: .reading, grade: .good, reconciled: false, seconds: 0,
+                    zoneOffset: 100_000),
             ])
         let clean = card.sanitized()
         XCTAssertEqual(clean?.created, Intake.earliest)
-        XCTAssertEqual(clean?.log.count, 1)
+        XCTAssertEqual(clean?.log.count, 2)
         XCTAssertTrue(clean?.log[0].date ?? .distantFuture <= Date().addingTimeInterval(86_400))
+        // The zone an answer was given in is kept as it came; one no zone has is dropped.
+        XCTAssertEqual(clean?.log[0].zoneOffset, -36_000)
+        XCTAssertNil(clean?.log[1].zoneOffset)
     }
 }
