@@ -28,6 +28,10 @@ public struct UnsentChanges: Codable, Equatable, Sendable {
         saved.insert(SyncName.historyCleared.recordName)
     }
 
+    public mutating func noteErased() {
+        saved.insert(SyncName.erased.recordName)
+    }
+
     public static func read(from url: URL) -> UnsentChanges {
         (try? Data(contentsOf: url)).flatMap { try? JSONDecoder().decode(Self.self, from: $0) }
             ?? UnsentChanges()

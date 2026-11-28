@@ -2,13 +2,18 @@ import CryptoKit
 import Foundation
 
 /// What sync keeps in iCloud, one record per card, collection and looked-up word, one for
-/// the date the history was last cleared, and one for the study settings.
+/// the date the history was last cleared, one for the date everything was last erased, and
+/// one for the study settings.
 public enum SyncKind: String, CaseIterable, Sendable {
     case card
     case collection
     case lookup
     case historyCleared = "history"
     case settings
+    case erased = "erase"
+
+    /// The records an erase takes away, and that carry the era they were sent under.
+    public static let erasable: Set<SyncKind> = [.card, .collection, .lookup]
 
     /// The record's type in CloudKit.
     public var recordType: String {
@@ -18,6 +23,7 @@ public enum SyncKind: String, CaseIterable, Sendable {
         case .lookup: return "Lookup"
         case .historyCleared: return "HistoryClear"
         case .settings: return "Settings"
+        case .erased: return "Erase"
         }
     }
 }
@@ -36,6 +42,7 @@ public struct SyncName: Equatable, Hashable, Sendable {
     }
 
     public static let historyCleared = SyncName(.historyCleared, "cleared")
+    public static let erased = SyncName(.erased, "all")
     public static let settings = SyncName(.settings, StudySettings.key)
     static let longest = 255
     /// Starts a hashed key; percent-encoding never writes it.
@@ -94,6 +101,25 @@ public enum SyncPayload {
         encoder.dateEncodingStrategy = .iso8601
         encoder.outputFormatting = [.sortedKeys]
         return try encoder.encode(record)
+    }
+
+    /// The record's JSON with the era it is sent under: the date of the erase the sender
+    /// knew, as `era`, a key the stores' decoders pass over.
+    public static func encode<Record: Encodable>(_ record: Record, era: Date?) throws -> Data {
+        let data = try encode(record)
+        guard let era, var object = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        else { return data }
+        object["era"] = ISO8601DateFormatter().string(from: era)
+        return try JSONSerialization.data(withJSONObject: object, options: [.sortedKeys])
+    }
+
+    /// The era a record was sent under; nil for one sent before any erase, or by a build
+    /// that kept none.
+    public static func era(of data: Data) -> Date? {
+        guard let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+            let era = object["era"] as? String
+        else { return nil }
+        return ISO8601DateFormatter().date(from: era)
     }
 
     public static func decode<Record: Decodable>(_ type: Record.Type, from data: Data) throws

@@ -1303,12 +1303,42 @@
         }
       }
     },
+    "Erase all data" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべてのデータを消去"
+          }
+        }
+      }
+    },
+    "Erase all data?" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべてのデータを消去しますか？"
+          }
+        }
+      }
+    },
     "estimated" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "推定"
+          }
+        }
+      }
+    },
+    "Every card, collection, cover and the lookup history, gone from this device and, through iCloud, from your other devices; a device that is offline now is erased when it next syncs. To correct a backup by hand, erase first and then restore the corrected file." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード、コレクション、表紙、検索履歴のすべてが、この端末からも、iCloud を通じて他の端末からも消えます。今オフラインの端末は、次に同期したときに消去されます。バックアップを手で直すには、まず消去してから、直したファイルを復元してください。"
           }
         }
       }
@@ -4055,6 +4085,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "文と回答も一緒になくなります。"
+          }
+        }
+      }
+    },
+    "This cannot be undone. Back up first if you may want any of it back." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "元に戻せません。残しておきたいものがあれば、先にバックアップしてください。"
           }
         }
       }

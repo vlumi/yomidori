@@ -46,6 +46,16 @@ final class Sync: ObservableObject {
         }
     }
 
+    nonisolated static func erased() {
+        engineLock.withLock {
+            if let current {
+                current.erased()
+            } else {
+                keepUnsent { $0.noteErased() }
+            }
+        }
+    }
+
     /// Called under `engineLock`; not in the demo, whose changes never sync.
     private nonisolated static func keepUnsent(_ note: (inout UnsentChanges) -> Void) {
         guard !DemoMode.isRequested, let url = unsentURL else { return }

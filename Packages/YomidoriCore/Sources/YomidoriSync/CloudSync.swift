@@ -12,22 +12,34 @@ public final class CloudSync: CKSyncEngineDelegate, @unchecked Sendable {
         public let collections: FileCollectionStore
         public let lookups: FileLookupHistory
         public let settings: FileStudySettings
+        /// When everything was last erased, here or on another device.
+        public let erased: FileEraseMark
         /// Where a cover's file is, if it has one.
         public let coverURL: (UUID) -> URL?
         /// Takes a cover arrived with a collection into the cover files.
         public let saveCover: (UUID, URL) -> Void
+        /// Clears what only this device keeps, the covers and the ranks by day, on another
+        /// device's erase.
+        public let clearDeviceFiles: () -> Void
 
         public init(
             cards: FileCardStore, collections: FileCollectionStore, lookups: FileLookupHistory,
-            settings: FileStudySettings, coverURL: @escaping (UUID) -> URL?,
-            saveCover: @escaping (UUID, URL) -> Void
+            settings: FileStudySettings, erased: FileEraseMark,
+            coverURL: @escaping (UUID) -> URL?, saveCover: @escaping (UUID, URL) -> Void,
+            clearDeviceFiles: @escaping () -> Void
         ) {
             self.cards = cards
             self.collections = collections
             self.lookups = lookups
             self.settings = settings
+            self.erased = erased
             self.coverURL = coverURL
             self.saveCover = saveCover
+            self.clearDeviceFiles = clearDeviceFiles
+        }
+
+        var eraseStores: Erase.Stores {
+            Erase.Stores(mark: erased, cards: cards, collections: collections, lookups: lookups)
         }
     }
 
@@ -134,6 +146,11 @@ public final class CloudSync: CKSyncEngineDelegate, @unchecked Sendable {
         engine?.state.add(pendingRecordZoneChanges: [.saveRecord(id(.historyCleared))])
     }
 
+    /// Everything was erased here: the mark goes up, after the deletes the stores reported.
+    public func erased() {
+        engine?.state.add(pendingRecordZoneChanges: [.saveRecord(id(.erased))])
+    }
+
     /// What was changed while sync was off.
     public func send(_ unsent: UnsentChanges) {
         let zoneID = zone.zoneID
@@ -153,6 +170,7 @@ public final class CloudSync: CKSyncEngineDelegate, @unchecked Sendable {
             .collection, RecordChange(saved: stores.collections.collections().map(\.id.uuidString)))
         recordsChanged(.lookup, RecordChange(saved: stores.lookups.lookups().map(\.id)))
         if stores.lookups.clearedAt != nil { historyCleared() }
+        if stores.erased.date != nil { erased() }
         if stores.settings.settings() != nil {
             recordsChanged(.settings, RecordChange(saved: [StudySettings.key]))
         }
@@ -247,15 +265,7 @@ public final class CloudSync: CKSyncEngineDelegate, @unchecked Sendable {
         let recordID = failure.record.recordID
         switch failure.error.code {
         case .serverRecordChanged:
-            // Another device got there first: take its version into the local one, merged,
-            // and send the merge on top of it.
-            // One this version can't read (written by a newer one) is left as it is.
-            guard let server = failure.error.serverRecord, mergeLocally(server) else {
-                syncEngine.state.remove(pendingRecordZoneChanges: [.saveRecord(recordID)])
-                return
-            }
-            remember(server)
-            retry.append(.saveRecord(recordID))
+            conflicted(recordID, with: failure.error.serverRecord, retry: &retry, syncEngine)
         case .zoneNotFound:
             syncEngine.state.add(pendingDatabaseChanges: [.saveZone(zone)])
             retry.append(.saveRecord(recordID))
@@ -276,6 +286,29 @@ public final class CloudSync: CKSyncEngineDelegate, @unchecked Sendable {
             retry.append(.saveRecord(recordID))
         default:
             failed(failure.error.localizedDescription)
+        }
+    }
+
+    /// Another device got there first: its version is taken into the local one, and the
+    /// result goes up on top of it where there is more to send. One this version can't read
+    /// (written by a newer one) is left as it is.
+    private func conflicted(
+        _ recordID: CKRecord.ID, with server: CKRecord?,
+        retry: inout [CKSyncEngine.PendingRecordZoneChange], _ syncEngine: CKSyncEngine
+    ) {
+        guard let server else {
+            syncEngine.state.remove(pendingRecordZoneChanges: [.saveRecord(recordID)])
+            return
+        }
+        switch mergeLocally(server) {
+        case .sendAgain:
+            remember(server)
+            retry.append(.saveRecord(recordID))
+        case .settled:
+            remember(server)
+            syncEngine.state.remove(pendingRecordZoneChanges: [.saveRecord(recordID)])
+        case .unreadable:
+            syncEngine.state.remove(pendingRecordZoneChanges: [.saveRecord(recordID)])
         }
     }
 

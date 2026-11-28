@@ -57,6 +57,14 @@ enum CoverArchive {
         }
     }
 
+    /// Every cover, as when everything is erased.
+    static func removeAll() {
+        if let directory = try? directory() {
+            try? FileManager.default.removeItem(at: directory)
+        }
+        decoded.removeAllObjects()
+    }
+
     /// Covers and page photos once shared a Stills folder, at two thousand pixels; the covers
     /// move here, scaled down, and the folder goes with every page photo in it.
     static func migrate(covers: [UUID]) {

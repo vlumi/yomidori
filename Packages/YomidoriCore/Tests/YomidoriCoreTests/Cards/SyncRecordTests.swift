@@ -47,14 +47,29 @@ final class SyncRecordTests: XCTestCase {
         XCTAssertEqual(back, card)
     }
 
+    /// The era a record goes under rides in its JSON, where the stores' decoders pass it over
+    /// and a build that keeps no eras reads the record as before.
+    func testARecordCarriesItsEraAndReadsWithoutIt() throws {
+        let erased = Date(timeIntervalSince1970: 1_790_000_000)
+        let lookup = Lookup(headword: "樹皮", reading: "じゅひ", entryID: 1, date: erased, source: .page)
+        let stamped = try SyncPayload.encode(lookup, era: erased)
+        XCTAssertEqual(SyncPayload.era(of: stamped), erased)
+        XCTAssertEqual(try SyncPayload.decode(Lookup.self, from: stamped), lookup)
+        XCTAssertEqual(SyncPayload.intake(Lookup.self, from: stamped), lookup)
+        let plain = try SyncPayload.encode(lookup, era: nil)
+        XCTAssertNil(SyncPayload.era(of: plain))
+        XCTAssertEqual(plain, try SyncPayload.encode(lookup))
+    }
+
     /// The record types are the schema in iCloud, deployed to production: a name changed
     /// here would send records no device reads.
     func testTheRecordTypesAreTheDeployedSchema() {
         XCTAssertEqual(
             SyncKind.allCases.map(\.recordType),
-            ["Card", "Collection", "Lookup", "HistoryClear", "Settings"])
+            ["Card", "Collection", "Lookup", "HistoryClear", "Settings", "Erase"])
         XCTAssertEqual(
             SyncKind.allCases.map(\.rawValue),
-            ["card", "collection", "lookup", "history", "settings"])
+            ["card", "collection", "lookup", "history", "settings", "erase"])
+        XCTAssertEqual(SyncName.erased.recordName, "erase-all")
     }
 }
