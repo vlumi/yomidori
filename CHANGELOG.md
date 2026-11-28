@@ -10,11 +10,15 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 **One bullet, one line — no hard wrapping.** Editors soft-wrap and rendered Markdown ignores the line breaks, while hard wraps make an edited entry re-flow into a diff nobody can read. **Order the unreleased list by what a reader notices**, not by merge order, and fold entries that tell one story into one bullet.
 
-## v1.0.3
+## v1.0.4
 
 ### Unreleased (next build)
 
+### build 55 — 2026-11-28
+
 - **A day's reviews stay on their day across time zones.** Every answer now remembers the zone it was given in, so the calendar, the streaks and the charts count it on the date it was given, wherever you open the app later; answers from before are taken as given in the zone the device is in at the first launch of this build.
+
+## v1.0.3
 
 ### build 54 — 2026-11-16
 
