@@ -97,6 +97,11 @@ public final class FileLookupHistory: LookupHistory {
         onClear?(date)
     }
 
+    /// The clear forgotten, as when everything is erased: a restore then brings every lookup.
+    public func forgetClear() {
+        try? FileManager.default.removeItem(at: clearedURL)
+    }
+
     /// Another device's lookups and clear: nothing older than the latest clear survives.
     public func applyRemote(saving saved: [Lookup], deleting deleted: Set<String>, clearedAt: Date?)
         throws

@@ -353,7 +353,8 @@ has what remains.
   driven by `CKSyncEngine`. One record per card, collection and looked-up word
   (`SyncName`, the store key made ASCII; `SyncPayload`, the same JSON the
   stores write), a cover as the collection record's asset, one record for
-  the date the history was last cleared, and one for the study settings
+  the date the history was last cleared, one for the date everything was last
+  erased, and one for the study settings
   (`StudySettings`: the retention, the lesson's order and size, dated; the
   later change wins; `StudySettingsBridge` in Kit keeps it and the defaults the
   screens read the same, so what a device keeps to itself — look, hand, layout
@@ -371,7 +372,18 @@ has what remains.
   not held as the server's version: its next save goes up without the fields,
   and the conflict that answers brings the server's copy down to merge; the
   failed write is reported as the sync's status. Deletions are
-  CloudKit's own, not tombstones; a zone deleted from iCloud, or a new
+  CloudKit's own, not tombstones, but an erase is one: *Erase all data*
+  empties the stores here (their deletes go out as any) and sends the erase's
+  date (`FileEraseMark`, `Erase` in Core), which a device that was away takes
+  by emptying its own stores, covers and ranks by day, and every card,
+  collection and lookup record goes up stamped with the erase its sender knew
+  (`era` in its JSON, which the decoders pass over). A record stamped from
+  before the erase known here was sent by a device that had not heard of it:
+  it is not taken, and is answered with this device's own copy or a delete,
+  and a conflict with such a version is written over; one stamped from past
+  an erase not fetched here yet is taken whole. The one gap left is a delete
+  made on a device that had not heard of the erase, which CloudKit applies as
+  any delete. A zone deleted from iCloud, or a new
   account, is filled again from this device. Pushes wake the engine, and the
   app fetches when it comes to the front. On unless turned off in Settings,
   never in the demo, and nothing happens without an iCloud account.
@@ -401,6 +413,7 @@ has what remains.
   all is moved aside under a dated name, never written over. What lies in the
   app's folder: `cards.json`, `collections.json`, `lookups.json` with
   `lookups.cleared.json` (the date the history was last cleared),
+  `erased.json` (the date everything was last erased),
   `progress.json` (the ranks by day, this device's own), `Covers/`, and
   sync's own three, `sync-unsent.json`, `sync-state.json` and
   `sync-fields.json`. The merges sync needs when a
@@ -574,8 +587,10 @@ has what remains.
   language (`AppLanguage`: the device's, English or Japanese, written to
   `AppleLanguages` for the system to read at the next start, with a notice
   until then); the retention aimed for; the count on the app's icon; how to
-  read any screen through Shortcuts; iCloud sync with its state; and the
-  backup, shared and restored.
+  read any screen through Shortcuts; iCloud sync with its state; the
+  backup, shared and restored; and *Erase all data*, behind a confirmation,
+  which is how a backup corrected by hand is made the whole truth: erase,
+  then restore it.
 - **Selecting on the page** (Kit, `LiveTextSelection`, `LiveTextImage`): in
   Live Text mode the engine's own selection on the still is the selection, told
   by the interaction's delegate as it changes and widened to whole chunks of

@@ -16,6 +16,7 @@ public struct SettingsView: View {
     @State private var choosingBackup = false
     @State private var restored: BackupRestore?
     @State private var restoreFailed = false
+    @State private var confirmingErase = false
     @ObservedObject private var sync = Sync.shared
 
     public var body: some View {
@@ -206,6 +207,36 @@ public struct SettingsView: View {
                     Text(
                         // swiftlint:disable:next line_length
                         "Your cards, collections and lookup history as one file, to keep a copy wherever you like; the covers are not in it. Restoring adds what a backup has to what is here, and takes nothing away.",
+                        bundle: .module)
+                }
+                Section {
+                    Button(role: .destructive) {
+                        confirmingErase = true
+                    } label: {
+                        Label {
+                            Text("Erase all data", bundle: .module)
+                        } icon: {
+                            Image(systemName: "trash")
+                        }
+                    }
+                    .confirmationDialog(
+                        Text("Erase all data?", bundle: .module), isPresented: $confirmingErase,
+                        titleVisibility: .visible
+                    ) {
+                        Button(role: .destructive) {
+                            try? Cards.eraseAll()
+                        } label: {
+                            Text("Erase all data", bundle: .module)
+                        }
+                    } message: {
+                        Text(
+                            "This cannot be undone. Back up first if you may want any of it back.",
+                            bundle: .module)
+                    }
+                } footer: {
+                    Text(
+                        // swiftlint:disable:next line_length
+                        "Every card, collection, cover and the lookup history, gone from this device and, through iCloud, from your other devices; a device that is offline now is erased when it next syncs. To correct a backup by hand, erase first and then restore the corrected file.",
                         bundle: .module)
                 }
             }

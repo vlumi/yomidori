@@ -44,6 +44,11 @@ enum Cards {
         let lookups: FileLookupHistory
         let snapshots: FileRankSnapshots
         let settings: FileStudySettings
+        let erased: FileEraseMark
+
+        var eraseStores: Erase.Stores {
+            Erase.Stores(mark: erased, cards: cards, collections: collections, lookups: lookups)
+        }
     }
 
     private static let stores: Stores? = {
@@ -54,7 +59,8 @@ enum Cards {
                 url: directory.appendingPathComponent("collections.json")),
             lookups: FileLookupHistory(url: directory.appendingPathComponent("lookups.json")),
             snapshots: FileRankSnapshots(url: directory.appendingPathComponent("progress.json")),
-            settings: FileStudySettings(url: directory.appendingPathComponent("settings.json")))
+            settings: FileStudySettings(url: directory.appendingPathComponent("settings.json")),
+            erased: FileEraseMark(url: directory.appendingPathComponent("erased.json")))
         if !stores.collections.file.isUnreadable {
             CoverArchive.migrate(covers: stores.collections.collections().compactMap(\.coverID))
         }
@@ -80,6 +86,29 @@ enum Cards {
         _ = try? snapshots.take(of: store.cards(), at: Date())
     }
 
+    /// Everything the reader made, gone from this device and, through sync, from every other:
+    /// the stores' deletes go out as they are reported, then the erase mark, so a device that
+    /// was away erases too; the history's clear goes with it.
+    static func eraseAll() throws {
+        guard let stores else { return }
+        let hadClear = stores.lookups.clearedAt != nil
+        try Erase.everything(stores.eraseStores)
+        clearDeviceFiles()
+        if hadClear {
+            Sync.recordsChanged(
+                .historyCleared, RecordChange(deleted: [SyncName.historyCleared.key]))
+        }
+        Sync.erased()
+    }
+
+    /// What only this device keeps: the covers, the ranks by day, the collection Keep files
+    /// under.
+    private static func clearDeviceFiles() {
+        CoverArchive.removeAll()
+        try? snapshots?.replaceAll([])
+        defaults.removeObject(forKey: currentCollectionKey)
+    }
+
     /// Every write refreshes the screens; this device's own also go to sync.
     private static func changed(_ kind: SyncKind, _ change: RecordChange, _ origin: ChangeOrigin) {
         if origin == .local { Sync.recordsChanged(kind, change) }
@@ -93,7 +122,7 @@ enum Cards {
         guard let stores else { return nil }
         return CloudSync.Stores(
             cards: stores.cards, collections: stores.collections, lookups: stores.lookups,
-            settings: stores.settings,
+            settings: stores.settings, erased: stores.erased,
             coverURL: { id in
                 (try? CoverArchive.url(for: id)).flatMap {
                     FileManager.default.fileExists(atPath: $0.path) ? $0 : nil
@@ -106,7 +135,8 @@ enum Cards {
                         at: url, longestSide: Int(CoverArchive.longestSide))
                 else { return }
                 _ = try? CoverArchive.save(image, as: id)
-            })
+            },
+            clearDeviceFiles: clearDeviceFiles)
     }
 
     static func noteLookup(of entry: DictionaryEntry, from source: Lookup.Source) {
