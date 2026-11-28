@@ -14,6 +14,8 @@ The `## vX.Y.Z` heading is written by the release lane too, whenever a release c
 
 ### Unreleased (next build)
 
+- **An answer keeps its zone through a backup and a sync.** Restoring a backup or receiving a card from another device left every answer stamped with this device's zone instead of the one it was given in; the zone now comes through as recorded.
+
 ### build 55 — 2026-11-28
 
 - **A day's reviews stay on their day across time zones.** Every answer now remembers the zone it was given in, so the calendar, the streaks and the charts count it on the date it was given, wherever you open the app later; answers from before are taken as given in the zone the device is in at the first launch of this build.
